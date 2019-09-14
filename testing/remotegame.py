@@ -119,15 +119,15 @@ class RemoteGameTestCase(unittest.TestCase):
 
     def testGameknot(self):
         links = [('https://gameknot.com/analyze-board.pl?bd=22792465#tag', True),           # Game
-                 ('https://GAMEKNOT.com/chess.pl?bd=22792465&p=1', True),                   # Game
-                 ('https://GAMEKNOT.com/dummy.pl?bd=22792465', False),                      # Not a game (wrong path)
-                 ('https://gameknot.com/chess.pl?bd=bepofr&p=1', False),                    # Not a game (not numeric)
-                 ('https://gameknot.com/analyze-board.pl?bd=1234567890&p=1', False),        # Not a game (wrong ID)
+                 ('https://GAMEKNOT.com/chess.pl?bd=22792465&p=1', False),                  # Not a game (wrong path)
+                 ('https://gameknot.com/analyze-board.pl?bd=1234567890&p=1', False),        # Not a game (unknown ID)
+                 ('https://gameknot.com/analyze-board.pl?bd=bepofr#tag', False),            # Not a game (not numeric ID)
                  ('https://gameknot.com', False),                                           # Not a game (homepage)
-                 ('https://gameknot.com/chess-puzzle.pl?pz=224260', True),                  # Puzzle with ID
-                 ('https://gameknot.com/chess-puzzle.pl?pz=224541&next=2', True),           # Puzzle without direct ID
+                 ('https://gameknot.com/chess-puzzle.pl?pz=224260', True),                  # Puzzle
+                 ('https://gameknot.com/chess-puzzle.pl?pz=224541&next=2', True),           # Puzzle with parameters
                  ('https://gameknot.com/chess-puzzle.pl?pz=224571', True),                  # Puzzle with analysis
-                 ('https://gameknot.com/chess-puzzle.pl?pz=ABC', True)]                     # Random puzzle from wrong ID
+                 ('https://gameknot.com/chess-puzzle.pl?pz=ABC', False),                    # Random puzzle but rejected by PyChess (wrong format)
+                 ('https://gameknot.com/chess-puzzle.pl?pz=0#tag', False)]                  # Random puzzle but rejected by PyChess (wrong format)
         self.executeTest(InternetGameGameknot(), links)
 
     def testSchachspielen(self):
