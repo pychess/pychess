@@ -1116,30 +1116,43 @@ class InternetGameGameknot(InternetGameInterface):
 
     def assign_game(self, url):
         # Verify the hostname
-        parsed = urlparse(url)
-        if parsed.netloc.lower() not in ['www.gameknot.com', 'gameknot.com']:
+        parsed = urlparse(url.lower())
+        if parsed.netloc not in ['www.gameknot.com', 'gameknot.com']:
             return False
 
         # Verify the page
-        ppl = parsed.path.lower()
-        if 'chess.pl' in ppl or 'analyze-board.pl' in ppl:
-            self.url_type = TYPE_GAME
-        elif 'chess-puzzle.pl' in ppl:
-            self.url_type = TYPE_PUZZLE
+        if parsed.path == '/analyze-board.pl':
+            ttype = TYPE_GAME
+            tkey = 'bd'
+        elif parsed.path == '/chess-puzzle.pl':
+            ttype = TYPE_PUZZLE
+            tkey = 'pz'
         else:
             return False
 
-        # Accept any incoming link because the puzzle ID is a combination of several parameters
-        self.id = url
-        return True
+        # Read the arguments
+        args = parse_qs(parsed.query)
+        if tkey in args:
+            gid = args[tkey][0]
+            if gid.isdigit() and gid != '0':
+                self.id = gid
+                self.url_type = ttype
+                return True
+        return False
 
     def download_game(self):
         # Check
-        if self.url_type not in [TYPE_PUZZLE, TYPE_GAME] or self.id is None:
+        if self.url_type not in [TYPE_GAME, TYPE_PUZZLE] or self.id is None:
             return None
 
         # Download
-        page = self.download(self.id, userAgent=True)
+        if self.url_type == TYPE_GAME:
+            url = 'https://gameknot.com/analyze-board.pl?bd=%s' % self.id
+        elif self.url_type == TYPE_PUZZLE:
+            url = 'https://gameknot.com/chess-puzzle.pl?pz=%s' % self.id
+        else:
+            assert(False)
+        page = self.download(url, userAgent=True)
         if page is None:
             return None
 
