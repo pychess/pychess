@@ -672,7 +672,7 @@ class GameWidget(GObject.GObject):
         toolbar.insert(lastButton, -1)
 
         filterButton = Gtk.ToolButton(stock_id=Gtk.STOCK_FIND)
-        filterButton.set_tooltip_text(_("Find postion in current database"))
+        filterButton.set_tooltip_text(_("Find position in current database"))
         toolbar.insert(filterButton, -1)
 
         self.saveButton = Gtk.ToolButton(stock_id=Gtk.STOCK_SAVE)

@@ -2416,7 +2416,7 @@ It will search positions from http://www.k4it.de/</property>
                                               <object class="GtkLabel" id="label38">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="label" translatable="yes">Backround image path :</property>
+                                                <property name="label" translatable="yes">Background image path :</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -3998,7 +3998,7 @@ It will search positions from http://www.k4it.de/</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">Warning: this option generates a formatted .pgn file which is not standards complient</property>
+                            <property name="tooltip_text" translatable="yes">Warning: this option generates a formatted .pgn file which is not standards compliant</property>
                             <property name="halign">start</property>
                             <property name="use_underline">True</property>
                             <property name="xalign">0</property>
