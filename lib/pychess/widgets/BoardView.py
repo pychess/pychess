@@ -1161,7 +1161,7 @@ class BoardView(Gtk.DrawingArea):
         context.transform(invmatrix)
         Pieces.drawPiece(piece, context,
                          cx_loc + CORD_PADDING, cy_loc + CORD_PADDING,
-                         side - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean)
+                         side - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean, variant=self.model.variant.variant)
         context.transform(matrix)
 
     def drawPieces(self, context, rectangle):

@@ -1,7 +1,7 @@
 from gi.repository import Rsvg
 
 from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN, \
-    reprSign
+    reprSign, SITTUYINCHESS
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.System.cairoextras import create_cairo_font_face_for_file
@@ -15,11 +15,17 @@ size = 800.0
 makruk_svg_pieces = None
 
 
-def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False):
+def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False, variant=None):
     """Rendering pieces using .svg chess figurines"""
 
     color = WHITE if allwhite else piece.color
-    if asean:
+    if variant is not None and variant == SITTUYINCHESS:
+        sittuyin_svg_pieces = get_svg_pieces("sittuyin")
+        image = sittuyin_svg_pieces[color][piece.sign]
+        w, h = image.props.width, image.props.height
+        offset_x = 0
+        offset_y = 0
+    elif asean:
         global makruk_svg_pieces
         if makruk_svg_pieces is None:
             makruk_svg_pieces = get_svg_pieces("makruk")
@@ -61,7 +67,7 @@ def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False):
     context.restore()
 
 
-def drawPiece4(piece, context, x, y, psize, allwhite=False, asean=False):
+def drawPiece4(piece, context, x, y, psize, allwhite=False, asean=False, variant=None):
     """Rendering pieces using .ttf chessfont figurines"""
 
     if asean:

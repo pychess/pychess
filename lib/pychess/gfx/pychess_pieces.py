@@ -69,7 +69,7 @@ for color in (WHITE, BLACK):
         parsedPieces[color][piece] = {size: list}
 
 
-def drawPieceReal(piece, cc, psize, allwhite=False, asean=False):
+def drawPieceReal(piece, cc, psize, allwhite=False, asean=False, variant=None):
     color = WHITE if allwhite else piece.color
 
     # Do the actual drawing to the Cairo context
@@ -86,7 +86,7 @@ def drawPieceReal(piece, cc, psize, allwhite=False, asean=False):
             cc.set_source_rgb(0, 0, 0)
 
 
-def drawPiece2(piece, cc, x, y, psize, allwhite=False, asean=False):
+def drawPiece2(piece, cc, x, y, psize, allwhite=False, asean=False, variant=None):
     """Rendering pieces with draw each time method"""
 
     if asean:
