@@ -544,7 +544,7 @@ class GladeHandlers:
 
 
 class PyChess(Gtk.Application):
-    def __init__(self, log_viewer, purge_recent, chess_file, ics_host, ics_port, loop, splash):
+    def __init__(self, log_viewer, purge_recent, chess_file, ics_host, ics_port, loop, splash, version_check):
         Gtk.Application.__init__(self,
                                  application_id="org.pychess",
                                  flags=Gio.ApplicationFlags.NON_UNIQUE)
@@ -560,6 +560,7 @@ class PyChess(Gtk.Application):
         self.chess_file = chess_file
         self.window = None
         self.splash = splash
+        self.version_check = version_check
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -576,7 +577,8 @@ class PyChess(Gtk.Application):
         self.initGlade(self.log_viewer)
         self.addPerspectives()
         self.handleArgs(self.chess_file)
-        create_task(checkversion())
+        if self.version_check:
+            create_task(checkversion())
 
         self.loaded_cids = {}
         self.saved_cids = {}
