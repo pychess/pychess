@@ -4,7 +4,7 @@ from urllib.request import urlopen
 from urllib.parse import unquote
 
 
-PGN_ENCODING = "latin_1"
+PGN_ENCODING = "utf-8"
 
 
 def splitUri(uri):
