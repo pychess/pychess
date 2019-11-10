@@ -97,9 +97,8 @@ class LearnModel(GameModel):
 
         if self.puzzle_game:
             # No need to check in best moves (and let add more time to analyzer) in trivial cases
-            if self.goal.result in (MATE, MATE_IN) and (
-                (status == BLACKWON and self.starting_color == BLACK) or
-                    (status == WHITEWON and self.starting_color == WHITE)):
+            if ((status == BLACKWON and self.starting_color == BLACK) or
+                  (status == WHITEWON and self.starting_color == WHITE)):
                 return False
             elif self.goal.result == DRAW_IN and status == DRAW:
                 return False
