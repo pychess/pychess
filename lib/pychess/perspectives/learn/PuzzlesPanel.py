@@ -5,7 +5,8 @@ from gi.repository import Gtk
 
 from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE
+from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, \
+    WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE, COLUMN_ROW_RESET
 from pychess.Utils.LearnModel import LearnModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
@@ -18,6 +19,7 @@ from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
 from pychess.System import conf
 from pychess.System.protoopen import protoopen
+from pychess.widgets import mainwindow
 
 __title__ = _("Puzzles")
 
@@ -61,6 +63,11 @@ class Sidepanel():
 
         renderer = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(_("Source"), renderer, text=2)
+        self.tv.append_column(column)
+
+        renderer = Gtk.CellRendererPixbuf(stock_id=Gtk.STOCK_REFRESH)
+        column = Gtk.TreeViewColumn(_("Reset"), renderer)
+        column.set_name(COLUMN_ROW_RESET)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererProgress()
@@ -108,11 +115,25 @@ class Sidepanel():
         if path is None:
             return
         else:
-            filename = PUZZLES[path[0]][0]
-            conf.set("categorycombo", PUZZLE)
-            from pychess.widgets.TaskerManager import learn_tasker
-            learn_tasker.learn_combo.set_active(path[0])
-            start_puzzle_from(filename)
+            filename, title, *_ = PUZZLES[path[0]]
+            if col.get_name() == COLUMN_ROW_RESET:
+                self._reset_progress_file(filename, title)
+            else:
+                conf.set("categorycombo", PUZZLE)
+                from pychess.widgets.TaskerManager import learn_tasker
+                learn_tasker.learn_combo.set_active(path[0])
+                start_puzzle_from(filename)
+
+    def _reset_progress_file(self, filename, title):
+        dialog = Gtk.MessageDialog(mainwindow(), 0, Gtk.MessageType.QUESTION,
+                                   Gtk.ButtonsType.OK_CANCEL,
+                                   _("This will set the progress to 0 for the puzzle") + ' "' + title + '".')
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            progress = puzzles_solving_progress[filename]
+            puzzles_solving_progress[filename] = [0] * len(progress)
+            self.persp.update_progress(None, None, None)
+        dialog.destroy()
 
 
 def start_puzzle_from(filename, index=None):
