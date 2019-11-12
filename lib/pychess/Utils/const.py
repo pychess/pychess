@@ -228,5 +228,8 @@ VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
 EDIT_MENU_ITEMS = ("copy_pgn", "copy_fen", )
 MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS + EDIT_MENU_ITEMS
 
+# Column name
+COLUMN_ROW_RESET = "column_row_reset"
+
 # Learn categories
 LECTURE, LESSON, PUZZLE, ENDGAME = range(4)
