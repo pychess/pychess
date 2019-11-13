@@ -65,13 +65,14 @@ class Sidepanel():
         column = Gtk.TreeViewColumn(_("Source"), renderer, text=2)
         self.tv.append_column(column)
 
+        renderer = Gtk.CellRendererProgress()
+        column = Gtk.TreeViewColumn(_("Progress"), renderer, text=3, value=4)
+        column.set_expand(True)
+        self.tv.append_column(column)
+
         renderer = Gtk.CellRendererPixbuf(stock_id=Gtk.STOCK_REFRESH)
         column = Gtk.TreeViewColumn(_("Reset"), renderer)
         column.set_name(COLUMN_ROW_RESET)
-        self.tv.append_column(column)
-
-        renderer = Gtk.CellRendererProgress()
-        column = Gtk.TreeViewColumn(_("Progress"), renderer, text=3, value=4)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)
