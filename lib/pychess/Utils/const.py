@@ -231,5 +231,8 @@ MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS + EDIT_MENU_I
 # Column name
 COLUMN_ROW_RESET = "column_row_reset"
 
+# Gtk icon name
+GTK_ICON_VIEW_REFRESH = "view-refresh"
+
 # Learn categories
 LECTURE, LESSON, PUZZLE, ENDGAME = range(4)
