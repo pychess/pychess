@@ -138,7 +138,7 @@ class Sidepanel():
         if reset_icon is not None:
             dialog = Gtk.MessageDialog(mainwindow(), 0, Gtk.MessageType.QUESTION,
                                        Gtk.ButtonsType.OK_CANCEL,
-                                       _('This will reset the progress to 0 for the puzzle "{title}"').format(title))
+                                       _('This will reset the progress to 0 for the puzzle "{title}"').format(title=title))
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 puzzles_solving_progress[filename] = [0] * len(progress)
