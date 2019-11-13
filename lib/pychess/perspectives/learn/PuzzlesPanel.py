@@ -80,10 +80,9 @@ class Sidepanel():
         def on_progress_updated(solving_progress, key, progress):
             for i, row in enumerate(self.store):
                 if row[0] == key:
-                    solved = progress.count(1)
-                    percent = 0 if not solved else round((solved * 100.) / len(progress))
+                    progress_ratio_string, percent = self._compute_progress_info(progress)
                     treeiter = self.store.get_iter(Gtk.TreePath(i))
-                    self.store[treeiter][3] = "%s / %s" % (solved, len(progress))
+                    self.store[treeiter][3] = progress_ratio_string
                     self.store[treeiter][4] = percent
         puzzles_solving_progress.connect("progress_updated", on_progress_updated)
 
@@ -93,9 +92,8 @@ class Sidepanel():
         def coro():
             for file_name, title, author in PUZZLES:
                 progress = puzzles_solving_progress.get(file_name)
-                solved = progress.count(1)
-                percent = 0 if not solved else round((solved * 100.) / len(progress))
-                self.store.append([file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
+                progress_ratio_string, percent = self._compute_progress_info(progress)
+                self.store.append([file_name, title, author, progress_ratio_string, percent])
                 yield from asyncio.sleep(0)
         create_task(coro())
 
@@ -124,6 +122,12 @@ class Sidepanel():
                 from pychess.widgets.TaskerManager import learn_tasker
                 learn_tasker.learn_combo.set_active(path[0])
                 start_puzzle_from(filename)
+
+    def _compute_progress_info(self, progress):
+        solved = progress.count(1)
+        percent = 0 if not solved else round((solved * 100.) / len(progress))
+        return "%s / %s" % (solved, len(progress)), percent
+
 
     def _reset_progress_file(self, filename, title):
         dialog = Gtk.MessageDialog(mainwindow(), 0, Gtk.MessageType.QUESTION,
