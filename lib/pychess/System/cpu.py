@@ -24,7 +24,8 @@ def get_cpu():
         result['popcnt'] = 'popcnt' in info
         result['bmi2'] = 'bmi2' in info
     except OSError:
-        # TODO Windows
-        result['popcnt'] = False
-        result['bmi2'] = False
+        # Logic not fully true
+        guess = (result['bitness'] == '64')
+        result['popcnt'] = guess
+        result['bmi2'] = guess
     return result
