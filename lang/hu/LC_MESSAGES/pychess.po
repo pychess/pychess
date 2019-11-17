@@ -35,7 +35,7 @@ msgstr "Alapállásból"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr "Egyedi pozíícióból"
+msgstr "_Egyedi pozíícióból"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"

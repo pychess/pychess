@@ -7,14 +7,14 @@
 # Heimen Stoffels <vistausss@outlook.com>, 2018-2019
 # jezusisstoer <jezusisstoer@gmail.com>, 2014
 # Pieter Aerts <pieter.info@telenet.be>, 2016-2017
-# Poly BOT <tigrinya.tigrigna@gmail.com>, 2018
+# Poly BOT <tigrinya.tigrigna@gmail.com>, 2018-2019
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-12 22:08+0200\n"
-"PO-Revision-Date: 2019-09-13 10:04+0000\n"
-"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
+"PO-Revision-Date: 2019-11-14 18:29+0000\n"
+"Last-Translator: Poly BOT <tigrinya.tigrigna@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/gbtami/pychess/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4694,14 +4694,14 @@ msgid ""
 "chess enthusiast: bug reports, source code, documentation, translations, "
 "feature requests, user assistance... Let's get in touch at "
 "<b>http://www.pychess.org</b>"
-msgstr ""
+msgstr "PyChess is een open-source schaakprogramma dat verbeterd kan worden door iedere schaakenthousiasteling: bugmeldingen, broncode, documentatie, vertalingen, functieverzoeken, gebruikersondersteuning... Kom in contact op <b>http://www.pychess.org</b>"
 
 #: lib/pychess/widgets/tipOfTheDay.py:25
 msgid ""
 "PyChess supports a wide range of chess engines, variants, Internet servers, "
 "and lessons. It is a perfect desktop application to conveniently improve "
 "your chess skills."
-msgstr ""
+msgstr "PyChess ondersteunt een breed scala aan schaakcomputers, varianten, internetservers en lessen. Het is dé perfecte bureaubladtoepassing om met gemak je schaakvaardigheden te verhogen."
 
 #: lib/pychess/widgets/tipOfTheDay.py:26
 msgid ""
@@ -4713,77 +4713,77 @@ msgstr "De uitgebrachte versies van PyChess dragen namen van historische schaakw
 msgid ""
 "Did you know that you can help translate PyChess into your own language, "
 "<b>Help</b> > <b>Translate PyChess</b>."
-msgstr ""
+msgstr "Wist je dat je kunt helpen om PyChess in je eigen taal te vertalen? Ga naar<b>Hulp</b> > <b>PyChess vertalen</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:28
 msgid ""
 "A game consists of an opening, a middle-game and an end-game. PyChess is "
 "able to train you thanks to its opening book, its supported chess engines "
 "and its training module."
-msgstr ""
+msgstr "Een partij bestaat uit een opening, het middenspel en een eindspel. PyChess kan je trainen door gebruik te maken van een openingsboek, de schaakcomputers die het ondersteunt en de oefenmodule. "
 
 #: lib/pychess/widgets/tipOfTheDay.py:31
 msgid ""
 "Did you know that it is possible to finish a chess game in just 2 turns?"
-msgstr ""
+msgstr "Wist je dat het mogelijk is om een spel af te ronden in slechts 2 beurten?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:32
 msgid ""
 "Did you know that a knight is better placed in the center of the board?"
-msgstr ""
+msgstr "Wist je dat een paard beter staat in het midden van het bord?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:33
 msgid ""
 "Did you know that moving the queen at the very beginning of a game does not "
 "offer any particular advantage?"
-msgstr ""
+msgstr "Wist je dat het verplaatsen van de dame aan het begin van een spel geen merkbaar voordeel biedt?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:34
 msgid ""
 "Did you know that having two-colored bishops working together is very "
 "powerful?"
-msgstr ""
+msgstr "Wist je dat het hebben van twee samenwerkende lopers die over verschillende kleuren velden bewegen erg krachtig is?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:35
 msgid "Did you know that the rooks are generally engaged late in the game?"
-msgstr ""
+msgstr "Wist je dat de torens meestal pas laat in de partij in het spel betrokken worden?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:36
 msgid ""
 "Did you know that the king can move across two squares under certain "
 "conditions? This is called castling."
-msgstr ""
+msgstr "Wist je dat de koning soms over twee velden kan worden verplaatst in één zet? Dit heet 'rokeren'. "
 
 #: lib/pychess/widgets/tipOfTheDay.py:37
 msgid ""
 "Did you know that the number of possible chess games exceeds the number of "
 "atoms in the Universe?"
-msgstr ""
+msgstr "Wist je dat het aantal mogelijke schaakvarianten hoger ligt dan het aantal atomen in het universum?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:40
 msgid ""
 "You can start a new game with <b>Game</b> > <b>New Game</b>, then choose the"
 " <b>Players</b>, <b>Time Control</b> and <b>Chess Variants</b>."
-msgstr ""
+msgstr "Je kunt een nieuw spel starten via<b>Spel</b> > <b>Nieuw Spel</b>. In het Nieuw Spel-venster kun je <b>Spelers</b>, <b>Tijdscontrole</b> en <b>Schaakvarianten</b> kiezen."
 
 #: lib/pychess/widgets/tipOfTheDay.py:41
 msgid ""
 "You can choose from 20 different difficulties to play against the computer. "
 "It will mainly affect the engines available time to think."
-msgstr ""
+msgstr "Je kunt spelen tegen de computer op 20 verschillende spelniveaus. Dit beïnvloed voornamelijk hoeveel tijd de computer heeft om na te denken. "
 
 #: lib/pychess/widgets/tipOfTheDay.py:42
 msgid ""
 "The level 20 engine difficulty gives full autonomy to the chess engine in "
 "managing its own time during the game."
-msgstr ""
+msgstr "De level 20 computer geeft volledige autonomie aan de schaakcomputer in het beheren van de denktijd."
 
 #: lib/pychess/widgets/tipOfTheDay.py:43
 msgid ""
 "To save a game use <b>Game</b> > <b>Save Game As</b>, provide the filename, "
 "and choose where you want it to be saved. At the bottom choose the extension"
 " type of the file, and <b>Save</b>."
-msgstr ""
+msgstr "U kunt een spel opslaan via <b>Spel</b> > <b>Opslaan als</b>. Voer een bestandsnaam en locatie in. Kies daarna, aan de onderkant, de bestandssoort en klik op <b>Opslaan</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:44
 msgid ""
@@ -4919,7 +4919,7 @@ msgid ""
 "The opening book gives you the first few moves that are considered to be "
 "good from a theoretical perspective. You are free to play any other legal "
 "move."
-msgstr ""
+msgstr "Het openingsboek geeft je de eerste paar zetten die vanuit theoretisch oogpunt goed worden gevonden. Je bent vrij om iedere andere legale zet te spelen. "
 
 #: lib/pychess/widgets/tipOfTheDay.py:67
 msgid ""
@@ -4937,7 +4937,7 @@ msgstr ""
 msgid ""
 "A tablebase can be connected either to PyChess, or to a compatible chess "
 "engine."
-msgstr ""
+msgstr "Een eindspeldatabase kan aan PyChess of aan een compatibele schaakcomputer worden aangesloten."
 
 #: lib/pychess/widgets/tipOfTheDay.py:70
 msgid ""
@@ -5166,7 +5166,7 @@ msgstr "de eindlijn (%s) is onjuist"
 #: lib/pychess/Utils/lutils/lmove.py:478
 #, python-format
 msgid "no %s is able to move to %s"
-msgstr ""
+msgstr "geen %s kan naar %s bewegen"
 
 #: lib/pychess/Utils/lutils/strateval.py:32
 #: lib/pychess/perspectives/games/commentPanel.py:198

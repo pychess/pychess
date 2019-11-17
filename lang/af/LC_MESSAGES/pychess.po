@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the pychess package.
 # 
 # Translators:
+# Bennie du Plessis <bennied008@gmail.com>, 2019
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-12 22:08+0200\n"
-"PO-Revision-Date: 2019-09-13 00:58+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2019-11-14 20:46+0000\n"
+"Last-Translator: Bennie du Plessis <bennied008@gmail.com>\n"
 "Language-Team: Afrikaans (http://www.transifex.com/gbtami/pychess/language/af/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,15 +30,15 @@ msgstr "_Nuwe Spel"
 
 #: glade/PyChess.glade:249
 msgid "From _Default Start Position"
-msgstr ""
+msgstr "Uit _Standaard Begin Posisie"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr ""
+msgstr "Uit _Selfopgestelde Posisie"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"
-msgstr ""
+msgstr "Uit _Spel Notasie"
 
 #: glade/PyChess.glade:277
 msgid "From Cli_pboard"
@@ -45,7 +46,7 @@ msgstr ""
 
 #: glade/PyChess.glade:288
 msgid "Play _Internet Chess"
-msgstr ""
+msgstr "Speel _Internet Skaak"
 
 #: glade/PyChess.glade:307
 msgid "_Load Game"
@@ -53,7 +54,7 @@ msgstr "_Laai Spel"
 
 #: glade/PyChess.glade:323
 msgid "Load _Recent Game"
-msgstr ""
+msgstr "Laai _Onlangse Spel"
 
 #: glade/PyChess.glade:329
 msgid "Load Re_mote Game"
@@ -69,15 +70,15 @@ msgstr "Stoor Spel _As"
 
 #: glade/PyChess.glade:375
 msgid "_Export Position"
-msgstr ""
+msgstr "_Verskeep Posisie"
 
 #: glade/PyChess.glade:392
 msgid "Share _Game"
-msgstr ""
+msgstr "_Deel Spel"
 
 #: glade/PyChess.glade:420
 msgid "Player _Rating"
-msgstr ""
+msgstr "Speler _Gradering"
 
 #: glade/PyChess.glade:427
 msgid "_Analyze Game"
@@ -85,19 +86,19 @@ msgstr ""
 
 #: glade/PyChess.glade:477
 msgid "_Edit"
-msgstr ""
+msgstr "_Wysig"
 
 #: glade/PyChess.glade:488
 msgid "_Copy PGN"
-msgstr ""
+msgstr "_Kopieër PGN"
 
 #: glade/PyChess.glade:500
 msgid "_Copy FEN"
-msgstr ""
+msgstr "_Kopieër FEN"
 
 #: glade/PyChess.glade:517
 msgid "_Engines"
-msgstr ""
+msgstr "_Enjins"
 
 #: glade/PyChess.glade:527
 msgid "Externals"
@@ -205,7 +206,7 @@ msgstr ""
 
 #: glade/PyChess.glade:861
 msgid "Import games from theweekinchess.com"
-msgstr ""
+msgstr "Verkry `n spel uit theweekinchess.com"
 
 #: glade/PyChess.glade:874
 msgid "_Help"
@@ -217,19 +218,19 @@ msgstr "Oor skaak"
 
 #: glade/PyChess.glade:893
 msgid "How to Play"
-msgstr ""
+msgstr "Hoe om te Speel"
 
 #: glade/PyChess.glade:905
 msgid "Tip of the Day"
-msgstr ""
+msgstr "Wenk van die Dag"
 
 #: glade/PyChess.glade:919
 msgid "Translate PyChess"
-msgstr ""
+msgstr "Vertaal PyChess"
 
 #: glade/PyChess.glade:928
 msgid "Report an issue"
-msgstr ""
+msgstr "Rapporteer `n Probleem"
 
 #: glade/PyChess.glade:1021
 msgid "Chess client"
@@ -245,7 +246,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1105
 msgid "<b>Name of _first human player:</b>"
-msgstr ""
+msgstr "<b>Naam van _eerste mens speler:</b>"
 
 #: glade/PyChess.glade:1134
 msgid "The displayed name of the guest player, e.g., Mary."
