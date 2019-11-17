@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-17 11:14+0100\n"
+"POT-Creation-Date: 2019-11-17 11:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5174,7 +5174,7 @@ msgstr ""
 
 #: lib/pychess/Utils/lutils/lmove.py:478
 #, python-format
-msgid "no %s is able to move to %s"
+msgid "no %(piece)s is able to move to %(cord)s"
 msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:32
