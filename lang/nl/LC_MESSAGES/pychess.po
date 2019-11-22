@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-12 22:08+0200\n"
-"PO-Revision-Date: 2019-11-14 18:29+0000\n"
-"Last-Translator: Poly BOT <tigrinya.tigrigna@gmail.com>\n"
+"POT-Creation-Date: 2019-11-17 11:23+0100\n"
+"PO-Revision-Date: 2019-11-17 13:23+0000\n"
+"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/gbtami/pychess/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -511,8 +511,8 @@ msgid "Side_panels"
 msgstr "Zij_panelen"
 
 #: glade/PyChess.glade:2419
-msgid "Backround image path :"
-msgstr "Achtergrondafbeeldingspad:"
+msgid "Background image path :"
+msgstr ""
 
 #: glade/PyChess.glade:2457
 msgid "<b>Welcome screen</b>"
@@ -679,8 +679,8 @@ msgstr "_PGN-bestand voorzien van tabs"
 #: glade/PyChess.glade:4001
 msgid ""
 "Warning: this option generates a formatted .pgn file which is not standards "
-"complient"
-msgstr "Waarschuwing: deze optie genereert een opgemaakt .pgn-bestand; dit is niet conform de standaard."
+"compliant"
+msgstr ""
 
 #: glade/PyChess.glade:4022
 msgid "Save _own games only"
@@ -911,8 +911,8 @@ msgid "Filter"
 msgstr "Filteren"
 
 #: glade/PyChess.glade:5891 glade/PyChess.glade:7196
-#: glade/fics_lounge.glade:3167 lib/pychess/Savers/remotegame.py:1179
-#: lib/pychess/Savers/remotegame.py:1399 lib/pychess/Utils/repr.py:22
+#: glade/fics_lounge.glade:3167 lib/pychess/Savers/remotegame.py:1192
+#: lib/pychess/Savers/remotegame.py:1412 lib/pychess/Utils/repr.py:22
 #: lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/TaskerManager.py:165
 #: lib/pychess/widgets/newGameDialog.py:1019
@@ -926,8 +926,8 @@ msgid "White"
 msgstr "Wit"
 
 #: glade/PyChess.glade:5902 glade/PyChess.glade:7212
-#: glade/fics_lounge.glade:3195 lib/pychess/Savers/remotegame.py:1180
-#: lib/pychess/Savers/remotegame.py:1400 lib/pychess/Utils/repr.py:22
+#: glade/fics_lounge.glade:3195 lib/pychess/Savers/remotegame.py:1193
+#: lib/pychess/Savers/remotegame.py:1413 lib/pychess/Utils/repr.py:22
 #: lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/TaskerManager.py:166
 #: lib/pychess/widgets/newGameDialog.py:1020
@@ -1436,7 +1436,7 @@ msgstr "_Vorige"
 msgid "_Next"
 msgstr "Volge_nde"
 
-#: glade/newInOut.glade:45 lib/pychess/Main.py:770
+#: glade/newInOut.glade:45 lib/pychess/Main.py:772
 #: lib/pychess/widgets/newGameDialog.py:571
 msgid "New Game"
 msgstr "Nieuw spel"
@@ -1680,12 +1680,12 @@ msgstr "http://nl.wikipedia.org/wiki/Schaken"
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr "https://nl.wikipedia.org/wiki/Schaken#Spelregels"
 
-#: lib/pychess/Main.py:702 lib/pychess/widgets/gamenanny.py:80
+#: lib/pychess/Main.py:704 lib/pychess/widgets/gamenanny.py:80
 #: lib/pychess/perspectives/welcome/__init__.py:7
 msgid "Welcome"
 msgstr "Welkom"
 
-#: lib/pychess/Main.py:775
+#: lib/pychess/Main.py:777
 msgid "Open Game"
 msgstr "<b>Open spel</b>"
 
@@ -2041,16 +2041,16 @@ msgstr "Verschillende technieken"
 msgid "Websockets"
 msgstr "Websockets"
 
-#: lib/pychess/Savers/remotegame.py:1355
+#: lib/pychess/Savers/remotegame.py:1368
 msgid "Puzzle"
 msgstr "Puzzel"
 
-#: lib/pychess/Savers/remotegame.py:1358
+#: lib/pychess/Savers/remotegame.py:1371
 #, python-format
 msgid "Puzzle %s"
 msgstr "Puzzel %s"
 
-#: lib/pychess/Savers/remotegame.py:1771
+#: lib/pychess/Savers/remotegame.py:1784
 #, python-format
 msgid "%d moves to find"
 msgstr "%d verplaatst naar zoeken"
@@ -4257,7 +4257,7 @@ msgid "Lessons"
 msgstr "Lessen"
 
 #: lib/pychess/widgets/TaskerManager.py:308
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:22
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:25
 msgid "Puzzles"
 msgstr "Puzzels"
 
@@ -4531,8 +4531,8 @@ msgid "Jump to latest position"
 msgstr "Ga naar de laatste positie"
 
 #: lib/pychess/widgets/gamewidget.py:675
-msgid "Find postion in current database"
-msgstr "Positie opzoeken in huidige databank"
+msgid "Find position in current database"
+msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:679
 msgid "Save arrows/circles"
@@ -5165,8 +5165,8 @@ msgstr "de eindlijn (%s) is onjuist"
 
 #: lib/pychess/Utils/lutils/lmove.py:478
 #, python-format
-msgid "no %s is able to move to %s"
-msgstr "geen %s kan naar %s bewegen"
+msgid "no %(piece)s is able to move to %(cord)s"
+msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:32
 #: lib/pychess/perspectives/games/commentPanel.py:198
@@ -5433,9 +5433,9 @@ msgstr "Seq"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:135
 msgid ""
-"Create new squence where listed conditions may be satisfied at different "
+"Create new sequence where listed conditions may be satisfied at different "
 "times in a game"
-msgstr "Creëer een nieuwe sequentie met verschillende criteria waaraan moet worden voldaan op verschillende spelmomenten"
+msgstr ""
 
 #: lib/pychess/perspectives/database/FilterPanel.py:140
 msgid "Str"
@@ -6460,7 +6460,7 @@ msgstr "Eindspellen beoefenen met computer"
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:64
 #: lib/pychess/perspectives/learn/LecturesPanel.py:67
 #: lib/pychess/perspectives/learn/LessonsPanel.py:45
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:59
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:62
 msgid "Title"
 msgstr "Titel"
 
@@ -6477,23 +6477,32 @@ msgid "Guided interactive lessons in \"guess the move\" style"
 msgstr "Interactieve lessen met begeleiding in de stijl van \"raad de zet\""
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:49
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:63
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:66
 msgid "Source"
 msgstr "Bron"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:53
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:67
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:70
 #: lib/pychess/perspectives/learn/__init__.py:130
 msgid "Progress"
 msgstr "Voortgang"
 
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:26
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:29
 msgid "Lichess practice studies Puzzles from GM games and Chess compositions"
 msgstr "Lichess-oefenstudies, puzzels van GM-spellen en schaakcomposities"
 
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:46
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:49
 msgid "others"
 msgstr "overigen"
+
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:75
+msgid "Reset"
+msgstr ""
+
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:141
+#, python-brace-format
+msgid "This will reset the progress to 0 for the puzzle \"{title}\""
+msgstr ""
 
 #: lib/pychess/perspectives/learn/__init__.py:24
 msgid "Learn"
