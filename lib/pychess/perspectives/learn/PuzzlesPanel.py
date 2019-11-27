@@ -3,8 +3,7 @@ import os
 from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, \
-    WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE, COLUMN_ROW_RESET, \
-    GTK_ICON_VIEW_REFRESH
+    WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE
 from pychess.Utils.LearnModel import LearnModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
@@ -48,6 +47,7 @@ for elem in sorted(os.listdir(path=addDataPrefix("learn/puzzles/"))):
 PUZZLES = puzzles0 + puzzles1 + puzzles2 + puzzles3
 
 # Note: Find the declaration of the class Sidepanel at the end of the file
+
 
 def start_puzzle_from(filename, index=None):
     if filename.lower().endswith(".pgn"):

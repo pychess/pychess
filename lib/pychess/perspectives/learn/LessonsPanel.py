@@ -1,7 +1,4 @@
 import os
-import asyncio
-
-from gi.repository import Gtk
 
 from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
@@ -35,6 +32,7 @@ for elem in sorted(os.listdir(path=addDataPrefix("learn/lessons/"))):
         LESSONS.append((elem, elem.replace("-", " ").capitalize(), "pychess.org"))
 
 # Note: Find the declaration of the class Sidepanel at the end of the file
+
 
 def start_lesson_from(filename, index=None):
     chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
