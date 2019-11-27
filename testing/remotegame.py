@@ -1,7 +1,7 @@
 import unittest
 import random
 
-from pychess.Savers.remotegame import InternetGameLichess, InternetGameChessgames, InternetGameFicsgames, InternetGameChesstempo, InternetGameChess24, InternetGame365chess, InternetGameChesspastebin, InternetGameChessbomb, InternetGameThechessworld, InternetGameChessOrg, InternetGameEuropeechecs, InternetGameGameknot, InternetGameSchachspielen, InternetGameRedhotpawn, InternetGameChesssamara, InternetGame2700chess, InternetGameIccf, InternetGameSchacharena, InternetGameChesspuzzle, InternetGameChessking, InternetGameIdeachess, InternetGameChessdb, InternetGameChesspro, InternetGameFicgs, InternetGameGeneric
+from pychess.Savers.remotegame import InternetGameLichess, InternetGameChessgames, InternetGameFicsgames, InternetGameChesstempo, InternetGameChess24, InternetGame365chess, InternetGameChesspastebin, InternetGameChessbomb, InternetGameThechessworld, InternetGameChessOrg, InternetGameEuropeechecs, InternetGameGameknot, InternetGameChessCom, InternetGameSchachspielen, InternetGameRedhotpawn, InternetGameChesssamara, InternetGame2700chess, InternetGameIccf, InternetGameSchacharena, InternetGameChesspuzzle, InternetGameChessking, InternetGameIdeachess, InternetGameChessdb, InternetGameChesspro, InternetGameFicgs, InternetGameGeneric
 
 
 class RemoteGameTestCase(unittest.TestCase):
@@ -37,6 +37,7 @@ class RemoteGameTestCase(unittest.TestCase):
         links = [('http://lichess.org/CA4bR2b8/black/analysis#12', True),                           # Game in advanced position
                  ('https://lichess.org/CA4bR2b8', True),                                            # Canonical address
                  ('https://lichess.org/game/export/CA4bR2b8', True),                                # Download link
+                 ('https://LICHESS.org/embed/CA4bR2b8/black?theme=brown', True),                    # Embedded game
                  ('http://fr.lichess.org/@/thibault', False),                                       # Not a game (user page)
                  ('http://lichess.org/blog', False),                                                # Not a game (page)
                  ('http://lichess.dev/ABCD1234', False),                                            # Not a game (wrong ID)
@@ -83,7 +84,8 @@ class RemoteGameTestCase(unittest.TestCase):
 
     def test365chess(self):
         links = [('https://www.365chess.com/view_game.php?g=4187437#anchor', True),         # Game 1/2-1/2 for special chars
-                 ('https://www.365chess.com/view_game.php?g=1234567890', False)]            # Not a game
+                 ('https://www.365chess.com/view_game.php?g=1234567890', False),            # Not a game
+                 ('https://www.365chess.com/game.php?gid=4230834&p=0', True)]               # Game with additional parameter
         self.executeTest(InternetGame365chess(), links)
 
     def testChesspastebin(self):
@@ -129,6 +131,20 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://gameknot.com/chess-puzzle.pl?pz=ABC', False),                    # Random puzzle but rejected by PyChess (wrong format)
                  ('https://gameknot.com/chess-puzzle.pl?pz=0#tag', False)]                  # Random puzzle but rejected by PyChess (wrong format)
         self.executeTest(InternetGameGameknot(), links)
+
+    def testChessCom(self):
+        links = [('https://www.CHESS.com/live/game/3638784952#anchor', True),               # Live game
+                 ('https://chess.com/de/live/game/3635508736?username=rikikits', True),     # Live game Chess960
+                 ('https://www.chess.com/live/game/1936591455', True),                      # Live game CrazyHouse
+                 ('https://www.chess.com/analysis/game/live/3874372792', True),             # Live analysis
+                 ('https://www.chess.com/analysis/game/live/4119932192', True),             # Live game with promotion to Queen
+                 ('https://www.chess.com/daily/game/223897998', True),                      # Daily game
+                 ('https://www.chess.com/DAILY/game/224478042', True),                      # Daily game
+                 ('https://www.chess.com/daily/game/225006782', True),                      # Daily game Chess960
+                 ('https://www.chess.com/daily/GAME/205389002', True),                      # Daily game Chess960
+                 ('https://chess.com/live/game/13029832074287114', False),                  # Not a game (wrong ID)
+                 ('https://www.chess.com', False)]                                          # Not a game (homepage)
+        self.executeTest(InternetGameChessCom(), links)
 
     def testSchachspielen(self):
         links = [('https://www.schach-spielen.eu/analyse/2jcpl1vs/black#test', True),       # Best game ever with anchor
