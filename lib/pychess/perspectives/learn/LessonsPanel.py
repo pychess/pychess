@@ -11,6 +11,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
 from pychess.System import conf
 from pychess.perspectives import perspective_manager
+from pychess.perspectives.learn.generate.generateLessonsSidepanel import generateLessonsSidepanel
 from pychess.perspectives.learn import lessons_solving_progress
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_game
 from pychess.Savers.pgn import PGNFile
@@ -33,72 +34,7 @@ for elem in sorted(os.listdir(path=addDataPrefix("learn/lessons/"))):
     elif elem.endswith(".pgn"):
         LESSONS.append((elem, elem.replace("-", " ").capitalize(), "pychess.org"))
 
-
-class Sidepanel():
-    def load(self, persp):
-        self.persp = persp
-        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-
-        self.tv = Gtk.TreeView()
-
-        renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Title"), renderer, text=1)
-        self.tv.append_column(column)
-
-        renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Source"), renderer, text=2)
-        self.tv.append_column(column)
-
-        renderer = Gtk.CellRendererProgress()
-        column = Gtk.TreeViewColumn(_("Progress"), renderer, text=3, value=4)
-        self.tv.append_column(column)
-
-        self.tv.connect("row-activated", self.row_activated)
-
-        def on_progress_updated(solving_progress, key, progress):
-            for i, row in enumerate(self.store):
-                if row[0] == key:
-                    solved = progress.count(1)
-                    percent = 0 if not solved else round((solved * 100.) / len(progress))
-                    treeiter = self.store.get_iter(Gtk.TreePath(i))
-                    self.store[treeiter][3] = "%s / %s" % (solved, len(progress))
-                    self.store[treeiter][4] = percent
-        lessons_solving_progress.connect("progress_updated", on_progress_updated)
-
-        self.store = Gtk.ListStore(str, str, str, str, int)
-
-        @asyncio.coroutine
-        def coro():
-            for file_name, title, author in LESSONS:
-                progress = lessons_solving_progress.get(file_name)
-                solved = progress.count(1)
-                percent = 0 if not solved else round((solved * 100.) / len(progress))
-                self.store.append([file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
-        create_task(coro())
-
-        self.tv.set_model(self.store)
-        self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
-        self.tv.set_cursor(conf.get("learncombo%s" % LESSON))
-
-        scrollwin = Gtk.ScrolledWindow()
-        scrollwin.add(self.tv)
-        scrollwin.show_all()
-
-        self.box.pack_start(scrollwin, True, True, 0)
-        self.box.show_all()
-
-        return self.box
-
-    def row_activated(self, widget, path, col):
-        if path is None:
-            return
-        else:
-            filename = LESSONS[path[0]][0]
-            conf.set("categorycombo", LESSON)
-            from pychess.widgets.TaskerManager import learn_tasker
-            learn_tasker.learn_combo.set_active(path[0])
-            start_lesson_from(filename)
-
+# Note: Find the declaration of the class Sidepanel at the end of the file
 
 def start_lesson_from(filename, index=None):
     chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
@@ -165,3 +101,12 @@ def start_lesson_game(gamemodel, filename, chessfile, records, index, rec):
     gamemodel.status = WAITING_TO_START
     perspective = perspective_manager.get_perspective("games")
     create_task(perspective.generalStart(gamemodel, p0, p1))
+
+
+# Sidepanel is a class
+Sidepanel = generateLessonsSidepanel(
+    solving_progress=lessons_solving_progress,
+    learn_category_id=LESSON,
+    entries=LESSONS,
+    start_from=start_lesson_from,
+)
