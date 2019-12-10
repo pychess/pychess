@@ -313,8 +313,6 @@ def defencive_moves_tactic(model, ply, phase):
 
     PIECE_VALUES[BISHOP] = bishopBackup
 
-    print(found_threatens)
-
 
 def offencive_moves_pin(model, ply, phase):
 
