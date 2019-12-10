@@ -17,6 +17,8 @@ from pychess.Utils.const import EMPTY, PAWN,\
 # 6 bits:  cord to move from
 # 6 bits:  cord to move to
 
+from .bitboard import toString
+
 shiftedFromCords = []
 for i in range(64):
     shiftedFromCords.append(i << 6)
@@ -660,6 +662,8 @@ def genCheckEvasions(board):
 
             for cord in iterBits(bits):
                 b = getAttacks(board, cord, color)
+
+                print("hey", toString(b))
                 b &= ~(kings | pawns)
 
                 # Add in pawn advances

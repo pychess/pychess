@@ -127,6 +127,10 @@ class LBoard:
 
         self.friends = [0, 0]
         self.kings = [-1, -1]
+
+        # this variable is a 2-dimmensionnal array, each case containing a bitboard
+        # self.boards[color] contains an array of bitboards, each representing the position of the pieces
+        # use example : self.boards[color][KNIGHT]
         self.boards = ([0] * 7, [0] * 7)
 
         self.enpassant = None  # cord which can be captured by enpassant or None

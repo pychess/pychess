@@ -18,6 +18,8 @@ from . import preferencesDialog
 from .PromotionDialog import PromotionDialog
 from .BoardView import BoardView, rect, join
 
+from pychess.Utils.DecisionSupportAlgorithm import DecisionSupportAlgorithm
+
 
 class BoardControl(Gtk.EventBox):
     """ Creates a BoardView for GameModel to control move selection,
@@ -38,7 +40,11 @@ class BoardControl(Gtk.EventBox):
         self.setup_position = setup_position
         self.game_preview = game_preview
 
-        self.view = BoardView(gamemodel, setup_position=setup_position)
+        dsa = DecisionSupportAlgorithm()
+
+        self.view = BoardView(gamemodel, dsa, setup_position=setup_position)
+        gamemodel.receiveSupportAlgorithm(dsa)
+
         self.add(self.view)
         self.variant = gamemodel.variant
         self.promotionDialog = PromotionDialog(self.variant.variant)

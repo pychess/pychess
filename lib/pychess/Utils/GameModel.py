@@ -130,6 +130,10 @@ class GameModel(GObject.GObject):
         self.reason = UNKNOWN_REASON
         self.curColor = WHITE
 
+        # support algorithm for new players
+        # type apparent : DecisionSupportAlgorithm
+        self.support_algorithm = None
+
         if timemodel is None:
             self.timemodel = TimeModel()
         else:
@@ -597,6 +601,11 @@ class GameModel(GObject.GObject):
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
 
+    def receiveSupportAlgorithm(self, decisionSupportAlgorithm):
+        """Function used to use a support algorithm.
+        The type is DecisionSupportAlgorithm from DecisionSupportAlgorithm file"""
+        self.support_algorithm = decisionSupportAlgorithm
+
     # Data stuff
 
     def loadAndStart(self, uri, loader, gameno, position, first_time=True):
@@ -735,8 +744,17 @@ class GameModel(GObject.GObject):
 
             book_depth_max = conf.get("book_depth_max")
 
+            # boolean to know if the game is against a bot
+            # activate support algorithm if that is the case
+            game_against_ia = (ARTIFICIAL in [player.__type__ for player in self.players])
+
+            if game_against_ia:
+                self.support_algorithm.set_foe_as_bot()
+
             while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
                 curPlayer = self.players[self.curColor]
+                self.support_algorithm.newTurn()
+
                 if self.timed:
                     log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % (
                         id(self), str(self.players), str(self.ply), str(curPlayer)))
@@ -748,13 +766,16 @@ class GameModel(GObject.GObject):
                         id(self), str(self.players), self.ply, str(curPlayer)))
 
                     move = None
+                    # if the current player is a bot
                     if curPlayer.__type__ == ARTIFICIAL and book_depth_max > 0 and self.ply <= book_depth_max:
                         move = self.get_book_move()
                         log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from book" % (
                             id(self), str(self.players), self.ply, move))
                         if move is not None:
                             curPlayer.set_board(self.boards[-1].move(move))
+                    # if the current player is not a bot
                     if move is None:
+
                         if self.ply > self.lowply:
                             move = yield from curPlayer.makeMove(self.boards[-1], self.moves[-1], self.boards[-2])
                         else:
