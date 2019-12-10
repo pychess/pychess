@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the pychess package.
 # 
 # Translators:
+# Bennie du Plessis <bennied008@gmail.com>, 2019
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-12 22:08+0200\n"
-"PO-Revision-Date: 2019-09-13 00:58+0000\n"
+"POT-Creation-Date: 2019-11-17 11:23+0100\n"
+"PO-Revision-Date: 2019-11-17 13:23+0000\n"
 "Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
 "Language-Team: Afrikaans (http://www.transifex.com/gbtami/pychess/language/af/)\n"
 "MIME-Version: 1.0\n"
@@ -29,15 +30,15 @@ msgstr "_Nuwe Spel"
 
 #: glade/PyChess.glade:249
 msgid "From _Default Start Position"
-msgstr ""
+msgstr "Uit _Standaard Begin Posisie"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr ""
+msgstr "Uit _Selfopgestelde Posisie"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"
-msgstr ""
+msgstr "Uit _Spel Notasie"
 
 #: glade/PyChess.glade:277
 msgid "From Cli_pboard"
@@ -45,7 +46,7 @@ msgstr ""
 
 #: glade/PyChess.glade:288
 msgid "Play _Internet Chess"
-msgstr ""
+msgstr "Speel _Internet Skaak"
 
 #: glade/PyChess.glade:307
 msgid "_Load Game"
@@ -53,7 +54,7 @@ msgstr "_Laai Spel"
 
 #: glade/PyChess.glade:323
 msgid "Load _Recent Game"
-msgstr ""
+msgstr "Laai _Onlangse Spel"
 
 #: glade/PyChess.glade:329
 msgid "Load Re_mote Game"
@@ -69,15 +70,15 @@ msgstr "Stoor Spel _As"
 
 #: glade/PyChess.glade:375
 msgid "_Export Position"
-msgstr ""
+msgstr "_Verskeep Posisie"
 
 #: glade/PyChess.glade:392
 msgid "Share _Game"
-msgstr ""
+msgstr "_Deel Spel"
 
 #: glade/PyChess.glade:420
 msgid "Player _Rating"
-msgstr ""
+msgstr "Speler _Gradering"
 
 #: glade/PyChess.glade:427
 msgid "_Analyze Game"
@@ -85,19 +86,19 @@ msgstr ""
 
 #: glade/PyChess.glade:477
 msgid "_Edit"
-msgstr ""
+msgstr "_Wysig"
 
 #: glade/PyChess.glade:488
 msgid "_Copy PGN"
-msgstr ""
+msgstr "_Kopieër PGN"
 
 #: glade/PyChess.glade:500
 msgid "_Copy FEN"
-msgstr ""
+msgstr "_Kopieër FEN"
 
 #: glade/PyChess.glade:517
 msgid "_Engines"
-msgstr ""
+msgstr "_Enjins"
 
 #: glade/PyChess.glade:527
 msgid "Externals"
@@ -205,7 +206,7 @@ msgstr ""
 
 #: glade/PyChess.glade:861
 msgid "Import games from theweekinchess.com"
-msgstr ""
+msgstr "Verkry `n spel uit theweekinchess.com"
 
 #: glade/PyChess.glade:874
 msgid "_Help"
@@ -217,19 +218,19 @@ msgstr "Oor skaak"
 
 #: glade/PyChess.glade:893
 msgid "How to Play"
-msgstr ""
+msgstr "Hoe om te Speel"
 
 #: glade/PyChess.glade:905
 msgid "Tip of the Day"
-msgstr ""
+msgstr "Wenk van die Dag"
 
 #: glade/PyChess.glade:919
 msgid "Translate PyChess"
-msgstr ""
+msgstr "Vertaal PyChess"
 
 #: glade/PyChess.glade:928
 msgid "Report an issue"
-msgstr ""
+msgstr "Rapporteer `n Probleem"
 
 #: glade/PyChess.glade:1021
 msgid "Chess client"
@@ -245,7 +246,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1105
 msgid "<b>Name of _first human player:</b>"
-msgstr ""
+msgstr "<b>Naam van _eerste mens speler:</b>"
 
 #: glade/PyChess.glade:1134
 msgid "The displayed name of the guest player, e.g., Mary."
@@ -507,7 +508,7 @@ msgid "Side_panels"
 msgstr ""
 
 #: glade/PyChess.glade:2419
-msgid "Backround image path :"
+msgid "Background image path :"
 msgstr ""
 
 #: glade/PyChess.glade:2457
@@ -675,7 +676,7 @@ msgstr ""
 #: glade/PyChess.glade:4001
 msgid ""
 "Warning: this option generates a formatted .pgn file which is not standards "
-"complient"
+"compliant"
 msgstr ""
 
 #: glade/PyChess.glade:4022
@@ -907,8 +908,8 @@ msgid "Filter"
 msgstr ""
 
 #: glade/PyChess.glade:5891 glade/PyChess.glade:7196
-#: glade/fics_lounge.glade:3167 lib/pychess/Savers/remotegame.py:1179
-#: lib/pychess/Savers/remotegame.py:1399 lib/pychess/Utils/repr.py:22
+#: glade/fics_lounge.glade:3167 lib/pychess/Savers/remotegame.py:1192
+#: lib/pychess/Savers/remotegame.py:1412 lib/pychess/Utils/repr.py:22
 #: lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/TaskerManager.py:165
 #: lib/pychess/widgets/newGameDialog.py:1019
@@ -922,8 +923,8 @@ msgid "White"
 msgstr ""
 
 #: glade/PyChess.glade:5902 glade/PyChess.glade:7212
-#: glade/fics_lounge.glade:3195 lib/pychess/Savers/remotegame.py:1180
-#: lib/pychess/Savers/remotegame.py:1400 lib/pychess/Utils/repr.py:22
+#: glade/fics_lounge.glade:3195 lib/pychess/Savers/remotegame.py:1193
+#: lib/pychess/Savers/remotegame.py:1413 lib/pychess/Utils/repr.py:22
 #: lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/TaskerManager.py:166
 #: lib/pychess/widgets/newGameDialog.py:1020
@@ -1432,7 +1433,7 @@ msgstr ""
 msgid "_Next"
 msgstr ""
 
-#: glade/newInOut.glade:45 lib/pychess/Main.py:770
+#: glade/newInOut.glade:45 lib/pychess/Main.py:772
 #: lib/pychess/widgets/newGameDialog.py:571
 msgid "New Game"
 msgstr ""
@@ -1676,12 +1677,12 @@ msgstr ""
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr ""
 
-#: lib/pychess/Main.py:702 lib/pychess/widgets/gamenanny.py:80
+#: lib/pychess/Main.py:704 lib/pychess/widgets/gamenanny.py:80
 #: lib/pychess/perspectives/welcome/__init__.py:7
 msgid "Welcome"
 msgstr ""
 
-#: lib/pychess/Main.py:775
+#: lib/pychess/Main.py:777
 msgid "Open Game"
 msgstr ""
 
@@ -2037,16 +2038,16 @@ msgstr ""
 msgid "Websockets"
 msgstr ""
 
-#: lib/pychess/Savers/remotegame.py:1355
+#: lib/pychess/Savers/remotegame.py:1368
 msgid "Puzzle"
 msgstr ""
 
-#: lib/pychess/Savers/remotegame.py:1358
+#: lib/pychess/Savers/remotegame.py:1371
 #, python-format
 msgid "Puzzle %s"
 msgstr ""
 
-#: lib/pychess/Savers/remotegame.py:1771
+#: lib/pychess/Savers/remotegame.py:1784
 #, python-format
 msgid "%d moves to find"
 msgstr ""
@@ -4253,7 +4254,7 @@ msgid "Lessons"
 msgstr ""
 
 #: lib/pychess/widgets/TaskerManager.py:308
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:22
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:25
 msgid "Puzzles"
 msgstr ""
 
@@ -4527,7 +4528,7 @@ msgid "Jump to latest position"
 msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:675
-msgid "Find postion in current database"
+msgid "Find position in current database"
 msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:679
@@ -5161,7 +5162,7 @@ msgstr ""
 
 #: lib/pychess/Utils/lutils/lmove.py:478
 #, python-format
-msgid "no %s is able to move to %s"
+msgid "no %(piece)s is able to move to %(cord)s"
 msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:32
@@ -5429,7 +5430,7 @@ msgstr ""
 
 #: lib/pychess/perspectives/database/FilterPanel.py:135
 msgid ""
-"Create new squence where listed conditions may be satisfied at different "
+"Create new sequence where listed conditions may be satisfied at different "
 "times in a game"
 msgstr ""
 
@@ -6456,7 +6457,7 @@ msgstr ""
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:64
 #: lib/pychess/perspectives/learn/LecturesPanel.py:67
 #: lib/pychess/perspectives/learn/LessonsPanel.py:45
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:59
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:62
 msgid "Title"
 msgstr ""
 
@@ -6473,22 +6474,31 @@ msgid "Guided interactive lessons in \"guess the move\" style"
 msgstr ""
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:49
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:63
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:66
 msgid "Source"
 msgstr ""
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:53
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:67
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:70
 #: lib/pychess/perspectives/learn/__init__.py:130
 msgid "Progress"
 msgstr ""
 
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:26
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:29
 msgid "Lichess practice studies Puzzles from GM games and Chess compositions"
 msgstr ""
 
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:46
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:49
 msgid "others"
+msgstr ""
+
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:75
+msgid "Reset"
+msgstr ""
+
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:141
+#, python-brace-format
+msgid "This will reset the progress to 0 for the puzzle \"{title}\""
 msgstr ""
 
 #: lib/pychess/perspectives/learn/__init__.py:24

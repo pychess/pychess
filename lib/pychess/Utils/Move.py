@@ -59,7 +59,7 @@ class Move:
                     self.flag = QUEEN_CASTLE if self.cord0.x == 4 else KING_CASTLE
                 elif self.cord0.x - self.cord1.x == -2 and board.variant not in (CAMBODIANCHESS, FISCHERRANDOMCHESS):
                     self.flag = KING_CASTLE if self.cord0.x == 4 else QUEEN_CASTLE
-                else:
+                elif board.variant != CAMBODIANCHESS:
                     if (abs(self.cord0.x - self.cord1.x) > 1 and self.cord1.x == C1) or (
                             board.board.ini_rooks[board.color][0] == self.cord1.cord and (
                                 (board.board.color == WHITE and board.board.castling & W_OOO) or (

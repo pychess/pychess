@@ -137,6 +137,8 @@ parser.add_argument('chess_file', nargs='?', metavar='chessfile',
                     help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
 parser.add_argument('--gbulb-loop', action='store_true',
                     help='use gbulb event loop based on GLib')
+parser.add_argument('--no-version-check', action='store_true',
+                    help='disable online version check')
 
 args = parser.parse_args()
 log_debug = args.log_debug
@@ -146,6 +148,7 @@ purge_recent = args.purge_recent
 chess_file = args.chess_file
 ics_host = args.ics_host
 ics_port = args.ics_port
+version_check = not args.no_version_check
 
 gbulb_loop = args.gbulb_loop
 if gbulb_loop:
@@ -250,7 +253,7 @@ else:
     loop = asyncio.SelectorEventLoop()
     asyncio.set_event_loop(loop)
 
-gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port, loop, splash)
+gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port, loop, splash, version_check)
 
 if log_debug:
     loop.set_debug(enabled=True)

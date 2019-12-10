@@ -323,8 +323,7 @@ k ... and White wins.
 6
 g7f6
 f3f6
-k However, Black can have a satisfactory game along the same lines if he didn't take the pawn c3, and continues with a counter-thrust
-d5
+k However, Black can have a satisfactory game along the same lines if he didn't take the pawn c3, and continues with a counter-thrust d5
 12
 back 22
 6

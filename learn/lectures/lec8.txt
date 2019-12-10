@@ -91,7 +91,7 @@ Kg8
 g6
 kib Threatening mate on h7.
 5
-fxg
+fxg6
 Nxg6
 kib And white will have trouble making progress because the king can slip out of the attack at f7. Black could also organize a strong defense before white's currently dormant pieces could move in to intensify the attack.
 20
@@ -124,11 +124,11 @@ Kg8
 g6
 kib This is the proverbial nail in the coffin. Qh7 ++ is white's next move.
 8
-back 999
 kib You may be thinking now that black put up a lousy defense. This is true. There were many better moves, but the game is instructive in showing the ideal setup of the white pieces during the stonewall attack.
 20
 kib the attack would not have succeeded without the combination of several white pieces bearing down on the kingside castled position and the huge space advantage held by white.
 15
+revert
 kib Now we'll look at three other games where the basics ring true although the moves change.
 8
 Kib E. Horowitz vs. an amateur, Milwaukee, 1950. Courtesy of "How to think ahead in chess" by I.A. Horowitz and Fred Reinfeld.
@@ -160,10 +160,10 @@ kib This prevents it nicely.
 5
 Be7
 Ngf3
-Kg8
+o-o
 Ne5
 Qc7
-Kg1
+o-o
 b6
 kib White is playing according to plan. He's set up the strong knight at e5 while preventing black from doing the same at e4. He's taken a commanding lead over the b1-h7 diagonal, and has lines open for Qh5 and the rook maneuver R-f3-h3.
 20
@@ -314,8 +314,8 @@ Rf7
 Rg1
 kib ... and black resigns. Can you blame him? Look at it on your own. Go ahead. I'll give you 20 seconds.
 28
-back 999
 Kib Another?
+revert
 Kib Kujoth vs. Crittenden, Milwaukee, 1949. Courtesy of "How to think ahead in chess" by I.A. Horowitz and Fred Reinfeld.
 8
 wname Kujoth
@@ -337,10 +337,10 @@ c5
 c3
 kib  As before, giving the bishop a free escape square in the event of c4.
 8
-cxd
+cxd4
 kib an error... it allows the bishop to gain freedom and does nothing to relax white's hold on the center. White should be able to attack more strongly when the time to attack comes.
 15
-exd
+exd4
 kib The only drawback for white is the currently undefended fpawn.
 6
 Be7
@@ -357,7 +357,7 @@ fxe5
 kib A word of advice...  anytime the knight on e5 is taken, it is necessary to take back with the f-pawn. This assures white's control of the kingside by locking up any potential attacks by black along the a7-g1 diagonal and opening the lines for the rook on the f-file and the c1 bishop. It also negates the need for g2-g4-g5, since the e5 pawn is enough to drive away the knight on f6.
 30
 Nd7
-Kg1
+o-o
 a5
 kib Black's plan is to exchange white's strong d3 bishop by playing Ba6. The guiding principle is that when you're defending, any exchanges you can force will usually ease your pressures.
 15
@@ -377,7 +377,7 @@ kib and white has a strong position with threats of N-f3-g5 and R-f3-h3.
 10
 back 2
 f5
-exf
+exf6
 Nxf6
 Rxf6
 Rxf6
@@ -449,7 +449,7 @@ Kxh7
 Qxg6 ++
 kib This is reason enough to enjoy playing the Stonewall. White is down two rooks and a knight, but wins the game from his consistent planned play.
 15
-back 999
+revert
 kib Here's a bonus game, played by myself about a year ago. I commit two basic inaccuracies that black luckily did not exploit. See if you can spot them.
 15
 kib I call this a bonus game because it only serves to reinforce the points already mentioned, and since I'll avoid using more commentary than necessary. If you'd like to analyze this game on your own, it's in MBDil's journal, entry A.

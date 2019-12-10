@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-12 22:08+0200\n"
-"PO-Revision-Date: 2019-09-13 00:58+0000\n"
+"POT-Creation-Date: 2019-11-17 11:23+0100\n"
+"PO-Revision-Date: 2019-11-17 13:23+0000\n"
 "Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/gbtami/pychess/language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -520,7 +520,7 @@ msgid "Side_panels"
 msgstr "Yan_paneller"
 
 #: glade/PyChess.glade:2419
-msgid "Backround image path :"
+msgid "Background image path :"
 msgstr ""
 
 #: glade/PyChess.glade:2457
@@ -688,7 +688,7 @@ msgstr ""
 #: glade/PyChess.glade:4001
 msgid ""
 "Warning: this option generates a formatted .pgn file which is not standards "
-"complient"
+"compliant"
 msgstr ""
 
 #: glade/PyChess.glade:4022
@@ -920,8 +920,8 @@ msgid "Filter"
 msgstr ""
 
 #: glade/PyChess.glade:5891 glade/PyChess.glade:7196
-#: glade/fics_lounge.glade:3167 lib/pychess/Savers/remotegame.py:1179
-#: lib/pychess/Savers/remotegame.py:1399 lib/pychess/Utils/repr.py:22
+#: glade/fics_lounge.glade:3167 lib/pychess/Savers/remotegame.py:1192
+#: lib/pychess/Savers/remotegame.py:1412 lib/pychess/Utils/repr.py:22
 #: lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/TaskerManager.py:165
 #: lib/pychess/widgets/newGameDialog.py:1019
@@ -935,8 +935,8 @@ msgid "White"
 msgstr "Beyaz"
 
 #: glade/PyChess.glade:5902 glade/PyChess.glade:7212
-#: glade/fics_lounge.glade:3195 lib/pychess/Savers/remotegame.py:1180
-#: lib/pychess/Savers/remotegame.py:1400 lib/pychess/Utils/repr.py:22
+#: glade/fics_lounge.glade:3195 lib/pychess/Savers/remotegame.py:1193
+#: lib/pychess/Savers/remotegame.py:1413 lib/pychess/Utils/repr.py:22
 #: lib/pychess/widgets/ChessClock.py:18
 #: lib/pychess/widgets/TaskerManager.py:166
 #: lib/pychess/widgets/newGameDialog.py:1020
@@ -1445,7 +1445,7 @@ msgstr "_Önceki"
 msgid "_Next"
 msgstr "_Sonraki"
 
-#: glade/newInOut.glade:45 lib/pychess/Main.py:770
+#: glade/newInOut.glade:45 lib/pychess/Main.py:772
 #: lib/pychess/widgets/newGameDialog.py:571
 msgid "New Game"
 msgstr "Yeni Oyun"
@@ -1689,12 +1689,12 @@ msgstr "http://tr.wikipedia.org/wiki/Satran%C3%A7"
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr "http://tr.wikipedia.org/wiki/Satran%C3%A7#Oynan.C4.B1.C5.9F.C4.B1"
 
-#: lib/pychess/Main.py:702 lib/pychess/widgets/gamenanny.py:80
+#: lib/pychess/Main.py:704 lib/pychess/widgets/gamenanny.py:80
 #: lib/pychess/perspectives/welcome/__init__.py:7
 msgid "Welcome"
 msgstr "Hoşgeldiniz"
 
-#: lib/pychess/Main.py:775
+#: lib/pychess/Main.py:777
 msgid "Open Game"
 msgstr "Oyun Aç"
 
@@ -2050,16 +2050,16 @@ msgstr ""
 msgid "Websockets"
 msgstr ""
 
-#: lib/pychess/Savers/remotegame.py:1355
+#: lib/pychess/Savers/remotegame.py:1368
 msgid "Puzzle"
 msgstr ""
 
-#: lib/pychess/Savers/remotegame.py:1358
+#: lib/pychess/Savers/remotegame.py:1371
 #, python-format
 msgid "Puzzle %s"
 msgstr ""
 
-#: lib/pychess/Savers/remotegame.py:1771
+#: lib/pychess/Savers/remotegame.py:1784
 #, python-format
 msgid "%d moves to find"
 msgstr ""
@@ -4266,7 +4266,7 @@ msgid "Lessons"
 msgstr ""
 
 #: lib/pychess/widgets/TaskerManager.py:308
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:22
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:25
 msgid "Puzzles"
 msgstr ""
 
@@ -4540,7 +4540,7 @@ msgid "Jump to latest position"
 msgstr "Son hamleye git"
 
 #: lib/pychess/widgets/gamewidget.py:675
-msgid "Find postion in current database"
+msgid "Find position in current database"
 msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:679
@@ -5174,7 +5174,7 @@ msgstr ""
 
 #: lib/pychess/Utils/lutils/lmove.py:478
 #, python-format
-msgid "no %s is able to move to %s"
+msgid "no %(piece)s is able to move to %(cord)s"
 msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:32
@@ -5442,7 +5442,7 @@ msgstr ""
 
 #: lib/pychess/perspectives/database/FilterPanel.py:135
 msgid ""
-"Create new squence where listed conditions may be satisfied at different "
+"Create new sequence where listed conditions may be satisfied at different "
 "times in a game"
 msgstr ""
 
@@ -6469,7 +6469,7 @@ msgstr ""
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:64
 #: lib/pychess/perspectives/learn/LecturesPanel.py:67
 #: lib/pychess/perspectives/learn/LessonsPanel.py:45
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:59
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:62
 msgid "Title"
 msgstr ""
 
@@ -6486,22 +6486,31 @@ msgid "Guided interactive lessons in \"guess the move\" style"
 msgstr ""
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:49
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:63
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:66
 msgid "Source"
 msgstr ""
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:53
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:67
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:70
 #: lib/pychess/perspectives/learn/__init__.py:130
 msgid "Progress"
 msgstr ""
 
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:26
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:29
 msgid "Lichess practice studies Puzzles from GM games and Chess compositions"
 msgstr ""
 
-#: lib/pychess/perspectives/learn/PuzzlesPanel.py:46
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:49
 msgid "others"
+msgstr ""
+
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:75
+msgid "Reset"
+msgstr ""
+
+#: lib/pychess/perspectives/learn/PuzzlesPanel.py:141
+#, python-brace-format
+msgid "This will reset the progress to 0 for the puzzle \"{title}\""
 msgstr ""
 
 #: lib/pychess/perspectives/learn/__init__.py:24
