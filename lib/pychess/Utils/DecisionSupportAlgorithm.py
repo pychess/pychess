@@ -2,6 +2,7 @@ from .lutils.attack import getAttacks, piecesAttackingCord
 from .const import NB_OF_CASES
 from .lutils.ldata import PIECE_VALUES
 from .Cord import Cord
+from pychess.System import conf
 
 
 # This file contains algorithm helping the users to choose the right decisions
@@ -10,9 +11,13 @@ class DecisionSupportAlgorithm:
 
     def __init__(self):
         self.against_bot = False
+        self.activationEnabled = False
 
         # to avoid calculating once more the coordinates, we save them
         self.coordinate_in_danger = []
+
+    def enableDisableAlgo(self, enable_algorithm):
+        self.activationEnabled = enable_algorithm
 
     def set_foe_as_bot(self):
         self.against_bot = True
@@ -29,7 +34,7 @@ class DecisionSupportAlgorithm:
 
         self.coordinate_in_danger = []
 
-        if self.against_bot:
+        if self.against_bot and self.activationEnabled:
             # TODO: tests
             for i in range(NB_OF_CASES):
                 c = Cord(i)
@@ -58,7 +63,7 @@ class DecisionSupportAlgorithm:
         if not newTurn:
             return self.coordinate_in_danger
 
-        if self.against_bot:
+        if self.against_bot and self.activationEnabled:
             # TODO: tests
             for i in range(NB_OF_CASES):
                 c = Cord(i)

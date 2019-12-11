@@ -94,6 +94,7 @@ DEFAULTS = {
         "fullAnimation": True,
         "showCords": True,
         "drawGrid": True,
+        "activateSupportAlgorithm": False,
         "board_frame": 1,
         "board_style": 1,
         "pieceTheme": "Chessicons",

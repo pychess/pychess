@@ -192,6 +192,7 @@ class BoardView(Gtk.DrawingArea):
             conf.notify_add("board_style", self.onBoardStyle),
             conf.notify_add("lightcolour", self.onBoardColour),
             conf.notify_add("darkcolour", self.onBoardColour),
+            conf.notify_add("activateSupportAlgorithm", self.onSupportAlgorithmActivation)
         ]
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
@@ -473,6 +474,11 @@ class BoardView(Gtk.DrawingArea):
             self.padding = self.pad
 
         self.redrawCanvas()
+
+    def onSupportAlgorithmActivation(self, *args):
+        '''activation of the support algorithm'''
+        activation_wanted = conf.get("activateSupportAlgorithm")
+        self.model.support_algorithm.enableDisableAlgo(activation_wanted)
 
     ###############################
     #          Animation          #
