@@ -27,12 +27,7 @@ class DecisionSupportAlgorithm:
     def end_turn(self):
         self.already_calculated = True
 
-    def attacked_and_not_protected(self, board, mycolor):
-        """returns a list of coord containing all the cord attacked but not protected
-        args : board of type Board, cord of type Cord, mycolor of value BLACK or WHITE
-
-        1- board.color is the color that played last, and that is considered as below (white) in getAttacks"""
-
+    def not_protected(self, board, mycolor):
         coordinate_in_danger = []
 
         if self.is_against_bot():
@@ -53,22 +48,49 @@ class DecisionSupportAlgorithm:
                             coordinate_in_danger.append(c_colored)
                             pass
 
-                        # if one of the piece is not protected and attacked, very dangerous
-                        if attacks != 0 and defense == 0:
-                            c_colored = Cord(i, color="R")
-                            coordinate_in_danger.append(c_colored)
+        return coordinate_in_danger
 
-                        # if one of the piece attacking is weaker than piece attacked, very dangerous
+    def attacked_and_not_protected(self, board, mycolor):
+        """returns a list of coord containing all the cord attacked but not protected
+        args : board of type Board, cord of type Cord, mycolor of value BLACK or WHITE
+
+        1- board.color is the color that played last, and that is considered as below (white) in getAttacks"""
+
+        coordinate_in_danger = []
+
+        if self.is_against_bot():
+            # TODO: tests
+            for i in range(NB_OF_CASES):
+                c = Cord(i)
+                number, letter = c.cords
+                piece = board.data[letter][number]
+                if piece is not None:
+                    if piece.color == mycolor:
+                        attacks = getAttacks(board.board, c.cord, 1 - mycolor)
+                        defense = getAttacks(board.board, c.cord, mycolor)
+
+
                         if attacks != 0:
-                            pieces_attacking = piecesAttackingCord(board.board, c.cord, 1 - mycolor)
-                            piece_attacking = pieces_attacking[0]
-                            min_value = PIECE_VALUES[piece_attacking]
-                            for piece_found in pieces_attacking:
-                                if PIECE_VALUES[piece_found] <= min_value:
-                                    min_value = PIECE_VALUES[piece_found]
-                                    piece_attacking = piece_found
-                            if PIECE_VALUES[piece_attacking] <= PIECE_VALUES[piece.piece]:
+                            # if one of the piece is not protected and attacked, very dangerous
+                            if defense == 0:
                                 c_colored = Cord(i, color="R")
                                 coordinate_in_danger.append(c_colored)
+                            else:
+                                # if one of the piece attacking is weaker than piece attacked, very dangerous
+
+                                # in this part we find the weakest ennemy pieces attacking our piece
+                                pieces_attacking = piecesAttackingCord(board.board, c.cord, 1 - mycolor)
+                                piece_attacking = pieces_attacking[0]
+                                min_value = PIECE_VALUES[piece_attacking]
+                                for piece_found in pieces_attacking:
+                                    if PIECE_VALUES[piece_found] <= min_value:
+                                        min_value = PIECE_VALUES[piece_found]
+                                        piece_attacking = piece_found
+
+                                # then we compare it to the value of the piece
+                                # currently, we consider trades as not dangerous, this behaviour could be changed
+                                if PIECE_VALUES[piece_attacking] < PIECE_VALUES[piece.piece]:
+                                    c_colored = Cord(i, color="R")
+                                    coordinate_in_danger.append(c_colored)
 
         return coordinate_in_danger

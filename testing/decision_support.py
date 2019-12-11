@@ -21,14 +21,14 @@ class BoardTestCase(unittest.TestCase):
             board.printPieces()
 
         # Not protected
-        self.assertEqual(dsa.attacked_and_not_protected(board, WHITE), [Cord("e4")])
+        self.assertEqual([Cord("e4")], dsa.attacked_and_not_protected(board, WHITE))
 
         # protected by Queen
-        self.assertEqual(dsa.attacked_and_not_protected(board, BLACK), [])
+        self.assertEqual([], dsa.attacked_and_not_protected(board, BLACK))
 
         board = board.move(Move(Cord(E4), Cord(E5), board))
 
-        self.assertEqual(dsa.attacked_and_not_protected(board, WHITE), [])
+        self.assertEqual([], dsa.attacked_and_not_protected(board, WHITE))
 
 
 if __name__ == '__main__':

@@ -82,6 +82,9 @@ class SetupModel(GObject.GObject):
         # prevent hovering over fields
         return True
 
+    def receiveSupportAlgorithm(self, x):
+        return
+
     def start(self):
         def coro():
             self.emit("game_started")
