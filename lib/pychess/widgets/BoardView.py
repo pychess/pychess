@@ -152,7 +152,7 @@ class BoardView(Gtk.DrawingArea):
         'shownChanged': (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
 
-    def __init__(self, gamemodel=None, dsa=None, preview=False, setup_position=False):
+    def __init__(self, gamemodel=None, preview=False, setup_position=False):
         GObject.GObject.__init__(self)
 
         if gamemodel is None:
@@ -274,7 +274,9 @@ class BoardView(Gtk.DrawingArea):
         self.saved_circles = set()
         self.saved_arrows = set()
 
-        self.supportAlgorithm = dsa
+        # store in memory the last number of move to know whether or not a new turn has started,
+        # of we went back to history
+        self.last_nb_of_move = len(self.model.moves)
 
     def _del(self):
         self.disconnect(self.draw_cid)
@@ -1594,22 +1596,28 @@ class BoardView(Gtk.DrawingArea):
         radius = self.square[3] / 2.0
         context.set_line_width(4)
 
-        val = self.supportAlgorithm
-        coord_attacked_not_protected = val.attacked_and_not_protected(self.model.boards[-1], self.model.curColor)
+        nb_turn_changed = False
+        if len(self.model.moves) != self.last_nb_of_move:
+            self.last_nb_of_move = len(self.model.moves)
+            nb_turn_changed = True
 
-        val.end_turn()
-        if val.calcul_done():
-            for cord in coord_attacked_not_protected:
-                rgba = self.color2rgba(cord.color)
-                context.set_source_rgb(*rgba[:3])
-                x_loc, y_loc = self.cord2Point(cord)
-                context.new_sub_path()
-                context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
-                context.stroke()
+        val = self.model.support_algorithm
+        coord_attacked_not_protected = val.calculate_coordinate_in_danger( \
+            self.model.boards[-1], \
+            1-self.model.curColor, \
+            nb_turn_changed)
 
-                # redraw the case of the cord that is dangerous
-                # TODO: it seems not very efficient.... see if we can redraw all cases concerned at once
-                self.redrawCanvas(rect(self.cord2RectRelative(cord)))
+        for cord in coord_attacked_not_protected:
+            rgba = self.color2rgba(cord.color)
+            context.set_source_rgb(*rgba[:3])
+            x_loc, y_loc = self.cord2Point(cord)
+            context.new_sub_path()
+            context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
+            context.stroke()
+
+            # redraw the case of the cord that is dangerous
+            # TODO: it seems not very efficient.... see if we can redraw all cases concerned at once
+            self.redrawCanvas(rect(self.cord2RectRelative(cord)))
 
     ############################################################################
     #                                Attributes                                #

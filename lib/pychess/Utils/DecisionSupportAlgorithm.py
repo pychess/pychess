@@ -17,9 +17,9 @@ class DecisionSupportAlgorithm:
     def set_foe_as_bot(self):
         self.against_bot = True
 
-    def calculate_coordinate_in_danger(self, board, mycolor):
+    def calculate_coordinate_in_danger(self, board, mycolor, newTurn=True):
         '''this function should be used'''
-        list_coordinates = self.__not_protected(board, mycolor)
+        list_coordinates = self.__not_protected(board, mycolor, newTurn)
         return list_coordinates
 
     def __not_protected(self, board, mycolor, newTurn=True):

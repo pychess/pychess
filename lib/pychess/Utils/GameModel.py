@@ -19,6 +19,7 @@ from pychess.Utils.Move import Move
 from pychess.Utils.eco import get_eco
 from pychess.Utils.Offer import Offer
 from pychess.Utils.TimeModel import TimeModel
+from pychess.Utils.DecisionSupportAlgorithm import DecisionSupportAlgorithm
 from pychess.Savers import html, txt
 from pychess.Variants.normal import NormalBoard
 
@@ -132,7 +133,7 @@ class GameModel(GObject.GObject):
 
         # support algorithm for new players
         # type apparent : DecisionSupportAlgorithm
-        self.support_algorithm = None
+        self.support_algorithm = DecisionSupportAlgorithm()
 
         if timemodel is None:
             self.timemodel = TimeModel()
@@ -256,6 +257,15 @@ class GameModel(GObject.GObject):
         self.emit("players_changed")
         log.debug("GameModel.setPlayers: <- emit players_changed")
         log.debug("GameModel.setPlayers: returning")
+
+        # when the players are set, it is known whether or not there is a bot
+        # we activate the support algorithm if there is one
+        # boolean to know if the game is against a bot
+        # activate support algorithm if that is the case
+        game_against_ia = (ARTIFICIAL in [player.__type__ for player in self.players])
+
+        if game_against_ia:
+            self.support_algorithm.set_foe_as_bot()
 
     def color(self, player):
         if player is self.players[0]:
@@ -601,11 +611,6 @@ class GameModel(GObject.GObject):
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
 
-    def receiveSupportAlgorithm(self, decisionSupportAlgorithm):
-        """Function used to use a support algorithm.
-        The type is DecisionSupportAlgorithm from DecisionSupportAlgorithm file"""
-        self.support_algorithm = decisionSupportAlgorithm
-
     # Data stuff
 
     def loadAndStart(self, uri, loader, gameno, position, first_time=True):
@@ -744,16 +749,8 @@ class GameModel(GObject.GObject):
 
             book_depth_max = conf.get("book_depth_max")
 
-            # boolean to know if the game is against a bot
-            # activate support algorithm if that is the case
-            game_against_ia = (ARTIFICIAL in [player.__type__ for player in self.players])
-
-            if game_against_ia:
-                self.support_algorithm.set_foe_as_bot()
-
             while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
                 curPlayer = self.players[self.curColor]
-                self.support_algorithm.newTurn()
 
                 if self.timed:
                     log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % (
