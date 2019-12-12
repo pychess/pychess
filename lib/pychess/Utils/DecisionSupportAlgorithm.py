@@ -24,15 +24,23 @@ class DecisionSupportAlgorithm:
 
     def calculate_coordinate_in_danger(self, board, mycolor, newTurn=True):
         '''this function should be used'''
-        list_coordinates = self.__not_protected(board, mycolor, newTurn)
-        return list_coordinates
-
-    def __not_protected(self, board, mycolor, newTurn=True):
-
         if not newTurn:
             return self.coordinate_in_danger
 
         self.coordinate_in_danger = []
+
+        self.coordinate_in_danger = self.__not_protected(board, mycolor, newTurn)
+        self.coordinate_in_danger += self.__attacked_and_not_protected(board, mycolor, newTurn)
+
+        return self.coordinate_in_danger
+
+    def __not_protected(self, board, mycolor, newTurn=True):
+        """returns a list of coord containing all the cord not protected and not attacked
+        args : board of type Board, cord of type Cord, mycolor of value BLACK or WHITE
+
+        1- board.color is the color that played last, and that is considered as below (white) in getAttacks"""
+
+        coordinate_in_danger = []
 
         if self.against_bot and self.activationEnabled:
             # TODO: tests
@@ -49,10 +57,10 @@ class DecisionSupportAlgorithm:
                         # means that towers are highlighted at the start of the game
                         if attacks == 0 and defense == 0:
                             c_colored = Cord(i, color="Y")
-                            self.coordinate_in_danger.append(c_colored)
-                            pass
+                            coordinate_in_danger.append(c_colored)
 
-        return self.coordinate_in_danger
+
+        return coordinate_in_danger
 
     def __attacked_and_not_protected(self, board, mycolor, newTurn=True):
         """returns a list of coord containing all the cord attacked but not protected
@@ -60,8 +68,7 @@ class DecisionSupportAlgorithm:
 
         1- board.color is the color that played last, and that is considered as below (white) in getAttacks"""
 
-        if not newTurn:
-            return self.coordinate_in_danger
+        coordinate_in_danger = []
 
         if self.against_bot and self.activationEnabled:
             # TODO: tests
@@ -78,7 +85,7 @@ class DecisionSupportAlgorithm:
                             # if one of the piece is not protected and attacked, very dangerous
                             if defense == 0:
                                 c_colored = Cord(i, color="R")
-                                self.coordinate_in_danger.append(c_colored)
+                                coordinate_in_danger.append(c_colored)
                             else:
                                 # if one of the piece attacking is weaker than piece attacked, very dangerous
 
@@ -95,6 +102,6 @@ class DecisionSupportAlgorithm:
                                 # currently, we consider trades as not dangerous, this behaviour could be changed
                                 if PIECE_VALUES[piece_attacking] < PIECE_VALUES[piece.piece]:
                                     c_colored = Cord(i, color="R")
-                                    self.coordinate_in_danger.append(c_colored)
+                                    coordinate_in_danger.append(c_colored)
 
-        return self.coordinate_in_danger
+        return coordinate_in_danger

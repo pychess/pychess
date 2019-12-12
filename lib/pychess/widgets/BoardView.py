@@ -222,6 +222,7 @@ class BoardView(Gtk.DrawingArea):
         self._greenarrow = None
         self._bluearrow = None
 
+        # this is an integer that contains the last move that is shown
         self._shown = self.model.ply
 
         self.no_frame = False
@@ -239,6 +240,8 @@ class BoardView(Gtk.DrawingArea):
         self.noAnimation = conf.get("noAnimation")
         self.faceToFace = conf.get("faceToFace")
         self.autoRotate = conf.get("autoRotate")
+        if conf.get("activateSupportAlgorithm"):
+            self.onSupportAlgorithmActivation()
 
         self.onBoardColour()
         self.onBoardStyle()
@@ -277,7 +280,7 @@ class BoardView(Gtk.DrawingArea):
 
         # store in memory the last number of move to know whether or not a new turn has started,
         # of we went back to history
-        self.last_nb_of_move = len(self.model.moves)
+        self.last_shown = 0
 
     def _del(self):
         self.disconnect(self.draw_cid)
@@ -915,13 +918,15 @@ class BoardView(Gtk.DrawingArea):
         # draw all the different components by calling all the draw methods of this class
         self.drawBoard(context, r)
 
+        self.drawSupportAlgorithm(context, r)
+
         if min(alloc.width, alloc.height) > 32:
             self.drawCords(context, r)
 
         if self.got_started:
             self.drawSpecial(context, r)
             self.drawEnpassant(context, r)
-            self.drawSupportAlgorithm(context, r)
+
             self.drawCircles(context)
             self.drawArrows(context)
             self.drawPieces(context, r)
@@ -1603,14 +1608,15 @@ class BoardView(Gtk.DrawingArea):
         context.set_line_width(4)
 
         nb_turn_changed = False
-        if len(self.model.moves) != self.last_nb_of_move:
-            self.last_nb_of_move = len(self.model.moves)
+        if self.shown != self.last_shown:
+            self.last_shown = self.shown
             nb_turn_changed = True
+
 
         val = self.model.support_algorithm
         coord_attacked_not_protected = val.calculate_coordinate_in_danger( \
-            self.model.boards[-1], \
-            1-self.model.curColor, \
+            self.model.boards[self.shown], \
+            (self.shown%2), \
             nb_turn_changed)
 
         for cord in coord_attacked_not_protected:
