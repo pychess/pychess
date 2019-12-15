@@ -1612,12 +1612,16 @@ class BoardView(Gtk.DrawingArea):
             self.last_shown = self.shown
             nb_turn_changed = True
 
+        algorithm = self.model.support_algorithm
 
-        val = self.model.support_algorithm
-        coord_attacked_not_protected = val.calculate_coordinate_in_danger( \
-            self.model.boards[self.shown], \
-            (self.shown%2), \
-            nb_turn_changed)
+        # self.shown is the number of moves shown,
+        # if it is divisible by two, the last move was a black one,
+        # so the current player is the one playing white (index 0)
+        coord_attacked_not_protected = algorithm.calculate_coordinate_in_danger(
+            self.model.boards[self.shown],
+            (self.shown % 2),
+            nb_turn_changed
+        )
 
         for cord in coord_attacked_not_protected:
             rgba = self.color2rgba(cord.color)
