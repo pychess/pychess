@@ -1607,21 +1607,20 @@ class BoardView(Gtk.DrawingArea):
         radius = self.square[3] / 2.0
         context.set_line_width(4)
 
-        nb_turn_changed = False
-        if self.shown != self.last_shown:
-            self.last_shown = self.shown
-            nb_turn_changed = True
-
         algorithm = self.model.support_algorithm
 
-        # self.shown is the number of moves shown,
-        # if it is divisible by two, the last move was a black one,
-        # so the current player is the one playing white (index 0)
-        coord_attacked_not_protected = algorithm.calculate_coordinate_in_danger(
-            self.model.boards[self.shown],
-            (self.shown % 2),
-            nb_turn_changed
-        )
+        if self.shown != self.last_shown:
+            self.last_shown = self.shown
+
+            # self.shown is the number of moves shown,
+            # if it is divisible by two, the last move was a black one,
+            # so the current player is the one playing white (index 0)
+            algorithm.calculate_coordinate_in_danger(
+                self.model.boards[self.shown],
+                (self.shown % 2)
+            )
+
+        coord_attacked_not_protected = algorithm.coordinate_in_danger
 
         for cord in coord_attacked_not_protected:
             rgba = self.color2rgba(cord.color)
@@ -1631,8 +1630,10 @@ class BoardView(Gtk.DrawingArea):
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
 
+
             # redraw the case of the cord that is dangerous
-            # TODO: it seems not very efficient.... see if we can redraw all cases concerned at once
+            # TODO: Should be changed, can potentially create infinite loop, where redraw call support Algo
+            # TODO: and support algo call redraw
             self.redrawCanvas(rect(self.cord2RectRelative(cord)))
 
     ############################################################################
