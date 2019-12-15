@@ -1630,7 +1630,6 @@ class BoardView(Gtk.DrawingArea):
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
 
-
             # redraw the case of the cord that is dangerous
             # TODO: Should be changed, can potentially create infinite loop, where redraw call support Algo
             # TODO: and support algo call redraw
