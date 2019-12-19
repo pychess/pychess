@@ -39,6 +39,7 @@ class BoardControl(Gtk.EventBox):
         self.game_preview = game_preview
 
         self.view = BoardView(gamemodel, setup_position=setup_position)
+
         self.add(self.view)
         self.variant = gamemodel.variant
         self.promotionDialog = PromotionDialog(self.variant.variant)

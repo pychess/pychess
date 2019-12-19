@@ -173,6 +173,8 @@ W_OO, W_OOO, B_OO, B_OOO = [2**i for i in range(4)]
 CAS_FLAGS = ((W_OOO, W_OO), (B_OOO, B_OO))
 W_CASTLED, B_CASTLED = [2**i for i in range(2)]
 
+NB_OF_CASES = 64
+
 # Cords types
 A1, B1, C1, D1, E1, F1, G1, H1,\
     A2, B2, C2, D2, E2, F2, G2, H2,\
@@ -197,6 +199,7 @@ reprCord = [
 reprFile = ["a", "b", "c", "d", "e", "f", "g", "h"]
 reprRank = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
+# dictionary for giving the cord linked to the flattened index of a coordinate
 cordDic = {}
 for cord, name in enumerate(reprCord):
     cordDic[name] = cord

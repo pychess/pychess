@@ -6,7 +6,7 @@ from pychess.Utils.const import ASEAN_VARIANTS, ASEAN_BBISHOP, ASEAN_WBISHOP, AS
 
 #
 # Caveat: Many functions in this module has very similar code. If you fix a
-# bug, or write a perforance enchace, please update all functions. Apologies
+# bug, or write a performance enhance, please update all functions. Apologies
 # for the inconvenience
 #
 
@@ -79,8 +79,77 @@ def isAttacked(board, cord, color, ischecked=False):
     return False
 
 
+# TODO tests
+def propagateRayFollowingMovement(board, cord, bitboard):
+    "tests if there are pieces blocking the way on the movement line"
+    rayto = fromToRay[cord]
+    blocker = board.blocker
+
+    bits = 0
+
+    while bitboard:
+        bit = bitboard & -bitboard
+        c = lsb[bit]
+        ray = rayto[c]
+        if ray and not clearBit(ray & blocker, c):
+            bits |= bitPosArray[c]
+        bitboard -= bit
+
+    return bits
+
+
+def piecesAttackingCord(board, cord, color):
+    """ return the type of piece attacking Cord
+    does not support variant yet
+    The type of args are LBoard, Cord as flat number (cord argument of class Cord, BLACK or WHITE from const file """
+
+    _moveArray = moveArray
+    pieces = board.boards[color]
+
+    pieces_attacking = []
+
+    # Knights
+    bits_knight = pieces[KNIGHT] & _moveArray[KNIGHT][cord]
+    if bits_knight:
+        pieces_attacking.append(KNIGHT)
+
+    # Kings
+    bits_king = pieces[KING] & _moveArray[KING][cord]
+    if bits_king:
+        pieces_attacking.append(KING)
+
+    # Pawns, to test , bug possible with BPAWN
+    bits_pawn = pieces[PAWN] & _moveArray[color == WHITE and BPAWN or PAWN][cord]
+    if bits_pawn:
+        pieces_attacking.append(PAWN)
+
+    # Bishops
+    bitboard_bishop = (pieces[BISHOP] | pieces[QUEEN]) & _moveArray[BISHOP][cord]
+
+    if propagateRayFollowingMovement(board, cord, bitboard_bishop):
+        pieces_attacking.append(BISHOP)
+
+    bitboard_rook = (pieces[ROOK] | pieces[QUEEN]) & _moveArray[ROOK][cord]
+    # inlined iterBits()
+
+    if propagateRayFollowingMovement(board, cord, bitboard_rook):
+        pieces_attacking.append(ROOK)
+
+    bitboard_queen_diago = pieces[QUEEN] & _moveArray[BISHOP][cord]
+    if propagateRayFollowingMovement(board, cord, bitboard_queen_diago):
+        pieces_attacking.append(QUEEN)
+
+    bitboard_queen_straight = pieces[QUEEN] & _moveArray[ROOK][cord]
+    if propagateRayFollowingMovement(board, cord, bitboard_queen_straight):
+        pieces_attacking.append(QUEEN)
+
+    return pieces_attacking
+
+
 def getAttacks(board, cord, color):
-    """ To create a bitboard of pieces of color, which attacks cord """
+    """ To create a bitboard of pieces of color, which attacks cord
+    The type of args are LBoard, ,BLACK or WHITE from const file
+    """
 
     _moveArray = moveArray
     pieces = board.boards[color]
@@ -91,7 +160,7 @@ def getAttacks(board, cord, color):
     # Kings
     bits |= pieces[KING] & _moveArray[KING][cord]
 
-    # Pawns
+    # Pawns, to test , bug possible with BPAWN
     bits |= pieces[PAWN] & _moveArray[color == WHITE and BPAWN or PAWN][cord]
 
     rayto = fromToRay[cord]
@@ -107,6 +176,7 @@ def getAttacks(board, cord, color):
     else:
         bitboard = (pieces[BISHOP] | pieces[QUEEN]) & _moveArray[BISHOP][cord]
         # inlined iterBits()
+        # check whether or not there is a piece blocking the path in diagonal
         while bitboard:
             bit = bitboard & -bitboard
             c = lsb[bit]
@@ -121,6 +191,8 @@ def getAttacks(board, cord, color):
     else:
         bitboard = (pieces[ROOK] | pieces[QUEEN]) & _moveArray[ROOK][cord]
     # inlined iterBits()
+
+    # check whether or not there is a piece blocking the path in straight line
     while bitboard:
         bit = bitboard & -bitboard
         c = lsb[bit]

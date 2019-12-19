@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.6"/>
   <object class="GtkAccelGroup" id="accelgroup1"/>
@@ -84,6 +84,14 @@
     <property name="upper">9</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkCheckButton" id="checkbutton2">
+    <property name="label" translatable="yes">checkbutton</property>
+    <property name="visible">True</property>
+    <property name="can_focus">True</property>
+    <property name="receives_default">False</property>
+    <property name="xalign">0</property>
+    <property name="draw_indicator">True</property>
   </object>
   <object class="GtkAdjustment" id="elo__from_adjustment">
     <property name="upper">3000</property>
@@ -207,9 +215,6 @@
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>
-    <child>
-      <placeholder/>
-    </child>
     <child>
       <object class="GtkVBox" id="mainvbox">
         <property name="visible">True</property>
@@ -1025,9 +1030,6 @@
     <property name="documenters"/>
     <property name="artists"/>
     <property name="logo">about.png</property>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
@@ -1051,9 +1053,6 @@
     <property name="title" translatable="yes">Preferences</property>
     <property name="icon_name">pychess</property>
     <property name="transient_for">main_window</property>
-    <child>
-      <placeholder/>
-    </child>
     <child>
       <object class="GtkVBox" id="vbox11">
         <property name="visible">True</property>
@@ -1402,6 +1401,21 @@ Ticked : the linear scale focuses on a limited range around the null average. It
                                         <property name="position">11</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="activateSupportAlgorithm">
+                                        <property name="label" translatable="yes">show threatened and not protected pieces</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">12</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1705,6 +1719,7 @@ Ticked : the linear scale focuses on a limited range around the null average. It
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="xalign">0.5</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                         </child>
@@ -4079,9 +4094,6 @@ It will search positions from http://www.k4it.de/</property>
     <property name="icon_name">pychess</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox4">
         <property name="visible">True</property>
@@ -4413,9 +4425,6 @@ It will search positions from http://www.k4it.de/</property>
     <property name="icon_name">pychess</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="vbox3">
         <property name="visible">True</property>
@@ -5010,9 +5019,6 @@ It will search positions from http://www.k4it.de/</property>
     <property name="title" translatable="yes">Manage engines</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox3">
         <property name="visible">True</property>
@@ -5709,7 +5715,7 @@ If it can use both  you can set here which one you like.</property>
                   <object class="GtkLabel" id="mass_path_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="no">.</property>
+                    <property name="label">.</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -5818,9 +5824,6 @@ If it can use both  you can set here which one you like.</property>
     <property name="title" translatable="yes">Filter</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox2">
         <property name="can_focus">False</property>

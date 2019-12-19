@@ -24,6 +24,11 @@ from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
 from . import preferencesDialog
 from pychess.perspectives import perspective_manager
 
+# This file contains the class that is used to draw the board
+
+
+# util functions on rectangles to redner board used by the class
+
 
 def intersects(r_zero, r_one):
     """ Takes two square and determines if they have an Intersection
@@ -34,9 +39,9 @@ def intersects(r_zero, r_one):
     w_one = r_one.width + r_one.x
     h_one = r_one.height + r_one.y
     return (w_one < r_one.x or w_one > r_zero.x) and \
-        (h_one < r_one.y or h_one > r_zero.y) and \
-        (w_zero < r_zero.x or w_zero > r_one.x) and \
-        (h_zero < r_zero.y or h_zero > r_one.y)
+           (h_one < r_one.y or h_one > r_zero.y) and \
+           (w_zero < r_zero.x or w_zero > r_one.x) and \
+           (h_zero < r_zero.y or h_zero > r_one.y)
 
 
 def contains(r_zero, r_one):
@@ -48,7 +53,8 @@ def contains(r_zero, r_one):
     h_zero = r_zero.height + r_zero.y
     w_one = r_one.width + r_one.x
     h_one = r_one.height + r_one.y
-    return r_zero.x <= r_one.x and w_zero >= w_one and \
+    return \
+        r_zero.x <= r_one.x and w_zero >= w_one and \
         r_zero.y <= r_one.y and h_zero >= h_one
 
 
@@ -152,6 +158,7 @@ class BoardView(Gtk.DrawingArea):
         if gamemodel is None:
             gamemodel = GameModel()
         self.model = gamemodel
+
         self.allwhite = self.model.variant == AllWhiteBoard
         self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
@@ -185,6 +192,7 @@ class BoardView(Gtk.DrawingArea):
             conf.notify_add("board_style", self.onBoardStyle),
             conf.notify_add("lightcolour", self.onBoardColour),
             conf.notify_add("darkcolour", self.onBoardColour),
+            conf.notify_add("activateSupportAlgorithm", self.onSupportAlgorithmActivation)
         ]
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
@@ -214,6 +222,7 @@ class BoardView(Gtk.DrawingArea):
         self._greenarrow = None
         self._bluearrow = None
 
+        # this is an integer that contains the last move that is shown
         self._shown = self.model.ply
 
         self.no_frame = False
@@ -231,6 +240,8 @@ class BoardView(Gtk.DrawingArea):
         self.noAnimation = conf.get("noAnimation")
         self.faceToFace = conf.get("faceToFace")
         self.autoRotate = conf.get("autoRotate")
+        if conf.get("activateSupportAlgorithm"):
+            self.onSupportAlgorithmActivation()
 
         self.onBoardColour()
         self.onBoardStyle()
@@ -257,6 +268,7 @@ class BoardView(Gtk.DrawingArea):
         self.premove_promotion = None
 
         # right click circles and arrows
+        # Contains Cord object, and are the coordinates in which we need to draw the circles or arrows
         self.arrows = set()
         self.circles = set()
         self.pre_arrow = None
@@ -265,6 +277,10 @@ class BoardView(Gtk.DrawingArea):
         # circles and arrows from .pgn comments
         self.saved_circles = set()
         self.saved_arrows = set()
+
+        # store in memory the last number of move to know whether or not a new turn has started,
+        # of we went back to history
+        self.last_shown = 0
 
     def _del(self):
         self.disconnect(self.draw_cid)
@@ -462,6 +478,11 @@ class BoardView(Gtk.DrawingArea):
 
         self.redrawCanvas()
 
+    def onSupportAlgorithmActivation(self, *args):
+        '''activation of the support algorithm'''
+        activation_wanted = conf.get("activateSupportAlgorithm")
+        self.model.support_algorithm.enableDisableAlgo(activation_wanted)
+
     ###############################
     #          Animation          #
     ###############################
@@ -473,7 +494,8 @@ class BoardView(Gtk.DrawingArea):
         if move.flag in (KING_CASTLE, QUEEN_CASTLE):
             board = self.model.boards[-1].board
             color = board.color
-            wildcastle = Cord(board.ini_kings[color]).x == 3 and \
+            wildcastle = \
+                Cord(board.ini_kings[color]).x == 3 and \
                 board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
             if move.flag == KING_CASTLE:
                 side = 0 if wildcastle else 1
@@ -495,7 +517,8 @@ class BoardView(Gtk.DrawingArea):
         """
         if board in self.model.variations[self.shown_variation_idx]:
             # if the board to be shown is in the current shown variation, we are ok
-            self.shown = self.model.variations[self.shown_variation_idx].index(board) + \
+            self.shown = \
+                self.model.variations[self.shown_variation_idx].index(board) + \
                 self.model.lowply
         else:
             # else we have to go back first
@@ -511,7 +534,8 @@ class BoardView(Gtk.DrawingArea):
             # swich to the new variation
             self.shown_variation_idx = self.model.variations.index(vari)
             self.real_set_shown = True
-            self.shown = self.model.variations[self.shown_variation_idx].index(board) + \
+            self.shown = \
+                self.model.variations[self.shown_variation_idx].index(board) + \
                 self.model.lowply
 
     def shownIsMainLine(self):
@@ -525,9 +549,13 @@ class BoardView(Gtk.DrawingArea):
         return self._shown
 
     def _setShown(self, shown, old_variation_idx=None):
-        """ Adjust the index in current variation board list.
+        """
+            Adjust the index in current variation board list.
             old_variation_index is used when variation was added
             to the last played move and we want to step back.
+
+            This function is called before draw, so this is where we preprocess data before drawing
+            This function is called at each turn
         """
         assert shown >= 0
         if shown < self.model.lowply:
@@ -563,6 +591,14 @@ class BoardView(Gtk.DrawingArea):
             need_redraw = True
         if self.pre_circle is not None:
             self.pre_circle = None
+            need_redraw = True
+
+        if (self.shown != shown):
+            algorithm = self.model.support_algorithm
+            algorithm.calculate_coordinate_in_danger(
+                self.model.boards[shown],
+                (shown % 2)
+            )
             need_redraw = True
 
         # search circles/arrows in move comments
@@ -722,7 +758,7 @@ class BoardView(Gtk.DrawingArea):
                 if piece.x is not None:
                     if not self.noAnimation:
                         if piece.piece == KNIGHT:
-                            newx = piece.x + (x_loc - piece.x) * mod**(1.5)
+                            newx = piece.x + (x_loc - piece.x) * mod ** (1.5)
                             newy = piece.y + (y_loc - piece.y) * mod
                         else:
                             newx = piece.x + (x_loc - piece.x) * mod
@@ -735,8 +771,8 @@ class BoardView(Gtk.DrawingArea):
                     paint_box = join(paint_box, self.cord2RectRelative(newx, newy))
 
                     if (newx <= x_loc <= piece.x or newx >= x_loc >= piece.x) and \
-                       (newy <= y_loc <= piece.y or newy >= y_loc >= piece.y) or \
-                       abs(newx - x_loc) < 0.005 and abs(newy - y_loc) < 0.005:
+                            (newy <= y_loc <= piece.y or newy >= y_loc >= piece.y) or \
+                            abs(newx - x_loc) < 0.005 and abs(newy - y_loc) < 0.005:
                         paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
                         piece.x = None
                         piece.y = None
@@ -868,9 +904,10 @@ class BoardView(Gtk.DrawingArea):
     #            draw             #
     ###############################
 
+    # draw called each time we hover on a case. WARNING it only redraw the case
     def draw(self, context, r):
-        # context.set_antialias(cairo.ANTIALIAS_NONE)
 
+        # context.set_antialias(cairo.ANTIALIAS_NONE)
         if self.shown < self.model.lowply:
             print("exiting cause to lowlpy", self.shown, self.model.lowply)
             return
@@ -890,7 +927,10 @@ class BoardView(Gtk.DrawingArea):
         side = square / self.FILES
         self.square = (xc_loc, yc_loc, square, side)
 
+        # draw all the different components by calling all the draw methods of this class
         self.drawBoard(context, r)
+
+        self.drawSupportAlgorithm(context, r)
 
         if min(alloc.width, alloc.height) > 32:
             self.drawCords(context, r)
@@ -898,6 +938,7 @@ class BoardView(Gtk.DrawingArea):
         if self.got_started:
             self.drawSpecial(context, r)
             self.drawEnpassant(context, r)
+
             self.drawCircles(context)
             self.drawArrows(context)
             self.drawPieces(context, r)
@@ -1053,7 +1094,8 @@ class BoardView(Gtk.DrawingArea):
                         if self.colors_only:
                             context.rectangle(xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
                         else:
-                            self.draw_image(context, self.light_surface, xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
+                            self.draw_image(context, self.light_surface, xc_loc + x_loc * side, yc_loc + y_loc * side,
+                                            side, side)
             if self.colors_only:
                 context.fill()
 
@@ -1077,7 +1119,8 @@ class BoardView(Gtk.DrawingArea):
                         if self.colors_only:
                             context.rectangle((xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
                         else:
-                            self.draw_image(context, self.dark_surface, (xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
+                            self.draw_image(context, self.dark_surface, (xc_loc + x_loc * side),
+                                            (yc_loc + y_loc * side), side, side)
             if self.colors_only:
                 context.fill()
 
@@ -1085,9 +1128,11 @@ class BoardView(Gtk.DrawingArea):
             # board frame
             delta = side / 4
             # top
-            self.draw_frame(context, self.frame_surface, xc_loc - delta, yc_loc - delta, self.FILES * side + delta * 2, delta)
+            self.draw_frame(context, self.frame_surface, xc_loc - delta, yc_loc - delta, self.FILES * side + delta * 2,
+                            delta)
             # bottom
-            self.draw_frame(context, self.frame_surface, xc_loc - delta, yc_loc + self.RANKS * side, self.FILES * side + delta * 2, delta)
+            self.draw_frame(context, self.frame_surface, xc_loc - delta, yc_loc + self.RANKS * side,
+                            self.FILES * side + delta * 2, delta)
             # left
             self.draw_frame(context, self.frame_surface, xc_loc - delta, yc_loc, delta, self.FILES * side)
             # right
@@ -1161,7 +1206,8 @@ class BoardView(Gtk.DrawingArea):
         context.transform(invmatrix)
         Pieces.drawPiece(piece, context,
                          cx_loc + CORD_PADDING, cy_loc + CORD_PADDING,
-                         side - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean, variant=self.model.variant.variant)
+                         side - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean,
+                         variant=self.model.variant.variant)
         context.transform(matrix)
 
     def drawPieces(self, context, rectangle):
@@ -1192,8 +1238,8 @@ class BoardView(Gtk.DrawingArea):
         col = style_ctxt.lookup_color("p_dark_selected")[1]
         bg_sd = (col.red, col.green, col.blue)
 
-        if min((fg_n[0] - bg_sl[0])**2 + (fg_n[1] - bg_sl[1])**2 + (fg_n[2] - bg_sl[2])**2,
-               (fg_n[0] - bg_sd[0])**2 + (fg_n[1] - bg_sd[1])**2 + (fg_n[2] - bg_sd[2])**2) < 0.2:
+        if min((fg_n[0] - bg_sl[0]) ** 2 + (fg_n[1] - bg_sl[1]) ** 2 + (fg_n[2] - bg_sl[2]) ** 2,
+               (fg_n[0] - bg_sd[0]) ** 2 + (fg_n[1] - bg_sd[1]) ** 2 + (fg_n[2] - bg_sd[2]) ** 2) < 0.2:
             col = style_ctxt.lookup_color("p_fg_selected")[1]
             fg_s = (col.red, col.green, col.blue)
 
@@ -1321,6 +1367,7 @@ class BoardView(Gtk.DrawingArea):
             context.new_sub_path()
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
+
         if self.pre_circle is not None:
             rgba = self.color2rgba(self.pre_circle.color)
             context.set_source_rgb(*rgba[:3])
@@ -1377,7 +1424,8 @@ class BoardView(Gtk.DrawingArea):
         if self.lastMove.flag in (KING_CASTLE, QUEEN_CASTLE):
             ksq0 = last_board.board.kings[last_board.color]
             ksq1 = show_board.board.kings[last_board.color]
-            wildcastle = Cord(last_board.board.ini_kings[last_board.color]).x == 3 and \
+            wildcastle = \
+                Cord(last_board.board.ini_kings[last_board.color]).x == 3 and \
                 last_board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
             if self.lastMove.flag == KING_CASTLE:
                 side = 0 if wildcastle else 1
@@ -1455,7 +1503,7 @@ class BoardView(Gtk.DrawingArea):
 
         lvx = cords[1].x - cords[0].x
         lvy = cords[0].y - cords[1].y
-        hypotenuse = float((lvx**2 + lvy**2)**.5)
+        hypotenuse = float((lvx ** 2 + lvy ** 2) ** .5)
         vec_x = lvx / hypotenuse
         vec_y = lvy / hypotenuse
         v1x = -vec_y
@@ -1558,6 +1606,30 @@ class BoardView(Gtk.DrawingArea):
         context.set_line_width(side / 2.)
         context.stroke()
 
+    ###############################
+    #     drawSupportAlgorithm    #
+    ###############################
+
+    # Here is how we implemented representation of support algorithm :
+    # piece not protected -> yellow circle
+    # piece attacked and not protected -> red circle
+    # see SupportAlgorithm in file utils.DecisionSupportAlgorithm for more details on the algorithm
+
+    def drawSupportAlgorithm(self, context, redrawn):
+        radius = self.square[3] / 2.0
+        context.set_line_width(4)
+
+        algorithm = self.model.support_algorithm
+        coord_attacked_not_protected = algorithm.coordinate_in_danger
+
+        for cord in coord_attacked_not_protected:
+            rgba = self.color2rgba(cord.color)
+            context.set_source_rgb(*rgba[:3])
+            x_loc, y_loc = self.cord2Point(cord)
+            context.new_sub_path()
+            context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
+            context.stroke()
+
     ############################################################################
     #                                Attributes                                #
     ############################################################################
@@ -1581,6 +1653,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getSelected(self):
         return self._selected
+
     selected = property(_getSelected, _setSelected)
 
     def _setHover(self, cord):
@@ -1606,6 +1679,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getHover(self):
         return self._hover
+
     hover = property(_getHover, _setHover)
 
     def _setActive(self, cord):
@@ -1622,6 +1696,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getActive(self):
         return self._active
+
     active = property(_getActive, _setActive)
 
     def _setPremove0(self, cord):
@@ -1638,6 +1713,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getPremove0(self):
         return self._premove0
+
     premove0 = property(_getPremove0, _setPremove0)
 
     def _setPremove1(self, cord):
@@ -1654,6 +1730,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getPremove1(self):
         return self._premove1
+
     premove1 = property(_getPremove1, _setPremove1)
 
     ################################
@@ -1676,6 +1753,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getRedarrow(self):
         return self._redarrow
+
     redarrow = property(_getRedarrow, _setRedarrow)
 
     def _setGreenarrow(self, cords):
@@ -1694,6 +1772,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getGreenarrow(self):
         return self._greenarrow
+
     greenarrow = property(_getGreenarrow, _setGreenarrow)
 
     def _setBluearrow(self, cords):
@@ -1712,6 +1791,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getBluearrow(self):
         return self._bluearrow
+
     bluearrow = property(_getBluearrow, _setBluearrow)
 
     ################################
@@ -1750,6 +1830,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getRotation(self):
         return self._rotation
+
     rotation = property(_getRotation, _setRotation)
 
     def _setDrawGrid(self, draw_grid):
@@ -1758,6 +1839,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getDrawGrid(self):
         return self._draw_grid
+
     draw_grid = property(_getDrawGrid, _setDrawGrid)
 
     def _setShowCords(self, show_cords):
@@ -1770,6 +1852,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getShowCords(self):
         return self._show_cords
+
     show_cords = property(_getShowCords, _setShowCords)
 
     def _setShowCaptured(self, show_captured, force_restore=False):
@@ -1792,6 +1875,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getShowCaptured(self):
         return False if self.preview else self._show_captured
+
     showCaptured = property(_getShowCaptured, _setShowCaptured)
 
     def _setShowEnpassant(self, show_enpassant):
@@ -1806,6 +1890,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _getShowEnpassant(self):
         return self._show_enpassant
+
     showEnpassant = property(_getShowEnpassant, _setShowEnpassant)
 
     ###########################
