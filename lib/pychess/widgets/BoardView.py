@@ -549,9 +549,13 @@ class BoardView(Gtk.DrawingArea):
         return self._shown
 
     def _setShown(self, shown, old_variation_idx=None):
-        """ Adjust the index in current variation board list.
+        """
+            Adjust the index in current variation board list.
             old_variation_index is used when variation was added
             to the last played move and we want to step back.
+
+            This function is called before draw, so this is where we preprocess data before drawing
+            This function is called at each turn
         """
         assert shown >= 0
         if shown < self.model.lowply:
@@ -587,6 +591,14 @@ class BoardView(Gtk.DrawingArea):
             need_redraw = True
         if self.pre_circle is not None:
             self.pre_circle = None
+            need_redraw = True
+
+        if (self.shown != shown):
+            algorithm = self.model.support_algorithm
+            algorithm.calculate_coordinate_in_danger(
+                self.model.boards[shown],
+                (shown % 2)
+            )
             need_redraw = True
 
         # search circles/arrows in move comments
@@ -1608,18 +1620,6 @@ class BoardView(Gtk.DrawingArea):
         context.set_line_width(4)
 
         algorithm = self.model.support_algorithm
-
-        if self.shown != self.last_shown:
-            self.last_shown = self.shown
-
-            # self.shown is the number of moves shown,
-            # if it is divisible by two, the last move was a black one,
-            # so the current player is the one playing white (index 0)
-            algorithm.calculate_coordinate_in_danger(
-                self.model.boards[self.shown],
-                (self.shown % 2)
-            )
-
         coord_attacked_not_protected = algorithm.coordinate_in_danger
 
         for cord in coord_attacked_not_protected:
@@ -1629,11 +1629,6 @@ class BoardView(Gtk.DrawingArea):
             context.new_sub_path()
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
-
-            # redraw the case of the cord that is dangerous
-            # TODO: Should be changed, can potentially create infinite loop, where redraw call support Algo
-            # TODO: and support algo call redraw
-            self.redrawCanvas(rect(self.cord2RectRelative(cord)))
 
     ############################################################################
     #                                Attributes                                #
