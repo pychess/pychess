@@ -593,7 +593,7 @@ class BoardView(Gtk.DrawingArea):
             self.pre_circle = None
             need_redraw = True
 
-        if (self.shown != shown):
+        if (self.shown != shown) and not self.setup_position:
             algorithm = self.model.support_algorithm
             algorithm.calculate_coordinate_in_danger(
                 self.model.boards[shown],
