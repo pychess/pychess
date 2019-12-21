@@ -6,6 +6,7 @@ from gi.repository import GObject
 
 from pychess.compat import create_task
 from pychess.Utils.const import LOCAL, RUNNING
+from pychess.Utils.DecisionSupportAlgorithm import DecisionSupportAlgorithm
 from pychess.Variants.setupposition import SetupBoard
 
 
@@ -66,6 +67,8 @@ class SetupModel(GObject.GObject):
         self.variations = [self.boards]
 
         self.lesson_game = False
+
+        self.support_algorithm = DecisionSupportAlgorithm()
 
     def _get_ply(self):
         return self.boards[-1].ply

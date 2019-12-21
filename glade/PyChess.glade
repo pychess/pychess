@@ -725,8 +725,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="Escape" signal="activate"/>
                         <accelerator key="F11" signal="activate"/>
+                        <accelerator key="Escape" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -1403,7 +1403,7 @@ Ticked : the linear scale focuses on a limited range around the null average. It
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="activateSupportAlgorithm">
-                                        <property name="label" translatable="yes">show threatened and not protected pieces</property>
+                                        <property name="label" translatable="yes">Show threatened and not protected pieces</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>

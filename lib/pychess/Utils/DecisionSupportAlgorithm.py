@@ -10,7 +10,7 @@ from pychess.Utils.const import KING
 class DecisionSupportAlgorithm:
 
     def __init__(self):
-        self.against_bot = False
+        self.local_game = False
         self.activationEnabled = False
 
         # to avoid calculating once more the coordinates, we save them
@@ -20,7 +20,7 @@ class DecisionSupportAlgorithm:
         self.activationEnabled = enable_algorithm
 
     def set_foe_as_bot(self):
-        self.against_bot = True
+        self.local_game = True
 
     def calculate_coordinate_in_danger(self, board, mycolor, newTurn=True):
         '''this function should be used for applying the algorithm'''
@@ -43,7 +43,7 @@ class DecisionSupportAlgorithm:
         WARNING : The king is currently excluded of the calculus => it is never considered as in danger"""
         coordinate_in_danger = []
 
-        if self.against_bot and self.activationEnabled:
+        if self.local_game and self.activationEnabled:
             # TODO: tests
             for i in range(NB_OF_CASES):
                 c = Cord(i)

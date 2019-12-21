@@ -262,7 +262,7 @@ class GameModel(GObject.GObject):
         # we activate the support algorithm if there is one
         # boolean to know if the game is against a bot
         # activate support algorithm if that is the case
-        if self.hasEnginePlayer():
+        if self.isLocalGame():
             self.support_algorithm.set_foe_as_bot()
 
     def color(self, player):
