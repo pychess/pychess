@@ -12,7 +12,7 @@ import string
 from random import choice, randint
 
 from pychess import VERSION
-from pychess.Utils.const import CRAZYHOUSECHESS, FISCHERRANDOMCHESS
+from pychess.Utils.const import CRAZYHOUSECHESS, FISCHERRANDOMCHESS, reprResult
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import parseAny, toSAN
 from pychess.System.Log import log
@@ -255,6 +255,11 @@ class InternetGameInterface:
         # Return the PGN with the local crlf
         return pgn.replace("\n", os.linesep)
 
+    def stripHtml(self, input):
+        ''' This method removes any HTML mark from the input parameter '''
+        rxp = re.compile(r'<\/?[^<]+>', re.IGNORECASE)
+        return rxp.sub('', input)
+
     # External
     def get_description(self):
         ''' (Abstract) Name of the chess provider written as "Chess provider -- Technique used" '''
@@ -281,7 +286,7 @@ class InternetGameLichess(InternetGameInterface):
 
     def assign_game(self, url):
         # Retrieve the ID of the broadcast
-        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = m.group(3)
@@ -292,7 +297,7 @@ class InternetGameLichess(InternetGameInterface):
                 return True
 
         # Retrieve the ID of the practice
-        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/practice\/[\w\-\/]+\/([a-z0-9]+\/[a-z0-9]+)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/practice\/[\w\-\/]+\/([a-z0-9]+\/[a-z0-9]+)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = m.group(3)
@@ -303,7 +308,7 @@ class InternetGameLichess(InternetGameInterface):
                 return True
 
         # Retrieve the ID of the study
-        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = m.group(3)
@@ -314,7 +319,7 @@ class InternetGameLichess(InternetGameInterface):
                 return True
 
         # Retrieve the ID of the puzzle
-        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = m.group(3)
@@ -325,7 +330,7 @@ class InternetGameLichess(InternetGameInterface):
                 return True
 
         # Retrieve the ID of the game
-        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE)  # More permissive
+        rxp = re.compile(r'^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE)  # More permissive
         m = rxp.match(url)
         if m is not None:
             gid = m.group(4)
@@ -572,7 +577,7 @@ class InternetGameChesstempo(InternetGameInterface):
         return 'ChessTempo.com -- %s' % CAT_DL
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/(\S+\.)?chesstempo\.com\/gamedb\/game\/(\d+)\/?([\S\/]+)?$', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/(\S+\.)?chesstempo\.com\/gamedb\/game\/(\d+)\/?([\S\/]+)?$', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = str(m.group(2))
@@ -600,7 +605,7 @@ class InternetGameChess24(InternetGameInterface):
         return 'Chess24.com -- %s' % CAT_HTML
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/chess24\.com\/[a-z]+\/(analysis|game|download-game)\/([a-z0-9\-_]+)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/chess24\.com\/[a-z]+\/(analysis|game|download-game)\/([a-z0-9\-_]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = str(m.group(2))
@@ -731,39 +736,50 @@ class InternetGame365chess(InternetGameInterface):
 
         # Played moves
         game = {}
-        pos1 = page.find(".ApplyPgnMoveText('")
-        pos2 = page.find("')", pos1)
+        pos1 = page.find("chess_game.Init({")
+        pos1 = page.find(",pgn:'", pos1)
+        pos2 = page.find("'", pos1 + 6)
         if -1 in [pos1, pos2]:
             return None
-        game['_moves'] = page[pos1 + 19:pos2]
+        game['_moves'] = page[pos1 + 6:pos2]
+
+        # Result
+        result = game['_moves'].split(' ')[-1]
+        if result in reprResult:
+            game['Result'] = result
+            game['_moves'] = " ".join(game['_moves'].split(' ')[0:-1])
 
         # Header
         game['_url'] = url
-        lines = page.split("\n")
+        lines = page.replace("<td", "\n<td").split("\n")
+        rxp = re.compile(r'^([\w\-,\s]+)(\(([0-9]+)\))? vs\. ([\w\-,\s]+)(\(([0-9]+)\))?$', re.IGNORECASE)
+        game['White'] = _('Unknown')
+        game['Black'] = _('Unknown')
         for line in lines:
             line = line.strip()
 
-            if line.startswith('<tr><td><h1>') and line.endswith('</h1></td></tr>'):
-                rxp = re.compile('^([\w\-\s]+)(\(([0-9]+)\))? vs\. ([\w\-\s]+)(\(([0-9]+)\))?$', re.IGNORECASE)
-                m = rxp.match(line[12:-15])
-                if m is None:
-                    game['White'] = _('Unknown')
-                    game['Black'] = _('Unknown')
-                else:
-                    game['White'] = str(m.group(1)).strip()
-                    if m.group(3) is not None:
-                        game['WhiteElo'] = str(m.group(3)).strip()
-                    game['Black'] = str(m.group(4)).strip()
-                    if m.group(6) is not None:
-                        game['BlackElo'] = str(m.group(6)).strip()
-                continue
+            # Event
+            for tag in ['Event', 'Site', 'Date', 'Round']:
+                if tag + ':' in line:
+                    pos1 = line.find(tag + ':')
+                    pos1 = line.find(' ', pos1)
+                    pos2 = line.find('<', pos1)
+                    if -1 not in [pos1, pos2]:
+                        v = line[pos1 + 1:pos2]
+                        if tag == 'Date':
+                            v = '%s.%s.%s' % (v[-4:], v[:2], v[3:5])  # mm/dd/yyyy --> yyyy.mm.dd
+                        game[tag] = v
 
-            if line.startswith('<tr><td><h2>') and line.endswith('</h2></td></tr>'):
-                list = line[12:-15].split(' &middot; ')
-                game['Event'] = list[0]
-                game['Opening'] = list[1]
-                game['Result'] = list[2].replace('&frac12;', '1/2')
-                continue
+            # Players
+            line = self.stripHtml(line).strip()
+            m = rxp.match(line)
+            if m is not None:
+                game['White'] = str(m.group(1)).strip()
+                if m.group(3) is not None:
+                    game['WhiteElo'] = str(m.group(3)).strip()
+                game['Black'] = str(m.group(4)).strip()
+                if m.group(6) is not None:
+                    game['BlackElo'] = str(m.group(6)).strip()
 
         # Rebuild the PGN game
         return self.rebuild_pgn(game)
@@ -786,7 +802,7 @@ class InternetGameChesspastebin(InternetGameInterface):
             return None
 
         # Extract the game ID
-        rxp = re.compile('.*?\<div id=\"([0-9]+)_board\"\>\<\/div\>.*?', flags=re.IGNORECASE)
+        rxp = re.compile(r'.*?\<div id=\"([0-9]+)_board\"\>\<\/div\>.*?', flags=re.IGNORECASE)
         m = rxp.match(page.replace("\n", ''))
         if m is None:
             return None
@@ -940,7 +956,7 @@ class InternetGameChessOrg(InternetGameInterface):
         return 'Chess.org -- %s' % CAT_WS
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             id = str(m.group(1))
@@ -1300,7 +1316,7 @@ class InternetGameChessCom(InternetGameInterface):
         return 'Chess.com -- %s' % CAT_HTML
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/([\S]+\.)?chess\.com\/([a-z\/]+)?(live|daily)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/([\S]+\.)?chess\.com\/([a-z\/]+)?(live|daily)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             self.url_type = m.group(3)
@@ -1401,7 +1417,7 @@ class InternetGameSchachspielen(InternetGameInterface):
         return 'Schach-Spielen.eu -- %s' % CAT_HTML
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/(www\.)?schach-spielen\.eu\/(game|analyse)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/(www\.)?schach-spielen\.eu\/(game|analyse)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = m.group(3)
@@ -1555,7 +1571,7 @@ class InternetGameChesssamara(InternetGameInterface):
         return 'Chess-Samara.ru -- %s' % CAT_DL
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/(\S+\.)?chess-samara\.ru\/(\d+)\-', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/(\S+\.)?chess-samara\.ru\/(\d+)\-', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = str(m.group(2))
@@ -1710,9 +1726,9 @@ class InternetGameSchacharena(InternetGameInterface):
             return None
 
         # Init
-        rxp_player = re.compile('.*spielerstatistik.*name=(\w+).*\[([0-9]+)\].*', re.IGNORECASE)
-        rxp_move = re.compile('.*<span.*onMouseOut.*fan\(([0-9]+)\).*', re.IGNORECASE)
-        rxp_result = re.compile('.*>(1\-0|0\-1|1\/2\-1\/2)\s([^\<]+)<.*', re.IGNORECASE)
+        rxp_player = re.compile(r'.*spielerstatistik.*name=(\w+).*\[([0-9]+)\].*', re.IGNORECASE)
+        rxp_move = re.compile(r'.*<span.*onMouseOut.*fan\(([0-9]+)\).*', re.IGNORECASE)
+        rxp_result = re.compile(r'.*>(1\-0|0\-1|1\/2\-1\/2)\s([^\<]+)<.*', re.IGNORECASE)
         player_count = 0
         board = LBoard()
         board.applyFen(DEFAULT_BOARD)
@@ -1770,7 +1786,7 @@ class InternetGameChesspuzzle(InternetGameInterface):
         return 'ChessPuzzle.net -- %s' % CAT_HTML
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/(\S+\.)?chesspuzzle\.net\/(Puzzle|Solution)\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/(\S+\.)?chesspuzzle\.net\/(Puzzle|Solution)\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = str(m.group(3))
@@ -1827,7 +1843,7 @@ class InternetGameChessking(InternetGameInterface):
         return 'ChessKing.com -- %s' % CAT_DL
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/(\S+\.)?chessking\.com\/games\/(ff\/)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/(\S+\.)?chessking\.com\/games\/(ff\/)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = str(m.group(3))
@@ -1864,7 +1880,7 @@ class InternetGameIdeachess(InternetGameInterface):
 
     def assign_game(self, url):
         # Game ID
-        rxp = re.compile('^https?:\/\/(\S+\.)?ideachess\.com\/.*\/.*\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/(\S+\.)?ideachess\.com\/.*\/.*\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = str(m.group(2))
@@ -1939,7 +1955,7 @@ class InternetGameChessdb(InternetGameInterface):
         args = parse_qs(parsed.query)
         if 'id' in args:
             gid = args['id'][0]
-            rxp = re.compile('^[0-9\.]+$', re.IGNORECASE)
+            rxp = re.compile(r'^[0-9\.]+$', re.IGNORECASE)
             if rxp.match(gid) is not None:
                 self.id = gid
                 return True
@@ -1999,7 +2015,7 @@ class InternetGameChesspro(InternetGameInterface):
             return None
 
         # Find the chess widget
-        rxp = re.compile('.*OpenGame\(\s*"g[0-9]+\"\s*,"(.*)"\s*\)\s*;.*', re.IGNORECASE)
+        rxp = re.compile(r'.*OpenGame\(\s*"g[0-9]+\"\s*,"(.*)"\s*\)\s*;.*', re.IGNORECASE)
         lines = page.split("\n")
         for line in lines:
             m = rxp.match(line)
@@ -2014,7 +2030,7 @@ class InternetGameFicgs(InternetGameInterface):
         return 'Ficgs.com -- %s' % CAT_DL
 
     def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/(\S+\.)?ficgs\.com\/game_(\d+).html', re.IGNORECASE)
+        rxp = re.compile(r'^https?:\/\/(\S+\.)?ficgs\.com\/game_(\d+).html', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
             gid = str(m.group(2))
