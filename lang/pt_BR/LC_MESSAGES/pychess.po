@@ -10,6 +10,7 @@
 # Leandro Alves Vianna <leandrovianna50@gmail.com>, 2014
 # Leandro Cristante de Oliveira <lcristante@aol.com>, 2014
 # Leonardo Gregianin <leogregianin@gmail.com>, 2014-2015
+# Marco Antônio Pretti <marco-mp@hotmail.com>, 2020
 # Marcos Bernardino da Silva <mbernardino6@gmail.com>, 2017
 # Orlando Noronha <lando.noronha@gmail.com>, 2016
 # Ronaldo Rezende Junior <ronaldo.rrj@gmail.com>, 2016-2019
@@ -20,8 +21,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-17 11:23+0100\n"
-"PO-Revision-Date: 2019-11-17 13:23+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2020-01-19 00:03+0000\n"
+"Last-Translator: Marco Antônio Pretti <marco-mp@hotmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/gbtami/pychess/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -240,7 +241,7 @@ msgstr "Traduza o PyChess"
 
 #: glade/PyChess.glade:928
 msgid "Report an issue"
-msgstr ""
+msgstr "Reportar um problema"
 
 #: glade/PyChess.glade:1021
 msgid "Chess client"
@@ -519,7 +520,7 @@ msgstr "_Painel lateral"
 
 #: glade/PyChess.glade:2419
 msgid "Background image path :"
-msgstr ""
+msgstr "Selecione arquivo de imagem de fundo"
 
 #: glade/PyChess.glade:2457
 msgid "<b>Welcome screen</b>"
@@ -687,7 +688,7 @@ msgstr "Recuo arquivo _PGN"
 msgid ""
 "Warning: this option generates a formatted .pgn file which is not standards "
 "compliant"
-msgstr ""
+msgstr "Aviso: esta opção gera um arquivo .png diferente dos formatos padrão"
 
 #: glade/PyChess.glade:4022
 msgid "Save _own games only"
