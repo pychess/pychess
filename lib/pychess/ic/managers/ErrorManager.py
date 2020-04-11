@@ -13,10 +13,10 @@ class ErrorManager(GObject.GObject):
 
     def __init__(self, connection):
         GObject.GObject.__init__(self)
-        connection.expect_line(self.onError, "(.*?): Command not found\.")
+        connection.expect_line(self.onError, r"(.*?): Command not found\.")
         connection.expect_line(self.onAmbiguousMove,
-                               "Ambiguous move \((%s)\)\." % sanmove)
-        connection.expect_line(self.onIllegalMove, "Illegal move \((%s)\)\." %
+                               r"Ambiguous move \((%s)\)\." % sanmove)
+        connection.expect_line(self.onIllegalMove, r"Illegal move \((%s)\)\." %
                                sanmove)
 
     def onError(self, match):

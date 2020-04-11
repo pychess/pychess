@@ -52,7 +52,7 @@ class EgtbGaviota:
         # (This is the compression scheme; the library currently only uses one at a time.)
         schemeCount = [0] * 10
         for filename in tbPathContents:
-            match = re.search("\.gtb\.cp(\d)$", filename)
+            match = re.search(r"\.gtb\.cp(\d)$", filename)
             if match:
                 schemeCount[int(match.group(1))] += 1
         compressionScheme = max(zip(schemeCount, range(10)))

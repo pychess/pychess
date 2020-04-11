@@ -296,7 +296,7 @@ class ICLogon:
             ports = (port, )
         else:
             ports = self.widgets["portsEntry"].get_text()
-            ports = list(map(int, re.findall("\d+", ports)))
+            ports = list(map(int, re.findall(r"\d+", ports)))
             if 5000 not in ports:
                 ports.append(5000)
             if 23 not in ports:

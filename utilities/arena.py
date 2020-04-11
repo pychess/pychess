@@ -124,7 +124,7 @@ def cb_gameended(game, reason):
 # A few helpers
 def printScoreboard():
     names = [discoverer.getName(e)[:3] for e in engines]
-    print("W\B", " ".join(names))
+    print(r"W\B", " ".join(names))
     for i, nameA in enumerate(names):
         print(nameA, end=' ')
         for j, nameB in enumerate(names):

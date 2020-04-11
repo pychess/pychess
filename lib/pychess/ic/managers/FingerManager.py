@@ -10,14 +10,14 @@ from pychess.System.Log import log
 
 types = "(?:blitz|standard|lightning|wild|bughouse|crazyhouse|suicide|losers|atomic)"
 rated = "(rated|unrated)"
-colors = "(?:\[(white|black)\]\s?)?"
-ratings = "([\d\+\-]{1,4})"
-titleslist = "(?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)"
-titles = "((?:\(%s\))+)?" % titleslist
-names = "(\w+)%s" % titles
-mf = "(?:([mf]{1,2})\s?)?"
+colors = r"(?:\[(white|black)\]\s?)?"
+ratings = r"([\d\+\-]{1,4})"
+titleslist = r"(?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)"
+titles = r"((?:\(%s\))+)?" % titleslist
+names = r"(\w+)%s" % titles
+mf = r"(?:([mf]{1,2})\s?)?"
 # FIXME: Needs support for day, hour, min, sec
-times = "[, ]*".join("(?:(\d+) %s)?" % s
+times = "[, ]*".join(r"(?:(\d+) %s)?" % s
                      for s in ("days", "hrs", "mins", "secs"))
 
 # "73 days, 5 hrs, 55 mins"
@@ -221,21 +221,21 @@ class FingerManager(GObject.GObject):
         self.connection = connection
 
         fingerLines = (
-            "(?P<never>%s has never connected\.)" % names,
+            r"(?P<never>%s has never connected\.)" % names,
             "Last disconnected: (?P<last>.+)",
             "On for: (?P<uptime>.+?) +Idle: (?P<idletime>.+)",
-            "%s is in (?P<silence>silence) mode\." % names,
-            "\(playing game (?P<gameno>\d+): (?P<p1>\S+?)%s vs. (?P<p2>\S+?)%s\)"
-            % (titles, titles), "\(%s (?P<busymessage>.+?)\)" % names,
-            "%s has not played any rated games\." % names,
+            r"%s is in (?P<silence>silence) mode\." % names,
+            r"\(playing game (?P<gameno>\d+): (?P<p1>\S+?)%s vs. (?P<p2>\S+?)%s\)"
+            % (titles, titles), r"\(%s (?P<busymessage>.+?)\)" % names,
+            r"%s has not played any rated games\." % names,
             "rating +RD +win +loss +draw +total +best",
             "(?P<gametype>%s) +(?P<ratings>.+)" % types,
             "Email *: (?P<email>.+)", "Sanctions *: (?P<sanctions>.+)",
             "Total time online: (?P<tto>.+)",
-            "% of life online:  [\d\.]+  \(since (?P<created>.+?)\)",
-            "Timeseal [ \\d] : (?P<timeseal>Off|On)",
+            r"% of life online:  [\d\.]+  \(since (?P<created>.+?)\)",
+            r"Timeseal [ \d] : (?P<timeseal>Off|On)",
             "Admin Level: (?P<adminlevel>.+)",
-            "(?P<noteno>\d+): *(?P<note>.*)", "$")
+            r"(?P<noteno>\d+): *(?P<note>.*)", "$")
 
         self.connection.expect_fromplus(self.onFinger, "Finger of %s:" % names,
                                         "$|".join(fingerLines))

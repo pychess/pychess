@@ -66,12 +66,12 @@ pattern = re.compile(r"""
     )    # move (full, count, move with ?!, ?!)
     """, re.VERBOSE | re.DOTALL)
 
-move_eval_re = re.compile("\[%eval\s+([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]")
-move_time_re = re.compile("\[%emt\s+(\d:)?(\d{1,2}:)?(\d{1,4})(?:\.(\d{1,3}))?\]")
+move_eval_re = re.compile(r"\[%eval\s+([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]")
+move_time_re = re.compile(r"\[%emt\s+(\d:)?(\d{1,2}:)?(\d{1,4})(?:\.(\d{1,3}))?\]")
 
 # Chessbase style circles/arrows {[%csl Ra3][%cal Gc2c3,Rc3d4]}
-comment_circles_re = re.compile("\[%csl\s+((?:[RGBY]\w{2},?)+)\]")
-comment_arrows_re = re.compile("\[%cal\s+((?:[RGBY]\w{4},?)+)\]")
+comment_circles_re = re.compile(r"\[%csl\s+((?:[RGBY]\w{2},?)+)\]")
+comment_arrows_re = re.compile(r"\[%cal\s+((?:[RGBY]\w{4},?)+)\]")
 
 # Mandatory tags (except "Result")
 mandatory_tags = ("Event", "Site", "Date", "Round", "White", "Black")
@@ -95,7 +95,7 @@ def parseClockTimeTag(tag):
     Parses 'WhiteClock'/'BlackClock' PGN headers and returns the time the
     player playing that color has left on their clock in milliseconds
     """
-    match = re.match("(\d{1,2}):(\d\d):(\d\d).(\d{1,3})", tag)
+    match = re.match(r"(\d{1,2}):(\d\d):(\d\d).(\d{1,3})", tag)
     if match:
         hour, minute, sec, msec = match.groups()
         return int(msec) + int(sec) * 1000 + int(minute) * 60 * 1000 + int(
@@ -107,12 +107,12 @@ def parseTimeControlTag(tag):
     Parses 'TimeControl' PGN header and returns the time and gain the
     players have on game start in seconds
     """
-    match = re.match("^(\d+)\+?(\-?\d+)?$", tag)
+    match = re.match(r"^(\d+)\+?(\-?\d+)?$", tag)
     if match:
         secs, gain = match.groups()
         return int(secs), int(gain) if gain is not None else 0, 0
     else:
-        match = re.match("^(\d+)\/(\d+)$", tag)
+        match = re.match(r"^(\d+)\/(\d+)$", tag)
         if match:
             moves, secs = match.groups()
             return int(secs), 0, int(moves)
@@ -226,7 +226,7 @@ def save(handle, model, position=None, flip=False):
             if not crlf and last != " " and last != "\t" and last != "(" and not text.startswith("\r") and not text.startswith("\n") and text != ")" and len(buffer) > 0:
                 buffer += " "
             # New line for a new main move
-            if len(buffer) == 0 or (indented and depth == 0 and last != "\r" and last != "\n" and re.match("^[0-9]+\.", text) is not None):
+            if len(buffer) == 0 or (indented and depth == 0 and last != "\r" and last != "\n" and re.match(r"^[0-9]+\.", text) is not None):
                 buffer += os.linesep
                 crlf = True
             # Alignment

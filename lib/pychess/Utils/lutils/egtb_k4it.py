@@ -13,7 +13,7 @@ from pychess.System.Log import log
 from pychess.System import conf
 
 URL = "http://www.k4it.de/egtb/fetch.php?action=egtb&fen="
-expression = re.compile("(\d+)-(\d+)-?(\d+)?: (Win in \d+|Draw|Lose in \d+)")
+expression = re.compile(r"(\d+)-(\d+)-?(\d+)?: (Win in \d+|Draw|Lose in \d+)")
 PROMOTION_FLAGS = {
     2: QUEEN_PROMOTION,
     3: ROOK_PROMOTION,

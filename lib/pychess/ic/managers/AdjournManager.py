@@ -32,7 +32,7 @@ reasons_dict = {
 }
 
 reasons = "(%s)" % "|".join(reasons_dict.keys())
-ratings = "([0-9\ \-\+]{1,4}[P E]?|UNR)"
+ratings = r"([0-9\ \-\+]{1,4}[P E]?|UNR)"
 
 
 class AdjournManager(GObject.GObject):
@@ -54,35 +54,35 @@ class AdjournManager(GObject.GObject):
         self.connection = connection
 
         self.connection.expect_line(self.__onStoredResponseNO,
-                                    "%s has no adjourned games\." % names)
+                                    r"%s has no adjourned games\." % names)
 
         self.connection.expect_line(self.__onHistoryResponseNO,
-                                    "%s has no history games\." % names)
+                                    r"%s has no history games\." % names)
 
         self.connection.expect_line(
             self.__onJournalResponseNO,
-            "(%s has no journal entries\.)|(That journal is private.)" % names)
+            r"(%s has no journal entries\.)|(That journal is private.)" % names)
 
         self.connection.expect_fromABplus(
             self.__onStoredResponseYES, "Stored games for %s:" % names,
-            "\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
-            "\s*\d+: (B|W) %s\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s"
+            r"\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
+            r"\s*\d+: (B|W) %s\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s"
             % (names, dates))
 
         self.connection.expect_fromABplus(
             self.__onHistoryResponseYES, "History for %s:" % names,
-            "\s*Opponent\s+Type\s+ECO\s+End\s+Date",
-            "\s*(\d+): (-|\+|=)\s+(\d+)\s+(W|B)\s+(\d+) %s\s+\[([a-z ]{3})\s*(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s"
+            r"\s*Opponent\s+Type\s+ECO\s+End\s+Date",
+            r"\s*(\d+): (-|\+|=)\s+(\d+)\s+(W|B)\s+(\d+) %s\s+\[([a-z ]{3})\s*(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s"
             % (names, reasons, dates))
 
         self.connection.expect_fromABplus(
             self.__onJournalResponseYES, "Journal for %s:" % names,
-            "\s*White\s+Rating\s+Black\s+Rating\s+Type\s+ECO\s+End\s+Result",
-            "\s*%%(\d+): %s\s+%s\s+%s\s+%s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+(\*|1/2-1/2|1-0|0-1)"
+            r"\s*White\s+Rating\s+Black\s+Rating\s+Type\s+ECO\s+End\s+Result",
+            r"\s*%%(\d+): %s\s+%s\s+%s\s+%s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+(\*|1/2-1/2|1-0|0-1)"
             % (names, ratings, names, ratings, reasons))
 
         self.connection.expect_line(self.__onAdjournedGameResigned,
-                                    "You have resigned the game\.")
+                                    r"You have resigned the game\.")
 
         self.connection.bm.connect("curGameEnded", self.__onCurGameEnded)
 

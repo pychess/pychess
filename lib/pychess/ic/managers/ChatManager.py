@@ -8,11 +8,11 @@ from gi.repository import GLib, GObject
 from pychess.System.Log import log
 from pychess.ic import GAME_TYPES, BLKCMD_ALLOBSERVERS
 
-titles = "(?:\([A-Z*]+\))*"
+titles = r"(?:\([A-Z*]+\))*"
 names = "([A-Za-z]+)" + titles
 titlesC = re.compile(titles)
 namesC = re.compile(names)
-ratings = "\(\s*([0-9\ \-\+]{1,4}[P E]?|UNR)\)"
+ratings = r"\(\s*([0-9\ \-\+]{1,4}[P E]?|UNR)\)"
 
 CHANNEL_SHOUT = "shout"
 CHANNEL_CSHOUT = "cshout"
@@ -55,26 +55,26 @@ class ChatManager(GObject.GObject):
 
         self.connection.expect_line(
             self.onPrivateMessage,
-            "%s(\*)?(?:\[\d+\])? (?:tells you|says): (.*)" % names)
+            r"%s(\*)?(?:\[\d+\])? (?:tells you|says): (.*)" % names)
         self.connection.expect_line(self.onAnnouncement,
-                                    "\s*\*\*ANNOUNCEMENT\*\* (.*)")
+                                    r"\s*\*\*ANNOUNCEMENT\*\* (.*)")
         self.connection.expect_line(self.onChannelMessage,
-                                    "%s(\*)?\((\d+)\): (.*)" % names)
+                                    r"%s(\*)?\((\d+)\): (.*)" % names)
         self.connection.expect_line(self.onShoutMessage,
-                                    "%s(\*)? (c-)?shouts: (.*)" % names)
+                                    r"%s(\*)? (c-)?shouts: (.*)" % names)
         self.connection.expect_line(self.onShoutMessage,
-                                    "--> %s(\*)?:? (.*)" % names)
+                                    r"--> %s(\*)?:? (.*)" % names)
         self.connection.expect_line(self.onKibitzMessage,
-                                    "%s%s\[(\d+)\] kibitzes: (.*)" %
+                                    r"%s%s\[(\d+)\] kibitzes: (.*)" %
                                     (names, ratings))
         self.connection.expect_line(self.onWhisperMessage,
-                                    "%s%s\[(\d+)\] whispers: (.*)" %
+                                    r"%s%s\[(\d+)\] whispers: (.*)" %
                                     (names, ratings))
 
         self.connection.expect_line(self.onArrivalNotification,
-                                    "Notification: %s has arrived\." % names)
+                                    r"Notification: %s has arrived\." % names)
         self.connection.expect_line(self.onDepartedNotification,
-                                    "Notification: %s has departed\." % names)
+                                    r"Notification: %s has departed\." % names)
 
         self.connection.expect_fromto(
             self.onChannelList, "channels only for their designated topics.",
@@ -82,24 +82,24 @@ class ChatManager(GObject.GObject):
 
         self.connection.expect_line(
             lambda m: GLib.idle_add(self.emit, 'channelAdd', m.groups()[0]),
-            "\[(\d+)\] added to your channel list.")
+            r"\[(\d+)\] added to your channel list.")
         self.connection.expect_line(
             lambda m: GLib.idle_add(self.emit, 'channelRemove', m.groups()[0]),
-            "\[(\d+)\] removed to your channel list.")
+            r"\[(\d+)\] removed to your channel list.")
 
         self.connection.expect_line(
             lambda m: GLib.idle_add(self.emit, 'channelJoinError', *m.groups()),
-            "Only (.+?) may join channel (\d+)\.")
+            r"Only (.+?) may join channel (\d+)\.")
 
         self.connection.expect_line(self.getNoChannelPlayers,
-                                    "Channel (\d+) is empty\.")
+                                    r"Channel (\d+) is empty\.")
         self.connection.expect_fromto(
-            self.getChannelPlayers, "Channel (\d+)(?: \"(\w+)\")?: (.+)",
-            "(\d+) player(?: is|s are) in channel \d+\.")
+            self.getChannelPlayers, r"Channel (\d+)(?: \"(\w+)\")?: (.+)",
+            r"(\d+) player(?: is|s are) in channel \d+\.")
 
         self.connection.expect_fromto(self.gotPlayerChannels,
                                       "%s is in the following channels:" %
-                                      names, "(?!(?:\d+\s+)+)")
+                                      names, r"(?!(?:\d+\s+)+)")
 
         # self.connection.expect_line (self.toldChannel,
         #        '\(told (\d+) players in channel (\d+) ".+"\)')
@@ -113,10 +113,10 @@ class ChatManager(GObject.GObject):
         self.currentLogChannel = None
         self.connection.expect_line(
             self.onChannelLogStart,
-            ":Channel (\d+|shout|c-shout) log for the last \d+ minutes:$")
+            r":Channel (\d+|shout|c-shout) log for the last \d+ minutes:$")
         self.connection.expect_line(
             self.onChannelLogLine,
-            ":\[(\d+):(\d+):(\d+)\] (?:(?:--> )?%s(?: shouts)?)\S* (.+)$" %
+            r":\[(\d+):(\d+):(\d+)\] (?:(?:--> )?%s(?: shouts)?)\S* (.+)$" %
             names)
         self.connection.expect_line(self.onChannelLogBreak,
                                     ":Use \"tell chLog Next\" to print more.$")
@@ -140,10 +140,10 @@ class ChatManager(GObject.GObject):
         # Observing 112 [DrStupp vs. hajaK]: pgg (1 user)
         self.connection.expect_line(
             self.get_allob_list,
-            '(?:Observing|Examining)\s+(\d+).+: (.+) \(')
+            r'(?:Observing|Examining)\s+(\d+).+: (.+) \(')
 
         self.connection.expect_line(self.on_allob_no,
-                                    "No one is observing game (\d+).")
+                                    r"No one is observing game (\d+).")
 
     def get_allob_list(self, match):
         """ Description: Processes the returning pattern matched of the FICS allob command
@@ -196,7 +196,7 @@ class ChatManager(GObject.GObject):
         channels = self.connection.lvm.getList("channel")
         return channels
 
-    channelListItem = re.compile("((?:\d+,?)+)\s*(.*)")
+    channelListItem = re.compile(r"((?:\d+,?)+)\s*(.*)")
 
     def onChannelList(self, matchlist):
         self.channels = [(CHANNEL_SHOUT, _("Shout")),

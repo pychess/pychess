@@ -12,16 +12,16 @@ from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 from pychess.ic.managers.BoardManager import parse_reason
 
 rated = "(rated|unrated)"
-colors = "(?:\[(white|black)\]\s?)?"
-ratings = "([\d\+\- ]{1,4})"
-titleslist = "(?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|CA|CM|FA|NM|C|U|D|B|T|H|\*)"
+colors = r"(?:\[(white|black)\]\s?)?"
+ratings = r"([\d\+\- ]{1,4})"
+titleslist = r"(?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|CA|CM|FA|NM|C|U|D|B|T|H|\*)"
 titleslist_re = re.compile(titleslist)
-titles = "((?:\(%s\))+)?" % titleslist
+titles = r"((?:\(%s\))+)?" % titleslist
 names = "([a-zA-Z]+)%s" % titles
-mf = "(?:([mf]{1,2})\s?)?"
-whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
+mf = r"(?:([mf]{1,2})\s?)?"
+whomatch = r"(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
-whoI = "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)"
+whoI = r"([A-Za-z]+)([\^~:\#. &])(\\d{2})" + r"(\d{1,4})([P E])" * 8 + r"(\d{1,4})([PE]?)"
 re_whoI = re.compile(whoI)
 
 
@@ -43,37 +43,37 @@ class HelperManager(GObject.GObject):
         # 6 games displayed (of 23 in progress)
         self.helperconn.expect_fromto(
             self.on_game_list,
-            "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
+            r"(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
             %
             (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())),
-            "(\d+) games displayed.")
+            r"(\d+) games displayed.")
 
         if self.helperconn.FatICS or self.helperconn.USCN:
-            self.helperconn.expect_line(self.on_player_who, "%s(?:\s{2,}%s)+" %
+            self.helperconn.expect_line(self.on_player_who, r"%s(?:\s{2,}%s)+" %
                                         (whomatch, whomatch))
             self.helperconn.expect_line(self.on_player_connect,
-                                        "\[([A-Za-z]+) has connected\.\]")
+                                        r"\[([A-Za-z]+) has connected\.\]")
             self.helperconn.expect_line(self.on_player_disconnect,
-                                        "\[([A-Za-z]+) has disconnected\.\]")
+                                        r"\[([A-Za-z]+) has disconnected\.\]")
         else:
             # New ivar pin
             # http://www.freechess.org/Help/HelpFiles/new_features.html
-            self.helperconn.expect_fromto(self.on_player_whoI, whoI, "(\d+) Players Displayed.")
+            self.helperconn.expect_fromto(self.on_player_whoI, whoI, r"(\d+) Players Displayed.")
             self.helperconn.expect_line(self.on_player_connectI, "<wa> %s" % whoI)
             self.helperconn.expect_line(self.on_player_disconnectI, "<wd> ([A-Za-z]+)")
 
         self.helperconn.expect_line(
             self.on_game_add,
-            "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
+            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
         self.helperconn.expect_line(
             self.on_game_remove,
-            "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
+            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
         self.helperconn.expect_line(self.on_player_unavailable,
                                     "%s is no longer available for matches." %
                                     names)
         self.helperconn.expect_fromto(
             self.on_player_available,
-            "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)"
+            r"%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)"
             % (names, ratings, ratings, ratings, ratings, ratings),
             "is now available for matches.")
 

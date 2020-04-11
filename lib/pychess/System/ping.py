@@ -25,7 +25,7 @@ class Pinger(GObject.GObject):
         self.host = host
         self.subproc = None
 
-        self.expression = re.compile("=([\d\.]+) (m?s)")
+        self.expression = re.compiler(r"=([\d\.]+) (m?s)")
 
         # We need untranslated error messages in regexp search
         # below, so have to use deferred translation here

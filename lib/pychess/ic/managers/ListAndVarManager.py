@@ -13,17 +13,17 @@ class ListAndVarManager:
 
         if self.connection.USCN:
             self.connection.expect_line(self.onUpdateList,
-                                        "(?:\w+\s+is (?:PUBLIC|PERSONAL))|$")
+                                        r"(?:\w+\s+is (?:PUBLIC|PERSONAL))|$")
         else:
             self.connection.expect_fromplus(
                 self.onUpdateLists, "Lists:",
-                "(?:\w+\s+is (?:PUBLIC|PERSONAL))|$")
+                r"(?:\w+\s+is (?:PUBLIC|PERSONAL))|$")
 
         self.connection.expect_line(self.onUpdateEmptyListitems,
-                                    "-- (\w+) list: 0 \w+ --")
+                                    r"-- (\w+) list: 0 \w+ --")
         self.connection.expect_fromplus(self.onUpdateListitems,
-                                        "-- (\w+) list: ([1-9]\d*) \w+ --",
-                                        "(?:\w+ *)+$")
+                                        r"-- (\w+) list: ([1-9]\d*) \w+ --",
+                                        r"(?:\w+ *)+$")
 
         self.connection.client.run_command("showlist")
 

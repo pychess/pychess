@@ -10,14 +10,14 @@ from pychess.ic.FICSObjects import FICSSeek
 from pychess.System.Log import log
 
 rated = "(rated|unrated)"
-colors = "(?:\[(white|black)\]\s?)?"
-ratings = "([\d\+\- ]{1,4})"
-titleslist = "(?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|CA|C|U|D|B|T|\*)"
+colors = r"(?:\[(white|black)\]\s?)?"
+ratings = r"([\d\+\- ]{1,4})"
+titleslist = r"(?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|CA|C|U|D|B|T|\*)"
 titleslist_re = re.compile(titleslist)
-titles = "((?:\(%s\))+)?" % titleslist
+titles = r"((?:\(%s\))+)?" % titleslist
 names = "([a-zA-Z]+)%s" % titles
-mf = "(?:([mf]{1,2})\s?)?"
-whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
+mf = r"(?:([mf]{1,2})\s?)?"
+whomatch = r"(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
 rating_re = re.compile("[0-9]{2,}")
 type_re = "(Lightning|Blitz|Standard|Suicide|Wild|Crazyhouse|Bughouse|Losers|Atomic)"
@@ -40,22 +40,22 @@ class SeekManager(GObject.GObject):
 
         self.connection.expect_line(self.on_seek_clear, "<sc>")
         self.connection.expect_line(self.on_seek_add, "<s(?:n?)> (.+)")
-        self.connection.expect_line(self.on_seek_remove, "<sr> ([\d ]+)")
+        self.connection.expect_line(self.on_seek_remove, r"<sr> ([\d ]+)")
         self.connection.expect_n_lines(self.on_our_seeks_removed,
-                                       "<sr> ([\d ]+)",
-                                       "Your seeks have been removed\.")
+                                       r"<sr> ([\d ]+)",
+                                       r"Your seeks have been removed\.")
         self.connection.expect_n_lines(self.on_seek_updated,
-                                       "Updating seek ad (\d+)(?:;?) (.*)\.",
-                                       "", "<sr> (\d+)", "", "<sn> (.+)")
+                                       r"Updating seek ad (\d+)(?:;?) (.*)\.",
+                                       "", r"<sr> (\d+)", "", "<sn> (.+)")
         self.connection.expect_n_lines(self.on_seek_updated,
-                                       "Updating seek ad (\d+)(?:;?) (.*)\.",
-                                       "Updating seek ad \d+(?:;?) (.*)\.", "",
-                                       "<sr> (\d+)", "", "<sn> (.+)")
+                                       r"Updating seek ad (\d+)(?:;?) (.*)\.",
+                                       r"Updating seek ad \d+(?:;?) (.*)\.", "",
+                                       r"<sr> (\d+)", "", "<sn> (.+)")
 
         self.connection.expect_n_lines(
-            self.on_assess, "\s*%s\s*" % type_re, "\s*(\w+)\s+(\w+)\s*",
-            "\s*(\(.+\))\s+(\(.+\))\s*", "\s*Win: .+", "\s*Draw: .+",
-            "\s*Loss: .+", "\s*New RD: .+")
+            self.on_assess, r"\s*%s\s*" % type_re, r"\s*(\w+)\s+(\w+)\s*",
+            r"\s*(\(.+\))\s+(\(.+\))\s*", r"\s*Win: .+", r"\s*Draw: .+",
+            r"\s*Loss: .+", r"\s*New RD: .+")
 
         self.connection.client.run_command("iset seekinfo 1")
         self.connection.client.run_command("iset seekremove 1")
