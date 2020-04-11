@@ -1135,7 +1135,7 @@ class HelperManagerTests(EmittingTestCase):
         """ Make sure ratings <1000 are caught """
         lines = [
             "Artmachine Blitz (1276), Std ( 819), Wild (----), Light(----), Bug(----)",
-            "is now available for matches\."
+            r"is now available for matches\."
         ]
         signal = "ratings_changed"
         player = self.connection.players.get('Artmachine')

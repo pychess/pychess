@@ -7,7 +7,7 @@ TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
 
 
 def get_playername(playername):
-    re_m = re.match("(\w+)\W*", playername)
+    re_m = re.match(r"(\w+)\W*", playername)
     return re_m.groups()[0]
 
 

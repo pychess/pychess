@@ -13,18 +13,18 @@ from pychess.System.Log import log
 from pychess.ic import GAME_TYPES, VariantGameType
 from pychess.ic.FICSObjects import FICSChallenge
 
-names = "\w+(?:\([A-Z\*]+\))*"
+names = r"\w+(?:\([A-Z\*]+\))*"
 
 rated = "(rated|unrated)"
-colors = "(?:\[(white|black)\])?"
-ratings = "\(([0-9\ \-\+]{1,4}[E P]?)\)"
-loaded_from = "(?: Loaded from (wild[/\w]*))?"
-adjourned = "(?: (\(adjourned\)))?"
+colors = r"(?:\[(white|black)\])?"
+ratings = r"\(([0-9\ \-\+]{1,4}[E P]?)\)"
+loaded_from = r"(?: Loaded from (wild[/\w]*))?"
+adjourned = r"(?: (\(adjourned\)))?"
 
-matchreUntimed = re.compile("(\w+) %s %s ?(\w+) %s %s (untimed)\s*" %
+matchreUntimed = re.compile(r"(\w+) %s %s ?(\w+) %s %s (untimed)\s*" %
                             (ratings, colors, ratings, rated))
 matchre = re.compile(
-    "(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)%s%s" %
+    r"(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)%s%s" %
     (ratings, colors, ratings, rated, loaded_from, adjourned))
 
 # <pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) [black] GuestNXMP (----) unrated blitz 2 12
@@ -73,8 +73,8 @@ class OfferManager(GObject.GObject):
         self.connection = connection
 
         self.connection.expect_line(
-            self.onOfferAdd, "<p(t|f)> (\d+) w=%s t=(\w+) p=(.+)" % names)
-        self.connection.expect_line(self.onOfferRemove, "<pr> (\d+)")
+            self.onOfferAdd, r"<p(t|f)> (\d+) w=%s t=(\w+) p=(.+)" % names)
+        self.connection.expect_line(self.onOfferRemove, r"<pr> (\d+)")
 
         for ficsstring, offer, error in (
             ("You cannot switch sides once a game is underway.",
@@ -93,14 +93,14 @@ class OfferManager(GObject.GObject):
 
         self.connection.expect_line(
             self.notEnoughMovesToUndo,
-            "There are (?:(no)|only (\d+) half) moves in your game\.")
+            r"There are (?:(no)|only (\d+) half) moves in your game\.")
 
         self.connection.expect_line(self.noOffersToAccept,
                                     "There are no ([^ ]+) offers to (accept).")
 
         self.connection.expect_line(
             self.onOfferDeclined,
-            "\w+ declines the (draw|takeback|pause|unpause|abort|adjourn) request\.")
+            r"\w+ declines the (draw|takeback|pause|unpause|abort|adjourn) request\.")
 
         self.lastPly = 0
         self.offers = {}

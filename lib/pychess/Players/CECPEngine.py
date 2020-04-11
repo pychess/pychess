@@ -46,7 +46,7 @@ movere = re.compile(r"""
 
 d_plus_dot_expr = re.compile(r"\d+\.")
 
-anare = re.compile("""
+anare = re.compile(r"""
     ^                        # beginning of string
     (\s*                     #
     \d+ [+\-\.]?             # The ply analyzed. Some engines end it with a dot, minus or plus

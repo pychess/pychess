@@ -12,7 +12,7 @@ count_games = select([func.count()]).select_from(game)
 
 
 def parseDateTag(tag):
-    elements = re.match("^([0-9\?]{4})(\.([0-9\?]{2})(\.([0-9\?]{2}))?)?$", tag)
+    elements = re.match(r"^([0-9\?]{4})(\.([0-9\?]{2})(\.([0-9\?]{2}))?)?$", tag)
     if elements is None:
         y, m, d = None, None, None
     else:

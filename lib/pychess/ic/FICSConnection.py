@@ -249,7 +249,7 @@ class FICSConnection(Connection):
                     raise LogOnException(ALREADYIN % self.username)
 
                 match = re.search(
-                    "\*\*\*\* Starting FICS session as " + "(%s)%s \*\*\*\*" %
+                    r"\*\*\*\* Starting FICS session as (%s)%s \*\*\*\*" %
                     (ic.NAMES_RE, ic.TITLES_RE), line)
                 if match:
                     self.username = match.groups()[0]
@@ -401,7 +401,7 @@ class FICSMainConnection(FICSConnection):
 
     def _post_connect_hook(self, lines):
         self.ini_messages = lines.splitlines()
-        notify_users = re.search("Present company includes: ((?:%s ?)+)\." %
+        notify_users = re.search(r"Present company includes: ((?:%s ?)+)\." %
                                  ic.NAMES_RE, lines)
         if notify_users:
             self.notify_users.extend(notify_users.groups()[0].split())

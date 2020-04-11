@@ -25,41 +25,41 @@ from pychess.ic import IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, GAME_TY
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSHistoryGame, \
     FICSAdjournedGame, FICSJournalGame, FICSPlayer
 
-names = "(\w+)"
-titles = "((?:\((?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
+names = r"(\w+)"
+titles = r"((?:\((?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
 ratedexp = "(rated|unrated)"
-ratings = "\(\s*([0-9\ \-\+]{1,4}[P E]?|UNR)\)"
+ratings = r"\(\s*([0-9\ \-\+]{1,4}[P E]?|UNR)\)"
 
 weekdays = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
           "Nov", "Dec"]
 
 # "Thu Oct 14, 20:36 PDT 2010"
-dates = "(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" % \
+dates = r"(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" % \
     ("|".join(weekdays), "|".join(months))
 
 # "2010-10-14 20:36 UTC"
-datesFatICS = "(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})\s+(UTC)"
+datesFatICS = r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})\s+(UTC)"
 
 moveListHeader1Str = "%s %s vs. %s %s --- (?:%s|%s)" % (
     names, ratings, names, ratings, dates, datesFatICS)
 moveListHeader1 = re.compile(moveListHeader1Str)
-moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." % \
+moveListHeader2Str = r"%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." % \
     ratedexp
 moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
 sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
-movetime = "\((\d:)?(\d{1,2}):(\d\d)(?:\.(\d{1,3}))?\)"
-moveListMoves = re.compile("\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" %
+movetime = r"\((\d:)?(\d{1,2}):(\d\d)(?:\.(\d{1,3}))?\)"
+moveListMoves = re.compile(r"\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" %
                            (sanmove, movetime, sanmove, movetime))
 
 creating0 = re.compile(
-    "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?" %
+    r"Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?" %
     (names, ratings, names, ratings, ratedexp))
 creating1 = re.compile(
-    "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\." %
+    r"{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\." %
     (names, names, ratedexp))
-pr = re.compile("<pr> ([\d ]+)")
-sr = re.compile("<sr> ([\d ]+)")
+pr = re.compile(r"<pr> ([\d ]+)")
+sr = re.compile(r"<sr> ([\d ]+)")
 
 fileToEpcord = (("a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"),
                 ("a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"))
@@ -211,7 +211,7 @@ class BoardManager(GObject.GObject):
         self.connection = connection
         self.connection.expect_line(self.onStyle12, "<12> (.+)")
         self.connection.expect_line(self.onWasPrivate,
-                                    "Sorry, game (\d+) is a private game\.")
+                                    r"Sorry, game (\d+) is a private game\.")
         self.connection.expect_line(self.tooManySeeks,
                                     "You can only have 3 active seeks.")
         self.connection.expect_line(
@@ -226,10 +226,10 @@ class BoardManager(GObject.GObject):
                                     "You are on %s's noplay list." % names)
         self.connection.expect_line(
             self.player_lagged,
-            "Game (\d+): %s has lagged for (\d+) seconds\." % names)
+            r"Game (\d+): %s has lagged for (\d+) seconds\." % names)
         self.connection.expect_line(
             self.opp_not_out_of_time,
-            "Opponent is not out of time, wait for server autoflag\.")
+            r"Opponent is not out of time, wait for server autoflag\.")
 
         self.connection.expect_n_lines(
             self.req_not_fit_formula,
@@ -238,21 +238,21 @@ class BoardManager(GObject.GObject):
 
         self.connection.expect_line(
             self.on_game_remove,
-            "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
+            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
 
         if self.connection.USCN:
             self.connection.expect_n_lines(
                 self.onPlayGameCreated,
-                "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+                r"Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
                 % (names, ratings, names, ratings, ratedexp), "",
-                "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+                r"{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
                 % (names, names, ratedexp), "", "<12> (.+)")
         else:
             self.connection.expect_n_lines(
                 self.onPlayGameCreated,
-                "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+                r"Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
                 % (names, ratings, names, ratings, ratedexp),
-                "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+                r"{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
                 % (names, names, ratedexp), "", "<12> (.+)")
 
         # TODO: Trying to precisely match every type of possible response FICS
@@ -265,47 +265,47 @@ class BoardManager(GObject.GObject):
         # VerboseTelnet.TelnetLines
         self.connection.expect_fromto(
             self.onMatchingSeekOrGetGame,
-            "Your seek (?:matches one already posted by %s|qualifies for %s's getgame)\."
+            r"Your seek (?:matches one already posted by %s|qualifies for %s's getgame)\."
             % (names, names), "(?:<12>|<sn>) (.+)")
         self.connection.expect_fromto(
             self.onInterceptedChallenge,
-            "Your challenge intercepts %s's challenge\." % names, "<12> (.+)")
+            r"Your challenge intercepts %s's challenge\." % names, "<12> (.+)")
 
         if self.connection.USCN:
             self.connection.expect_n_lines(self.onObserveGameCreated,
-                                           "You are now observing game \d+\.",
+                                           r"You are now observing game \d+\.",
                                            '', "<12> (.+)")
         else:
             self.connection.expect_n_lines(
-                self.onObserveGameCreated, "You are now observing game \d+\.",
-                "Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)" %
+                self.onObserveGameCreated, r"You are now observing game \d+\.",
+                r"Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)" %
                 (names, ratings, names, ratings, ratedexp), '', "<12> (.+)")
 
         self.connection.expect_fromto(self.onObserveGameMovesReceived,
-                                      "Movelist for game (\d+):",
-                                      "{Still in progress} \*")
+                                      r"Movelist for game (\d+):",
+                                      r"{Still in progress} \*")
 
         self.connection.expect_fromto(
             self.onArchiveGameSMovesReceived,
             moveListHeader1Str,
             #                                       "\s*{((?:Game courtesyadjourned by (Black|White))|(?:Still in progress)|(?:Game adjourned by mutual agreement)|(?:(White|Black) lost connection; game adjourned)|(?:Game adjourned by ((?:server shutdown)|(?:adjudication)|(?:simul holder))))} \*")
-            "\s*{.*(?:([Gg]ame.*adjourned.\s*)|(?:Still in progress)|(?:Neither.*)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*")
+            r"\s*{.*(?:([Gg]ame.*adjourned.\s*)|(?:Still in progress)|(?:Neither.*)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*")
 
         self.connection.expect_line(
-            self.onGamePause, "Game (\d+): Game clock (paused|resumed)\.")
+            self.onGamePause, r"Game (\d+): Game clock (paused|resumed)\.")
         self.connection.expect_line(
             self.onUnobserveGame,
-            "Removing game (\d+) from observation list\.")
+            r"Removing game (\d+) from observation list\.")
 
         self.connection.expect_line(
             self.made_examined,
-            "%s has made you an examiner of game (\d+)\." % names)
+            r"%s has made you an examiner of game (\d+)\." % names)
 
         self.connection.expect_line(self.made_unexamined,
-                                    "You are no longer examining game (\d+)\.")
+                                    r"You are no longer examining game (\d+)\.")
 
         self.connection.expect_n_lines(
-            self.onExamineGameCreated, "Starting a game in examine \(scratch\) mode\.",
+            self.onExamineGameCreated, r"Starting a game in examine \(scratch\) mode\.",
             '', "<12> (.+)")
 
         self.queuedEmits = {}

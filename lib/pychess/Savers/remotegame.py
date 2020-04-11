@@ -1134,7 +1134,7 @@ class InternetGameEuropeechecs(InternetGameInterface):
                 return None
 
             # Find the chess widgets
-            rxp = re.compile(".*class=\"cbwidget\"\s+id=\"([0-9a-f]+)_container\".*", re.IGNORECASE)
+            rxp = re.compile(r".*class=\"cbwidget\"\s+id=\"([0-9a-f]+)_container\".*", re.IGNORECASE)
             lines = page.split("\n")
             for line in lines:
                 m = rxp.match(line)
