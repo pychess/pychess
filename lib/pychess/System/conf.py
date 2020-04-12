@@ -23,8 +23,16 @@ for sect in ("FICS", "ICC"):
 path = addUserConfigPrefix("config")
 encoding = locale.getpreferredencoding()
 if os.path.isfile(path):
-    configParser.readfp(open(path, encoding=encoding))
-atexit.register(lambda: configParser.write(open(path, "w", encoding=encoding)))
+    with open(path, encoding=encoding) as fh:
+        configParser.readfp(fh)
+
+
+def save_config(path=path, encoding=encoding):
+    with open(path, "w", encoding=encoding) as fh:
+        configParser.write(fh)
+
+
+atexit.register(save_config)
 
 if sys.platform == "win32":
     username = os.environ["USERNAME"]
@@ -263,7 +271,8 @@ def set(key, value, section=section):
     # print("---conf set()", section, key, value)
     try:
         configParser.set(section, key, str(value))
-        configParser.write(open(path, "w"))
+        with open(path, "w") as fh:
+            configParser.write(fh)
     except Exception as err:
         log.error(
             "Unable to save configuration '%s'='%s' because of error: %s %s" %
