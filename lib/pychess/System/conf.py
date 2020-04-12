@@ -24,7 +24,7 @@ path = addUserConfigPrefix("config")
 encoding = locale.getpreferredencoding()
 if os.path.isfile(path):
     with open(path, encoding=encoding) as fh:
-        configParser.readfp(fh)
+        configParser.read_file(fh)
 
 
 def save_config(path=path, encoding=encoding):
