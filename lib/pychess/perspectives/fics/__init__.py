@@ -27,6 +27,24 @@ from pychess.Savers import pgn, fen
 from pychess.perspectives import Perspective, perspective_manager, panel_name
 
 
+if not hasattr(Gtk.TreeModelFilter, "new_with_model"):
+    # Fix #1811: TreeModelFilter.sort_new_with_model() is missing on some Gtk versions
+    # due to API changes. Let's keep compatibility with older versions.
+
+    def sort_new_with_model(self):
+        super_object = super(Gtk.TreeModel, self)
+        if hasattr(super_object, "sort_new_with_model"):
+            return super_object.sort_new_with_model()
+        return Gtk.TreeModelSort.new_with_model(self)
+
+    @classmethod
+    def new_with_model(self, child_model):
+        return Gtk.TreeModel.sort_new_with_model(child_model)
+
+    Gtk.TreeModel.sort_new_with_model = sort_new_with_model
+    Gtk.TreeModelFilter.new_with_model = new_with_model
+
+
 class PlayerNotificationMessage(InfoBarMessage):
 
     def __init__(self, message_type, content, callback, player, text):
