@@ -115,8 +115,8 @@ def cb_gameended(game, reason):
     printScoreboard()
     print()
 
-    f = open("arena.pgn", "a+")
-    save(f, game)
+    with open("arena.pgn", "a+") as fh:
+        save(fh, game)
 
     runGame()
 

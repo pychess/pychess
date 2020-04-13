@@ -396,13 +396,11 @@ class PgnImport():
                 if self.append_pgn:
                     # reopen database to write
                     self.db_handle.close()
-                    self.db_handle = protosave(self.chessfile.path, self.append_pgn)
-
-                    log.info("Append from %s to %s" % (pgnfile, self.chessfile.path))
-                    handle.seek(0)
-                    self.db_handle.writelines(handle)
-                    self.db_handle.close()
-                    handle.close()
+                    with protosave(self.chessfile.path, self.append_pgn) as self.db_handle:
+                        log.info("Append from %s to %s" % (pgnfile, self.chessfile.path))
+                        handle.seek(0)
+                        self.db_handle.writelines(handle)
+                        handle.close()
 
                     if self.chessfile.scoutfish is not None:
                         # create new .scout from pgnfile we are importing

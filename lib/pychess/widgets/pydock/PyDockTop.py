@@ -167,9 +167,8 @@ class PyDockTop(PyDockComposite, TabReceiver):
 
         if self.get_child():
             self.__addToXML(self.get_child(), dockElem, doc)
-        f_handle = open(xmlpath, "w")
-        doc.writexml(f_handle)
-        f_handle.close()
+        with open(xmlpath, "w") as f_handle:
+            doc.writexml(f_handle)
         doc.unlink()
 
     def __addToXML(self, component, parentElement, document):
