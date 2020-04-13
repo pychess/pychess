@@ -56,7 +56,8 @@ class EngineDiscoverer(GObject.GObject):
         self.jsonpath = addUserConfigPrefix("engines.json")
         self.engines = []
         try:
-            self.engines = json.load(open(self.jsonpath))
+            with open(self.jsonpath) as fh:
+                self.engines = json.load(fh)
         except ValueError as err:
             log.warning(
                 "engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s\n%s"

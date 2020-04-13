@@ -202,11 +202,11 @@ def newTheme(widget, background=None):
     # Check if a cache has been saved
     temppng = addUserCachePrefix("temp.png")
     if path.isfile(temppng):
-        fyle = open(temppng, "rb")
-        # Check if the cache was made while using the same theme
-        if list(fyle.read(6)) == colors:
-            surface = cairo.ImageSurface.create_from_png(fyle)
-            return
+        with open(temppng, "rb") as fyle:
+            # Check if the cache was made while using the same theme
+            if list(fyle.read(6)) == colors:
+                surface = cairo.ImageSurface.create_from_png(fyle)
+                return
 
     # Get mostly transparant shadowy image
     imgsurface = cairo.ImageSurface.create_from_png(background)
@@ -227,9 +227,9 @@ def newTheme(widget, background=None):
 
     # Save a cache for later use. Save 'newcolor' in the frist three pixels
     # to check for theme changes between two instances
-    fyle = open(temppng, "wb")
-    fyle.write(bytes(colors))
-    surface.write_to_png(fyle)
+    with open(temppng, "wb") as fyle:
+        fyle.write(bytes(colors))
+        surface.write_to_png(fyle)
 
 
 def isDarkTheme(widget):

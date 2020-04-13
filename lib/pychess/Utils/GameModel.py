@@ -676,7 +676,8 @@ class GameModel(GObject.GObject):
         else:
             fileobj = uri
             self.uri = None
-        saver.save(fileobj, self, position, flip)
+        with fileobj:
+            saver.save(fileobj, self, position, flip)
         self.needsSave = False
         self.emit("game_saved", uri)
 

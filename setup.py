@@ -141,10 +141,12 @@ stderr = sys.stderr
 stdout = sys.stdout
 
 if not isfile("eco.db"):
-    exec(open("pgn2ecodb.py").read())
+    with open("pgn2ecodb.py") as fh:
+        exec(fh.read())
 
 if not isfile(os.path.abspath("pieces/Pychess.png")):
-    exec(open("create_theme_preview.py").read())
+    with open("create_theme_preview.py") as fh:
+        exec(fh.read())
 
 # restore
 sys.stderr = stderr
