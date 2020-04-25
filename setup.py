@@ -205,7 +205,7 @@ for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d)) and
     DATA_FILES += [("share/pychess/pieces/" + dir, glob('pieces/' + dir + '/*.svg'))]
 
 # Manpages
-DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
+DATA_FILES += [('share/man/man1', ['manpages/pychess.1'])]
 
 # Language
 pofile = "LC_MESSAGES/pychess"

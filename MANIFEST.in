@@ -3,7 +3,7 @@ recursive-include pieces *
 include README.md AUTHORS ARTISTS DOCUMENTERS LICENSE INSTALL TRANSLATORS
 include sounds/*.ogg
 include learn/lectures/*.txt learn/lessons/*.pgn learn/lessons/*.sqlite learn/puzzles/*.pgn learn/puzzles/*.sqlite learn/puzzles/*.olv
-include manpages/pychess.1.gz
+include manpages/pychess.1
 include menu/pychess
 include gtksourceview-3.0/language-specs/pgn.lang
 include pychess_book.bin eco.db
