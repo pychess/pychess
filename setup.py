@@ -168,7 +168,7 @@ DATA_FILES += [("share/pychess/boards", glob('boards/*.png'))]
 
 # Data
 DATA_FILES += [('share/mime/packages', ['pychess.xml'])]
-DATA_FILES += [('share/appdata', ['pychess.appdata.xml'])]
+DATA_FILES += [('share/metainfo', ['pychess.metainfo.xml'])]
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
 DATA_FILES += [('share/icons/hicolor/scalable/apps', ['pychess.svg'])]
 DATA_FILES += [('share/menu', ['menu/pychess'])]
