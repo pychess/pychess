@@ -800,7 +800,7 @@ class PGNFile(ChessFile):
         self.has_emt = False
         self.has_eval = False
 
-        def walk(model, node, path):
+        def _create_board(model, node):
             if node.prev is None:
                 # initial game board
                 board = model.variant(setup=node.asFen(), lboard=node)
@@ -813,21 +813,34 @@ class PGNFile(ChessFile):
                         _("Invalid move."),
                         "%s%s" % (move_count(node, black_periods=True), move))
 
-            if node.next is None:
-                model.variations.append(path + [board])
-            else:
-                walk(model, node.next, path + [board])
+            return board
 
-            for child in node.children:
-                if isinstance(child, list):
-                    if len(child) > 1:
-                        # non empty variation, go walk
-                        walk(model, child[1], list(path))
-                else:
-                    if not self.has_emt:
-                        self.has_emt = child.find("%emt") >= 0
-                    if not self.has_eval:
-                        self.has_eval = child.find("%eval") >= 0
+        def walk(model, node, path):
+            boards = path
+            stack = []
+            current = node
+
+            while current is not None:
+                board = _create_board(model, current)
+                boards.append(board)
+                stack.append(current)
+                current = current.next
+            else:
+                model.variations.append(list(boards))
+
+            while stack:
+                current = stack.pop()
+                boards.pop()
+                for child in current.children:
+                    if isinstance(child, list):
+                        if len(child) > 1:
+                            # non empty variation, go walk
+                            walk(model, child[1], list(boards))
+                    else:
+                        if not self.has_emt:
+                            self.has_emt = child.find("%emt") >= 0
+                        if not self.has_eval:
+                            self.has_eval = child.find("%eval") >= 0
 
         # Collect all variation paths into a list of board lists
         # where the first one will be the boards of mainline game.
