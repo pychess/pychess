@@ -595,9 +595,11 @@ class BoardView(Gtk.DrawingArea):
 
         if (self.shown != shown) and not self.setup_position:
             algorithm = self.model.support_algorithm
+            x = shown - self.model.lowply
+            if x >= len(self.model.boards):
+                x = -1
             algorithm.calculate_coordinate_in_danger(
-                self.model.boards[shown - self.model.lowply],
-                (shown % 2)
+                self.model.boards[x], (shown % 2)
             )
             need_redraw = True
 
