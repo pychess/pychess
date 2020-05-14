@@ -50,7 +50,6 @@ class ParsingError(Exception):
 
 
 def sittuyin_promotion_fcord(board, tcord):
-    from pychess.Variants import variants
     queenMoves = moveArray[ASEAN_QUEEN]
     for fcord in iterBits(queenMoves[tcord]):
         if board.arBoard[fcord]:

@@ -81,7 +81,7 @@ class LearnInfoBar(Gtk.InfoBar):
     def get_next_puzzle(self):
         self.clear()
         self.set_message_type(Gtk.MessageType.INFO)
-        if self.gamemodel.learn_type in(LESSON, PUZZLE) and self.gamemodel.current_index + 1 == self.gamemodel.game_count:
+        if self.gamemodel.learn_type in (LESSON, PUZZLE) and self.gamemodel.current_index + 1 == self.gamemodel.game_count:
             self.content_area.add(Gtk.Label(_("Well done! %s completed." % learn2str[self.gamemodel.learn_type])))
         else:
             if "FEN" in self.gamemodel.tags:
