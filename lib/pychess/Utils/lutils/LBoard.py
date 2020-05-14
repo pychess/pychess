@@ -246,7 +246,7 @@ class LBoard:
         promoted = False
         # if there is a holding within [] we change it to BFEN style first
         if pieceChrs.endswith("]"):
-            pieceChrs = pieceChrs[:-1].replace("[", "/")
+            pieceChrs = pieceChrs[:-1].replace("[", "/").replace("-", "")
         for r, rank in enumerate(pieceChrs.split("/")):
             cord = (7 - r) * 8
             for char in rank:

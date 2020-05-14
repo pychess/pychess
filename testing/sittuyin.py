@@ -59,6 +59,16 @@ FEN3 = "5k2/8/R2P4/8/8/8/8/4K3 w - - 0 9"
 # . . . . . . . .
 FEN4 = "5k2/8/2r2K2/3P3p/8/5nn1/8/8 w - - 0 9"
 
+# . . . . . . . .
+# . . ♚ . . . . .
+# . . . . . . . .
+# . . . . . . . .
+# ♜ . . . . . . .
+# . ♙ . . . . . .
+# . . . . . . . .
+# . ♖ ♔ . . . . .
+FEN5 = "8/2k5/8/8/r7/1P6/8/1RK5[] w - - 0 1"
+
 
 class SittuyinTestCase(unittest.TestCase):
     def test_validate(self):
@@ -114,6 +124,18 @@ class SittuyinTestCase(unittest.TestCase):
         self.assertTrue(validate(board, parseAN(board, 'd6e5f')))
         # pawn promotion move can't give check
         self.assertFalse(validate(board, parseAN(board, 'd6e7f')))
+
+        # https://www.facebook.com/Myanmar-Sittuyin-105323654491347/
+        board = SittuyinBoard(setup=FEN5)
+        print(board)
+        self.assertTrue(validate(board, parseAN(board, 'b3b4')))
+        self.assertTrue(validate(board, parseAN(board, 'b3a4')))
+
+        self.assertFalse(validate(board, parseAN(board, 'b3a4f')))
+        self.assertTrue(validate(board, parseAN(board, 'b3a2f')))
+        self.assertTrue(validate(board, parseAN(board, 'b3c2f')))
+        self.assertTrue(validate(board, parseAN(board, 'b3c4f')))
+        self.assertFalse(validate(board, parseAN(board, 'b3b3f')))
 
     def test_geCaptures(self):
         """Testing validate move in Sittuyin variant"""
