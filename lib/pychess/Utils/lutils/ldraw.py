@@ -1,6 +1,6 @@
 
 from .ldata import BLACK_SQUARES
-from pychess.Utils.const import WHITE, BLACK, KNIGHT, BISHOP, ROOK, QUEEN, PAWN
+from pychess.Utils.const import ASEAN_VARIANTS, WHITE, BLACK, KNIGHT, BISHOP, ROOK, QUEEN, PAWN
 
 
 def testFifty(board):
@@ -49,6 +49,9 @@ def testMaterial(board):
     bn = blackPieceCount[KNIGHT]
     bb = blackPieceCount[BISHOP]
     br = blackPieceCount[ROOK]
+
+    if board.variant in ASEAN_VARIANTS and (wb or bb):
+        return False
 
     if (wn, wb, wr, 0, bn, bb, br, 0) in drawSet:
         return True
