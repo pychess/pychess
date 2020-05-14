@@ -67,7 +67,7 @@ FEN4 = "5k2/8/2r2K2/3P3p/8/5nn1/8/8 w - - 0 9"
 # . ♙ . . . . . .
 # . . . . . . . .
 # . ♖ ♔ . . . . .
-FEN5 = "8/2k5/8/8/r7/1P6/8/1RK5[] w - - 0 9"
+FEN5 = "8/2k5/8/8/r7/1P6/8/1RK5[] w - - 0 1"
 
 
 class SittuyinTestCase(unittest.TestCase):
