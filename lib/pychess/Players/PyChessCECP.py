@@ -23,6 +23,7 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
 from pychess.Variants.horde import HORDESTART
 from pychess.Variants.placement import PLACEMENTSTART
+from pychess.Variants.threecheck import THREECHECKSTART
 from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, KAMBODIANSTART, SITTUYINSTART
 
 if sys.platform != "win32":
@@ -149,7 +150,8 @@ class PyChessCECP(PyChess):
                             self.board.variant = ATOMICCHESS
                             self.board.iniAtomic()
                         elif lines[1] == "3check":
-                            self.board.variant = THREECHECKCHESS
+                            self.board = LBoard(THREECHECKCHESS)
+                            self.board.applyFen(THREECHECKSTART)
                         elif lines[1] == "racingkings":
                             self.board.variant = RACINGKINGSCHESS
                         elif lines[1] == "kingofthehill":
