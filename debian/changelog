@@ -1,33 +1,227 @@
-pychess (0.8) gutsy; urgency=low
+pychess (1.0.0-1) unstable; urgency=medium
 
-  * Philidor final
+  * New upstream release (Closes: #721571, #659377, #660136)
+  * Covert package to Python 3 (Closes: #937405)
+  * debian/control:
+     - Update Build-Depends
+     - Update Vcs-* to salsa.debian.org (Closes: #721571)
+     - Update Standards-Version to 4.4.1
+  * Update debian/watch with new URL
+  * Update debian/copyright file
+  * Add build.diff to fix the build
+  * debian/rules: update to build Python 3 package
+  * Use debhelper-compat instead of debian/compat
+  * Remove debian/orig-tar.sh - not needed anymore
 
- -- Thijs Vermeir <thijsvermeir@gmail.com>  Mon, 18 Feb 2008 15:15:47 +0100
+ -- Varun Hiremath <varun@debian.org>  Sat, 14 Mar 2020 16:49:47 -0700
 
-pychess (0.8-beta4) gutsy; urgency=low
+pychess (0.12.2-1) unstable; urgency=medium
 
-  * Philidor Beta 4
+  * New upstream release
+  * Add pychess.xpm icon and install it to /usr/share/pixmaps.
+  * Add menu file, thanks to Markus Koschany (Closes: #738010)
+  * Remove patches/
 
- -- Thijs Vermeir <thijsvermeir@gmail.com>  Fri, 18 Jan 2008 13:51:08 +0100
+ -- Varun Hiremath <varun@debian.org>  Wed, 17 Feb 2016 19:14:32 -0500
 
-pychess (0.8-beta3) gutsy; urgency=low
+pychess (0.12-3) unstable; urgency=medium
 
-  * Philidor Beta 3 - Christmas time
+  * d/control: Update Depends (Closes: #785922, #805022)
+  * Update Vcs fields to new debian git repository
 
- -- Thijs Vermeir <thijsvermeir@gmail.com>  Wed, 26 Dec 2007 21:38:58 +0100
+ -- Varun Hiremath <varun@debian.org>  Tue, 24 Nov 2015 22:45:58 -0500
 
-pychess (0.8-beta2) gutsy; urgency=low
+pychess (0.12-2) unstable; urgency=medium
 
-  * PyChess Philidor beta 2
+  * d/control: Fix Depends python-gtk2
 
- -- Thijs Vermeir <thijsvermeir@gmail.com>  Tue, 20 Nov 2007 16:26:25 +0100
+ -- Varun Hiremath <varun@debian.org>  Tue, 03 Nov 2015 22:58:14 -0500
 
-pychess (0.6.1-1ubuntu1) gutsy; urgency=low
+pychess (0.12-1) unstable; urgency=medium
 
-  * Apply Glade widget patch provided by upstream (LP: #128300)
-  * Change maintainter to MOTU
+  * New upstream release
+  * d/control: update Depends
+     - replace python-rsvg with gir1.2-rsvg-2.0 (Closes: #790153)
+     - switch to gstreamer1.0-plugins-base (Closes: #785922)
+  * Update d/watch file
+  * Update Standards-Version to 3.9.6
 
- -- Scott Kitterman <scott@kitterman.com>  Sun, 09 Sep 2007 11:06:54 -0400
+ -- Varun Hiremath <varun@debian.org>  Tue, 03 Nov 2015 20:26:05 -0500
+
+pychess (0.12~beta3-1) unstable; urgency=low
+
+  * New upstream release (Closes: #708827, #657494)
+  * d/control: Add gstreamer0.10-plugins-base to Depends
+    (Closes: #703560, #685473)
+  * d/control: add libgaviotatb1 and gaviotatb to Depends
+  * d/patches: remove executable.diff; update setup_docs.diff
+
+ -- Varun Hiremath <varun@debian.org>  Mon, 05 Aug 2013 19:53:19 -0400
+
+pychess (0.10.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Bump Standards-Version to 3.9.3
+
+ -- Varun Hiremath <varun@debian.org>  Wed, 25 Apr 2012 16:51:47 -0400
+
+pychess (0.10.1~beta1-1) unstable; urgency=low
+
+  * New upstream release
+    - support python2.7, thanks to Luca Falavigna (Closes: #635356)
+  * Bump Standards-Version to 3.9.2
+  * Update debian/watch to handle new download url
+  * Update debian/patches/* to new upstream version
+
+ -- Varun Hiremath <varun@debian.org>  Mon, 19 Sep 2011 20:11:24 -0400
+
+pychess (0.10-1) unstable; urgency=low
+
+  * New upstream release
+  * Remove python-pysqlite2 from Depends
+  * Convert to dh_python2 (Closes: #616960)
+  * Bump Standards-Version to 3.9.1
+
+ -- Varun Hiremath <varun@debian.org>  Sat, 21 May 2011 23:54:03 -0400
+
+pychess (0.10~beta3-2) unstable; urgency=low
+
+  * Add patches/gnome_icons.diff to replace missing icons from the latest
+    gnome-icon-theme package (Closes: #579974)
+
+ -- Varun Hiremath <varun@debian.org>  Thu, 06 May 2010 00:47:38 -0400
+
+pychess (0.10~beta3-1) unstable; urgency=low
+
+  * New upstream release
+  * Bump Standards-Version to 3.8.4
+  * Switch to source format 3.0
+  * Set minimum python version to 2.5
+
+ -- Varun Hiremath <varun@debian.org>  Sun, 02 May 2010 01:24:11 -0400
+
+pychess (0.10~beta1-3) unstable; urgency=low
+
+  * Add python-rsvg to Depends
+
+ -- Varun Hiremath <varun@debian.org>  Mon, 10 Aug 2009 19:23:27 -0400
+
+pychess (0.10~beta1-2) unstable; urgency=low
+
+  * debian/control: replace Depends python-gnome2-desktop with
+    python-gtksourceview2 (Closes: #539966)
+  * Remove Torsten from Uploaders, as requested
+  * Bump Standards-Version to 3.8.2
+  * Add description to all debian/patches
+
+ -- Varun Hiremath <varun@debian.org>  Mon, 10 Aug 2009 00:57:41 -0400
+
+pychess (0.10~beta1-1) unstable; urgency=low
+
+  * New upstream release
+  * Update debian/watch to support beta versions.
+
+ -- Torsten Werner <twerner@debian.org>  Thu, 11 Jun 2009 23:04:15 +0200
+
+pychess (0.10~alpha2-1) unstable; urgency=low
+
+  * New upstream release
+  * Bump Standards-Version to 3.8.1
+  * Call dh_desktop in debian/rules
+
+ -- Varun Hiremath <varun@debian.org>  Sat, 25 Apr 2009 17:16:13 -0400
+
+pychess (0.8.2-1) unstable; urgency=low
+
+  * New upstream release (Closes: #481633)
+
+ -- Varun Hiremath <varun@debian.org>  Tue, 20 May 2008 15:02:53 +0530
+
+pychess (0.8.1-1) unstable; urgency=low
+
+  * new upstream release
+  * Add debian/orig-tar.sh to ease downloading the tarball.
+
+ -- Torsten Werner <twerner@debian.org>  Sun, 30 Mar 2008 11:31:45 +0200
+
+pychess (0.8-2) unstable; urgency=low
+
+  * Change Build-Depends: python-central (>= 0.6.0). (Closes: #472019)
+
+ -- Torsten Werner <twerner@debian.org>  Fri, 21 Mar 2008 20:48:34 +0100
+
+pychess (0.8-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/patches:
+    - remove amd64_hash.diff, merged upstream
+    - remove pychess.desktop.diff, merged upstream
+
+ -- Varun Hiremath <varun@debian.org>  Sat, 01 Mar 2008 21:07:27 +0530
+
+pychess (0.8~beta4-3) unstable; urgency=low
+
+  * Add patches/amd64_hash.diff to fix problems in loading pychess on
+    amd64 (Closes: #462374)
+
+ -- Varun Hiremath <varun@debian.org>  Sat, 26 Jan 2008 02:31:18 +0530
+
+pychess (0.8~beta4-2) unstable; urgency=low
+
+  * debian/control:
+    + add version check on gnome-icon-theme (>= 2.20.0) as some of the
+      icons are missing in the older versions (Closes: #462240)
+    + add python-gnome2-desktop to Depends (Closes: #462323)
+    + add python-cairo and python-gobject to Depends
+
+ -- Varun Hiremath <varun@debian.org>  Thu, 24 Jan 2008 08:41:16 +0530
+
+pychess (0.8~beta4-1) unstable; urgency=low
+
+  * New upstream release (Closes: #461448)
+
+ -- Varun Hiremath <varun@debian.org>  Fri, 18 Jan 2008 23:52:22 +0530
+
+pychess (0.8~beta3-1) unstable; urgency=low
+
+  * New upstream release
+  * Remove pythonpath.diff - merged upstream
+
+ -- Varun Hiremath <varun@debian.org>  Thu, 03 Jan 2008 00:18:07 +0530
+
+pychess (0.8~beta2-3) unstable; urgency=low
+
+  * Add debian/patches/pythonpath.diff to fix issues with PYTHONPATH
+    (Closes: #455890)
+  * debian/control: Bumped up Standards-Version to 3.7.3
+
+ -- Varun Hiremath <varun@debian.org>  Fri, 14 Dec 2007 02:53:49 +0530
+
+pychess (0.8~beta2-2) unstable; urgency=low
+
+  * Add python-gst0.10 to Depends (Closes: #454783)
+  * Move pychess binary to /usr/games
+  * Use upstream provided manpage
+
+ -- Varun Hiremath <varunhiremath@gmail.com>  Sat, 08 Dec 2007 08:32:29 +0530
+
+pychess (0.8~beta2-1) unstable; urgency=low
+
+  [ Varun Hiremath ]
+  * New upstream release
+  * Update all patches
+
+  [ Torsten Werner ]
+  * Update Vcs and Homepage header in debian/control.
+  * Update debian/watch to reflect upstream changes.
+
+ -- Torsten Werner <twerner@debian.org>  Sat, 01 Dec 2007 10:44:00 +0100
+
+pychess (0.6.1-2) unstable; urgency=low
+
+  * Apply Glade widget patch.
+
+ -- Varun Hiremath <varunhiremath@gmail.com>  Sat, 06 Oct 2007 22:57:04 +0530
 
 pychess (0.6.1-1) unstable; urgency=low
 

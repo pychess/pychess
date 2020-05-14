@@ -2,52 +2,65 @@ Source: pychess
 Section: games
 Priority: optional
 Maintainer: Varun Hiremath <varun@debian.org>
-Build-Depends: debhelper (>= 7.0.50~), python-all ( >=2.6.6-3~)
-Standards-Version: 3.9.3
-X-Python-Version: >= 2.6
-Homepage: http://pychess.org/
-Vcs-Hg: http://code.google.com/p/pychess/source/checkout
-Vcs-Browser: http://code.google.com/p/pychess/source/browse/
+Build-Depends: debhelper-compat (= 12),
+	       python3,
+	       dh-python,
+	       python3-gi,
+	       python3-pexpect,
+	       python3-sqlalchemy,
+	       python3-psutil,
+	       python3-gi-cairo,
+	       python3-cairo,
+	       gir1.2-glib-2.0,
+	       gir1.2-gtk-3.0,
+	       gir1.2-pango-1.0,
+	       gir1.2-rsvg-2.0,
+	       gir1.2-gdkpixbuf-2.0,
+	       gir1.2-gtksource-3.0,
+	       gir1.2-gstreamer-1.0,
+	       gir1.2-gst-plugins-base-1.0,
+       	       gobject-introspection,
+               xvfb,
+               xauth,
+Standards-Version: 4.4.1
+Homepage: http://www.pychess.org/
+Vcs-Git: https://salsa.debian.org/debian/pychess.git
+Vcs-Browser: https://salsa.debian.org/debian/pychess
 
 Package: pychess
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends},
- gnome-icon-theme (>= 2.20.0), python-gtk2, python-glade2,
- python-gst0.10, python-gtksourceview2, python-cairo,
- python-gobject, python-rsvg, gstreamer0.10-plugins-base,
- libgaviotatb1, gaviotatb
-Description: chess graphical user interface for several chess engines and the Free Internet Chess Server (FICS)
- PyChess is a chess client for playing and analyzing chess games. It is
- intended to be usable both for those totally new to chess as well as
- advanced users who want to use a computer to further enhance their play.
+Depends: ${misc:Depends}, ${python3:Depends},
+	 gnome-icon-theme,
+	 python3-cairo,
+	 python3-gi,
+	 python3-gi-cairo,
+	 python3-websockets,
+	 gobject-introspection,
+	 gir1.2-glib-2.0,
+	 gir1.2-gtk-3.0,
+	 gir1.2-pango-1.0,
+	 gir1.2-rsvg-2.0,
+	 gir1.2-gdkpixbuf-2.0,
+	 gir1.2-gtksource-3.0,
+	 gir1.2-gstreamer-1.0,
+	 gir1.2-gst-plugins-base-1.0,
+	 libgaviotatb1,
+	 gaviotatb
+Description: Fully featured, nice looking, easy to use Chess Client
+ The goal of pychess, is to provide a fully featured, nice looking,
+ easy to use chess client for the gnome-desktop.
  .
- PyChess has a builtin python chess engine and auto-detects most
- popular chess engines (Stockfish, Rybka, Houdini, Shredder, GNU Chess,
- Crafty, Fruit, and many more). These engines are available as opponents,
- and are used to provide hints and analysis. PyChess also shows analysis
- from opening books and Gaviota end-game tablebases.
+ The client should be usable both to those totally new to chess, and
+ those who want to use a computer to further enchance their play.
  .
- When you get sick of playing computer players you can login to FICS (the
- Free Internet Chess Server) and play against people all over the world.
- PyChess has a built-in Timeseal client, so you won't lose clock time during
- a game due to lag. PyChess also has pre-move support, which means you can
- make (or start making) a move before your opponent has made their move.
- .
- PyChess has many other features including:
- - CECP and UCI chess engine support with customizable engine configurations
- - Polyglot opening book support
- - Hint and Spy move arrows
- - Hint, Score, and Annotation panels
- - Play and analyze games in separate game tabs
- - 18 chess variants including Chess960, Suicide, Crazyhouse, Shuffle, Losers, Piece Odds, and Atomic
- - Reads and writes PGN, EPD and FEN chess file formats
- - Undo and pause chess games
- - Move animation in games
- - Drag and drop chess files
- - Optional game move and event sounds
- - Chess piece themes with 40 built-in piece themes
- - Legal move highlighting
- - Direct copy+paste pgn game input via Enter Game Notation open-game dialog
- - Internationalised text and Figurine Algebraic Notation (FAN) support
- - Translated into 38 languages (languages with +5% strings translated)
- - Easy to use and intuitive look and feel
+ Features include:
+  Tabbed interface
+  pgn+epd read/write support
+  Hints and spymode
+  xboard/cecp engine support
+  Builtin Python based engine
+  Openingbook using sqlite
+  Clean interface and dialogs
+  Builtin move validator
+  Legal move highlighting
+  Supports drag'n'drop.

@@ -1,8 +1,23 @@
 #!/usr/bin/make -f
-DEB_PYTHON_SYSTEM=pycentral
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/python-distutils.mk
+%:
+	dh $@ --with python3 --buildsystem=pybuild
 
-clean::
+override_dh_clean::
+	dh_clean
 	$(RM) lang/*/LC_MESSAGES/*.mo
+
+override_dh_install:
+	dh_install
+	$(RM) -r debian/pychess/usr/bin
+	$(RM) debian/pychess/usr/share/pychess/LICENSE
+	$(RM) debian/pychess/usr/share/pychess/README.md
+	dh_install pychess /usr/games/
+	dh_install debian/pychess.xpm /usr/share/pixmaps
+
+override_dh_link:
+	dh_link
+	dh_link /usr/share/common-licenses/GPL-3 /usr/share/pychess/LICENSE
+	dh_link /usr/share/doc/pychess/README.md /usr/share/pychess/README.md
+
+override_dh_auto_test:
