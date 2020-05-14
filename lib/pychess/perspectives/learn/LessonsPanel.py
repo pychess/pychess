@@ -8,7 +8,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
 from pychess.System import conf
 from pychess.perspectives import perspective_manager
-from pychess.perspectives.learn.generate.generateLessonsSidepanel import generateLessonsSidepanel
+from pychess.perspectives.learn.generateLessonsSidepanel import generateLessonsSidepanel
 from pychess.perspectives.learn import lessons_solving_progress
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_game
 from pychess.Savers.pgn import PGNFile

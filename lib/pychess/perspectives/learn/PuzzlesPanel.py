@@ -10,7 +10,7 @@ from pychess.Variants import variants
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.perspectives import perspective_manager
-from pychess.perspectives.learn.generate.generateLessonsSidepanel import generateLessonsSidepanel
+from pychess.perspectives.learn.generateLessonsSidepanel import generateLessonsSidepanel
 from pychess.perspectives.learn import lessons_solving_progress
 from pychess.perspectives.learn import puzzles_solving_progress
 from pychess.Savers.olv import OLVFile
