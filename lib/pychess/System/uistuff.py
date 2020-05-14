@@ -397,12 +397,6 @@ def getMonitorBounds():
         return (0, 0, 0, 0)
 
 
-tooltip = Gtk.Window(Gtk.WindowType.POPUP)
-tooltip.set_name('gtk-tooltip')
-tooltip.ensure_style()
-tooltipStyle = tooltip.get_style()
-
-
 def makeYellow(box):
     def on_box_expose_event(box, context):
         # box.style.paint_flat_box (box.window,
@@ -412,6 +406,10 @@ def makeYellow(box):
         pass
 
     def cb(box):
+        tooltip = Gtk.Window(Gtk.WindowType.POPUP)
+        tooltip.set_name('gtk-tooltip')
+        tooltip.ensure_style()
+        tooltipStyle = tooltip.get_style()
         box.set_style(tooltipStyle)
         box.connect("draw", on_box_expose_event)
 
