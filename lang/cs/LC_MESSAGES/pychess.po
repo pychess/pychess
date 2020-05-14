@@ -9,15 +9,15 @@
 # fri, 2013-2014
 # gbtami <gbtami@gmail.com>, 2016
 # fri, 2015
-# fri, 2013-2016,2018-2019
+# fri, 2013-2016,2018-2020
 # Petr Bilek <sallyx@centrum.cz>, 2019
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-17 11:23+0100\n"
-"PO-Revision-Date: 2019-11-17 13:23+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2020-03-04 16:22+0000\n"
+"Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/gbtami/pychess/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,19 +36,19 @@ msgstr "_Nová hra"
 
 #: glade/PyChess.glade:249
 msgid "From _Default Start Position"
-msgstr ""
+msgstr "Z _výchozí začáteční pozice"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr ""
+msgstr "Z _vlastní pozice"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"
-msgstr ""
+msgstr "Ze _záznamu hry"
 
 #: glade/PyChess.glade:277
 msgid "From Cli_pboard"
-msgstr ""
+msgstr "Ze _schránky"
 
 #: glade/PyChess.glade:288
 msgid "Play _Internet Chess"
@@ -64,7 +64,7 @@ msgstr "Nahrát _nedávnou hru"
 
 #: glade/PyChess.glade:329
 msgid "Load Re_mote Game"
-msgstr ""
+msgstr "Nahrát _vzdálenou hru"
 
 #: glade/PyChess.glade:347
 msgid "_Save Game"
@@ -80,7 +80,7 @@ msgstr "_Vyvést postavení"
 
 #: glade/PyChess.glade:392
 msgid "Share _Game"
-msgstr ""
+msgstr "Sdílet _hru"
 
 #: glade/PyChess.glade:420
 msgid "Player _Rating"
@@ -236,7 +236,7 @@ msgstr "Překlad PyChess"
 
 #: glade/PyChess.glade:928
 msgid "Report an issue"
-msgstr ""
+msgstr "Nahlásit potíže"
 
 #: glade/PyChess.glade:1021
 msgid "Chess client"
@@ -430,7 +430,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1704
 msgid "Exact matches only"
-msgstr ""
+msgstr "Pouze přesné shody"
 
 #: glade/PyChess.glade:1732
 msgid "Use _local tablebases"
@@ -515,7 +515,7 @@ msgstr "_Panely"
 
 #: glade/PyChess.glade:2419
 msgid "Background image path :"
-msgstr ""
+msgstr "Cesta k obrázku pozadí:"
 
 #: glade/PyChess.glade:2457
 msgid "<b>Welcome screen</b>"
@@ -898,15 +898,15 @@ msgstr "Volby"
 
 #: glade/PyChess.glade:5538
 msgid "Add from folder"
-msgstr ""
+msgstr "Přidat ze složky"
 
 #: glade/PyChess.glade:5625
 msgid "Detected engines"
-msgstr ""
+msgstr "Zjištěné stroje"
 
 #: glade/PyChess.glade:5700
 msgid "Base path:"
-msgstr ""
+msgstr "Základní cesta:"
 
 #: glade/PyChess.glade:5818
 #: lib/pychess/perspectives/database/FilterPanel.py:101
