@@ -194,6 +194,10 @@ else:
         libintl = cdll.LoadLibrary("libintl-8")
         libintl.bindtextdomain(domain, locale_dir)
         libintl.bind_textdomain_codeset(domain, 'UTF-8')
+    elif sys.platform == 'darwin':
+        import ctypes
+        libintl = ctypes.cdll.LoadLibrary('libintl.dylib')
+        libintl.bindtextdomain(domain, locale_dir)
     else:
         locale.bindtextdomain(domain, locale_dir)
 
