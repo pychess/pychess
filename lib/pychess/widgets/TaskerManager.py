@@ -11,7 +11,7 @@ from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff, conf
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.IconLoader import load_icon, get_pixbuf
+from pychess.Utils.IconLoader import get_pixbuf
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, BLACK, NORMALCHESS, LECTURE, LESSON, PUZZLE, ENDGAME
 from pychess.Variants import variants
@@ -247,9 +247,6 @@ class NewGameTasker(Gtk.Alignment):
             create_task(perspective.generalStart(gamemodel, player1tup, player0tup))
 
 
-big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
-
-
 class InternetGameTasker(Gtk.Alignment):
     def __init__(self):
         GObject.GObject.__init__(self)
@@ -275,6 +272,7 @@ class InternetGameTasker(Gtk.Alignment):
         self.widgets["connectButton"].connect("clicked", self.connectClicked)
         self.widgets["opendialog2"].connect("clicked", self.openDialogClicked)
 
+        big_start = get_pixbuf("glade/internet.png")
         self.widgets["startIcon"].set_from_pixbuf(big_start)
 
         uistuff.keep(self.widgets["ics_combo"], "ics_combo")
@@ -366,6 +364,9 @@ class LearnTasker(Gtk.Alignment):
         self.category = conf.get("categorycombo")
         self.category_combo.set_active(self.category)
 
+        dictionary = get_pixbuf("glade/dictionary.png")
+        self.widgets["dictionaryIcon"].set_from_pixbuf(dictionary)
+
         uistuff.keep(self.widgets["category_combo"], "categorycombo")
 
         self.widgets["opendialog4"].connect("clicked", self.openDialogClicked)
@@ -419,6 +420,9 @@ class DatabaseTasker(Gtk.Alignment):
 
         self.on_recent_menu_changed(recent_manager, liststore)
         recent_manager.connect("changed", self.on_recent_menu_changed, liststore)
+
+        openimage = get_pixbuf("glade/open48.png")
+        self.widgets["openImage"].set_from_pixbuf(openimage)
 
         self.widgets["opendialog3"].connect("clicked", self.openDialogClicked)
         self.widgets["openButton"].connect("clicked", self.openClicked)

@@ -21,6 +21,7 @@ from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
 from pychess.Utils.const import HINT, NAME, SPY, NORMALCHESS
 from pychess.Utils.checkversion import isgit, checkversion
+from pychess.Utils.IconLoader import get_pixbuf
 from pychess.widgets import enginesDialog, newGameDialog
 from pychess.widgets.Background import hexcol
 from pychess.widgets.tipOfTheDay import TipOfTheDay
@@ -768,12 +769,14 @@ class PyChess(Gtk.Application):
             elif persp == Games:
                 perspective.connect("gmwidg_created", self.on_gmwidg_created)
 
-        new_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
+        newimage = get_pixbuf("glade/new24.png")
+        new_button = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(newimage))
         new_button.set_tooltip_text(_("New Game"))
         new_button.connect("clicked", self.glade_handlers.on_new_game1_activate)
         perspective_manager.toolbar.insert(new_button, 0)
 
-        open_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_OPEN)
+        openimage = get_pixbuf("glade/open24.png")
+        open_button = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(openimage))
         open_button.set_tooltip_text(_("Open Game"))
         open_button.connect("clicked", self.glade_handlers.on_load_game1_activate)
         perspective_manager.toolbar.insert(open_button, 1)
