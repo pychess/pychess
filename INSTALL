@@ -94,3 +94,18 @@ In C:\msys64\mingw32.exe terminal run:
 pacman -S mingw-w64-i686-gtk3 mingw-w64-i686-python3-gobject mingw-w64-i686-gtksourceview3 mingw-w64-i686-python3-sqlalchemy mingw-w64-i686-python3-psutil
 In Windows command window run:
 c:\msys64\mingw32\bin\python3.exe ./pychess
+
+-------------------------
+Dependencies for macOS:
+
+Tested on Catalina and Python 3.7.2
+
+1. brew install
+brew install pygobject3 gtk+3
+brew install gst-python
+brew install gtksourceview3
+brew install librsvg
+# (optional) brew install gettext
+
+2. pip install
+see req.txt
