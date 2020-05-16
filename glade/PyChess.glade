@@ -3046,7 +3046,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image88">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3067,7 +3067,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image99">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3090,7 +3090,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image100">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3113,7 +3113,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image133">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3136,7 +3136,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image14">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3159,7 +3159,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image15">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3313,7 +3313,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image1004">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3394,7 +3394,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image1005">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3417,7 +3417,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image1006">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3494,7 +3494,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image1007">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3546,7 +3546,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image17">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3643,7 +3643,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image20">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
@@ -3710,7 +3710,7 @@ It will search positions from http://www.k4it.de/</property>
                                       <object class="GtkImage" id="image21">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="stock">gtk-media-play</property>
+                                        <property name="pixbuf">play.png</property>
                                       </object>
                                     </child>
                                   </object>
