@@ -9,6 +9,7 @@ from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import HINT, OPENING, SPY, BLACK, NULL_MOVE, ENDGAME, DRAW, WHITEWON, WHITE, NORMALCHESS
 from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
+from pychess.Utils.IconLoader import get_pixbuf
 from pychess.Utils.logic import legalMoveCount
 from pychess.Utils.Move import Move, toSAN, toFAN, listToMoves
 from pychess.Utils.lutils.lmovegen import newMove
@@ -510,6 +511,9 @@ class Sidepanel:
         self.toggleRenderer.set_property("stock-id", "gtk-add")
         c4 = Gtk.TreeViewColumn("StartStop", self.toggleRenderer)
 
+        self.play_image = get_pixbuf("glade/play.png")
+        self.pause_image = get_pixbuf("glade/pause.png")
+
         def cb_visible(column, cell, store, iter, data):
             if not store[iter][6]:
                 cell.set_property('visible', False)
@@ -517,9 +521,9 @@ class Sidepanel:
                 cell.set_property('visible', True)
 
             if store[iter][5]:
-                cell.set_property("stock-id", "gtk-media-play")
+                cell.set_property("pixbuf", self.play_image)
             else:
-                cell.set_property("stock-id", "gtk-media-pause")
+                cell.set_property("pixbuf", self.pause_image)
 
         c4.set_cell_data_func(self.toggleRenderer, cb_visible)
 
