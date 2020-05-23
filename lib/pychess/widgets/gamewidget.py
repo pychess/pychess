@@ -647,35 +647,43 @@ class GameWidget(GObject.GObject):
         align = createAlignment(4, 0, 4, 0)
         toolbar = Gtk.Toolbar()
 
-        firstButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_PREVIOUS)
+        image1 = get_pixbuf("glade/first.png")
+        firstButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image1))
         firstButton.set_tooltip_text(_("Jump to initial position"))
         toolbar.insert(firstButton, -1)
 
-        prevButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_REWIND)
+        image2 = get_pixbuf("glade/prev.png")
+        prevButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image2))
         prevButton.set_tooltip_text(_("Step back one move"))
         toolbar.insert(prevButton, -1)
 
-        mainButton = Gtk.ToolButton(stock_id=Gtk.STOCK_GOTO_FIRST)
+        image3 = get_pixbuf("glade/mainline.png")
+        mainButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image3))
         mainButton.set_tooltip_text(_("Go back to the main line"))
         toolbar.insert(mainButton, -1)
 
-        upButton = Gtk.ToolButton(stock_id=Gtk.STOCK_GOTO_TOP)
+        image4 = get_pixbuf("glade/parent.png")
+        upButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image4))
         upButton.set_tooltip_text(_("Go back to the parent line"))
         toolbar.insert(upButton, -1)
 
-        nextButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_FORWARD)
+        image5 = get_pixbuf("glade/next.png")
+        nextButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image5))
         nextButton.set_tooltip_text(_("Step forward one move"))
         toolbar.insert(nextButton, -1)
 
-        lastButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_NEXT)
+        image6 = get_pixbuf("glade/last.png")
+        lastButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image6))
         lastButton.set_tooltip_text(_("Jump to latest position"))
         toolbar.insert(lastButton, -1)
 
-        filterButton = Gtk.ToolButton(stock_id=Gtk.STOCK_FIND)
+        image7 = get_pixbuf("glade/find.png")
+        filterButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image7))
         filterButton.set_tooltip_text(_("Find position in current database"))
         toolbar.insert(filterButton, -1)
 
-        self.saveButton = Gtk.ToolButton(stock_id=Gtk.STOCK_SAVE)
+        image8 = get_pixbuf("glade/save.png")
+        self.saveButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image8))
         self.saveButton.set_tooltip_text(_("Save arrows/circles"))
         toolbar.insert(self.saveButton, -1)
 
