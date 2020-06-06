@@ -52,7 +52,7 @@ class ParsingError(Exception):
 def sittuyin_promotion_fcord(board, tcord):
     queenMoves = moveArray[ASEAN_QUEEN]
     for fcord in iterBits(queenMoves[tcord]):
-        if board.arBoard[fcord]:
+        if board.arBoard[fcord] and board.arBoard[fcord] == PAWN:
             return fcord
 
 ################################################################################
