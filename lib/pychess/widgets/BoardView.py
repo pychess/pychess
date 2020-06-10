@@ -314,13 +314,16 @@ class BoardView(Gtk.DrawingArea):
     def playSound(self):
         # Play sounds
         if self.model.players and self.model.status != WAITING_TO_START:
-            move = self.model.moves[-1]
-            if move.is_capture(self.model.boards[-2]):
+            boardA = self.model.getBoardAtPly(self.shown - 1, self.shown_variation_idx)
+            boardB = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
+            move = self.model.getMoveAtPly(self.shown - 1, self.shown_variation_idx)
+            # move = self.model.moves[-1]
+            if move.is_capture(boardA):
                 sound = "aPlayerCaptures"
             else:
                 sound = "aPlayerMoves"
 
-            if self.model.boards[-1].board.isChecked():
+            if boardB.board.isChecked():
                 sound = "aPlayerChecks"
 
             if self.model.players[0].__type__ == REMOTE and \
@@ -330,13 +333,12 @@ class BoardView(Gtk.DrawingArea):
             preferencesDialog.SoundTab.playAction(sound)
 
     def gameChanged(self, model, ply):
-        self.playSound()
-
         # Auto updating self.shown can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
         # and we won't like auto updating.
         if self.auto_update_shown and self.shown + 1 >= ply and self.shownIsMainLine():
             self.shown = ply
+            self.playSound()
 
             # Rotate board
             if self.autoRotate:
@@ -1970,7 +1972,6 @@ class BoardView(Gtk.DrawingArea):
                     self._setShown(self.model.lowply, old_variation_idx)
 
     def showNext(self, step=1):
-        self.playSound()
         if self.model.examined and self.model.noTD:
             self.model.goNext(step)
         else:
@@ -1980,6 +1981,7 @@ class BoardView(Gtk.DrawingArea):
                     self.shown += step
                 else:
                     self.shown = maxply
+                self.playSound()
 
     def showLast(self):
         if self.model.examined and self.model.noTD:
