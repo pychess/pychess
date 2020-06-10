@@ -69,6 +69,10 @@ FEN4 = "5k2/8/2r2K2/3P3p/8/5nn1/8/8 w - - 0 9"
 # . ♖ ♔ . . . . .
 FEN5 = "8/2k5/8/8/r7/1P6/8/1RK5[] w - - 0 9"
 
+FEN6 = "8/8/8/8/1P1Sk3/8/8/K1p1pp2 w - - 4 148"
+
+FEN7 = "6s1/8/1k1N1p2/3P1P2/p1SP2p1/P6n/1K6/8 w - - 0 58"
+
 
 class SittuyinTestCase(unittest.TestCase):
     def test_validate(self):
@@ -136,6 +140,19 @@ class SittuyinTestCase(unittest.TestCase):
         self.assertTrue(validate(board, parseAN(board, 'b3c2f')))
         self.assertTrue(validate(board, parseAN(board, 'b3c4f')))
         self.assertFalse(validate(board, parseAN(board, 'b3b3f')))
+
+    def test_san_promotion_ambiguity(self):
+        """Testing Sittuyin promotion SAN parser"""
+
+        board = SittuyinBoard(setup=FEN6)
+        print(board)
+        self.assertNotEqual(parseAN(board, 'd4c3f'), parseSAN(board, 'c3=f'))
+        self.assertEqual(parseAN(board, 'b4c3f'), parseSAN(board, 'c3=f'))
+
+        board = SittuyinBoard(setup=FEN7)
+        print(board)
+        self.assertNotEqual(parseAN(board, 'f5e6f'), parseSAN(board, 'e6=f'))
+        self.assertEqual(parseAN(board, 'd5e6f'), parseSAN(board, 'e6=f'))
 
     def test_geCaptures(self):
         """Testing validate move in Sittuyin variant"""
