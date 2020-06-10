@@ -311,23 +311,26 @@ class BoardView(Gtk.DrawingArea):
 
         self.emit("shownChanged", self.shown)
 
-    def gameChanged(self, model, ply):
+    def playSound(self):
         # Play sounds
         if self.model.players and self.model.status != WAITING_TO_START:
-            move = model.moves[-1]
-            if move.is_capture(model.boards[-2]):
+            move = self.model.moves[-1]
+            if move.is_capture(self.model.boards[-2]):
                 sound = "aPlayerCaptures"
             else:
                 sound = "aPlayerMoves"
 
-            if model.boards[-1].board.isChecked():
+            if self.model.boards[-1].board.isChecked():
                 sound = "aPlayerChecks"
 
-            if model.players[0].__type__ == REMOTE and \
-                    model.players[1].__type__ == REMOTE:
+            if self.model.players[0].__type__ == REMOTE and \
+                    self.model.players[1].__type__ == REMOTE:
                 sound = "observedMoves"
 
             preferencesDialog.SoundTab.playAction(sound)
+
+    def gameChanged(self, model, ply):
+        self.playSound()
 
         # Auto updating self.shown can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
@@ -1967,6 +1970,7 @@ class BoardView(Gtk.DrawingArea):
                     self._setShown(self.model.lowply, old_variation_idx)
 
     def showNext(self, step=1):
+        self.playSound()
         if self.model.examined and self.model.noTD:
             self.model.goNext(step)
         else:
