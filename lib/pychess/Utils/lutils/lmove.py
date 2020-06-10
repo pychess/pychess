@@ -11,7 +11,7 @@ from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTL
     GIVEAWAYCHESS, ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, HORDECHESS,\
     chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, NULL_MOVE, FAN, ASEAN_QUEEN
 from pychess.Utils.repr import reprPiece, localReprSign
-from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
+from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove, gen_sittuyin_promotions
 
 
 def RANK(cord):
@@ -50,10 +50,12 @@ class ParsingError(Exception):
 
 
 def sittuyin_promotion_fcord(board, tcord):
+    valid_promotions = list(gen_sittuyin_promotions(board))
     queenMoves = moveArray[ASEAN_QUEEN]
     for fcord in iterBits(queenMoves[tcord]):
         if board.arBoard[fcord] and board.arBoard[fcord] == PAWN:
-            return fcord
+            if newMove(fcord, tcord, QUEEN_PROMOTION) in valid_promotions:
+                return fcord
 
 ################################################################################
 # parseAny                                                                     #
