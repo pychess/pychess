@@ -613,7 +613,7 @@ class PanelTab:
 
 # Theme initing
 
-board_items = [(None, "colors only")]
+board_items = [(None, "colors only"), (None, "transparent")]
 boards_path = addDataPrefix("boards")
 board_items += [(get_pixbuf(os.path.join(boards_path, b), 24), b[:-6]) for b in listdir(boards_path) if b.endswith("_d.png")]
 

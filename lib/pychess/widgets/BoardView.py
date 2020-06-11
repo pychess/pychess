@@ -453,7 +453,8 @@ class BoardView(Gtk.DrawingArea):
         """
         board_style = conf.get("board_style")
         self.colors_only = board_style == 0
-        if not self.colors_only:
+        self.transparent = board_style == 1
+        if (not self.colors_only) and (not self.transparent):
             # create dark and light square surfaces
             board_style_name = preferencesDialog.board_items[board_style][1]
             if self.board_style_name is None or self.board_style_name != board_style_name:
@@ -1087,23 +1088,27 @@ class BoardView(Gtk.DrawingArea):
 
         if self.model.variant.variant in ASEAN_VARIANTS:
             # just fill the whole board with light color
-            if self.colors_only:
+            if self.colors_only or self.transparent:
                 context.rectangle(xc_loc, yc_loc, side * self.FILES, side * self.RANKS)
             else:
                 self.draw_image(context, self.light_surface, xc_loc, yc_loc, side * self.FILES, side * self.RANKS)
-            if self.colors_only:
+            if self.transparent:
+                pass
+            elif self.colors_only:
                 context.fill()
         else:
             # light squares
             for x_loc in range(self.FILES):
                 for y_loc in range(self.RANKS):
                     if x_loc % 2 + y_loc % 2 != 1:
-                        if self.colors_only:
+                        if self.colors_only or self.transparent:
                             context.rectangle(xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
                         else:
                             self.draw_image(context, self.light_surface, xc_loc + x_loc * side, yc_loc + y_loc * side,
                                             side, side)
-            if self.colors_only:
+            if self.transparent:
+                pass
+            elif self.colors_only:
                 context.fill()
 
         col = Gdk.RGBA()
@@ -1113,6 +1118,8 @@ class BoardView(Gtk.DrawingArea):
         if self.model.variant.variant in ASEAN_VARIANTS:
             # diagonals
             if self.model.variant.variant == SITTUYINCHESS:
+                context.set_source_rgb(0.0, 0.0, 0.0)
+                context.set_line_width(0.5 if r is None else 1.0)
                 context.move_to(xc_loc, yc_loc)
                 context.rel_line_to(square, square)
                 context.move_to(xc_loc + square, yc_loc)
@@ -1123,12 +1130,14 @@ class BoardView(Gtk.DrawingArea):
             for x_loc in range(self.FILES):
                 for y_loc in range(self.RANKS):
                     if x_loc % 2 + y_loc % 2 == 1:
-                        if self.colors_only:
+                        if self.colors_only or self.transparent:
                             context.rectangle((xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
                         else:
                             self.draw_image(context, self.dark_surface, (xc_loc + x_loc * side),
                                             (yc_loc + y_loc * side), side, side)
-            if self.colors_only:
+            if self.transparent:
+                pass
+            elif self.colors_only:
                 context.fill()
 
         if not self.no_frame:
