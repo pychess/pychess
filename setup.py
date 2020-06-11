@@ -16,13 +16,7 @@ from pychess.System.protoopen import protoopen
 
 
 msi = False
-if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
-    import msilib
-
-    # monkeypatching msilib to add missing Win64 needed by distutils.command.bdist_msi
-    # see https://bugs.python.org/issue34251
-    msilib.Win64 = msilib.AMD64
-
+if sys.argv[-1] == "bdist_msi":
     try:
         from cx_Freeze import setup, Executable
         from cx_Freeze.windist import bdist_msi
@@ -30,29 +24,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
     except ImportError:
         print("ERROR: can't import cx_Freeze!")
         sys.exit(1)
-
-    # Monkeypatching cx_freezee to do per user installer
-    class peruser_bdist_msi(bdist_msi):  # noqa
-        def add_properties(self):
-            metadata = self.distribution.metadata
-            props = [
-                ('DistVersion', metadata.get_version()),
-                ('DefaultUIFont', 'DlgFont8'),
-                ('ErrorDialog', 'ErrorDlg'),
-                ('Progress1', 'Install'),
-                ('Progress2', 'installs'),
-                ('MaintenanceForm_Action', 'Repair'),
-                ('ALLUSERS', '2'),
-                ('MSIINSTALLPERUSER', '1')]
-            email = metadata.author_email or metadata.maintainer_email
-            if email:
-                props.append(("ARPCONTACT", email))
-            if metadata.url:
-                props.append(("ARPURLINFOABOUT", metadata.url))
-            if self.upgrade_code is not None:
-                props.append(("UpgradeCode", self.upgrade_code))
-            msilib.add_data(self.db, 'Property', props)
-    bdist_msi.add_properties = peruser_bdist_msi.add_properties
 else:
     from distutils.core import setup
 

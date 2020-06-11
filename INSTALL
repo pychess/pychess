@@ -88,12 +88,21 @@ gstreamer
 gst-plugins-base
 
 -------------------------
-Dependencies for Windows:
+Dependencies for 32bit(!) Python 3.8.x on Windows:
 Go to https://msys2.github.io/ and download the x86_64 installer
 In C:\msys64\mingw32.exe terminal run:
-pacman -S mingw-w64-i686-gtk3 mingw-w64-i686-python3-gobject mingw-w64-i686-gtksourceview3 mingw-w64-i686-python3-sqlalchemy mingw-w64-i686-python3-psutil
+
+pacman -S mingw-w64-i686-python mingw-w64-i686-python-cairo mingw-w64-i686-gobject-introspection mingw-w64-i686-libffi
+pacman -S mingw-w64-i686-gtk3 mingw-w64-i686-python-gobject mingw-w64-i686-gtksourceview3
+pacman -S mingw-w64-i686-python-sqlalchemy mingw-w64-i686-python-pexpect mingw-w64-i686-python-psutil
+pip install websockets
+
 In Windows command window run:
-c:\msys64\mingw32\bin\python3.exe ./pychess
+python ./pychess
+
+To create .msi installer:
+pacman -S mingw-w64-i686-python-cx_Freeze
+python setup.py bdist_msi
 
 -------------------------
 Dependencies for macOS:
