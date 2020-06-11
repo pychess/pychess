@@ -30,7 +30,7 @@ if cpu['windows']:
 # The comments provides known conflicts with Linux packages
 # Weak engines (<2700) should be added manually unless a package exists already
 if cpu['windows']:
-    stockfish_name = "stockfish_10_x%s.exe" % cpu['bitness']
+    stockfish_name = "stockfish_11_x%s.exe" % cpu['bitness']
     sjaakii_name = "sjaakii_win%s_ms.exe" % cpu['bitness']
 else:
     stockfish_name = "stockfish"
