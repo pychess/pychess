@@ -135,7 +135,7 @@ def get_chess_font_face(name):
 all_in_one = None
 drawPiece = None
 svg_pieces = None
-makruk_svg_pieces = get_svg_pieces("ada")
+makruk_svg_pieces = get_svg_pieces("makruk")
 sittuyin_svg_pieces = get_svg_pieces("sittuyin")
 chess_font_face = None
 piece2char = None

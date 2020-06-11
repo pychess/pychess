@@ -60,22 +60,21 @@ install:
 
   - bash -lc "pacman -Su --noconfirm"
 
-  # we want python3.7
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3"
+  # we want python3.8
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python"
 
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-gtk3 %PKG_PREFIX%-gtksourceview3 %PKG_PREFIX%-python3-gobject %PKG_PREFIX%-python3-cairo"
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-psutil %PKG_PREFIX%-python3-sqlalchemy"
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-cx_Freeze %PKG_PREFIX%-zlib %PKG_PREFIX%-python3-pip"
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-gtk3 %PKG_PREFIX%-gtksourceview3 %PKG_PREFIX%-python-gobject %PKG_PREFIX%-python-cairo"
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python-psutil %PKG_PREFIX%-python-sqlalchemy %PKG_PREFIX%-python-pexpect"
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python-cx_Freeze %PKG_PREFIX%-zlib %PKG_PREFIX%-python-pip"
 
   # check python version
-  - "python3 --version"
+  - "python --version"
 
-  - "pip3 install pexpect"
   - "pip3 install websockets"
 
   # download stockfish
   - "if not exist c:\\projects\\pychess\\engines mkdir c:\\projects\\pychess\\engines"
-  - "if not exist c:\\projects\\pychess\\engines\\stockfish_10_x64.exe appveyor DownloadFile https://github.com/niklasf/Stockfish/releases/download/fishnet-291118/%STOCKFISH% -FileName c:\\projects\\pychess\\engines\\stockfish_10_x64.exe"
+  - "if not exist c:\\projects\\pychess\\engines\\stockfish_11_x64.exe appveyor DownloadFile https://github.com/niklasf/Stockfish/releases/download/fishnet-20200611/%STOCKFISH% -FileName c:\\projects\\pychess\\engines\\stockfish_11_x64.exe"
   - dir c:\projects\pychess\engines
 
   - "if not exist C:\\msys64\\MINGW32\\DLLs mkdir C:\\msys64\\MINGW32\\DLLs"
@@ -88,10 +87,10 @@ test_script:
   - set PYTHONIOENCODING=utf8
   - set PYTHONPATH=../lib
   - set PYCHESS_UNITTEST=true
-  - "python3 run_tests.py"
+  - "python run_tests.py"
 
 build_script:
-  - "python3 setup.py bdist_msi"
+  - "python setup.py bdist_msi"
   - "dir dist"
 
 #after_build:
