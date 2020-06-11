@@ -12,23 +12,17 @@ pnames = ('Pawn', 'Knight', 'Bishop', 'Rook', 'Queen', 'King')
 
 size = 800.0
 
-makruk_svg_pieces = None
-
 
 def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False, variant=None):
     """Rendering pieces using .svg chess figurines"""
 
     color = WHITE if allwhite else piece.color
     if variant is not None and variant == SITTUYINCHESS:
-        sittuyin_svg_pieces = get_svg_pieces("sittuyin")
         image = sittuyin_svg_pieces[color][piece.sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
         offset_y = 0
     elif asean:
-        global makruk_svg_pieces
-        if makruk_svg_pieces is None:
-            makruk_svg_pieces = get_svg_pieces("makruk")
         image = makruk_svg_pieces[color][piece.sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
@@ -141,6 +135,8 @@ def get_chess_font_face(name):
 all_in_one = None
 drawPiece = None
 svg_pieces = None
+makruk_svg_pieces = get_svg_pieces("ada")
+sittuyin_svg_pieces = get_svg_pieces("sittuyin")
 chess_font_face = None
 piece2char = None
 
