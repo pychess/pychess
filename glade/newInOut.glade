@@ -218,7 +218,7 @@
                                 <property name="yalign">0</property>
                                 <property name="xpad">5</property>
                                 <property name="ypad">5</property>
-                                <property name="icon_name">stock_people</property>
+                                <property name="pixbuf">people48.png</property>
                                 <property name="icon_size">6</property>
                               </object>
                               <packing>
@@ -511,7 +511,7 @@
                                             <property name="height_request">21</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="stock">gtk-properties</property>
+                                            <property name="pixbuf">properties.png</property>
                                             <property name="icon_size">1</property>
                                           </object>
                                         </child>
@@ -560,7 +560,7 @@
                                             <property name="height_request">21</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="stock">gtk-properties</property>
+                                            <property name="pixbuf">properties.png</property>
                                             <property name="icon_size">1</property>
                                           </object>
                                         </child>
@@ -609,7 +609,7 @@
                                             <property name="height_request">21</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="stock">gtk-properties</property>
+                                            <property name="pixbuf">properties.png</property>
                                             <property name="icon_size">1</property>
                                           </object>
                                         </child>
@@ -679,7 +679,7 @@
                                             <property name="height_request">21</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="stock">gtk-properties</property>
+                                            <property name="pixbuf">properties.png</property>
                                             <property name="icon_size">1</property>
                                           </object>
                                         </child>
@@ -829,7 +829,7 @@
                                             <property name="height_request">21</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="stock">gtk-properties</property>
+                                            <property name="pixbuf">properties.png</property>
                                             <property name="icon_size">1</property>
                                           </object>
                                         </child>
@@ -879,7 +879,7 @@
                                             <property name="height_request">21</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="stock">gtk-properties</property>
+                                            <property name="pixbuf">properties.png</property>
                                             <property name="icon_size">1</property>
                                           </object>
                                         </child>
