@@ -49,9 +49,9 @@ from pychess.Utils.eco import find_opening_fen
 # Background.Taskers so they have a similar look.
 # ===============================================================================
 big_time = get_pixbuf("glade/stock_alarm.svg")
-big_people = load_icon(48, "stock_people", "system-users")
-iwheels = load_icon(24, "gtk-execute", "system-run")
-ipeople = load_icon(24, "stock_people", "system-users")
+big_people = get_pixbuf("glade/people48.png")
+iwheels = get_pixbuf("glade/wheel.png")
+ipeople = get_pixbuf("glade/people24.png")
 inotebook = load_icon(24, "stock_notebook", "computer")
 
 weather_icons = ("clear", "clear-night", "few-clouds", "few-clouds-night",
