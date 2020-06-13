@@ -23,6 +23,7 @@ from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
     HiddenPiecesBoard, AllWhiteBoard
 from . import preferencesDialog
 from pychess.perspectives import perspective_manager
+from pychess.widgets.preferencesDialog import board_items
 
 # This file contains the class that is used to draw the board
 
@@ -453,7 +454,7 @@ class BoardView(Gtk.DrawingArea):
         """
         board_style = conf.get("board_style")
         self.colors_only = board_style == 0
-        self.transparent = board_style == 1
+        self.transparent = board_style == len(board_items) - 1
         if (not self.colors_only) and (not self.transparent):
             # create dark and light square surfaces
             board_style_name = preferencesDialog.board_items[board_style][1]
@@ -469,7 +470,8 @@ class BoardView(Gtk.DrawingArea):
     def onBoardFrame(self, *args):
         board_frame = conf.get("board_frame")
         self.no_frame = board_frame == 0
-        if not self.no_frame:
+        self.transparent = board_frame == len(board_items) - 1
+        if (not self.no_frame) and (not self.transparent):
             # create board frame surface
             board_frame_name = preferencesDialog.board_items[board_frame][1]
             if self.board_frame_name is None or self.board_frame_name != board_frame_name:
@@ -1140,7 +1142,7 @@ class BoardView(Gtk.DrawingArea):
             elif self.colors_only:
                 context.fill()
 
-        if not self.no_frame:
+        if (not self.no_frame) and (not self.transparent):
             # board frame
             delta = side / 4
             # top
