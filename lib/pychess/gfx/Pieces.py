@@ -1,7 +1,7 @@
 from gi.repository import Rsvg
 
 from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN, \
-    reprSign, SITTUYINCHESS
+    reprSign, SITTUYINCHESS, HAWK, ELEPHANT, SCHESS
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.System.cairoextras import create_cairo_font_face_for_file
@@ -33,7 +33,10 @@ def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False, variant
         offset_x = piece_ord[piece.sign] * psize
         offset_y = 0 if color == BLACK else psize
     else:
-        image = svg_pieces[color][piece.sign]
+        if variant is not None and variant == SCHESS:
+            image = schess_svg_pieces[color][piece.sign]
+        else:
+            image = svg_pieces[color][piece.sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
         offset_y = 0
@@ -95,7 +98,7 @@ def drawPiece4(piece, context, x, y, psize, allwhite=False, asean=False, variant
 
 surfaceCache = {}
 
-pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING)
+pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, HAWK, ELEPHANT)
 
 
 def get_svg_pieces(svgdir):
@@ -105,12 +108,15 @@ def get_svg_pieces(svgdir):
         rsvg_handles = Rsvg.Handle.new_from_file(addDataPrefix(
             "pieces/%s/%s.svg" % (svgdir, svgdir)))
     else:
-        rsvg_handles = [[None] * 7, [None] * 7]
+        rsvg_handles = [[None] * 9, [None] * 9]
         for c, color in ((WHITE, 'white'), (BLACK, 'black')):
             for p in pieces:
-                rsvg_handles[c][p] = Rsvg.Handle.new_from_file(addDataPrefix(
-                    "pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[
-                        p].lower())))
+                try:
+                    rsvg_handles[c][p] = Rsvg.Handle.new_from_file(addDataPrefix(
+                        "pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[
+                            p].lower())))
+                except Exception:
+                    print("No %s piece for %s" % (color, p))
     return rsvg_handles
 
 
@@ -137,6 +143,7 @@ drawPiece = None
 svg_pieces = None
 makruk_svg_pieces = get_svg_pieces("makruk")
 sittuyin_svg_pieces = get_svg_pieces("sittuyin")
+schess_svg_pieces = get_svg_pieces("merida")
 chess_font_face = None
 piece2char = None
 

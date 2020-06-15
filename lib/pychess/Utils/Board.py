@@ -6,9 +6,9 @@ from .Piece import Piece
 from .Cord import Cord
 from .const import A1, A8, B1, B8, C1, C8, D1, D8, E1, E8, F1, F8, G1, G8, H1, H8, \
     BISHOP, ROOK, ROOK_PROMOTION, QUEEN_PROMOTION, KNIGHT_PROMOTION, BLACK, FEN_START, \
-    WHITE, NORMALCHESS, PAWN, BISHOP_PROMOTION, KNIGHT, QUEEN, KING, DROP_VARIANTS, NULL_MOVE, \
+    WHITE, NORMALCHESS, PAWN, BISHOP_PROMOTION, KNIGHT, QUEEN, KING, DROP_VARIANTS, \
     DROP, ATOMICCHESS, ENPASSANT, FISCHERRANDOMCHESS, QUEEN_CASTLE, CRAZYHOUSECHESS, KING_CASTLE, \
-    WILDCASTLECHESS, PROMOTIONS, WILDCASTLESHUFFLECHESS, SITTUYINCHESS, FAN_PIECES
+    WILDCASTLECHESS, PROMOTIONS, WILDCASTLESHUFFLECHESS, FAN_PIECES
 
 
 def reverse_enum(L):
@@ -127,12 +127,10 @@ class Board:
         new = []
         dead = []
 
-        if move.flag == NULL_MOVE:
-            return moved, new, dead
-
         cord0, cord1 = move.cords
 
-        if cord0 == cord1 and self.variant == SITTUYINCHESS:
+        # null move or SITTUYINCHESS in place promotion
+        if cord0 == cord1 and move.flag != DROP and move.flag != QUEEN_PROMOTION:
             return moved, new, dead
 
         if move.flag == DROP:
@@ -208,12 +206,10 @@ class Board:
         new = []
         dead = []
 
-        if move.flag == NULL_MOVE:
-            return moved, new, dead
-
         cord0, cord1 = move.cords
 
-        if cord0 == cord1 and self.variant == SITTUYINCHESS:
+        # null move or SITTUYINCHESS in place promotion
+        if cord0 == cord1 and move.flag != DROP and move.flag != QUEEN_PROMOTION:
             return moved, new, dead
 
         if self.variant == ATOMICCHESS and (board1[cord1] or
@@ -294,7 +290,7 @@ class Board:
         cord0, cord1 = move.cords
 
         if (self[move.cord1] is not None or flag == ENPASSANT) and \
-                not (cord0 == cord1 and self.variant == SITTUYINCHESS) and \
+                not (cord0 == cord1 and move.flag != DROP and move.flag != QUEEN_PROMOTION) and \
                 not (flag in (QUEEN_CASTLE, KING_CASTLE)):
             if self.variant == CRAZYHOUSECHESS:
                 piece = PAWN if flag == ENPASSANT or self[
@@ -345,7 +341,7 @@ class Board:
                 else:
                     newBoard[cord1] = newBoard[cord0]
 
-        if flag != NULL_MOVE and flag != DROP:
+        if cord0 != cord1 and flag != DROP:
             newBoard[cord0] = None
 
         if flag in (QUEEN_CASTLE, KING_CASTLE):

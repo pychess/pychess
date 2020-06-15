@@ -6,7 +6,7 @@ from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
 from pychess.compat import create_task
 from pychess.System import conf, uistuff
 from pychess.Utils import prettyPrintScore
-from pychess.Utils.const import HINT, OPENING, SPY, BLACK, NULL_MOVE, ENDGAME, DRAW, WHITEWON, WHITE, NORMALCHESS
+from pychess.Utils.const import HINT, OPENING, SPY, BLACK, ENDGAME, DRAW, WHITEWON, WHITE, NORMALCHESS
 from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
 from pychess.Utils.IconLoader import get_pixbuf
@@ -325,7 +325,7 @@ class EngineAdvisor(Advisor):
                 # we need to chage it to get the board in gamemodel variations board list later
                 board.setColor(1 - board.color)
                 king = board.kings[board.color]
-                null_move = Move(newMove(king, king, NULL_MOVE))
+                null_move = Move(newMove(king, king))
                 model.add_variation(self.engine.board, [null_move] + moves)
 
     def child_tooltip(self, i):

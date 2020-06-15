@@ -8,8 +8,9 @@ from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTL
     reprFile, reprRank, chr2Sign, cordDic, reprSign, reprCord, reprSignSittuyin, reprSignMakruk,\
     QUEEN, KNIGHT, BISHOP, ROOK, KING, NORMALCHESS, NORMAL_MOVE, PROMOTIONS, WHITE, BLACK, DROP,\
     FAN_PIECES, SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, MAKRUKCHESS, CAMBODIANCHESS,\
-    GIVEAWAYCHESS, ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, HORDECHESS,\
-    chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, NULL_MOVE, FAN, ASEAN_QUEEN
+    GIVEAWAYCHESS, ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, HORDECHESS, SCHESS, \
+    chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, FAN, ASEAN_QUEEN, \
+    HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove, gen_sittuyin_promotions
 
@@ -184,17 +185,18 @@ def toSAN(board, move, localRepr=False):
         return sign
 
     flag = move >> 12
-
-    if flag == NULL_MOVE:
-        return "--"
-
     fcord = (move >> 6) & 63
+
     if flag == KING_CASTLE:
         return "O-O%s" % check_or_mate()
     elif flag == QUEEN_CASTLE:
         return "O-O-O%s" % check_or_mate()
 
     tcord = move & 63
+
+    # Sittuyin in place promotion is NOT null move
+    if fcord == tcord and flag != DROP and flag != QUEEN_PROMOTION:
+        return "--"
 
     fpiece = fcord if flag == DROP else board.arBoard[fcord]
     tpiece = board.arBoard[tcord]
@@ -284,7 +286,7 @@ def parseSAN(board, san):
     color = board.color
 
     if notat == "--":
-        return newMove(board.kings[color], board.kings[color], NULL_MOVE)
+        return newMove(board.kings[color], board.kings[color])
 
     if notat[-1] in "+#":
         notat = notat[:-1]
@@ -599,8 +601,8 @@ def toAN(board, move, short=False, castleNotation=CASTLE_SAN):
 
 def parseAN(board, an):
     """ Parse an Algebraic Notation string """
-
-    if not 4 <= len(an) <= 6:
+    length = len(an)
+    if not 4 <= length <= 6:
         raise ParsingError(an, "the move must be 4 or 6 chars long",
                            board.asFen())
 
@@ -622,16 +624,27 @@ def parseAN(board, an):
 
     flag = NORMAL_MOVE
 
-    if len(an) > 4 and not an[-1] in "QRBNMSFqrbnmsf":
+    if length > 4 and not an[-1] in "QRBNMSFHEqrbnmsfhe":
         if (board.variant != SUICIDECHESS and board.variant != GIVEAWAYCHESS) or \
             (board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS) and not an[
                 -1] in "Kk":
             raise ParsingError(an, "invalid promoted piece", board.asFen())
 
-    if len(an) == 5:
+    if length == 5:
         # The a7a8q variant
-        flag = chr2Sign[an[4].lower()] + 2
-    elif len(an) == 6:
+        if board.variant == SCHESS:
+            if an[1] in "18":
+                # gating move
+                if board.arBoard[fcord] == ROOK and board.arBoard[tcord] == "KING":
+                    flag = HAWK_GATE_AT_ROOK if an[-1] == "h" else ELEPHANT_GATE_AT_ROOK
+                else:
+                    flag = HAWK_GATE if an[-1] == "h" else ELEPHANT_GATE
+            else:
+                # promotion move
+                flag = chr2Sign[an[4].lower()] + 2
+        else:
+            flag = chr2Sign[an[4].lower()] + 2
+    elif length == 6:
         # The a7a8=q variant
         flag = chr2Sign[an[5].lower()] + 2
     elif board.arBoard[fcord] == KING:
@@ -658,6 +671,7 @@ def parseAN(board, an):
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
     elif board.arBoard[fcord] == PAWN:
+        # assume queen promotion
         if an[3] in "18" and board.variant != SITTUYINCHESS:
             flag = QUEEN_PROMOTION
 
