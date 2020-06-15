@@ -5,7 +5,7 @@ from pychess.Savers.pgn import load, walk, pattern, MOVE
 from pychess.System.protoopen import protoopen
 
 
-file_names = ("atomic", "chess960rwch", "world_matches", "zh")
+file_names = ("atomic", "chess960rwch", "world_matches", "zh", "sittuyin")
 file_handles = []
 for name in file_names:
     file_handles.append(protoopen("gamefiles/%s.pgn" % name))
