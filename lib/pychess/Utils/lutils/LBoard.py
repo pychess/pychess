@@ -528,8 +528,8 @@ class LBoard:
         color = self.color
         opcolor = 1 - self.color
         castling = self.castling
-        kcastle = flag == KING_CASTLE or (flag != DROP and fpiece == KING and fcord - tcord == -2)
-        qcastle = flag == QUEEN_CASTLE or (flag != DROP and fpiece == KING and fcord - tcord == 2)
+        kcastle = flag == KING_CASTLE or (self.variant == SCHESS and fpiece == KING and fcord - tcord == -2)
+        qcastle = flag == QUEEN_CASTLE or (self.variant == SCHESS and fpiece == KING and fcord - tcord == 2)
 
         self.hist_move.append(move)
         self.hist_enpassant.append(self.enpassant)
@@ -567,7 +567,7 @@ class LBoard:
             fcord = self.ini_kings[color]
             if FILE(fcord) == 3 and self.variant in (WILDCASTLECHESS,
                                                      WILDCASTLESHUFFLECHESS):
-                side = 0 if kcastle else 1
+                side = 0 if side == 1 else 1
             tcord = self.fin_kings[color][side]
             rookf = self.ini_rooks[color][side]
             rookt = self.fin_rooks[color][side]
@@ -732,8 +732,8 @@ class LBoard:
             self.setColor(color)
             return
 
-        kcastle = flag == KING_CASTLE or (flag != DROP and tpiece == KING and fcord - tcord == -2)
-        qcastle = flag == QUEEN_CASTLE or (flag != DROP and tpiece == KING and fcord - tcord == 2)
+        kcastle = flag == KING_CASTLE or (self.variant == SCHESS and tpiece == KING and fcord - tcord == -2)
+        qcastle = flag == QUEEN_CASTLE or (self.variant == SCHESS and tpiece == KING and fcord - tcord == 2)
 
         # Castling moves can be represented strangely, so normalize them.
         if kcastle or qcastle:
@@ -742,7 +742,7 @@ class LBoard:
             fcord = self.ini_kings[color]
             if FILE(fcord) == 3 and self.variant in (WILDCASTLECHESS,
                                                      WILDCASTLESHUFFLECHESS):
-                side = 0 if kcastle else 1
+                side = 0 if side == 1 else 1
             tcord = self.fin_kings[color][side]
             rookf = self.ini_rooks[color][side]
             rookt = self.fin_rooks[color][side]
