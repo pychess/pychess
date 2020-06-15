@@ -219,7 +219,7 @@ def toSAN(board, move, localRepr=False):
     if flag == DROP:
         return "%s@%s%s" % (part0, part1, check_or_mate())
 
-    if fpiece != PAWN:
+    if fpiece != PAWN or (board.variant == SITTUYINCHESS and flag in PROMOTIONS):
         xs = []
         ys = []
 
@@ -257,9 +257,6 @@ def toSAN(board, move, localRepr=False):
             part1 = "x" + part1
             if fpiece == PAWN:
                 part0 += reprFile[FILE(fcord)]
-
-    if board.variant == SITTUYINCHESS and flag in PROMOTIONS:
-        part0 = reprCord[fcord]
 
     notat = part0 + part1
     if flag in PROMOTIONS:
