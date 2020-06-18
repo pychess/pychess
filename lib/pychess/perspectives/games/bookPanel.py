@@ -129,7 +129,7 @@ class OpeningAdvisor(Advisor):
                 eco = ""
 #                self.opening_names.append("")
             else:
-                eco = "%s - %s%s%s" % (opening[0], opening[1], ', ' if opening[2] != '' else '', opening[2])
+                eco = "%s %s%s%s" % (opening[0], opening[1], ', ' if opening[2] != '' else '', opening[2])
 #                self.opening_names.append("%s %s" % (opening[1], opening[2]))
                 if opening[3] == int(False):
                     eco = '(...) %s' % eco.strip()

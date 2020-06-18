@@ -477,6 +477,8 @@ class Sidepanel:
 
         response = dialog.run()
         dialog.destroy()
+        if response == Gtk.ResponseType.DELETE_EVENT:  # Escape key implies Cancel
+            response = Gtk.ResponseType.CANCEL
 
         (iter_first, iter_last) = textbuffer.get_bounds()
         comment = '' if response == Gtk.ResponseType.REJECT else textbuffer.get_text(iter_first, iter_last, False)

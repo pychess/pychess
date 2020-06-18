@@ -524,7 +524,7 @@ class BoardControl(Gtk.EventBox):
         elif keyname == "equal":
             self.keybuffer += "="
 
-        elif keyname == "Return":
+        elif keyname == "Return" and self.keybuffer != "":
             color = self.view.model.boards[-1].color
             board = self.view.model.getBoardAtPly(
                 self.view.shown, self.view.shown_variation_idx)
