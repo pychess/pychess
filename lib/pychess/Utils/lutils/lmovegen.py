@@ -3,14 +3,15 @@ from .attack import isAttacked, pinnedOnKing, getAttacks
 from .ldata import fromToRay, moveArray, directions, fileBits, rankBits,\
     ray45, attack45, ray135, attack135, ray90, attack90, ray00, attack00, FILE, rays
 from pychess.Utils.const import EMPTY, PAWN,\
-    QUEEN, KNIGHT, BISHOP, ROOK, KING, WHITE, BLACK,\
+    QUEEN, KNIGHT, BISHOP, ROOK, KING, HAWK, ELEPHANT, WHITE, BLACK,\
     SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, GIVEAWAYCHESS, CAMBODIANCHESS,\
     ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, CRAZYHOUSECHESS, ASEAN_VARIANTS,\
-    HORDECHESS, PLACEMENTCHESS, BPAWN, sliders,\
+    HORDECHESS, PLACEMENTCHESS, SCHESS, BPAWN, sliders,\
     A8, A6, G6, F6, H1, C3, B2, B3, A3, D6, D8, E3, E1, E8, C7, F2, D1, E6, H3, D3, H2, G7, H6, H7,\
     ASEAN_QUEEN, ASEAN_BBISHOP, ASEAN_WBISHOP, NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT,\
-    KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE,\
-    DROP_VARIANTS, DROP, B_OOO, B_OO, W_OOO, W_OO
+    KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, \
+    DROP_VARIANTS, DROP, B_OOO, B_OO, W_OOO, W_OO, HAWK_PROMOTION, ELEPHANT_PROMOTION, \
+    HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK
 
 # The format of a move is as follows - from left:
 # 4 bits:  Descriping the type of the move
@@ -23,7 +24,9 @@ for i in range(64):
 
 shiftedFlags = []
 for i in NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
-        KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE, DROP:
+        KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, \
+        KING_PROMOTION, HAWK_PROMOTION, ELEPHANT_PROMOTION, \
+        HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK, DROP:
     shiftedFlags.append(i << 12)
 
 
@@ -52,9 +55,20 @@ def genCastles(board):
                                                      WILDCASTLESHUFFLECHESS):
                 castle = QUEEN_CASTLE if castle == KING_CASTLE else KING_CASTLE
             if board.variant == FISCHERRANDOMCHESS:
-                return newMove(king, rook, castle)
+                yield newMove(king, rook, castle)
             else:
-                return newMove(king, king_after, castle)
+                yield newMove(king, king_after, castle)
+                if board.variant == SCHESS:
+                    holding = board.holding[color]
+                    if holding[HAWK] == 0 and holding[ELEPHANT] == 0:
+                        return
+                    for king in iterBits(board.boards[board.color][KING] & board.virgin[board.color]):
+                        if holding[HAWK] > 0:
+                            yield newMove(king, king_after, HAWK_GATE)
+                            yield newMove(rook, king, HAWK_GATE_AT_ROOK)
+                        if holding[ELEPHANT] > 0:
+                            yield newMove(king, king_after, ELEPHANT_GATE)
+                            yield newMove(rook, king, ELEPHANT_GATE_AT_ROOK)
 
     king = board.ini_kings[board.color]
     wildcastle = FILE(king) == 3 and board.variant in (WILDCASTLECHESS,
@@ -62,30 +76,26 @@ def genCastles(board):
     if board.color == WHITE:
         if board.castling & W_OO:
             side = 0 if wildcastle else 1
-            move = generateOne(WHITE, side, board.fin_kings[WHITE][side],
-                               board.fin_rooks[WHITE][side])
-            if move:
+            for move in generateOne(WHITE, side, board.fin_kings[WHITE][side],
+                                    board.fin_rooks[WHITE][side]):
                 yield move
 
         if board.castling & W_OOO:
             side = 1 if wildcastle else 0
-            move = generateOne(WHITE, side, board.fin_kings[WHITE][side],
-                               board.fin_rooks[WHITE][side])
-            if move:
+            for move in generateOne(WHITE, side, board.fin_kings[WHITE][side],
+                                    board.fin_rooks[WHITE][side]):
                 yield move
     else:
         if board.castling & B_OO:
             side = 0 if wildcastle else 1
-            move = generateOne(BLACK, side, board.fin_kings[BLACK][side],
-                               board.fin_rooks[BLACK][side])
-            if move:
+            for move in generateOne(BLACK, side, board.fin_kings[BLACK][side],
+                                    board.fin_rooks[BLACK][side]):
                 yield move
 
         if board.castling & B_OOO:
             side = 1 if wildcastle else 0
-            move = generateOne(BLACK, side, board.fin_kings[BLACK][side],
-                               board.fin_rooks[BLACK][side])
-            if move:
+            for move in generateOne(BLACK, side, board.fin_kings[BLACK][side],
+                                    board.fin_rooks[BLACK][side]):
                 yield move
 
 
@@ -219,7 +229,7 @@ def gen_sittuyin_promotions(board):
 
 def genAllMoves(board, drops=True):
     from pychess.Variants import variants
-    if drops and board.variant in DROP_VARIANTS:
+    if drops and board.variant in DROP_VARIANTS and board.variant != SCHESS:
         for move in genDrops(board):
             yield move
 
@@ -242,17 +252,29 @@ def genAllMoves(board, drops=True):
     rooks = board.boards[board.color][ROOK]
     queens = board.boards[board.color][QUEEN]
     kings = board.boards[board.color][KING]
+    hawks = board.boards[board.color][HAWK]
+    elephants = board.boards[board.color][ELEPHANT]
 
     PROMOTIONS = variants[board.variant].PROMOTIONS
     # In sittuyin only one queen allowed to exist any time per side
     if board.variant == SITTUYINCHESS and queens:
         PROMOTIONS = (NORMAL_MOVE, )
 
-    # Knights
+    # Knights, Hawks, Elephants
     knightMoves = moveArray[KNIGHT]
-    for cord in iterBits(knights):
+    for cord in iterBits(knights | hawks | elephants):
         for c in iterBits(knightMoves[cord] & notfriends):
             yield newMove(cord, c)
+
+    # knight moves with gating
+    holding = board.holding[board.color]
+    if board.variant == SCHESS and (holding[HAWK] > 0 or holding[ELEPHANT] > 0):
+        for cord in iterBits(knights & board.virgin[board.color]):
+            for c in iterBits(knightMoves[cord] & notfriends):
+                if holding[HAWK] > 0:
+                    yield newMove(cord, c, HAWK_GATE)
+                if holding[ELEPHANT] > 0:
+                    yield newMove(cord, c, ELEPHANT_GATE)
 
     # King
     if kings:
@@ -265,6 +287,12 @@ def genAllMoves(board, drops=True):
                         yield newMove(cord, c)
                 else:
                     yield newMove(cord, c)
+                    if board.variant == SCHESS and (holding[HAWK] > 0 or holding[ELEPHANT] > 0):
+                        for cord in iterBits(kings & board.virgin[board.color]):
+                            if holding[HAWK] > 0:
+                                yield newMove(cord, c, HAWK_GATE)
+                            if holding[ELEPHANT] > 0:
+                                yield newMove(cord, c, ELEPHANT_GATE)
 
     if board.variant in ASEAN_VARIANTS:
         # Rooks
@@ -291,8 +319,8 @@ def genAllMoves(board, drops=True):
                 yield newMove(cord, c)
 
     else:
-        # Rooks and Queens
-        for cord in iterBits(rooks | queens):
+        # Rooks and Queens and Elephants
+        for cord in iterBits(rooks | queens | elephants):
             try:
                 attackBoard = attack00[cord][ray00[cord] & blocker] | \
                     attack90[cord][ray90[cord] & blocker]
@@ -301,8 +329,21 @@ def genAllMoves(board, drops=True):
             for c in iterBits(attackBoard & notfriends):
                 yield newMove(cord, c)
 
-    # Bishops and Queens
-        for cord in iterBits(bishops | queens):
+        if board.variant == SCHESS and (holding[HAWK] > 0 or holding[ELEPHANT] > 0):
+            for cord in iterBits((rooks | queens) & board.virgin[board.color]):
+                try:
+                    attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                        attack90[cord][ray90[cord] & blocker]
+                except KeyError:
+                    attackBoard = 0
+                for c in iterBits(attackBoard & notfriends):
+                    if holding[HAWK] > 0:
+                        yield newMove(cord, c, HAWK_GATE)
+                    if holding[ELEPHANT] > 0:
+                        yield newMove(cord, c, ELEPHANT_GATE)
+
+    # Bishops and Queens, Hawks
+        for cord in iterBits(bishops | queens | hawks):
             try:
                 attackBoard = attack45[cord][ray45[cord] & blocker] | \
                     attack135[cord][ray135[cord] & blocker]
@@ -310,6 +351,19 @@ def genAllMoves(board, drops=True):
                 attackBoard = 0
             for c in iterBits(attackBoard & notfriends):
                 yield newMove(cord, c)
+
+        if board.variant == SCHESS and (holding[HAWK] > 0 or holding[ELEPHANT] > 0):
+            for cord in iterBits((bishops | queens) & board.virgin[board.color]):
+                try:
+                    attackBoard = attack45[cord][ray45[cord] & blocker] | \
+                        attack135[cord][ray135[cord] & blocker]
+                except KeyError:
+                    attackBoard = 0
+                for c in iterBits(attackBoard & notfriends):
+                    if holding[HAWK] > 0:
+                        yield newMove(cord, c, HAWK_GATE)
+                    if holding[ELEPHANT] > 0:
+                        yield newMove(cord, c, ELEPHANT_GATE)
 
     # White pawns
     pawnEnemies = enemies | (enpassant is not None and bitPosArray[enpassant] or 0)
@@ -481,6 +535,8 @@ def genCaptures(board):
     rooks = board.boards[board.color][ROOK]
     queens = board.boards[board.color][QUEEN]
     kings = board.boards[board.color][KING]
+    hawks = board.boards[board.color][HAWK]
+    elephants = board.boards[board.color][ELEPHANT]
 
     PROMOTIONS = variants[board.variant].PROMOTIONS
     # In sittuyin promotion can't give capture
@@ -489,7 +545,7 @@ def genCaptures(board):
 
     # Knights
     knightMoves = moveArray[KNIGHT]
-    for cord in iterBits(knights):
+    for cord in iterBits(knights | hawks | elephants):
         for c in iterBits(knightMoves[cord] & enemies):
             yield newMove(cord, c)
 
@@ -513,7 +569,7 @@ def genCaptures(board):
             for c in iterBits(attackBoard & enemies):
                 yield newMove(cord, c)
     else:
-        for cord in iterBits(rooks | queens):
+        for cord in iterBits(rooks | queens | elephants):
             try:
                 attackBoard = attack00[cord][ray00[cord] & blocker] | \
                     attack90[cord][ray90[cord] & blocker]
@@ -534,7 +590,7 @@ def genCaptures(board):
             for c in iterBits(queenMoves[cord] & enemies):
                 yield newMove(cord, c)
     else:
-        for cord in iterBits(bishops | queens):
+        for cord in iterBits(bishops | queens | hawks):
             try:
                 attackBoard = attack45[cord][ray45[cord] & blocker] | \
                     attack135[cord][ray135[cord] & blocker]

@@ -18,7 +18,7 @@ from pychess.Utils.Move import toSAN, toAN, parseAny
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import ANALYZING, INVERSE_ANALYZING, DRAW, WHITEWON, BLACKWON, \
     WON_ADJUDICATION, DRAW_OFFER, ACTION_ERROR_NONE_TO_ACCEPT, CASTLE_KK, WHITE, \
-    CASTLE_SAN, FISCHERRANDOMCHESS, BLACK, reprSign, RESIGNATION
+    CASTLE_SAN, FISCHERRANDOMCHESS, BLACK, reprSign, RESIGNATION, SCHESS
 from pychess.Utils.logic import validate, getMoveKillingKing
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.lutils.lmove import ParsingError
@@ -640,6 +640,9 @@ class CECPEngine(ProtocolEngine):
                 fen = " ".join(fen_arr)
             print("setboard %s" % fen, file=self.engine)
         else:
+            # "edit" doesn't support seirawan (fairymax)
+            if board.variant == SCHESS:
+                return
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
             self.__tellEngineToStopPlayingCurrentColor()

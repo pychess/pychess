@@ -31,12 +31,12 @@ NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, RANDOMCHESS, \
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, \
     WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS, HORDECHESS, \
     RACINGKINGSCHESS, ASEANCHESS, MAKRUKCHESS, SITTUYINCHESS, CAMBODIANCHESS, AIWOKCHESS, \
-    EUROSHOGICHESS, SETUPCHESS, PLACEMENTCHESS = range(38)
+    EUROSHOGICHESS, SETUPCHESS, PLACEMENTCHESS, SCHESS = range(39)
 
 ASEAN_VARIANTS = (ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS,
                   SITTUYINCHESS)
 DROP_VARIANTS = (BUGHOUSECHESS, CRAZYHOUSECHESS, EUROSHOGICHESS, SITTUYINCHESS,
-                 SETUPCHESS, PLACEMENTCHESS)
+                 SETUPCHESS, PLACEMENTCHESS, SCHESS)
 UNSUPPORTED = (BUGHOUSECHESS, AIWOKCHESS, EUROSHOGICHESS, SETUPCHESS)
 
 # Chess variant groups
@@ -121,15 +121,15 @@ NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
 # Piece types
 
 # BPAWN is a pawn that moves in the opposite direction
-EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN, \
-    ASEAN_WBISHOP, ASEAN_BBISHOP, ASEAN_QUEEN = range(11)
+EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, HAWK, ELEPHANT, BPAWN, \
+    ASEAN_WBISHOP, ASEAN_BBISHOP, ASEAN_QUEEN = range(13)
 
 # Is sliding piece
-sliders = [False, False, False, True, True, True, False, False, False, False,
-           False]
+sliders = [False, False, False, True, True, True, False,
+           True, True, False, False, False, False]
 
 # Piece signs
-reprSign = ["", "P", "N", "B", "R", "Q", "K"]
+reprSign = ["", "P", "N", "B", "R", "Q", "K", "H", "E"]
 reprSignMakruk = ["", "P", "N", "S", "R", "M", "K"]
 reprSignSittuyin = ["", "P", "N", "S", "R", "F", "K"]
 chr2Sign = {"k": KING,
@@ -140,7 +140,9 @@ chr2Sign = {"k": KING,
             "p": PAWN,
             "m": QUEEN,
             "s": BISHOP,
-            "f": QUEEN}
+            "f": QUEEN,
+            "h": HAWK,
+            "e": ELEPHANT}
 chrU2Sign = {"K": KING,
              "Q": QUEEN,
              "R": ROOK,
@@ -149,14 +151,20 @@ chrU2Sign = {"K": KING,
              "P": PAWN,
              "M": QUEEN,
              "S": BISHOP,
-             "F": QUEEN}
+             "F": QUEEN,
+             "H": HAWK,
+             "E": ELEPHANT}
 
 # Move values
 NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
-    KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, \
-    QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE, DROP = range(11)
+    KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, \
+    HAWK_PROMOTION, ELEPHANT_PROMOTION, \
+    HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK, DROP = range(16)
+
 PROMOTIONS = (KING_PROMOTION, QUEEN_PROMOTION, ROOK_PROMOTION,
-              BISHOP_PROMOTION, KNIGHT_PROMOTION)
+              BISHOP_PROMOTION, KNIGHT_PROMOTION, HAWK_PROMOTION, ELEPHANT_PROMOTION)
+
+GATINGS = (HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)
 
 # Algebraic notation types: Short, Long, Figure and Simpe
 SAN, LAN, FAN, AN = range(4)
@@ -164,8 +172,8 @@ SAN, LAN, FAN, AN = range(4)
 CASTLE_SAN, CASTLE_KK, CASTLE_KR = range(3)
 
 FAN_PIECES = [
-    ["", "♙", "♘", "♗", "♖", "♕", "♔", ""],
-    ["", "♟", "♞", "♝", "♜", "♛", "♚", ""]
+    ["", "♙", "♘", "♗", "♖", "♕", "♔", "H", "E", ""],
+    ["", "♟", "♞", "♝", "♜", "♛", "♚", "h", "e", ""]
 ]
 
 # Castling values

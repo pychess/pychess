@@ -56,10 +56,10 @@ pattern = re.compile(r"""
     |(\))                # variation end
     |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
     |(
-    ([a-hKkQqRrBNnMmSsF][a-hxKQRBNMSF1-8+#=\-]{1,6}
+    ([a-hKkQqRrBNnMmSsFHE][a-hxKQRBNMSFHE1-8+#=\-/]{1,6}
     |[PNBRQMSFK]@[a-h][1-8][+#]?  # drop move
     |o\-?o(?:\-?o)?      # castling notation using letter 'o' with or without '-'
-    |O\-?O(?:\-?O)?      # castling notation using letter 'O' with or without '-'
+    |O\-?O(?:\-?O)?(?:/[HE][a-h][18]?)?      # castling notation using letter 'O' with or without '-'
     |0\-0(?:\-0)?        # castling notation using zero with required '-'
     |\-\-)               # non standard '--' is used for null move inside variations
     ([\?!]{1,2})*

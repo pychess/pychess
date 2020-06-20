@@ -595,7 +595,7 @@ class BoardState:
     def validate(self, cord0, cord1):
         if cord0 is None or cord1 is None:
             return False
-        # prevent accidental NULL_MOVE creation
+        # prevent accidental null move creation
         if cord0 == cord1 and self.parent.variant.variant != SITTUYINCHESS:
             return False
         if self.getBoard()[cord0] is None:

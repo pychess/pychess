@@ -117,6 +117,7 @@ class SubProcess(GObject.GObject):
 
                 try:
                     line = line.decode().rstrip()
+                    # print(line)
                 except UnicodeError:
                     # Some engines send author names in different encodinds (f.e. spike)
                     print("UnicodeError while decoding:", line)

@@ -22,9 +22,9 @@ if '_' not in builtins.__dict__:
 reprColor = [_("White"), _("Black")]
 
 reprPiece = ["Empty", _("Pawn"), _("Knight"), _("Bishop"), _("Rook"),
-             _("Queen"), _("King"), "BPawn"]
+             _("Queen"), _("King"), _("Hawk"), _("Elephant"), "BPawn"]
 
-localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K")]
+localReprSign = ["", _("P"), _("N"), _("B"), _("R"), _("Q"), _("K"), _("H"), _("E")]
 
 reprResult_long = {
     DRAW: _("The game ended in a draw"),

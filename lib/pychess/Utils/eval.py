@@ -4,7 +4,7 @@
 
 from array import array
 from pychess.Utils.const import PAWN, WHITE, KNIGHT, QUEEN, KING, BISHOP, ROOK, BLACK, \
-    B_OOO, B_OO, W_OO, W_OOO, DRAW, RUNNING, WHITEWON
+    B_OOO, B_OO, W_OO, W_OOO, DRAW, RUNNING, WHITEWON, HAWK, ELEPHANT
 
 pieceValues = [0, 900, 500, 350, 300, 100]
 # these tables will be used for positional bonuses: #
@@ -189,6 +189,9 @@ pos = {
         ])
     }
 }
+
+pos[HAWK] = {WHITE: pos[BISHOP][WHITE], BLACK: pos[BISHOP][BLACK]}
+pos[ELEPHANT] = {WHITE: pos[ROOK][WHITE], BLACK: pos[ROOK][BLACK]}
 
 endking = array('b', [
     -5, -3, -1, 0, 0, -1, -3, -5, -3, 10, 10, 10, 10, 10, 10, -3, -1, 10, 25,

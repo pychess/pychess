@@ -26,8 +26,10 @@ BISHOP_VALUE = 330
 ROOK_VALUE = 500
 QUEEN_VALUE = 900
 KING_VALUE = 2000
+HAWK_VALUE = 800
+ELEPHANT_VALUE = 850
 PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE, BISHOP_VALUE, ROOK_VALUE,
-                QUEEN_VALUE, KING_VALUE]
+                QUEEN_VALUE, KING_VALUE, HAWK_VALUE, ELEPHANT_VALUE]
 
 ASEAN_PIECE_VALUES = (0, 100, 450, 300, 630, 180, 2000)
 CRAZY_PIECE_VALUES = (0, 100, 200, 240, 240, 380, 2000)
@@ -313,6 +315,8 @@ dir = [
     [-10, -1, 1, 10],
     [-11, -10, -9, -1, 1, 9, 10, 11],
     [-11, -10, -9, -1, 1, 9, 10, 11],
+    [-11, -9, 9, 11],
+    [-10, -1, 1, 10],
     [-9, -11],
     [-11, -9, 9, 10, 11],
     [-11, -10, -9, 9, 11],

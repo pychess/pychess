@@ -1,6 +1,6 @@
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import DROP, NORMAL_MOVE, PAWN, SITTUYINCHESS, QUEEN, KING, \
-    NULL_MOVE, WHITE, BLACK, W_OOO, W_OO, B_OOO, B_OO, QUEEN_CASTLE, FISCHERRANDOMCHESS,\
+    WHITE, BLACK, W_OOO, W_OO, B_OOO, B_OO, QUEEN_CASTLE, FISCHERRANDOMCHESS, GATINGS,\
     KING_CASTLE, CAMBODIANCHESS, ENPASSANT, PROMOTIONS, CASTLE_SAN, C1, G1, reprSign
 from pychess.Utils.lutils.lmovegen import newMove
 from .lutils import lmove
@@ -20,7 +20,6 @@ class Move:
             self.cord0 = None if self.flag == DROP else Cord(lmove.FCORD(
                 self.move))
             self.cord1 = Cord(lmove.TCORD(self.move))
-
         else:
             assert cord0 is not None and cord1 is not None, "cord0=%s, cord1=%s, board=%s" % (
                 cord0, cord1, board)
@@ -52,9 +51,6 @@ class Move:
                     self.flag = lmove.FLAG_PIECE(QUEEN)
 
             elif board[self.cord0].piece == KING:
-                if self.cord0 == self.cord1:
-                    self.flag = NULL_MOVE
-
                 if self.cord0.x - self.cord1.x == 2 and board.variant not in (CAMBODIANCHESS, FISCHERRANDOMCHESS):
                     self.flag = QUEEN_CASTLE if self.cord0.x == 4 else KING_CASTLE
                 elif self.cord0.x - self.cord1.x == -2 and board.variant not in (CAMBODIANCHESS, FISCHERRANDOMCHESS):
@@ -94,11 +90,12 @@ class Move:
         promotion = "=" + reprSign[lmove.PROMOTE_PIECE(self.flag)] \
                     if self.flag in PROMOTIONS else ""
 
+        gate_piece = reprSign[lmove.GATE_PIECE(self.flag)].lower() if self.flag in GATINGS else ""
         if self.flag == DROP:
             piece = reprSign[lmove.FCORD(self.move)]
             return piece + "@" + str(self.cord1) + promotion
         else:
-            return str(self.cord0) + str(self.cord1) + promotion
+            return str(self.cord0) + str(self.cord1) + gate_piece + promotion
 
     def __eq__(self, other):
         if isinstance(other, Move):
