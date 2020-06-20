@@ -9,11 +9,11 @@ from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, 
     E1, E8, F1, F8, \
     G1, G8, H1, H8, \
     DROP, PROMOTIONS, ENPASSANT, B_OO, B_OOO, W_OO, W_OOO, QUEEN_CASTLE,\
-    KING_CASTLE, GATINGS, HAWK_GATE, HAWK_GATE_AT_ROOK, QUEEN_PROMOTION
+    KING_CASTLE, GATINGS, HAWK_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK, QUEEN_PROMOTION
 from pychess.Utils.repr import reprColor
-from .ldata import FILE, fileBits
+from .ldata import FILE, fileBits, brank8
 from .attack import isAttacked
-from .bitboard import clearBit, setBit, bitPosArray
+from .bitboard import clearBit, iterBits, setBit, bitPosArray
 from .PolyglotHash import pieceHashes, epHashes, \
     W_OOHash, W_OOOHash, B_OOHash, B_OOOHash, colorHash, holdingHash
 
@@ -122,6 +122,10 @@ class LBoard:
         self.is_first_move = {KING: [True, True], QUEEN: [True, True]}
         self.hist_is_first_move = []
 
+    def iniSchess(self):
+        self.virgin = [brank8[1], brank8[0]]
+        self.hist_virgin = []
+
     def applyFen(self, fenstr):
         """ Applies the fenstring to the board.
             If the string is not properly
@@ -190,6 +194,9 @@ class LBoard:
         elif self.variant == CAMBODIANCHESS:
             self.iniCambodian()
 
+        elif self.variant == SCHESS:
+            self.iniSchess()
+
         if self.variant in DROP_VARIANTS:
             self.iniHouse()
 
@@ -223,9 +230,6 @@ class LBoard:
         else:
             pieceChrs, colChr = parts
 
-        # Try to validate some information
-        # TODO: This should be expanded and perhaps moved
-
         slashes = pieceChrs.count("/")
         if slashes < 7:
             raise SyntaxError(
@@ -242,7 +246,7 @@ class LBoard:
                 elif self.variant == CAMBODIANCHESS:
                     valid_chars = "DE"
                 elif self.variant == SCHESS:
-                    valid_chars = "KQBCDFG"
+                    valid_chars = "KQABCDEFGH"
                 else:
                     valid_chars = "KQ"
 
@@ -313,6 +317,7 @@ class LBoard:
             self.setColor(BLACK)
 
         # Parse castling availability
+        # TODO: S-Chess gating
 
         castling = 0
         for char in castChr:
@@ -528,8 +533,11 @@ class LBoard:
         color = self.color
         opcolor = 1 - self.color
         castling = self.castling
-        kcastle = flag == KING_CASTLE or (self.variant == SCHESS and fpiece == KING and fcord - tcord == -2)
-        qcastle = flag == QUEEN_CASTLE or (self.variant == SCHESS and fpiece == KING and fcord - tcord == 2)
+
+        kcastle = flag == KING_CASTLE or (
+            self.variant == SCHESS and ((fpiece == KING and fcord - tcord == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord > 0)))
+        qcastle = flag == QUEEN_CASTLE or (
+            self.variant == SCHESS and ((fpiece == KING and fcord - tcord == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord < 0)))
 
         self.hist_move.append(move)
         self.hist_enpassant.append(self.enpassant)
@@ -543,6 +551,8 @@ class LBoard:
         if self.variant == CAMBODIANCHESS:
             self.hist_is_first_move.append({KING: self.is_first_move[KING][:],
                                             QUEEN: self.is_first_move[QUEEN][:]})
+        elif self.variant == SCHESS:
+            self.hist_virgin.append(self.virgin[:])
 
         self.opchecked = None
         self.checked = None
@@ -558,12 +568,16 @@ class LBoard:
                 self.is_first_move[KING][color] = False
             elif fpiece == QUEEN and self.is_first_move[QUEEN][color]:
                 self.is_first_move[QUEEN][color] = False
+        elif self.variant == SCHESS:
+            if fcord in iterBits(self.virgin[color]):
+                self.virgin[color] = clearBit(self.virgin[color], fcord)
 
         # Castling moves can be represented strangely, so normalize them.
         if kcastle or qcastle:
             side = 0 if qcastle else 1
             fpiece = KING
             tpiece = EMPTY  # In FRC, there may be a rook there, but the king doesn't capture it.
+            gcord = fcord  # save gating cord
             fcord = self.ini_kings[color]
             if FILE(fcord) == 3 and self.variant in (WILDCASTLECHESS,
                                                      WILDCASTLESHUFFLECHESS):
@@ -658,6 +672,7 @@ class LBoard:
             self.holding[color][gpiece] -= 1
             self.hash ^= holdingHash[color][gpiece][self.holding[color][gpiece]]
             self.pieceCount[color][gpiece] += 1
+            self._addPiece(gcord if (kcastle or qcastle) else fcord, gpiece, color)
 
         if self.variant == ATOMICCHESS and (tpiece != EMPTY or
                                             flag == ENPASSANT):
@@ -732,8 +747,17 @@ class LBoard:
             self.setColor(color)
             return
 
-        kcastle = flag == KING_CASTLE or (self.variant == SCHESS and tpiece == KING and fcord - tcord == -2)
-        qcastle = flag == QUEEN_CASTLE or (self.variant == SCHESS and tpiece == KING and fcord - tcord == 2)
+        if flag in GATINGS:
+            gpiece = HAWK if flag in (HAWK_GATE, HAWK_GATE_AT_ROOK) else ELEPHANT
+            self.holding[color][gpiece] += 1
+            self.hash ^= holdingHash[color][gpiece][self.holding[color][gpiece]]
+            self.pieceCount[color][gpiece] -= 1
+            self._removePiece(fcord, gpiece, color)
+
+        kcastle = flag == KING_CASTLE or (
+            self.variant == SCHESS and ((tpiece == KING and fcord - tcord == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord > 0)))
+        qcastle = flag == QUEEN_CASTLE or (
+            self.variant == SCHESS and ((tpiece == KING and fcord - tcord == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord < 0)))
 
         # Castling moves can be represented strangely, so normalize them.
         if kcastle or qcastle:
@@ -817,14 +841,10 @@ class LBoard:
                     self.promoted[tcord] = 0
             self.capture_promoting = self.hist_capture_promoting.pop()
 
-        if flag in GATINGS:
-            gpiece = HAWK if flag in (HAWK_GATE, HAWK_GATE_AT_ROOK) else ELEPHANT
-            self.holding[color][gpiece] += 1
-            self.hash ^= holdingHash[color][gpiece][self.holding[color][gpiece]]
-            self.pieceCount[color][gpiece] -= 1
-
         if self.variant == CAMBODIANCHESS:
             self.is_first_move = self.hist_is_first_move.pop()
+        elif self.variant == SCHESS:
+            self.virgin = self.hist_virgin.pop()
 
         self.setColor(color)
 
@@ -918,7 +938,7 @@ class LBoard:
     def __repr__(self):
         return self.prepr()
 
-    def asFen(self, enable_bfen=True):
+    def asFen(self, enable_bfen=False):
         fenstr = []
 
         rows = [self.arBoard[i:i + 8] for i in range(0, 64, 8)][::-1]
@@ -989,6 +1009,26 @@ class LBoard:
             if not cast:
                 cast = "-"
             fenstr.append(cast)
+        elif self.variant == SCHESS:
+            # TODO: remove redundant letters
+            cast = ""
+            if self.castling & W_OO:
+                cast += "K"
+            if self.castling & W_OOO:
+                cast += "Q"
+            if self.holding[WHITE][HAWK] > 0 or self.holding[WHITE][ELEPHANT] > 0:
+                for bit in iterBits(self.virgin[WHITE]):
+                    cast += "ABCDEFGH"[bit]
+            if self.castling & B_OO:
+                cast += "k"
+            if self.castling & B_OOO:
+                cast += "q"
+            if self.holding[BLACK][HAWK] > 0 or self.holding[BLACK][ELEPHANT] > 0:
+                for bit in iterBits(self.virgin[BLACK]):
+                    cast += "abcdefgh"[bit - 56]
+            if not cast:
+                cast = "-"
+            fenstr.append(cast)
         else:
             fenstr.append(self.reprCastling())
         fenstr.append(" ")
@@ -1050,6 +1090,9 @@ class LBoard:
             copy.holding = (self.holding[0].copy(), self.holding[1].copy())
             copy.capture_promoting = self.capture_promoting
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
+            if self.variant == SCHESS:
+                copy.virgin = self.virgin[:]
+                copy.hist_virgin = self.hist_virgin[:]
         elif self.variant == ATOMICCHESS:
             copy.hist_exploding_around = [a[:] for a in self.hist_exploding_around]
         elif self.variant == THREECHECKCHESS:

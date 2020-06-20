@@ -11,7 +11,7 @@ from pychess.Utils.book import getOpenings
 from pychess.Utils.const import NORMALCHESS, FEN_START, BLACK, FISCHERRANDOMCHESS, \
     CRAZYHOUSECHESS, WILDCASTLESHUFFLECHESS, LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, \
     THREECHECKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, \
-    SITTUYINCHESS, GIVEAWAYCHESS, HORDECHESS, RACINGKINGSCHESS, PLACEMENTCHESS, WHITE
+    SITTUYINCHESS, GIVEAWAYCHESS, HORDECHESS, RACINGKINGSCHESS, PLACEMENTCHESS, SCHESS, WHITE
 from pychess.Utils.lutils.Benchmark import benchmark
 from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
@@ -25,6 +25,7 @@ from pychess.Variants.horde import HORDESTART
 from pychess.Variants.placement import PLACEMENTSTART
 from pychess.Variants.threecheck import THREECHECKSTART
 from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, KAMBODIANSTART, SITTUYINSTART
+from pychess.Variants.seirawan import SCHESSSTART
 
 if sys.platform != "win32":
     import readline
@@ -61,7 +62,7 @@ class PyChessCECP(PyChess):
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
             "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse," +
-                        "losers,suicide,giveaway,horde,atomic,racingkings," +
+                        "losers,suicide,giveaway,horde,atomic,racingkings,seirawan," +
                         "kingofthehill,3check,placement,asean,cambodian,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
@@ -174,6 +175,9 @@ class PyChessCECP(PyChess):
                         elif lines[1] == "sittuyin":
                             self.board = LBoard(SITTUYINCHESS)
                             self.board.applyFen(SITTUYINSTART)
+                        elif lines[1] == "seirawan":
+                            self.board = LBoard(SCHESS)
+                            self.board.applyFen(SCHESSSTART)
 
                 elif lines[0] == "quit":
                     self.forced = True

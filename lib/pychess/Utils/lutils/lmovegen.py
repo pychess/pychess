@@ -59,8 +59,16 @@ def genCastles(board):
             else:
                 yield newMove(king, king_after, castle)
                 if board.variant == SCHESS:
-                    yield newMove(king, king_after, HAWK_GATE)
-                    yield newMove(king, king_after, ELEPHANT_GATE)
+                    holding = board.holding[color]
+                    if holding[HAWK] == 0 and holding[ELEPHANT] == 0:
+                        return
+                    for king in iterBits(board.boards[board.color][KING] & board.virgin[board.color]):
+                        if holding[HAWK] > 0:
+                            yield newMove(king, king_after, HAWK_GATE)
+                            yield newMove(rook, king, HAWK_GATE_AT_ROOK)
+                        if holding[ELEPHANT] > 0:
+                            yield newMove(king, king_after, ELEPHANT_GATE)
+                            yield newMove(rook, king, ELEPHANT_GATE_AT_ROOK)
 
     king = board.ini_kings[board.color]
     wildcastle = FILE(king) == 3 and board.variant in (WILDCASTLECHESS,
@@ -258,11 +266,15 @@ def genAllMoves(board, drops=True):
         for c in iterBits(knightMoves[cord] & notfriends):
             yield newMove(cord, c)
 
-    if board.variant == SCHESS:
-        for cord in iterBits(knights):
+    # knight moves with gating
+    holding = board.holding[board.color]
+    if board.variant == SCHESS and (holding[HAWK] > 0 or holding[ELEPHANT] > 0):
+        for cord in iterBits(knights & board.virgin[board.color]):
             for c in iterBits(knightMoves[cord] & notfriends):
-                yield newMove(cord, c, HAWK_GATE)
-                yield newMove(cord, c, ELEPHANT_GATE)
+                if holding[HAWK] > 0:
+                    yield newMove(cord, c, HAWK_GATE)
+                if holding[ELEPHANT] > 0:
+                    yield newMove(cord, c, ELEPHANT_GATE)
 
     # King
     if kings:
@@ -275,9 +287,12 @@ def genAllMoves(board, drops=True):
                         yield newMove(cord, c)
                 else:
                     yield newMove(cord, c)
-                    if board.variant == SCHESS:
-                        yield newMove(cord, c, HAWK_GATE)
-                        yield newMove(cord, c, ELEPHANT_GATE)
+                    if board.variant == SCHESS and (holding[HAWK] > 0 or holding[ELEPHANT] > 0):
+                        for cord in iterBits(kings & board.virgin[board.color]):
+                            if holding[HAWK] > 0:
+                                yield newMove(cord, c, HAWK_GATE)
+                            if holding[ELEPHANT] > 0:
+                                yield newMove(cord, c, ELEPHANT_GATE)
 
     if board.variant in ASEAN_VARIANTS:
         # Rooks
@@ -314,16 +329,18 @@ def genAllMoves(board, drops=True):
             for c in iterBits(attackBoard & notfriends):
                 yield newMove(cord, c)
 
-        if board.variant == SCHESS:
-            for cord in iterBits(rooks | queens):
+        if board.variant == SCHESS and (holding[HAWK] > 0 or holding[ELEPHANT] > 0):
+            for cord in iterBits((rooks | queens) & board.virgin[board.color]):
                 try:
                     attackBoard = attack00[cord][ray00[cord] & blocker] | \
                         attack90[cord][ray90[cord] & blocker]
                 except KeyError:
                     attackBoard = 0
                 for c in iterBits(attackBoard & notfriends):
-                    yield newMove(cord, c, HAWK_GATE)
-                    yield newMove(cord, c, ELEPHANT_GATE)
+                    if holding[HAWK] > 0:
+                        yield newMove(cord, c, HAWK_GATE)
+                    if holding[ELEPHANT] > 0:
+                        yield newMove(cord, c, ELEPHANT_GATE)
 
     # Bishops and Queens, Hawks
         for cord in iterBits(bishops | queens | hawks):
@@ -335,16 +352,18 @@ def genAllMoves(board, drops=True):
             for c in iterBits(attackBoard & notfriends):
                 yield newMove(cord, c)
 
-        if board.variant == SCHESS:
-            for cord in iterBits(bishops | queens):
+        if board.variant == SCHESS and (holding[HAWK] > 0 or holding[ELEPHANT] > 0):
+            for cord in iterBits((bishops | queens) & board.virgin[board.color]):
                 try:
                     attackBoard = attack45[cord][ray45[cord] & blocker] | \
                         attack135[cord][ray135[cord] & blocker]
                 except KeyError:
                     attackBoard = 0
                 for c in iterBits(attackBoard & notfriends):
-                    yield newMove(cord, c, HAWK_GATE)
-                    yield newMove(cord, c, ELEPHANT_GATE)
+                    if holding[HAWK] > 0:
+                        yield newMove(cord, c, HAWK_GATE)
+                    if holding[ELEPHANT] > 0:
+                        yield newMove(cord, c, ELEPHANT_GATE)
 
     # White pawns
     pawnEnemies = enemies | (enpassant is not None and bitPosArray[enpassant] or 0)

@@ -111,12 +111,11 @@ def get_svg_pieces(svgdir):
         rsvg_handles = [[None] * 9, [None] * 9]
         for c, color in ((WHITE, 'white'), (BLACK, 'black')):
             for p in pieces:
-                try:
-                    rsvg_handles[c][p] = Rsvg.Handle.new_from_file(addDataPrefix(
-                        "pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[
-                            p].lower())))
-                except Exception:
-                    print("No %s piece for %s" % (color, p))
+                if p in (HAWK, ELEPHANT) and svgdir != "merida":
+                    continue
+                rsvg_handles[c][p] = Rsvg.Handle.new_from_file(addDataPrefix(
+                    "pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[
+                        p].lower())))
     return rsvg_handles
 
 

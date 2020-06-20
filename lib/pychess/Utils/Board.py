@@ -8,7 +8,8 @@ from .const import A1, A8, B1, B8, C1, C8, D1, D8, E1, E8, F1, F8, G1, G8, H1, H
     BISHOP, ROOK, ROOK_PROMOTION, QUEEN_PROMOTION, KNIGHT_PROMOTION, BLACK, FEN_START, \
     WHITE, NORMALCHESS, PAWN, BISHOP_PROMOTION, KNIGHT, QUEEN, KING, DROP_VARIANTS, \
     DROP, ATOMICCHESS, ENPASSANT, FISCHERRANDOMCHESS, QUEEN_CASTLE, CRAZYHOUSECHESS, KING_CASTLE, \
-    WILDCASTLECHESS, PROMOTIONS, WILDCASTLESHUFFLECHESS, FAN_PIECES
+    WILDCASTLECHESS, PROMOTIONS, WILDCASTLESHUFFLECHESS, FAN_PIECES, \
+    GATINGS, HAWK, HAWK_GATE, ELEPHANT, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK, SCHESS
 
 
 def reverse_enum(L):
@@ -128,12 +129,13 @@ class Board:
         dead = []
 
         cord0, cord1 = move.cords
+        flag = FLAG(move.move)
 
         # null move or SITTUYINCHESS in place promotion
-        if cord0 == cord1 and move.flag != DROP and move.flag != QUEEN_PROMOTION:
+        if cord0 == cord1 and flag != DROP and flag != QUEEN_PROMOTION:
             return moved, new, dead
 
-        if move.flag == DROP:
+        if flag == DROP:
             piece = FCORD(move.move)
             cord0 = self.getHoldingCord(self.color, piece)
             moved.append((self[cord0], cord0))
@@ -142,8 +144,13 @@ class Board:
             dead = new
             return moved, new, dead
 
+        kcastle = flag == KING_CASTLE or (
+            self.variant == SCHESS and ((self[move.cord0].piece == KING and cord0.x - cord1.x == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and cord0.x - cord1.x > 0)))
+        qcastle = flag == QUEEN_CASTLE or (
+            self.variant == SCHESS and ((self[move.cord0].piece == KING and cord0.x - cord1.x == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and cord0.x - cord1.x < 0)))
+
         if self.variant == ATOMICCHESS and (self[cord1] or
-                                            move.flag == ENPASSANT):
+                                            flag == ENPASSANT):
             # Sequence nubers of next newHoldingCord of WHITE and BLACK
             nth = [0, 0]
 
@@ -153,13 +160,13 @@ class Board:
             moved.append((board1[cord], cord0))
             new.append(board1[cord])
         else:
-            if move.flag in PROMOTIONS:
+            if flag in PROMOTIONS:
                 dead.append(self[cord0])
             else:
                 moved.append((self[cord0], cord0))
 
-        if self[cord1] and not (self.variant == FISCHERRANDOMCHESS and
-                                move.flag in (QUEEN_CASTLE, KING_CASTLE)):
+        # capture
+        if self[cord1] and not (flag in (QUEEN_CASTLE, KING_CASTLE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)):
             piece = PAWN if self.variant == CRAZYHOUSECHESS and self[
                 cord1].promoted else self[cord1].piece
             cord = board1.getHoldingCord(self.color, piece)
@@ -179,23 +186,30 @@ class Board:
                         moved.append((board1[cord], acord))
                         new.append(board1[cord])
 
-        if move.flag in (QUEEN_CASTLE, KING_CASTLE):
-            side = move.flag - QUEEN_CASTLE
+        if kcastle or qcastle:
+            side = 0 if qcastle else 1
             if FILE(cord0.x) == 3 and self.board.variant in (
                     WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
                 side = 0 if side == 1 else 1
             rook = self.board.ini_rooks[self.color][side]
             moved.append((self[Cord(rook)], Cord(rook)))
 
-        elif move.flag in PROMOTIONS:
+        elif flag in PROMOTIONS:
             newPiece = board1[cord1]
             moved.append((newPiece, cord0))
             new.append(newPiece)
 
-        elif move.flag == ENPASSANT:
+        elif flag == ENPASSANT:
             shift = -1 if self.color == WHITE else 1
             ep_cord = Cord(cord1.x, cord1.y + shift)
             moved.append((self[ep_cord], ep_cord))
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = board1.getHoldingPieces(self.color)
+
+        if flag in GATINGS:
+            gpiece = HAWK if flag in (HAWK_GATE, HAWK_GATE_AT_ROOK) else ELEPHANT
+            cord0 = self.getHoldingCord(self.color, gpiece)
+            moved.append((self[cord0], cord0))
             # add all captured pieces to "new" list to enforce repainting them after a possible reordering
             new = board1.getHoldingPieces(self.color)
 
@@ -207,24 +221,34 @@ class Board:
         dead = []
 
         cord0, cord1 = move.cords
+        flag = FLAG(move.move)
 
         # null move or SITTUYINCHESS in place promotion
-        if cord0 == cord1 and move.flag != DROP and move.flag != QUEEN_PROMOTION:
+        if cord0 == cord1 and flag != DROP and flag != QUEEN_PROMOTION:
             return moved, new, dead
 
         if self.variant == ATOMICCHESS and (board1[cord1] or
-                                            move.flag == ENPASSANT):
+                                            flag == ENPASSANT):
             piece = board1[cord0].piece
             cord = self.getHoldingCord(self.color, piece)
             moved.append((self[cord], cord))
             self[cord].opacity = 1
             dead.append(self[cord])
-        elif not (self.variant == FISCHERRANDOMCHESS and move.flag in
+        elif not (self.variant == FISCHERRANDOMCHESS and flag in
                   (QUEEN_CASTLE, KING_CASTLE)):
             moved.append((self[cord1], cord1))
 
-        if board1[cord1] and not (self.variant == FISCHERRANDOMCHESS and
-                                  move.flag in (QUEEN_CASTLE, KING_CASTLE)):
+        kcastle = flag == KING_CASTLE or (
+            self.variant == SCHESS and (
+                (self[move.cord1] is not None and self[move.cord1].piece == KING and cord0.x - cord1.x == -2) or
+                (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and cord0.x - cord1.x > 0)))
+        qcastle = flag == QUEEN_CASTLE or (
+            self.variant == SCHESS and (
+                (self[move.cord1] is not None and self[move.cord1].piece == KING and cord0.x - cord1.x == 2) or
+                (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and cord0.x - cord1.x < 0)))
+
+        # capture
+        if board1[cord1] and not (flag in (QUEEN_CASTLE, KING_CASTLE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)):
             piece = PAWN if self.variant == CRAZYHOUSECHESS and board1[
                 cord1].promoted else board1[cord1].piece
             cord = self.getHoldingCord(1 - self.color, piece)
@@ -246,20 +270,20 @@ class Board:
                         self[cord].opacity = 1
                         dead.append(self[cord])
 
-        if move.flag in (QUEEN_CASTLE, KING_CASTLE):
-            side = move.flag - QUEEN_CASTLE
+        if kcastle or qcastle:
+            side = 0 if qcastle else 1
             if FILE(cord0.x) == 3 and self.board.variant in (
                     WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
                 side = 0 if side == 1 else 1
             rook = self.board.fin_rooks[board1.color][side]
             moved.append((self[Cord(rook)], Cord(rook)))
 
-        elif move.flag in PROMOTIONS:
+        elif flag in PROMOTIONS:
             newPiece = board1[cord0]
             moved.append((newPiece, cord1))
             new.append(newPiece)
 
-        elif move.flag == ENPASSANT:
+        elif flag == ENPASSANT:
             cord = self.getHoldingCord(1 - self.color, PAWN)
             moved.append((self[cord], cord))
             self[cord].opacity = 1
@@ -286,12 +310,20 @@ class Board:
         newBoard = self.clone(lboard=lboard)
         if lboard is None:
             newBoard.board.applyMove(move.move)
-
         cord0, cord1 = move.cords
 
+        kcastle = flag == KING_CASTLE or (
+            self.variant == SCHESS and ((self[move.cord0].piece == KING and cord0.x - cord1.x == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)and cord0.x - cord1.x > 0)))
+        qcastle = flag == QUEEN_CASTLE or (
+            self.variant == SCHESS and ((self[move.cord0].piece == KING and cord0.x - cord1.x == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)and cord0.x - cord1.x < 0)))
+
+        if kcastle or qcastle:
+            gcord = cord0  # save gating cord
+
+        # capture
         if (self[move.cord1] is not None or flag == ENPASSANT) and \
-                not (cord0 == cord1 and move.flag != DROP and move.flag != QUEEN_PROMOTION) and \
-                not (flag in (QUEEN_CASTLE, KING_CASTLE)):
+                not (cord0 == cord1 and flag != DROP and flag != QUEEN_PROMOTION) and \
+                not (kcastle or qcastle):
             if self.variant == CRAZYHOUSECHESS:
                 piece = PAWN if flag == ENPASSANT or self[
                     move.cord1].promoted else self[move.cord1].piece
@@ -336,16 +368,19 @@ class Board:
                     1 - self.color])] = new_piece
                 newBoard[cord1] = None
             else:
-                if flag in (QUEEN_CASTLE, KING_CASTLE):
-                    king = newBoard[cord0]
+                if kcastle or qcastle:
+                    if flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK):
+                        king = newBoard[cord1]
+                    else:
+                        king = newBoard[cord0]
                 else:
                     newBoard[cord1] = newBoard[cord0]
 
-        if cord0 != cord1 and flag != DROP:
+        if cord0 != cord1 and flag != DROP and flag != HAWK_GATE_AT_ROOK and flag != ELEPHANT_GATE_AT_ROOK:
             newBoard[cord0] = None
 
-        if flag in (QUEEN_CASTLE, KING_CASTLE):
-            side = flag - QUEEN_CASTLE
+        if kcastle or qcastle:
+            side = 0 if qcastle else 1
             if FILE(cord0.x) == 3 and self.board.variant in (
                     WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
                 side = 0 if side == 1 else 1
@@ -354,8 +389,16 @@ class Board:
             newBoard[Cord(finrook)] = newBoard[Cord(inirook)]
             if inirook != finrook:
                 newBoard[Cord(inirook)] = None
+            if flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK):
+                newBoard[cord1] = None
             finking = self.board.fin_kings[self.color][side]
             newBoard[Cord(finking)] = king
+
+        if flag in GATINGS:
+            gpiece = HAWK if flag in (HAWK_GATE, HAWK_GATE_AT_ROOK) else ELEPHANT
+            holding_coord = self.getHoldingCord(self.color, gpiece)
+            newBoard[gcord if (kcastle or qcastle) else cord0] = newBoard[holding_coord]
+            newBoard[holding_coord] = None
 
         if flag in PROMOTIONS:
             new_piece = Piece(self.color, PROMOTE_PIECE(flag))
@@ -367,6 +410,7 @@ class Board:
 
         if flag == DROP or flag == ENPASSANT or self[move.cord1] is not None:
             newBoard.reorderHolding(self.color)
+
         return newBoard
 
     def switchColor(self):

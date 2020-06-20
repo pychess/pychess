@@ -2,7 +2,8 @@ import sys
 
 from .attack import staticExchangeEvaluate
 from .ldata import PIECE_VALUES, ASEAN_PIECE_VALUES, PAWN_VALUE, MATE_VALUE
-from pychess.Utils.const import DROP, EMPTY, ASEAN_VARIANTS, PROMOTIONS, ATOMICCHESS
+from .lmove import GATE_PIECE
+from pychess.Utils.const import DROP, EMPTY, ASEAN_VARIANTS, PROMOTIONS, ATOMICCHESS, GATINGS
 from pychess.Utils.eval import pos as position_values
 from pychess.Variants.atomic import kingExplode
 
@@ -69,6 +70,9 @@ def getMoveValue(board, table, depth, move):
     if flag == DROP:
         return PIECE_VALUES[tpiece] + 1000
 
+    if flag in GATINGS:
+        return PIECE_VALUES[GATE_PIECE(flag)] + 1000
+
     killervalue = table.isKiller(depth, move)
     if killervalue:
         return 1000 + killervalue
@@ -78,16 +82,18 @@ def getMoveValue(board, table, depth, move):
     # opking = board.kings[1-board.color]
     # score = distance[fpiece][fcord][opking] - distance[fpiece][tcord][opking]
 
-    if fpiece not in position_values:
-        # That is, fpiece == EMPTY
-        print(fcord, tcord)
-        print(board)
-
     if board.variant in ASEAN_VARIANTS:
         score = 0
     else:
-        score = position_values[fpiece][board.color][tcord] - \
-            position_values[fpiece][board.color][fcord]
+        try:
+            score = position_values[fpiece][board.color][tcord] - \
+                position_values[fpiece][board.color][fcord]
+            # print("NOT EMPTY fpiece", fpiece, fcord, tcord)
+            # print(board)
+        except KeyError:
+            print("EMPTY fpiece!!!", fpiece, fcord, tcord)
+            print(board)
+            raise
 
     # History heuristic
     score += table.getButterfly(move)
