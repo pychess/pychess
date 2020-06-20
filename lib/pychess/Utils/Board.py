@@ -313,9 +313,9 @@ class Board:
         cord0, cord1 = move.cords
 
         kcastle = flag == KING_CASTLE or (
-            self.variant == SCHESS and ((self[move.cord0].piece == KING and cord0.x - cord1.x == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)and cord0.x - cord1.x > 0)))
+            self.variant == SCHESS and ((self[move.cord0].piece == KING and cord0.x - cord1.x == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and cord0.x - cord1.x > 0)))
         qcastle = flag == QUEEN_CASTLE or (
-            self.variant == SCHESS and ((self[move.cord0].piece == KING and cord0.x - cord1.x == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)and cord0.x - cord1.x < 0)))
+            self.variant == SCHESS and ((self[move.cord0].piece == KING and cord0.x - cord1.x == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and cord0.x - cord1.x < 0)))
 
         if kcastle or qcastle:
             gcord = cord0  # save gating cord
