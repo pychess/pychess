@@ -1,5 +1,6 @@
 import unittest
 import random
+import sys
 
 from pychess.Savers.remotegame import InternetGameLichess, InternetGameChessgames, InternetGameFicsgames, InternetGameChesstempo, InternetGameChess24, InternetGame365chess, InternetGameChesspastebin, InternetGameChessbomb, InternetGameThechessworld, InternetGameChessOrg, InternetGameEuropeechecs, InternetGameGameknot, InternetGameChessCom, InternetGameSchachspielen, InternetGameRedhotpawn, InternetGameChesssamara, InternetGame2700chess, InternetGameIccf, InternetGameSchacharena, InternetGameChesspuzzle, InternetGameChessking, InternetGameIdeachess, InternetGameChessdb, InternetGameChesspro, InternetGameFicgs, InternetGameChessbase, InternetGamePlayok, InternetGamePychess, InternetGameGeneric
 
@@ -12,6 +13,7 @@ class RemoteGameTestCase(unittest.TestCase):
         print("\n%s" % cp.get_description())
         if not cp.is_enabled():
             print('- Skipping disabled chess provider')
+            return
 
         # Pick one link only to not overload the remote server
         url, expected = random.choice(links)
@@ -71,6 +73,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://www.ficsgames.org/about.html', False)]                                   # Not a game
         self.executeTest(InternetGameFicsgames(), links)
 
+    @unittest.skipIf(sys.platform == "linux", "websockets issues...")
     def testChesstempo(self):
         links = [('https://chesstempo.com/gamedb/game/2046457', True),                      # Game
                  ('https://CHESSTEMPO.com/gamedb/game/2046457/foo/bar/123', True),          # Game with additional path
@@ -107,6 +110,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://thechessworld.com/help/about/', False)]                                                                  # Not a game (about page)
         self.executeTest(InternetGameThechessworld(), links)
 
+    @unittest.skipIf(sys.platform == "linux", "websockets issues...")
     def testChessOrg(self):
         links = [('https://chess.org/play/19a8ffe8-b543-4a41-be02-e84e0f4d6f3a', True),     # Classic game
                  ('https://CHESS.org/play/c28f1b76-aee0-4577-b8a5-eeda6a0e14af', True),     # Chess960
@@ -273,6 +277,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('http://www.playok.com', False)]                          # Not a game (homepage)
         self.executeTest(InternetGamePlayok(), links)
 
+    @unittest.skipIf(sys.platform == "linux", "websockets issues...")
     def testPychess(self):
         links = [('http://pychess.org/DGN5Ps2k#tag', True),                 # Crazyhouse
                  ('http://pychess-variants.herokuapp.com/uWbgRNfw', True),  # Chess
