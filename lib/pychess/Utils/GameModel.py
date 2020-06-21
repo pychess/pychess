@@ -196,7 +196,7 @@ class GameModel(GObject.GObject):
 
     @property
     def starting_color(self):
-        return BLACK if "FEN" in self.tags and self.tags["FEN"].split()[1] == "b" else WHITE
+        return BLACK if "FEN" in self.tags and self.tags["FEN"] != "" and self.tags["FEN"].split()[1] == "b" else WHITE
 
     @property
     def orientation(self):
