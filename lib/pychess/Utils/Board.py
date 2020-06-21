@@ -291,6 +291,10 @@ class Board:
             new = self.getHoldingPieces(self.color)
             dead.append(self[cord])
 
+        elif flag in GATINGS:
+            # add all gated pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(1 - self.color)
+
         return moved, new, dead
 
     def move(self, move, lboard=None):

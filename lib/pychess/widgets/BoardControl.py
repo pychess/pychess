@@ -8,13 +8,16 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny, toAN
 from pychess.Utils.const import ARTIFICIAL, FLAG_CALL, ABORT_OFFER, LOCAL, TAKEBACK_OFFER, \
     ADJOURN_OFFER, DRAW_OFFER, RESIGNATION, HURRY_ACTION, PAUSE_OFFER, RESUME_OFFER, RUNNING, \
-    DROP, DROP_VARIANTS, PAWN, QUEEN, SITTUYINCHESS, QUEEN_PROMOTION
+    DROP, DROP_VARIANTS, PAWN, QUEEN, KING, SITTUYINCHESS, QUEEN_PROMOTION, \
+    SCHESS, HAWK, ELEPHANT, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK
 
 from pychess.Utils.logic import validate
+from pychess.Utils.lutils.bitboard import iterBits
 from pychess.Utils.lutils import lmove, lmovegen
 from pychess.Utils.lutils.lmove import ParsingError
 
 from . import preferencesDialog
+from .GatingDialog import GatingDialog
 from .PromotionDialog import PromotionDialog
 from .BoardView import BoardView, rect, join
 
@@ -42,6 +45,7 @@ class BoardControl(Gtk.EventBox):
 
         self.add(self.view)
         self.variant = gamemodel.variant
+        self.gatingDialog = GatingDialog(SCHESS)
         self.promotionDialog = PromotionDialog(self.variant.variant)
 
         self.RANKS = gamemodel.boards[0].RANKS
@@ -124,6 +128,11 @@ class BoardControl(Gtk.EventBox):
         self.lockedSelectedState = None
         self.lockedActiveState = None
         self.currentState = None
+
+    def getGating(self, castling, hawk, elephant):
+        color = self.view.model.boards[-1].color
+        gating = self.gatingDialog.runAndHide(color, castling, hawk, elephant)
+        return gating
 
     def getPromotion(self):
         color = self.view.model.boards[-1].color
@@ -219,6 +228,7 @@ class BoardControl(Gtk.EventBox):
         # Game end can change cord0 to None while dragging a piece
         if cord0 is None:
             return
+        gating = None
         board = self.getBoard()
         color = board.color
         # Ask player for which piece to promote into. If this move does not
@@ -250,7 +260,23 @@ class BoardControl(Gtk.EventBox):
             elif board[cord1] is None and (cord0.cord + cord1.cord) % 2 == 1:
                 promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
 
-        if cord0.x < 0 or cord0.x > self.FILES - 1:
+        holding = board.board.holding[color]
+        if self.variant.variant == SCHESS:
+            moved = board[cord0].sign
+            hawk = holding[HAWK] > 0
+            elephant = holding[ELEPHANT] > 0
+            if (hawk or elephant) and cord0.cord in iterBits(board.board.virgin[color]):
+                castling = moved == KING and abs(cord0.x - cord1.x) == 2
+                gating = self.getGating(castling, hawk, elephant)
+
+        if gating is not None:
+            if gating in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK):
+                side = 0 if cord0.x - cord1.x == 2 else 1
+                rcord = board.board.ini_rooks[color][side]
+                move = Move(lmovegen.newMove(rcord, cord0.cord, gating))
+            else:
+                move = Move(lmovegen.newMove(cord0.cord, cord1.cord, gating))
+        elif cord0.x < 0 or cord0.x > self.FILES - 1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
             move = Move(cord0, cord1, board, promotion)

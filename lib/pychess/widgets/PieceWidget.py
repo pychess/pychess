@@ -9,6 +9,7 @@ class PieceWidget(Gtk.DrawingArea):
         GObject.GObject.__init__(self)
         self.connect("draw", self.expose)
         self.piece = piece
+        self.variant = variant
         self.asean = variant in ASEAN_VARIANTS
 
     def setPiece(self, piece):
@@ -23,4 +24,4 @@ class PieceWidget(Gtk.DrawingArea):
         s_min = min(rect.width, rect.height)
         x_loc = (rect.width - s_min) / 2.0
         y_loc = (rect.height - s_min) / 2.0
-        Pieces.drawPiece(self.piece, context, x_loc, y_loc, s_min, asean=self.asean)
+        Pieces.drawPiece(self.piece, context, x_loc, y_loc, s_min, asean=self.asean, variant=self.variant)
