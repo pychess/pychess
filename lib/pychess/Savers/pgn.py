@@ -209,44 +209,48 @@ def save(handle, model, position=None, flip=False):
     # Alignment of the fetched elements
     indented = conf.get("indentPgn")
     if indented:
-        buffer = ""
+        text_buffer = ""
         depth = 0
         crlf = False
         for text in result:
             # De/Indentation
-            crlf = (buffer[-1:] if len(buffer) > 0 else "") in ["\r", "\n"]
+            crlf = (text_buffer[-1:] if len(text_buffer) > 0 else "") in ["\r", "\n"]
             if text == "(":
                 depth += 1
                 if indented and not crlf:
-                    buffer += os.linesep
+                    text_buffer += os.linesep
                     crlf = True
             # Space between each term
-            last = buffer[-1:] if len(buffer) > 0 else ""
+            last = text_buffer[-1:] if len(text_buffer) > 0 else ""
             crlf = last in ["\r", "\n"]
-            if not crlf and last != " " and last != "\t" and last != "(" and not text.startswith("\r") and not text.startswith("\n") and text != ")" and len(buffer) > 0:
-                buffer += " "
+            if not crlf and last != " " and last != "\t" and last != "(" and not text.startswith("\r") and not text.startswith("\n") and text != ")" and len(text_buffer) > 0:
+                text_buffer += " "
             # New line for a new main move
-            if len(buffer) == 0 or (indented and depth == 0 and last != "\r" and last != "\n" and re.match(r"^[0-9]+\.", text) is not None):
-                buffer += os.linesep
+            if len(text_buffer) == 0 or (indented and depth == 0 and last != "\r" and last != "\n" and re.match(r"^[0-9]+\.", text) is not None):
+                text_buffer += os.linesep
                 crlf = True
             # Alignment
             if crlf and depth > 0:
                 for j in range(0, depth):
-                    buffer += "    "
+                    text_buffer += "    "
             # Term
-            buffer += text
+            text_buffer += text
             if indented and text == ")":
-                buffer += os.linesep
+                text_buffer += os.linesep
                 crlf = True
                 depth -= 1
     else:
         # Add new line to separate tag section and movetext
         print('', file=handle)
-        buffer = textwrap.fill(" ".join(result), width=80)
+        text_buffer = textwrap.fill(" ".join(result), width=80)
 
     # Final
     status = reprResult[model.status]
-    print(buffer, status, file=handle)
+    try:
+        print(text_buffer, status, file=handle)
+    except UnicodeEncodeError:
+        text_buffer = bytes(text_buffer, "utf-8").decode(PGN_ENCODING, errors="ignore")
+        print(text_buffer, status, file=handle)
     # Add new line to separate next game
     print('', file=handle)
 
