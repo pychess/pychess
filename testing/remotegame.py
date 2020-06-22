@@ -144,7 +144,8 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://www.chess.com/analysis/game/live/3874372792', True),             # Live analysis
                  ('https://www.chess.com/analysis/game/live/4119932192', True),             # Live game with promotion to Queen
                  ('https://www.chess.com/daily/game/223897998', True),                      # Daily game
-                 ('https://www.chess.com/DAILY/game/224478042', True),                      # Daily game
+                 ('https://www.chess.com/DAILY/game/224478042', False),                     # Not a game (bad URL)
+                 ('https://www.chess.com/daily/game/224478042', True),                      # Daily game
                  ('https://www.chess.com/daily/game/225006782', True),                      # Daily game Chess960
                  ('https://www.chess.com/daily/GAME/205389002', True),                      # Daily game Chess960
                  ('https://chess.com/live/game/13029832074287114', False),                  # Not a game (wrong ID)
