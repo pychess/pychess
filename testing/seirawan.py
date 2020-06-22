@@ -184,6 +184,29 @@ class SchessTestCase(unittest.TestCase):
         board.popMove()
         self.assertEqual(placement(board.asFen()), placement(fen))
 
+    def test_disambig_gating_san(self):
+        FEN = "rnbqkb1r/ppp1pppp/3p1n2/8/2PP4/2N5/PP2PPPP/RHBQKBNR[Eeh] b KQACDEFGHkqabcdefh - 1 3"
+        board = LBoard(SCHESS)
+        board.applyFen(FEN)
+
+        moves = set()
+        for move in genAllMoves(board):
+            moves.add(toAN(board, move))
+        print("--------")
+        print(board)
+
+        self.assertIn("f6d7", moves)
+        self.assertNotIn("f6d7/H", moves)
+        self.assertNotIn("f6d7/E", moves)
+        self.assertIn("b8d7", moves)
+        self.assertIn("b8d7h", moves)
+        self.assertIn("b8d7e", moves)
+
+        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nfd7'))), 'f6d7')
+        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nbd7'))), 'b8d7')
+        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nbd7/H'))), 'b8d7h')
+        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nbd7/E'))), 'b8d7e')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -511,7 +511,7 @@ def parseSAN(board, san):
                     if board_clone.opIsChecked():
                         continue
                     if flag in GATINGS:
-                        back_rank = 1 if color == WHITE else 8
+                        back_rank = 0 if color == WHITE else 7
                         if RANK(f) == back_rank:
                             return newMove(FCORD(move), TCORD(move), flag)
                         else:
