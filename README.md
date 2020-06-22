@@ -9,11 +9,8 @@ The mission of PyChess is to create a free, pleasant, [PyGObject](https://pygobj
 Linux desktop that does everything you require from an advanced chess client.
 
 - Project homepage: https://pychess.github.io/
-- Download page: https://pychess.github.io/download/
+- Download page: https://github.com/pychess/pychess/releases
 - Development page: https://github.com/pychess/pychess
 - Translations: https://www.transifex.com/projects/p/pychess/
 - Mailing list: http://groups.google.com/group/pychess-people
-- Chat: http://webchat.freenode.net/?channels=pychess&uio=d4
-- pychess-engine playing on lichess.org https://lichess.org/@/PyChessBot
-
-- Discord: https://discord.gg/aPs8RKr (Please indicate that you are discussing the "PyChess desktop GUI")
+- Chat: https://discord.gg/aPs8RKr
