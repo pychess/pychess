@@ -3,7 +3,8 @@ from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
 from pychess.Utils.lutils.LBoard import LBoard
 
-SETUPSTART = "4k3/8/8/8/8/8/8/4K3 w - - 0 1"
+SETUPSTART = "4k3/8/8/8/8/8/8/4K3[prnsqkPRNSQK] w - - 0 1"
+HOLDINGS = "[prnsqkPRNSQK]"
 
 
 class SetupBoard(Board):
@@ -18,11 +19,22 @@ class SetupBoard(Board):
     PROMOTIONS = ()
 
     def __init__(self, setup=True, lboard=None):
-        fenstr = SETUPSTART if setup is True else setup
-        # add all kind of pieces to holdings
-        parts = fenstr.split()
-        parts[0] += "/prnsqkPRNSQK"
-        fenstr = " ".join(parts)
+        if setup is True:
+            fenstr = SETUPSTART
+        elif isinstance(setup, str):
+            fenstr = setup
+            # add all kind of pieces to holdings
+            parts = fenstr.split()
+            if parts[0].endswith("]"):
+                placement, holdings = parts[0].split("[")
+                for piece in HOLDINGS:
+                    if piece not in holdings:
+                        parts[0] = placement + HOLDINGS
+                        fenstr = " ".join(parts)
+                        break
+            else:
+                parts[0] += HOLDINGS
+                fenstr = " ".join(parts)
         if lboard is not None:
             Board.__init__(self, setup=fenstr, lboard=lboard)
         else:
