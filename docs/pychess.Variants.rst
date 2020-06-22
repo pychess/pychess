@@ -180,6 +180,14 @@ pychess.Variants.rookodds module
     :undoc-members:
     :show-inheritance:
 
+pychess.Variants.seirawan module
+-------------------------------------
+
+.. automodule:: pychess.Variants.seirawan
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pychess.Variants.setupposition module
 -------------------------------------
 
