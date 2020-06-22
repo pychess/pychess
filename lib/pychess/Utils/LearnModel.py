@@ -88,6 +88,10 @@ class LearnModel(GameModel):
         elif learn_type == ENDGAME:
             self.end_game = True
 
+    def add_hints(self, hint):
+        ply, move = hint
+        self.hints[ply] = [(move, 10000)]
+
     def check_failed_playing_best(self, status):
         if self.ply - 1 in self.hints:
             best_score = self.hints[self.ply - 1][0][1]

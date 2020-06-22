@@ -351,7 +351,11 @@ class GameModel(GObject.GObject):
                         if len(self.hints[ply]) < i + 1:
                             self.hints[ply].append((pv[0], score))
                         else:
-                            self.hints[ply][i] = (pv[0], score)
+                            # Some puzzle need manual hints added by LearnModel.add_hints()
+                            # because depth 20 is not enough to find the best move
+                            # we have to avoid overwrite it!
+                            if score > self.hints[ply][i][1]:
+                                self.hints[ply][i] = (pv[0], score)
         if analysis and analysis[0] is not None:
             ply, pv, score, depth, nps = analysis[0]
             if score is not None and depth:

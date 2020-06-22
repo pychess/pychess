@@ -49,6 +49,12 @@ PUZZLES = puzzles0 + puzzles1 + puzzles2 + puzzles3
 # Note: Find the declaration of the class Sidepanel at the end of the file
 
 
+HINTS = {
+    "r2qrbk1/5ppp/pn1p4/np2P1P1/3p4/5N2/PPB2PP1/R1BQR1K1 w - - 1 20": (38, "c2h7"),
+    "3r1rk1/bpq2ppp/p1b1p3/2P5/1P2B3/P4Q2/1B3PPP/2R2RK1 w - - 3 18": (34, "e4h7"),
+}
+
+
 def start_puzzle_from(filename, index=None):
     if filename.lower().endswith(".pgn"):
         chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))
@@ -79,6 +85,9 @@ def start_puzzle_from(filename, index=None):
 
 def start_puzzle_game(gamemodel, filename, records, index, rec, from_lesson=False):
     gamemodel.set_learn_data(PUZZLE, filename, index, len(records), from_lesson=from_lesson)
+
+    if "FEN" in gamemodel.tags and gamemodel.tags["FEN"] in HINTS:
+        gamemodel.add_hints(HINTS[gamemodel.tags["FEN"]])
 
     engine = discoverer.getEngineByName(discoverer.getEngineLearn())
     ponder_off = True
