@@ -207,8 +207,8 @@ def toSAN(board, move, localRepr=False):
 
     if flag in GATINGS:
         gate_piece = reprSign[GATE_PIECE(flag)]
-        kcastle = (fpiece == KING and fcord - tcord == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK))
-        qcastle = (fpiece == KING and fcord - tcord == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK))
+        kcastle = (fpiece == KING and fcord - tcord == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord > 0)
+        qcastle = (fpiece == KING and fcord - tcord == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord < 0)
         if kcastle:
             return "O-O/%s%s%s" % (gate_piece, reprCord[fcord], check_or_mate())
         elif qcastle:
@@ -356,7 +356,7 @@ def parseSAN(board, san):
             gate_index = san.find("/") + 1
             if "e" == san[gate_index + 1]:
                 flag = HAWK_GATE if san[gate_index] == "H" else ELEPHANT_GATE
-            elif "h" == san[gate_index + 1]:
+            else:
                 fcord = board.ini_rooks[color][side]
                 tcord = board.ini_kings[color]
                 flag = HAWK_GATE_AT_ROOK if san[gate_index] == "H" else ELEPHANT_GATE_AT_ROOK

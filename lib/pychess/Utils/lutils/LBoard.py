@@ -11,7 +11,7 @@ from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, 
     DROP, PROMOTIONS, ENPASSANT, B_OO, B_OOO, W_OO, W_OOO, QUEEN_CASTLE,\
     KING_CASTLE, GATINGS, HAWK_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK, QUEEN_PROMOTION
 from pychess.Utils.repr import reprColor
-from .ldata import FILE, fileBits, brank8
+from .ldata import FILE, fileBits
 from .attack import isAttacked
 from .bitboard import clearBit, iterBits, setBit, bitPosArray
 from .PolyglotHash import pieceHashes, epHashes, \
@@ -123,7 +123,7 @@ class LBoard:
         self.hist_is_first_move = []
 
     def iniSchess(self):
-        self.virgin = [brank8[1], brank8[0]]
+        self.virgin = [0, 0]
         self.hist_virgin = []
 
     def applyFen(self, fenstr):
@@ -357,6 +357,24 @@ class LBoard:
                     castling |= B_OO
                 elif char == "q":
                     castling |= B_OOO
+
+            if self.variant == SCHESS:
+                if char == "K":
+                    self.virgin[WHITE] = setBit(self.virgin[WHITE], E1)
+                    self.virgin[WHITE] = setBit(self.virgin[WHITE], H1)
+                elif char == "Q":
+                    self.virgin[WHITE] = setBit(self.virgin[WHITE], A1)
+                    self.virgin[WHITE] = setBit(self.virgin[WHITE], E1)
+                elif char == "k":
+                    self.virgin[BLACK] = setBit(self.virgin[BLACK], E8)
+                    self.virgin[BLACK] = setBit(self.virgin[BLACK], H8)
+                elif char == "q":
+                    self.virgin[BLACK] = setBit(self.virgin[BLACK], A8)
+                    self.virgin[BLACK] = setBit(self.virgin[BLACK], E8)
+                else:
+                    side = WHITE if char.isupper() else BLACK
+                    cord = ord(char) - 65 if side == WHITE else ord(char) - 97 + 56
+                    self.virgin[side] = setBit(self.virgin[side], cord)
 
         if self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS,
                             FISCHERRANDOMCHESS):

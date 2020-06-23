@@ -55,7 +55,7 @@ class Board:
 
             for color in (BLACK, WHITE):
                 pieces = self.board.boards[color]
-                for piece in (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING):
+                for piece in (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, HAWK, ELEPHANT):
                     for cord in iterBits(pieces[piece]):
                         self.data[RANK(cord)][FILE(cord)] = Piece(color, piece)
 
