@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import json
 from urllib.request import Request, urlopen
@@ -15,6 +16,7 @@ from pychess import VERSION
 from pychess.Utils.const import CRAZYHOUSECHESS, FISCHERRANDOMCHESS, reprResult
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import parseAny, toSAN
+from pychess.widgets import newGameDialog
 from pychess.System.Log import log
 
 # import pdb
@@ -25,7 +27,7 @@ from pychess.System.Log import log
 # ssl._create_default_https_context = ssl._create_unverified_context  # Chess24, ICCF
 
 
-TYPE_NONE, TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE, TYPE_EVENT, TYPE_FEN = range(6)
+TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE, TYPE_EVENT, TYPE_FEN = range(5)
 CHESS960 = 'Fischerandom'
 DEFAULT_BOARD = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
@@ -41,15 +43,29 @@ class InternetGameInterface:
     # Internal
     def __init__(self):
         ''' Initialize the common data that can be used in ALL the sub-classes. '''
-        self.id = None
+        self.reset()
         self.allow_extra = False
         self.userAgent = 'PyChess %s' % VERSION
         self.use_an = True  # To rebuild a readable PGN where possible
         self.allow_octet_stream = False
 
+    def reset(self):
+        self.id = None
+        self.url_type = None
+        self.data = None
+
     def is_enabled(self):
-        ''' To disable a chess provider temporarily, override this method in the sub-class. '''
-        return True
+        ''' Override this method in the sub-class to disable a chess provider temporarily. '''
+        _, proto = self.get_identity()
+        return (proto != CAT_WS) or (sys.version_info.major >= 3 and sys.version_info.minor >= 5)  # Async WS needs 3.5 for SSL
+
+    def is_async(self):
+        _, proto = self.get_identity()
+        return proto == CAT_WS
+
+    def get_description(self):
+        name, _ = self.get_identity()
+        return '%s' % name
 
     def get_game_id(self):
         ''' Return the unique identifier of the game that was detected after a successful call to assign_game().
@@ -182,17 +198,6 @@ class InternetGameInterface:
         else:
             return pgn
 
-    def async_from_sync(self, coro):
-        ''' The method is used for the WebSockets technique to call an asynchronous task from a synchronous task. '''
-        # TODO Not working under Linux while PyChess GUI is running
-        curloop = asyncio.get_event_loop()
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(coro)
-        loop.close()
-        asyncio.set_event_loop(curloop)
-        return result
-
     def send_xhr(self, url, postData, userAgent=False):
         ''' Call a target URL by submitting the POSTDATA.
             The USERAGENT is requested by some websites to make sure that you are not a bot.
@@ -287,8 +292,8 @@ class InternetGameInterface:
             return False
 
     # External
-    def get_description(self):
-        ''' (Abstract) Name of the chess provider written as "Chess provider -- Technique used" '''
+    def get_identity(self):
+        ''' (Abstract) Name and technique of the chess provider '''
         pass
 
     def assign_game(self, url):
@@ -302,13 +307,12 @@ class InternetGameInterface:
 
 # Lichess.org
 class InternetGameLichess(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = TYPE_NONE
+    def reset(self):
+        InternetGameInterface.reset(self)
         self.url_tld = 'org'
 
-    def get_description(self):
-        return 'Lichess.org -- %s' % CAT_DL
+    def get_identity(self):
+        return 'Lichess.org', CAT_DL
 
     def assign_game(self, url):
         # Retrieve the ID of the broadcast
@@ -512,18 +516,15 @@ class InternetGameLichess(InternetGameInterface):
             # Rebuild the PGN game
             return self.rebuild_pgn(game)
 
-        else:
-            assert(False)
-
 
 # ChessGames.com
 class InternetGameChessgames(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
+    def reset(self):
+        InternetGameInterface.reset(self)
         self.computer = False
 
-    def get_description(self):
-        return 'ChessGames.com -- %s' % CAT_DL
+    def get_identity(self):
+        return 'ChessGames.com', CAT_DL
 
     def assign_game(self, url):
         # Verify the hostname
@@ -566,8 +567,8 @@ class InternetGameChessgames(InternetGameInterface):
 
 # FicsGames.org
 class InternetGameFicsgames(InternetGameInterface):
-    def get_description(self):
-        return 'FicsGames.org -- %s' % CAT_DL
+    def get_identity(self):
+        return 'FicsGames.org', CAT_DL
 
     def assign_game(self, url):
         # Verify the URL
@@ -599,12 +600,8 @@ class InternetGameFicsgames(InternetGameInterface):
 
 # ChessTempo.com
 class InternetGameChesstempo(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = None
-
-    def get_description(self):
-        return 'ChessTempo.com -- %s' % CAT_WS
+    def get_identity(self):
+        return 'ChessTempo.com', CAT_WS
 
     def assign_game(self, url):
         # Puzzles
@@ -628,27 +625,26 @@ class InternetGameChesstempo(InternetGameInterface):
                 return True
         return False
 
+    @asyncio.coroutine
     def download_game(self):
         # Check
         if None in [self.id, self.url_type]:
-            return None
+            return
 
         # Games
         if self.url_type == TYPE_GAME:
             pgn = self.download('http://chesstempo.com/requests/download_game_pgn.php?gameids=%s' % self.id, userAgent=True)  # Else a random game is retrieved
-            if pgn is None or len(pgn) <= 128:
-                return None
-            else:
-                return pgn
+            if pgn is not None and len(pgn) > 128:
+                self.data = pgn
 
         # Puzzles
         elif self.url_type == TYPE_PUZZLE:
 
             # Open a websocket to retrieve the puzzle
             @asyncio.coroutine
-            def coro():
+            def coro(self):
                 result = None
-                ws = yield from websockets.connect('wss://chesstempo.com:443/ws', origin="https://chesstempo.com", extra_headers=[('User-agent', self.userAgent)], ping_interval=None)
+                ws = yield from websockets.connect('wss://chesstempo.com:443/ws', origin='https://chesstempo.com', extra_headers=[('User-agent', self.userAgent)], ping_interval=None)
                 try:
                     # Check the welcome message
                     data = yield from ws.recv()
@@ -669,16 +665,18 @@ class InternetGameChesstempo(InternetGameInterface):
                                     result = b64decode(data).decode().strip()
                                 else:
                                     result = data['data'].strip()
+                                if result == '':
+                                    result = None
                 finally:
                     yield from ws.close()
-                return result
+                self.data = result
 
-            data = self.async_from_sync(coro())
-            if data in [None, '']:
-                return None
+            yield from coro(self)
+            if self.data is None:
+                return
 
             # Rebuild the puzzle
-            puzzle = self.json_loads(data)
+            puzzle = self.json_loads(self.data)
             game = {}
             game['_url'] = 'https://chesstempo.com/chess-tactics/%s' % self.id
             game['Event'] = 'Puzzle %s' % self.json_field(puzzle, 'tacticInfo/problem_id')
@@ -688,15 +686,13 @@ class InternetGameChesstempo(InternetGameInterface):
             game['FEN'] = self.json_field(puzzle, 'tacticInfo/startPosition')
             game['SetUp'] = '1'
             game['_moves'] = '{%s} %s' % (self.json_field(puzzle, 'tacticInfo/prevmove'), self.json_field(puzzle, 'tacticInfo/moves'))
-            return self.rebuild_pgn(game)
-
-        return None
+            self.data = self.rebuild_pgn(game)
 
 
 # Chess24.com
 class InternetGameChess24(InternetGameInterface):
-    def get_description(self):
-        return 'Chess24.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'Chess24.com', CAT_HTML
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/chess24\.com\/[a-z]+\/(analysis|game|download-game)\/([a-z0-9\-_]+)[\/\?\#]?', re.IGNORECASE)
@@ -794,8 +790,8 @@ class InternetGameChess24(InternetGameInterface):
 
 # 365chess.com
 class InternetGame365chess(InternetGameInterface):
-    def get_description(self):
-        return '365chess.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return '365chess.com', CAT_HTML
 
     def assign_game(self, url):
         # Verify the URL
@@ -881,8 +877,8 @@ class InternetGame365chess(InternetGameInterface):
 
 # ChessPastebin.com
 class InternetGameChesspastebin(InternetGameInterface):
-    def get_description(self):
-        return 'ChessPastebin.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'ChessPastebin.com', CAT_HTML
 
     def assign_game(self, url):
         return self.reacts_to(url, 'chesspastebin.com')
@@ -932,8 +928,8 @@ class InternetGameChesspastebin(InternetGameInterface):
 
 # ChessBomb.com
 class InternetGameChessbomb(InternetGameInterface):
-    def get_description(self):
-        return 'ChessBomb.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'ChessBomb.com', CAT_HTML
 
     def assign_game(self, url):
         return self.reacts_to(url, 'chessbomb.com')
@@ -1011,8 +1007,8 @@ class InternetGameChessbomb(InternetGameInterface):
 
 # TheChessWorld.com
 class InternetGameThechessworld(InternetGameInterface):
-    def get_description(self):
-        return 'TheChessWorld.com -- %s' % CAT_DL
+    def get_identity(self):
+        return 'TheChessWorld.com', CAT_DL
 
     def assign_game(self, url):
         return self.reacts_to(url, 'thechessworld.com')
@@ -1046,8 +1042,8 @@ class InternetGameThechessworld(InternetGameInterface):
 
 # Chess.org
 class InternetGameChessOrg(InternetGameInterface):
-    def get_description(self):
-        return 'Chess.org -- %s' % CAT_WS
+    def get_identity(self):
+        return 'Chess.org', CAT_WS
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)
@@ -1059,16 +1055,17 @@ class InternetGameChessOrg(InternetGameInterface):
                 return True
         return False
 
+    @asyncio.coroutine
     def download_game(self):
         # Check
         if self.id is None:
-            return None
+            return
 
         # Fetch the page to retrieve the encrypted user name
         url = 'https://chess.org/play/%s' % self.id
         page = self.download(url)
         if page is None:
-            return None
+            return
         lines = page.split("\n")
         name = ''
         for line in lines:
@@ -1080,7 +1077,7 @@ class InternetGameChessOrg(InternetGameInterface):
                     name = line[pos1 + 1:pos2]
                     break
         if name == '':
-            return None
+            return
 
         # Random elements to get a unique URL
         rndI = randint(1, 1000)
@@ -1088,35 +1085,32 @@ class InternetGameChessOrg(InternetGameInterface):
 
         # Open a websocket to retrieve the chess data
         @asyncio.coroutine
-        def coro():
+        def coro(self):
             url = 'wss://chess.org:443/play-sockjs/%d/%s/websocket' % (rndI, rndS)
             log.debug('Websocket connecting to %s' % url)
             ws = yield from websockets.connect(url, origin="https://chess.org:443", ping_interval=None)
             try:
                 # Server: Hello
                 data = yield from ws.recv()
-                if data != 'o':  # Open
-                    yield from ws.close()
-                    return None
+                if data == 'o':  # Open
+                    # Client: I am XXX, please open the game YYY
+                    yield from ws.send('["%s %s"]' % (name, self.id))
+                    data = yield from ws.recv()
 
-                # Client: I am XXX, please open the game YYY
-                yield from ws.send('["%s %s"]' % (name, self.id))
-                data = yield from ws.recv()
-
-                # Server: some data
-                if data[:1] != 'a':
-                    yield from ws.close()
-                    return None
-                return data[3:-2]
+                    # Server: some data
+                    if data[:1] == 'a':
+                        data = data[3:-2]
+                        if data not in [None, '']:
+                            self.data = data
             finally:
                 yield from ws.close()
 
-        data = self.async_from_sync(coro())
-        if data is None or data == '':
-            return None
+        yield from coro(self)
+        if self.data is None:
+            return
 
         # Parses the game
-        chessgame = self.json_loads(data.replace('\\"', '"'))
+        chessgame = self.json_loads(self.data.replace('\\"', '"'))
         game = {}
         game['_url'] = url
         board = LBoard(variant=FISCHERRANDOMCHESS)
@@ -1146,7 +1140,8 @@ class InternetGameChessOrg(InternetGameInterface):
             try:
                 board.applyFen(startPos)
             except Exception:
-                return None
+                self.data = None
+                return
         else:
             board.applyFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1')
         time = self.json_field(chessgame, 'timeLimitSecs')
@@ -1184,7 +1179,8 @@ class InternetGameChessOrg(InternetGameInterface):
         game['_moves'] = ''
         moves = self.json_field(chessgame, 'lans')
         if moves == '':
-            return None
+            self.data = None
+            return
         moves = moves.split(' ')
         for move in moves:
             try:
@@ -1195,19 +1191,17 @@ class InternetGameChessOrg(InternetGameInterface):
                 else:
                     game['_moves'] += move + ' '
             except Exception:
-                return None
+                self.data = None
+                return
 
         # Rebuild the PGN game
-        return self.rebuild_pgn(game)
+        self.data = self.rebuild_pgn(game)
 
 
 # Europe-Echecs.com
 class InternetGameEuropeechecs(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-
-    def get_description(self):
-        return 'Europe-Echecs.com -- %s' % CAT_DL
+    def get_identity(self):
+        return 'Europe-Echecs.com', CAT_DL
 
     def assign_game(self, url):
         return self.reacts_to(url, 'europe-echecs.com')
@@ -1241,12 +1235,8 @@ class InternetGameEuropeechecs(InternetGameInterface):
 
 # GameKnot.com
 class InternetGameGameknot(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = TYPE_NONE
-
-    def get_description(self):
-        return 'GameKnot.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'GameKnot.com', CAT_HTML
 
     def assign_game(self, url):
         # Verify the hostname
@@ -1284,8 +1274,6 @@ class InternetGameGameknot(InternetGameInterface):
             url = 'https://gameknot.com/analyze-board.pl?bd=%s' % self.id
         elif self.url_type == TYPE_PUZZLE:
             url = 'https://gameknot.com/chess-puzzle.pl?pz=%s' % self.id
-        else:
-            assert(False)
         page = self.download(url, userAgent=True)
         if page is None:
             return None
@@ -1402,12 +1390,8 @@ class InternetGameGameknot(InternetGameInterface):
 
 # Chess.com
 class InternetGameChessCom(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = None
-
-    def get_description(self):
-        return 'Chess.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'Chess.com', CAT_HTML
 
     def assign_game(self, url):
         # Positions
@@ -1425,7 +1409,7 @@ class InternetGameChessCom(InternetGameInterface):
         rxp = re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(puzzles)\/problem\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
-            self.url_type = m.group(3)
+            self.url_type = m.group(3).lower()
             self.id = m.group(4)
             return True
 
@@ -1433,7 +1417,7 @@ class InternetGameChessCom(InternetGameInterface):
         rxp = re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(live|daily)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
-            self.url_type = m.group(3)
+            self.url_type = m.group(3).lower()
             self.id = m.group(5)
             return True
         return False
@@ -1600,8 +1584,8 @@ class InternetGameChessCom(InternetGameInterface):
 
 # Schach-Spielen.eu
 class InternetGameSchachspielen(InternetGameInterface):
-    def get_description(self):
-        return 'Schach-Spielen.eu -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'Schach-Spielen.eu', CAT_HTML
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/(www\.)?schach-spielen\.eu\/(game|analyse)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)
@@ -1649,12 +1633,8 @@ class InternetGameSchachspielen(InternetGameInterface):
 
 # RedHotPawn.com
 class InternetGameRedhotpawn(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = None
-
-    def get_description(self):
-        return 'RedHotPawn.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'RedHotPawn.com', CAT_HTML
 
     def assign_game(self, url):
         # Verify the URL
@@ -1754,8 +1734,8 @@ class InternetGameRedhotpawn(InternetGameInterface):
 
 # Chess-Samara.ru
 class InternetGameChesssamara(InternetGameInterface):
-    def get_description(self):
-        return 'Chess-Samara.ru -- %s' % CAT_DL
+    def get_identity(self):
+        return 'Chess-Samara.ru', CAT_DL
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/(\S+\.)?chess-samara\.ru\/(\d+)\-', re.IGNORECASE)
@@ -1782,8 +1762,8 @@ class InternetGameChesssamara(InternetGameInterface):
 
 # 2700chess.com
 class InternetGame2700chess(InternetGameInterface):
-    def get_description(self):
-        return '2700chess.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return '2700chess.com', CAT_HTML
 
     def assign_game(self, url):
         # Verify the hostname
@@ -1830,12 +1810,8 @@ class InternetGame2700chess(InternetGameInterface):
 
 # Iccf.com
 class InternetGameIccf(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = None
-
-    def get_description(self):
-        return 'Iccf.com -- %s' % CAT_DL
+    def get_identity(self):
+        return 'Iccf.com', CAT_DL
 
     def assign_game(self, url):
         # Verify the hostname
@@ -1881,11 +1857,8 @@ class InternetGameIccf(InternetGameInterface):
 
 # SchachArena.de
 class InternetGameSchacharena(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-
-    def get_description(self):
-        return 'SchachArena.de -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'SchachArena.de', CAT_HTML
 
     def assign_game(self, url):
         # Verify the URL
@@ -1969,8 +1942,8 @@ class InternetGameSchacharena(InternetGameInterface):
 
 # ChessPuzzle.net
 class InternetGameChesspuzzle(InternetGameInterface):
-    def get_description(self):
-        return 'ChessPuzzle.net -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'ChessPuzzle.net', CAT_HTML
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/(\S+\.)?chesspuzzle\.net\/(Puzzle|Solution)\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
@@ -2022,12 +1995,8 @@ class InternetGameChesspuzzle(InternetGameInterface):
 
 # ChessKing.com
 class InternetGameChessking(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = None
-
-    def get_description(self):
-        return 'ChessKing.com -- %s' % CAT_DL
+    def get_identity(self):
+        return 'ChessKing.com', CAT_DL
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/(\S+\.)?chessking\.com\/games\/(ff\/)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
@@ -2058,12 +2027,8 @@ class InternetGameChessking(InternetGameInterface):
 
 # IdeaChess.com
 class InternetGameIdeachess(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = None
-
-    def get_description(self):
-        return 'IdeaChess.com -- %s' % CAT_API
+    def get_identity(self):
+        return 'IdeaChess.com', CAT_API
 
     def assign_game(self, url):
         # Game ID
@@ -2129,8 +2094,8 @@ class InternetGameIdeachess(InternetGameInterface):
 
 # Chess-DB.com
 class InternetGameChessdb(InternetGameInterface):
-    def get_description(self):
-        return 'Chess-DB.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'Chess-DB.com', CAT_HTML
 
     def is_enabled(self):
         return False  # Server down
@@ -2188,8 +2153,8 @@ class InternetGameChessdb(InternetGameInterface):
 
 # ChessPro.ru
 class InternetGameChesspro(InternetGameInterface):
-    def get_description(self):
-        return 'ChessPro.ru -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'ChessPro.ru', CAT_HTML
 
     def assign_game(self, url):
         return self.reacts_to(url, 'chesspro.ru')
@@ -2216,8 +2181,8 @@ class InternetGameChesspro(InternetGameInterface):
 
 # Ficgs.com
 class InternetGameFicgs(InternetGameInterface):
-    def get_description(self):
-        return 'Ficgs.com -- %s' % CAT_DL
+    def get_identity(self):
+        return 'Ficgs.com', CAT_DL
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/(\S+\.)?ficgs\.com\/game_(\d+).html', re.IGNORECASE)
@@ -2240,8 +2205,8 @@ class InternetGameFicgs(InternetGameInterface):
 
 # Chessbase
 class InternetGameChessbase(InternetGameInterface):
-    def get_description(self):
-        return 'ChessBase.com -- %s' % CAT_HTML
+    def get_identity(self):
+        return 'ChessBase.com', CAT_HTML
 
     def assign_game(self, url):
         return self.reacts_to(url, '*')             # Any website can embed a widget from Chessbase
@@ -2295,8 +2260,8 @@ class InternetGameChessbase(InternetGameInterface):
 
 # PlayOK.com
 class InternetGamePlayok(InternetGameInterface):
-    def get_description(self):
-        return 'PlayOK.com -- %s' % CAT_DL
+    def get_identity(self):
+        return 'PlayOK.com', CAT_DL
 
     def assign_game(self, url):
         # Verify the hostname
@@ -2325,8 +2290,8 @@ class InternetGamePlayok(InternetGameInterface):
 
 # Pychess.org
 class InternetGamePychess(InternetGameInterface):
-    def get_description(self):
-        return 'Pychess.org -- %s' % CAT_WS
+    def get_identity(self):
+        return 'Pychess.org', CAT_WS
 
     def assign_game(self, url):
         # Retrieve the ID of the game
@@ -2341,14 +2306,15 @@ class InternetGamePychess(InternetGameInterface):
         # Nothing found
         return False
 
+    @asyncio.coroutine
     def download_game(self):
         # Check
         if self.id is None:
-            return None
+            return
 
         # Open a websocket to retrieve the game
         @asyncio.coroutine
-        def coro():
+        def coro(self):
             result = None
             ws = yield from websockets.connect('wss://www.pychess.org/wsr', origin="https://www.pychess.org", ping_interval=None)
             try:
@@ -2357,20 +2323,19 @@ class InternetGamePychess(InternetGameInterface):
                     data = yield from ws.recv()
                     data = self.json_loads(data)
                     if data['type'] == 'board' and data['gameId'] == self.id:
-                        result = data['pgn']
+                        result = data['pgn'] if data['pgn'] != '' else None
                         break
             finally:
                 yield from ws.close()
-            return result
+            self.data = result
 
-        data = self.async_from_sync(coro())
-        return None if data == '' else data
+        yield from coro(self)
 
 
 # Generic
 class InternetGameGeneric(InternetGameInterface):
-    def get_description(self):
-        return 'Generic -- %s' % CAT_MISC
+    def get_identity(self):
+        return 'Generic', CAT_MISC
 
     def assign_game(self, url):
         # Any page is valid
@@ -2454,7 +2419,7 @@ chess_providers = [InternetGameLichess(),
 
 # Get the list of chess providers
 def get_internet_game_providers():
-    list = [cp.get_description() for cp in chess_providers]
+    list = [cp.get_description() for cp in chess_providers if cp.is_enabled()]
     list.sort()
     return list
 
@@ -2473,11 +2438,16 @@ def get_internet_game_as_pgn(url):
     for prov in chess_providers:
         if not prov.is_enabled():
             continue
+        prov.reset()
         if prov.assign_game(url):
             # Download
             log.debug('Responding chess provider: %s' % prov.get_description())
             try:
-                pgn = prov.download_game()
+                if prov.is_async():
+                    yield from prov.download_game()
+                    pgn = prov.data
+                else:
+                    pgn = prov.download_game()
                 pgn = prov.sanitize(pgn)
             except Exception as e:
                 pgn = None
@@ -2491,5 +2461,11 @@ def get_internet_game_as_pgn(url):
                 return pgn
     return None
 
+def get_internet_game(url):
+    if url in [None, '']:
+        return False
+    else:
+        data = yield from get_internet_game_as_pgn(url.strip())
+        return newGameDialog.loadPgnAndRun(data)
 
 # print(get_internet_game_as_pgn(''))

@@ -3,6 +3,7 @@ from random import randrange
 from pychess.System import conf
 from pychess.System import uistuff
 from pychess.widgets import mainwindow
+from pychess.Savers.remotegame import get_internet_game_providers
 
 
 class TipOfTheDay:
@@ -21,7 +22,7 @@ class TipOfTheDay:
         self.tips_fixed = 2
         self.tips = [
             # PyChess facts -- The first tips_fixed messages are always displayed first
-            _("PyChess is an open-source chess application that can be enhanced by any chess enthusiast: bug reports, source code, documentation, translations, feature requests, user assistance... Let's get in touch at <b>http://www.pychess.org</b>"),
+            _("PyChess is an open-source chess application that can be enhanced by any chess enthusiast: bug reports, source code, documentation, translations, feature requests, user assistance... Let's get in touch at <b>https://pychess.github.io</b>"),
             _("PyChess supports a wide range of chess engines, variants, Internet servers, and lessons. It is a perfect desktop application to conveniently improve your chess skills."),
             _("The releases of PyChess hold the name of historical world chess champions. Do you know the name of the current world chess champion?"),
             _("Did you know that you can help translate PyChess into your own language, <b>Help</b> > <b>Translate PyChess</b>."),
@@ -84,6 +85,7 @@ class TipOfTheDay:
             _("Time compensation is a feature that doesn't waste your clock time because of the latency of your Internet connection. The module can be downloaded from the menu <b>Edit</b> > <b>Externals</b>."),
             _("You can play against chess engines on an Internet chess server. Use the filter to include or exclude them from the available players."),
             _("The communication with an Internet chess server is not standardized. Therefore, you can only connect to the supported chess servers in PyChess, like freechess.org or chessclub.com"),
+            _("PyChess is able to download chess games remotely from the following websites:" + "\n\n" + ", ".join(get_internet_game_providers())),
 
             # Externals
             _("PyChess uses the external module Scoutfish to evaluate the chess databases. For example, it is possible to extract the games where some pieces are in precise count or positions."),
