@@ -1,8 +1,9 @@
 import unittest
 import random
-import sys
 
-from pychess.Savers.remotegame import InternetGameLichess, InternetGameChessgames, InternetGameFicsgames, InternetGameChesstempo, InternetGameChess24, InternetGame365chess, InternetGameChesspastebin, InternetGameChessbomb, InternetGameThechessworld, InternetGameChessOrg, InternetGameEuropeechecs, InternetGameGameknot, InternetGameChessCom, InternetGameSchachspielen, InternetGameRedhotpawn, InternetGameChesssamara, InternetGame2700chess, InternetGameIccf, InternetGameSchacharena, InternetGameChesspuzzle, InternetGameChessking, InternetGameIdeachess, InternetGameChessdb, InternetGameChesspro, InternetGameFicgs, InternetGameChessbase, InternetGamePlayok, InternetGamePychess, InternetGameGeneric
+from pychess.Savers.remotegame import get_internet_game_providers, InternetGameLichess, InternetGameChessgames, InternetGameFicsgames, InternetGameChesstempo, InternetGameChess24, InternetGame365chess, InternetGameChesspastebin, InternetGameChessbomb, InternetGameThechessworld, InternetGameChessOrg, InternetGameEuropeechecs, InternetGameGameknot, InternetGameChessCom, InternetGameSchachspielen, InternetGameRedhotpawn, InternetGameChesssamara, InternetGame2700chess, InternetGameIccf, InternetGameSchacharena, InternetGameChesspuzzle, InternetGameChessking, InternetGameIdeachess, InternetGameChessdb, InternetGameChesspro, InternetGameFicgs, InternetGameChessbase, InternetGamePlayok, InternetGamePychess, InternetGameGeneric
+
+cplist = get_internet_game_providers()
 
 
 class RemoteGameTestCase(unittest.TestCase):
@@ -11,8 +12,14 @@ class RemoteGameTestCase(unittest.TestCase):
         if cp is None or links is None or len(links) == 0:
             return
         print("\n%s" % cp.get_description())
+        if cp.get_description() not in cplist:
+            print('- Skipping unlisted chess provider')
+            return
         if not cp.is_enabled():
             print('- Skipping disabled chess provider')
+            return
+        if cp.is_async():
+            print('- Skipping asynchronous chess provider')
             return
 
         # Pick one link only to not overload the remote server
@@ -21,6 +28,7 @@ class RemoteGameTestCase(unittest.TestCase):
         print('- Expecting data: %s' % expected)
 
         # Download link
+        cp.reset()
         if not cp.assign_game(url):
             data = None
         else:
@@ -33,6 +41,8 @@ class RemoteGameTestCase(unittest.TestCase):
         # Result
         ok = data is not None
         print('- Fetched data: %s' % ok)
+        if ok:
+            print(data)
         self.assertEqual(ok, expected)
 
     def testLichess(self):
@@ -73,7 +83,6 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://www.ficsgames.org/about.html', False)]                                   # Not a game
         self.executeTest(InternetGameFicsgames(), links)
 
-    @unittest.skipIf(sys.platform == "linux", "websockets issues...")
     def testChesstempo(self):
         links = [('https://chesstempo.com/gamedb/game/2046457', True),                      # Game
                  ('https://CHESSTEMPO.com/gamedb/game/2046457/foo/bar/123', True),          # Game with additional path
@@ -110,7 +119,6 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://thechessworld.com/help/about/', False)]                                                                  # Not a game (about page)
         self.executeTest(InternetGameThechessworld(), links)
 
-    @unittest.skipIf(sys.platform == "linux", "websockets issues...")
     def testChessOrg(self):
         links = [('https://chess.org/play/19a8ffe8-b543-4a41-be02-e84e0f4d6f3a', True),     # Classic game
                  ('https://CHESS.org/play/c28f1b76-aee0-4577-b8a5-eeda6a0e14af', True),     # Chess960
@@ -144,8 +152,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://www.chess.com/analysis/game/live/3874372792', True),             # Live analysis
                  ('https://www.chess.com/analysis/game/live/4119932192', True),             # Live game with promotion to Queen
                  ('https://www.chess.com/daily/game/223897998', True),                      # Daily game
-                 ('https://www.chess.com/DAILY/game/224478042', False),                     # Not a game (bad URL)
-                 ('https://www.chess.com/daily/game/224478042', True),                      # Daily game
+                 ('https://www.chess.com/DAILY/game/224478042', True),                      # Daily game
                  ('https://www.chess.com/daily/game/225006782', True),                      # Daily game Chess960
                  ('https://www.chess.com/daily/GAME/205389002', True),                      # Daily game Chess960
                  ('https://chess.com/live/game/13029832074287114', False),                  # Not a game (wrong ID)
@@ -278,7 +285,6 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('http://www.playok.com', False)]                          # Not a game (homepage)
         self.executeTest(InternetGamePlayok(), links)
 
-    @unittest.skipIf(sys.platform == "linux", "websockets issues...")
     def testPychess(self):
         links = [('http://pychess.org/DGN5Ps2k#tag', True),                 # Crazyhouse
                  ('http://pychess-variants.herokuapp.com/uWbgRNfw', True),  # Chess
@@ -288,6 +294,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://pychess.ORG/tALxtipo', True),                    # Makruk
                  ('https://pychess.org/2CKjayxv?param', True),              # Cambodian
                  ('https://PYCHESS.ORG/4x0kQ8kY', True),                    # Sittuyin
+                 ('https://pychess.org/7cqV5j2N', True),                    # Seirawan
                  ('http://pychess.org', False)]                             # Not a game (homepage)
         self.executeTest(InternetGamePychess(), links)
 

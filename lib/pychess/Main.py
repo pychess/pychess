@@ -36,7 +36,7 @@ from pychess.widgets.prompttext import getUserTextDialog
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import chesspastebin
 from pychess.Savers.pgn import PGNFile
-from pychess.Savers.remotegame import get_internet_game_as_pgn
+from pychess.Savers.remotegame import get_internet_game
 from pychess.System.protoopen import splitUri
 from pychess.widgets import mainwindow
 from pychess.ic import ICLogon
@@ -216,8 +216,8 @@ class GladeHandlers:
 
                     # Load the link
                     if typeok and link != '':
-                        pgn = get_internet_game_as_pgn(link)
-                        b = newGameDialog.loadPgnAndRun(pgn)
+                        create_task(get_internet_game(link))
+                        b = True
 
                 # Database
                 else:
@@ -314,17 +314,7 @@ class GladeHandlers:
 
     def on_remote_game_activate(self, widget):
         url = getUserTextDialog(mainwindow(), _('Load a remote game'), _('Paste the link to download:'))
-        if url is not None:
-            remdata = get_internet_game_as_pgn(url.strip())
-            if remdata is None:
-                dlg = Gtk.MessageDialog(mainwindow(),
-                                        type=Gtk.MessageType.ERROR,
-                                        buttons=Gtk.ButtonsType.OK,
-                                        message_format=_("The provided link does not lead to a meaningful chess content."))
-                dlg.run()
-                dlg.destroy()
-            else:
-                newGameDialog.loadPgnAndRun(remdata)
+        create_task(get_internet_game(url))
 
     def on_save_game1_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
