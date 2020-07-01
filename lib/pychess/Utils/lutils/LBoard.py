@@ -587,7 +587,13 @@ class LBoard:
             elif fpiece == QUEEN and self.is_first_move[QUEEN][color]:
                 self.is_first_move[QUEEN][color] = False
         elif self.variant == SCHESS:
-            if fcord in iterBits(self.virgin[color]):
+            if qcastle:
+                self.virgin[color] = clearBit(self.virgin[color], self.ini_kings[color])
+                self.virgin[color] = clearBit(self.virgin[color], self.ini_rooks[color][0])
+            elif kcastle:
+                self.virgin[color] = clearBit(self.virgin[color], self.ini_kings[color])
+                self.virgin[color] = clearBit(self.virgin[color], self.ini_rooks[color][1])
+            elif fcord in iterBits(self.virgin[color]):
                 self.virgin[color] = clearBit(self.virgin[color], fcord)
 
         # Castling moves can be represented strangely, so normalize them.

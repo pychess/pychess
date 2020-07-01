@@ -219,6 +219,21 @@ class SchessTestCase(unittest.TestCase):
         self.assertEqual(board.virgin[0], brank8[1])
         self.assertEqual(board.virgin[1], brank8[0])
 
+        board = LBoard(SCHESS)
+        FEN = "r1hqerk1/pp1nbppp/2pp1nb1/4p3/2PPP3/2N1B1PP/PP2NPB1/RH1QK2R/E w KQHEDA - 2 10"
+        board.applyFen(FEN)
+        print("-----------")
+        print(board)
+
+        move = parseSAN(board, "O-O")
+        board.applyMove(move)
+        castl = board.asFen().split()[2]
+
+        self.assertNotIn("Q", castl)
+        self.assertNotIn("K", castl)
+        self.assertNotIn("E", castl)
+        self.assertNotIn("H", castl)
+
     def test_gating_castle_at_rook_wOOO_SAN(self):
         FEN = "r2ek2r/5pp1/1pp1pnp1/2pp1h2/3P4/2P1PP2/PP1N2PP/R3K1HR/E w KQHEAkq - 2 16"
         board = LBoard(SCHESS)
