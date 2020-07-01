@@ -2461,6 +2461,7 @@ def get_internet_game_as_pgn(url):
                 return pgn
     return None
 
+
 def get_internet_game(url):
     if url in [None, '']:
         return False
