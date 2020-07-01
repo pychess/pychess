@@ -67,13 +67,17 @@ class Board:
                             self[self.newHoldingCord(color, 1)] = Piece(color,
                                                                         piece)
 
-    def getHoldingCord(self, color, piece):
+    def getHoldingCord(self, color, piece, piece_color=None):
         """Get the chord of first occurrence of piece in given color holding"""
 
         enum = reverse_enum if color == WHITE else enumerate
         for x_loc in self.HOLDING_FILES[color]:
             for y_loc, row in enum(self.data):
                 if (row.get(x_loc) is not None) and row.get(x_loc).piece == piece:
+                    # In S-chess holding may contain our un-gated and captured H/E at the same time
+                    # but in case of gating we are looking for our own HAWK/ELEPHANT only!
+                    if piece_color is not None and row.get(x_loc).color != piece_color:
+                        continue
                     return Cord(x_loc, y_loc)
 
     def newHoldingCord(self, color, nth=1):
@@ -400,7 +404,7 @@ class Board:
 
         if flag in GATINGS:
             gpiece = HAWK if flag in (HAWK_GATE, HAWK_GATE_AT_ROOK) else ELEPHANT
-            holding_coord = self.getHoldingCord(self.color, gpiece)
+            holding_coord = self.getHoldingCord(self.color, gpiece, piece_color=self.color)
             newBoard[gcord if (kcastle or qcastle) else cord0] = newBoard[holding_coord]
             newBoard[holding_coord] = None
 
