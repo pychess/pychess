@@ -735,6 +735,8 @@ ENGINES_LIST = [
     ENGINE("amundsen", "xboard", "se", 0, NO_AUTO_DETECT, None),
     ENGINE("anticrux", "uci", "fr", 0, NO_AUTO_DETECT, 10),
     ENGINE("fairymax", "xboard", "nl", 0, AUTO_DETECT, None),
+    ENGINE("fmax", "xboard", "nl", 0, AUTO_DETECT, None),
+    ENGINE("shamax", "xboard", "nl", 0, AUTO_DETECT, None),
     ENGINE("fruit", "uci", "fr", 2783, AUTO_DETECT, None),
     ENGINE("sunfish", "xboard", "dk", 0, NO_AUTO_DETECT, None),
     ENGINE("democracy", "uci", "fr", 0, NO_AUTO_DETECT, None),

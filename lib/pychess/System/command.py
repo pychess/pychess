@@ -1,4 +1,5 @@
 import subprocess
+import os.path
 
 
 class Command():
@@ -16,7 +17,9 @@ class Command():
                                        universal_newlines=True,
                                        stdin=subprocess.PIPE,
                                        stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE)
+                                       stderr=subprocess.PIPE,
+                                       bufsize=0,
+                                       cwd=os.path.split(self.command[0])[0])
         except OSError:
             return status, output, error
         except ValueError:

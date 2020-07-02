@@ -588,6 +588,7 @@ class EngineDiscoverer(GObject.GObject):
         engine["name"] = name
         engine["protocol"] = protocol
         engine["command"] = new_engine
+        engine["workingDirectory"] = os.path.split(new_engine)[0]
         engine["recheck"] = True
         if vm_name is not None:
             engine["vm_name"] = vm_name
