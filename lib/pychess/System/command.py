@@ -19,7 +19,7 @@ class Command():
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE,
                                        bufsize=0,
-                                       cwd=os.path.split(self.command[0])[0])
+                                       cwd=os.path.dirname(self.command[0]))
         except OSError:
             return status, output, error
         except ValueError:
