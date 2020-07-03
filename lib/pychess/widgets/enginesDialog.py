@@ -286,8 +286,6 @@ class EnginesDialog():
                             if check_ok:
                                 uci = checker is is_uci
                                 break
-                            else:
-                                continue
 
                         if not check_ok:
                             # restore the original
