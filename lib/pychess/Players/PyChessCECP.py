@@ -11,7 +11,8 @@ from pychess.Utils.book import getOpenings
 from pychess.Utils.const import NORMALCHESS, FEN_START, BLACK, FISCHERRANDOMCHESS, \
     CRAZYHOUSECHESS, WILDCASTLESHUFFLECHESS, LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, \
     THREECHECKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, \
-    SITTUYINCHESS, GIVEAWAYCHESS, HORDECHESS, RACINGKINGSCHESS, PLACEMENTCHESS, SCHESS, WHITE
+    SITTUYINCHESS, GIVEAWAYCHESS, HORDECHESS, RACINGKINGSCHESS, PLACEMENTCHESS, \
+    SCHESS, LIGHTBRIGADECHESS, WHITE
 from pychess.Utils.lutils.Benchmark import benchmark
 from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
@@ -26,6 +27,7 @@ from pychess.Variants.placement import PLACEMENTSTART
 from pychess.Variants.threecheck import THREECHECKSTART
 from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, KAMBODIANSTART, SITTUYINSTART
 from pychess.Variants.seirawan import SCHESSSTART
+from pychess.Variants.lightbrigade import LIGHTBRIGADESTART
 
 if sys.platform != "win32":
     import readline
@@ -61,7 +63,7 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse," +
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,light-brigade," +
                         "losers,suicide,giveaway,horde,atomic,racingkings,seirawan," +
                         "kingofthehill,3check,placement,asean,cambodian,makruk,sittuyin",
             "colors": 0,
@@ -178,6 +180,9 @@ class PyChessCECP(PyChess):
                         elif lines[1] == "seirawan":
                             self.board = LBoard(SCHESS)
                             self.board.applyFen(SCHESSSTART)
+                        elif lines[1] == "light-brigade":
+                            self.board = LBoard(LIGHTBRIGADECHESS)
+                            self.board.applyFen(LIGHTBRIGADESTART)
 
                 elif lines[0] == "quit":
                     self.forced = True
