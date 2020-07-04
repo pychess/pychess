@@ -2,7 +2,8 @@ from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, 
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, CAMBODIANCHESS, MAKRUKCHESS, \
     FISCHERRANDOMCHESS, SITTUYINCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, \
     SUICIDECHESS, GIVEAWAYCHESS, DROP_VARIANTS, BLACK, WHITE, FAN_PIECES, CAS_FLAGS, \
-    NORMALCHESS, PLACEMENTCHESS, THREECHECKCHESS, SETUPCHESS, FEN_START, HAWK, ELEPHANT, SCHESS, \
+    NORMALCHESS, PLACEMENTCHESS, THREECHECKCHESS, SETUPCHESS, FEN_START, HAWK, ELEPHANT, \
+    SCHESS, LIGHTBRIGADECHESS, \
     chrU2Sign, cordDic, reprCord, reprFile, reprSign, reprSignMakruk, reprSignSittuyin, \
     A1, A8, B1, B8, \
     C1, C8, D1, D8, \
@@ -247,6 +248,8 @@ class LBoard:
                     valid_chars = "DE"
                 elif self.variant == SCHESS:
                     valid_chars = "KQABCDEFGH"
+                elif self.variant == LIGHTBRIGADECHESS:
+                    valid_chars = ""
                 else:
                     valid_chars = "KQ"
 
