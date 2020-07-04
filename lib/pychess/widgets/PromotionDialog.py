@@ -1,8 +1,8 @@
 from gi.repository import Gtk
 
 from pychess.Utils.Piece import Piece
-from pychess.Utils.const import SUICIDECHESS, GIVEAWAYCHESS, SITTUYINCHESS, LIGHTBRIGADECHESS, \
-                                WHITE, KING, QUEEN, ROOK, BISHOP, KNIGHT
+from pychess.Utils.const import SUICIDECHESS, GIVEAWAYCHESS, SITTUYINCHESS, \
+    LIGHTBRIGADECHESS, WHITE, KING, QUEEN, ROOK, BISHOP, KNIGHT
 
 from .PieceWidget import PieceWidget
 
