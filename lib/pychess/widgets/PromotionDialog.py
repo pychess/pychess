@@ -1,8 +1,8 @@
 from gi.repository import Gtk
 
 from pychess.Utils.Piece import Piece
-from pychess.Utils.const import SUICIDECHESS, GIVEAWAYCHESS, SITTUYINCHESS, \
-    LIGHTBRIGADECHESS, WHITE, KING, QUEEN, ROOK, BISHOP, KNIGHT
+from pychess.Utils.const import SUICIDECHESS, GIVEAWAYCHESS, SITTUYINCHESS, SCHESS, \
+    LIGHTBRIGADECHESS, WHITE, KING, QUEEN, ROOK, BISHOP, KNIGHT, HAWK, ELEPHANT
 
 from .PieceWidget import PieceWidget
 
@@ -29,21 +29,33 @@ class PromotionDialog:
             self.widgets["knightDock"].get_child().show()
             self.widgets["kingDock"].add(PieceWidget(Piece(WHITE, KING), variant))
             self.widgets["kingDock"].get_child().show()
+            if variant == SCHESS:
+                self.widgets["hawkDock"].add(PieceWidget(Piece(WHITE, HAWK), variant))
+                self.widgets["hawkDock"].get_child().show()
+                self.widgets["elephantDock"].add(PieceWidget(Piece(WHITE, ELEPHANT), variant))
+                self.widgets["elephantDock"].get_child().show()
 
-    def setColor(self, color):
+    def setColor(self, color, variant):
         self.widgets["knightDock"].get_child().getPiece().color = color
         self.widgets["bishopDock"].get_child().getPiece().color = color
         self.widgets["rookDock"].get_child().getPiece().color = color
         self.widgets["queenDock"].get_child().getPiece().color = color
         self.widgets["kingDock"].get_child().getPiece().color = color
+        if variant == SCHESS:
+            self.widgets["hawkDock"].get_child().getPiece().color = color
+            self.widgets["elephantDock"].get_child().getPiece().color = color
 
     def runAndHide(self, color, variant):
         if variant == LIGHTBRIGADECHESS:
             return QUEEN if color == WHITE else KNIGHT
 
-        self.setColor(color)
+        self.setColor(color, variant)
         if variant != SUICIDECHESS and variant != GIVEAWAYCHESS:
             self.widgets["button5"].hide()
+
+        if variant != SCHESS:
+            self.widgets["button6"].hide()
+            self.widgets["button7"].hide()
 
         if variant == SITTUYINCHESS:
             self.widgets["button4"].hide()
@@ -53,5 +65,5 @@ class PromotionDialog:
         res = self.dialog.run()
         self.dialog.hide()
         if res != Gtk.ResponseType.DELETE_EVENT:
-            return [QUEEN, ROOK, BISHOP, KNIGHT, KING][int(res)]
+            return [QUEEN, ROOK, BISHOP, KNIGHT, KING, HAWK, ELEPHANT][int(res)]
         return None
