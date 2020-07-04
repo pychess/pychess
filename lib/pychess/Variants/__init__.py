@@ -5,7 +5,8 @@ from pychess.Utils.const import NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERR
     PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, ALLWHITECHESS, BLINDFOLDCHESS, \
     HIDDENPIECESCHESS, HIDDENPAWNSCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, THREECHECKCHESS, \
     AIWOKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, CAMBODIANCHESS, SITTUYINCHESS, EUROSHOGICHESS, \
-    RACINGKINGSCHESS, MAKRUKCHESS, SETUPCHESS, GIVEAWAYCHESS, HORDECHESS, PLACEMENTCHESS, SCHESS
+    RACINGKINGSCHESS, MAKRUKCHESS, SETUPCHESS, GIVEAWAYCHESS, HORDECHESS, PLACEMENTCHESS, SCHESS, \
+    LIGHTBRIGADECHESS
 
 from .normal import NormalBoard
 from .corner import CornerBoard
@@ -39,6 +40,7 @@ from .euroshogi import EuroShogiBoard
 from .setupposition import SetupBoard
 from .placement import PlacementBoard
 from .seirawan import SchessBoard
+from .lightbrigade import LightbrigadeBoard
 
 
 variants = {NORMALCHESS: NormalBoard,
@@ -80,6 +82,7 @@ variants = {NORMALCHESS: NormalBoard,
             SETUPCHESS: SetupBoard,
             PLACEMENTCHESS: PlacementBoard,
             SCHESS: SchessBoard,
+            LIGHTBRIGADECHESS: LightbrigadeBoard,
             }
 
 name2variant = dict([(v.cecp_name.capitalize(), v) for v in variants.values()])

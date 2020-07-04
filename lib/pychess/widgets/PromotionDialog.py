@@ -1,7 +1,8 @@
 from gi.repository import Gtk
 
 from pychess.Utils.Piece import Piece
-from pychess.Utils.const import WHITE, SUICIDECHESS, GIVEAWAYCHESS, SITTUYINCHESS, KING, QUEEN, ROOK, BISHOP, KNIGHT
+from pychess.Utils.const import SUICIDECHESS, GIVEAWAYCHESS, SITTUYINCHESS, LIGHTBRIGADECHESS, \
+                                WHITE, KING, QUEEN, ROOK, BISHOP, KNIGHT
 
 from .PieceWidget import PieceWidget
 
@@ -37,6 +38,9 @@ class PromotionDialog:
         self.widgets["kingDock"].get_child().getPiece().color = color
 
     def runAndHide(self, color, variant):
+        if variant == LIGHTBRIGADECHESS:
+            return QUEEN if color == WHITE else KNIGHT
+
         self.setColor(color)
         if variant != SUICIDECHESS and variant != GIVEAWAYCHESS:
             self.widgets["button5"].hide()

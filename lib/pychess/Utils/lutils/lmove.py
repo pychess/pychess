@@ -9,7 +9,7 @@ from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTL
     QUEEN, KNIGHT, BISHOP, ROOK, KING, NORMALCHESS, NORMAL_MOVE, PROMOTIONS, WHITE, BLACK, DROP,\
     FAN_PIECES, SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, MAKRUKCHESS, CAMBODIANCHESS,\
     GIVEAWAYCHESS, ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, HORDECHESS, SCHESS, \
-    chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, FAN, ASEAN_QUEEN, \
+    LIGHTBRIGADECHESS, chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, KNIGHT_PROMOTION, FAN, ASEAN_QUEEN, \
     HAWK_PROMOTION, HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK, GATINGS
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove, gen_sittuyin_promotions
@@ -718,8 +718,11 @@ def parseAN(board, an):
         flag = ENPASSANT
     elif board.arBoard[fcord] == PAWN:
         # assume queen promotion
-        if an[3] in "18" and board.variant != SITTUYINCHESS:
-            flag = QUEEN_PROMOTION
+        if an[3] in "18":
+            if board.variant == LIGHTBRIGADECHESS:
+                flag = QUEEN_PROMOTION if board.color == WHITE else KNIGHT_PROMOTION
+            elif board.variant != SITTUYINCHESS:
+                flag = QUEEN_PROMOTION
 
     return newMove(fcord, tcord, flag)
 
