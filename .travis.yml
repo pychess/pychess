@@ -5,7 +5,7 @@ matrix:
   include:
     - os: linux
       sudo: required
-      dist: bionic
+      dist: xenial
       language: generic
       env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy python3-psutil python3-websockets python3-pip stockfish"
 
