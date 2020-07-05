@@ -320,10 +320,9 @@ class ICLogon:
             self.helperconn = FICSHelperConnection(self.connection, self.host, ports, timeseal)
             self.helperconn.connect("error", self.onHelperConnectionError)
 
-            @asyncio.coroutine
-            def coro():
-                yield from self.main_connected_event.wait()
-                yield from self.helperconn.start()
+            async def coro():
+                await self.main_connected_event.wait()
+                await self.helperconn.start()
 
             self.helperconn_task = create_task(coro())
 
@@ -345,9 +344,8 @@ class ICLogon:
 
             set_user_vars = response == Gtk.ResponseType.YES
 
-            @asyncio.coroutine
-            def coro():
-                yield from self.main_connected_event.wait()
+            async def coro():
+                await self.main_connected_event.wait()
                 self.connection.start_helper_manager(set_user_vars)
             create_task(coro())
 

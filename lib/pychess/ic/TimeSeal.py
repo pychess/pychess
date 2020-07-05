@@ -37,8 +37,7 @@ class ICSStreamReader(asyncio.StreamReader):
         self.connected_event = connected_event
         self.name = name
 
-    @asyncio.coroutine
-    def read_until(self, *untils):
+    async def read_until(self, *untils):
         while True:
             for i, until in enumerate(untils):
                 start = self._buffer.find(bytearray(until, "ascii"))
@@ -49,7 +48,7 @@ class ICSStreamReader(asyncio.StreamReader):
                     not_find = "read_until:%s , got:'%s'" % (until, self._buffer)
                     log.debug(not_find, extra={"task": (self.name, "raw")})
 
-            yield from self._wait_for_data('read_until')
+            await self._wait_for_data('read_until')
 
 
 class ICSStreamReaderProtocol(asyncio.StreamReaderProtocol):
@@ -179,8 +178,7 @@ class ICSTelnet():
         self.timeseal = timeseal
         self.ICC_buffer = ""
 
-    @asyncio.coroutine
-    def start(self, host, port, connected_event):
+    async def start(self, host, port, connected_event):
         if self.canceled:
             raise CanceledException()
         self.port = port
@@ -203,7 +201,7 @@ class ICSTelnet():
                     else:
                         startupinfo = None
                     create = asyncio.create_subprocess_exec(* ["%s" % timestamp_path, "-p", "%s" % self.port], startupinfo=startupinfo)
-                    self.timestamp_proc = yield from create
+                    self.timestamp_proc = await create
                     log.info("%s started OK" % timestamp_path)
                 except OSError as err:
                     log.info("Can't start %s OSError: %s %s" % (timestamp_path, err.errno, err.strerror))
@@ -222,7 +220,7 @@ class ICSTelnet():
         self.reader = ICSStreamReader(_DEFAULT_LIMIT, loop, self.connected_event, self.name)
         self.protocol = ICSStreamReaderProtocol(self.reader, cb, loop, self.name, self.timeseal)
         coro = loop.create_connection(lambda: self.protocol, self.host, self.port)
-        self.transport, _protocol = yield from coro
+        self.transport, _protocol = await coro
         # writer = asyncio.StreamWriter(transport, protocol, reader, loop)
 
         if self.timeseal:
@@ -255,26 +253,24 @@ class ICSTelnet():
         else:
             self.transport.write(string.encode() + b"\n")
 
-    @asyncio.coroutine
-    def readline(self):
+    async def readline(self):
         if self.canceled:
             raise CanceledException()
 
         if self.ICC:
-            line = yield from self.readuntil(b"\n")
+            line = await self.readuntil(b"\n")
             return line.strip()
         else:
-            line = yield from self.reader.readline()
+            line = await self.reader.readline()
             return line.decode("latin_1").strip()
 
-    @asyncio.coroutine
-    def readuntil(self, until):
+    async def readuntil(self, until):
         if self.canceled:
             raise CanceledException()
 
         if self.ICC:
             if len(self.ICC_buffer) == 0:
-                self.ICC_buffer = yield from self.reader.readuntil(until)
+                self.ICC_buffer = await self.reader.readuntil(until)
             i = self.ICC_buffer.find(until)
             m = sys.maxsize
             if i >= 0:
@@ -297,13 +293,12 @@ class ICSTelnet():
             else:
                 return ""
         else:
-            data = yield from self.reader.readuntil(until)
+            data = await self.reader.readuntil(until)
             return data.decode("latin_1")
 
-    @asyncio.coroutine
-    def read_until(self, *untils):
+    async def read_until(self, *untils):
         if self.canceled:
             raise CanceledException()
 
-        ret = yield from self.reader.read_until(*untils)
+        ret = await self.reader.read_until(*untils)
         return ret

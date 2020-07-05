@@ -6,7 +6,6 @@ from urllib.request import Request, urlopen
 from urllib.parse import urlparse, parse_qs, unquote, urlencode
 from html import unescape
 from html.parser import HTMLParser
-import asyncio
 import websockets
 from base64 import b64decode
 import string
@@ -625,8 +624,7 @@ class InternetGameChesstempo(InternetGameInterface):
                 return True
         return False
 
-    @asyncio.coroutine
-    def download_game(self):
+    async def download_game(self):
         # Check
         if None in [self.id, self.url_type]:
             return
@@ -641,23 +639,22 @@ class InternetGameChesstempo(InternetGameInterface):
         elif self.url_type == TYPE_PUZZLE:
 
             # Open a websocket to retrieve the puzzle
-            @asyncio.coroutine
-            def coro(self):
+            async def coro(self):
                 result = None
-                ws = yield from websockets.connect('wss://chesstempo.com:443/ws', origin='https://chesstempo.com', extra_headers=[('User-agent', self.userAgent)], ping_interval=None)
+                ws = await websockets.connect('wss://chesstempo.com:443/ws', origin='https://chesstempo.com', extra_headers=[('User-agent', self.userAgent)], ping_interval=None)
                 try:
                     # Check the welcome message
-                    data = yield from ws.recv()
+                    data = await ws.recv()
                     data = self.json_loads(data)
                     if (data['eventName'] == 'connectionStarted') and (data['data'] == 'started'):
 
                         # Call the puzzle
-                        yield from ws.send('{"eventName":"get-problem-session-data","data":{"problemSetId":1,"sessionSize":20}}')
-                        yield from ws.send('{"eventName":"set-problem-difficulty","data":{"difficulty":"","problemSetId":1}}')
-                        yield from ws.send('{"eventName":"get-tactic","data":{"problemId":%s,"vo":false}}' % self.id)
+                        await ws.send('{"eventName":"get-problem-session-data","data":{"problemSetId":1,"sessionSize":20}}')
+                        await ws.send('{"eventName":"set-problem-difficulty","data":{"difficulty":"","problemSetId":1}}')
+                        await ws.send('{"eventName":"get-tactic","data":{"problemId":%s,"vo":false}}' % self.id)
 
                         for i in range(3):
-                            data = yield from ws.recv()
+                            data = await ws.recv()
                             data = self.json_loads(data)
                             if data['eventName'] == 'get-tactic-result':
                                 if data['enc']:
@@ -668,10 +665,10 @@ class InternetGameChesstempo(InternetGameInterface):
                                 if result == '':
                                     result = None
                 finally:
-                    yield from ws.close()
+                    await ws.close()
                 self.data = result
 
-            yield from coro(self)
+            await coro(self)
             if self.data is None:
                 return
 
@@ -1055,8 +1052,7 @@ class InternetGameChessOrg(InternetGameInterface):
                 return True
         return False
 
-    @asyncio.coroutine
-    def download_game(self):
+    async def download_game(self):
         # Check
         if self.id is None:
             return
@@ -1084,18 +1080,17 @@ class InternetGameChessOrg(InternetGameInterface):
         rndS = ''.join(choice(string.ascii_lowercase) for i in range(8))
 
         # Open a websocket to retrieve the chess data
-        @asyncio.coroutine
-        def coro(self):
+        async def coro(self):
             url = 'wss://chess.org:443/play-sockjs/%d/%s/websocket' % (rndI, rndS)
             log.debug('Websocket connecting to %s' % url)
-            ws = yield from websockets.connect(url, origin="https://chess.org:443", ping_interval=None)
+            ws = await websockets.connect(url, origin="https://chess.org:443", ping_interval=None)
             try:
                 # Server: Hello
-                data = yield from ws.recv()
+                data = await ws.recv()
                 if data == 'o':  # Open
                     # Client: I am XXX, please open the game YYY
-                    yield from ws.send('["%s %s"]' % (name, self.id))
-                    data = yield from ws.recv()
+                    await ws.send('["%s %s"]' % (name, self.id))
+                    data = await ws.recv()
 
                     # Server: some data
                     if data[:1] == 'a':
@@ -1103,9 +1098,9 @@ class InternetGameChessOrg(InternetGameInterface):
                         if data not in [None, '']:
                             self.data = data
             finally:
-                yield from ws.close()
+                await ws.close()
 
-        yield from coro(self)
+        await coro(self)
         if self.data is None:
             return
 
@@ -2306,30 +2301,28 @@ class InternetGamePychess(InternetGameInterface):
         # Nothing found
         return False
 
-    @asyncio.coroutine
-    def download_game(self):
+    async def download_game(self):
         # Check
         if self.id is None:
             return
 
         # Open a websocket to retrieve the game
-        @asyncio.coroutine
-        def coro(self):
+        async def coro(self):
             result = None
-            ws = yield from websockets.connect('wss://www.pychess.org/wsr', origin="https://www.pychess.org", ping_interval=None)
+            ws = await websockets.connect('wss://www.pychess.org/wsr', origin="https://www.pychess.org", ping_interval=None)
             try:
-                yield from ws.send('{"type":"board","gameId":"%s"}' % self.id)
+                await ws.send('{"type":"board","gameId":"%s"}' % self.id)
                 for i in range(5):
-                    data = yield from ws.recv()
+                    data = await ws.recv()
                     data = self.json_loads(data)
                     if data['type'] == 'board' and data['gameId'] == self.id:
                         result = data['pgn'] if data['pgn'] != '' else None
                         break
             finally:
-                yield from ws.close()
+                await ws.close()
             self.data = result
 
-        yield from coro(self)
+        await coro(self)
 
 
 # Generic
@@ -2425,7 +2418,7 @@ def get_internet_game_providers():
 
 
 # Retrieve a game from a URL
-def get_internet_game_as_pgn(url):
+async def get_internet_game_as_pgn(url):
     # Check the format
     if url in [None, '']:
         return None
@@ -2444,7 +2437,7 @@ def get_internet_game_as_pgn(url):
             log.debug('Responding chess provider: %s' % prov.get_description())
             try:
                 if prov.is_async():
-                    yield from prov.download_game()
+                    await prov.download_game()
                     pgn = prov.data
                 else:
                     pgn = prov.download_game()
@@ -2462,11 +2455,11 @@ def get_internet_game_as_pgn(url):
     return None
 
 
-def get_internet_game(url):
+async def get_internet_game(url):
     if url in [None, '']:
         return False
     else:
-        data = yield from get_internet_game_as_pgn(url.strip())
+        data = await get_internet_game_as_pgn(url.strip())
         return newGameDialog.loadPgnAndRun(data)
 
 # print(get_internet_game_as_pgn(''))

@@ -27,8 +27,8 @@ if sys.argv[-1] == "bdist_msi":
 else:
     from distutils.core import setup
 
-if sys.version_info < (3, 4, 2):
-    print('ERROR: PyChess requires Python >= 3.4.2')
+if sys.version_info < (3, 5, 3):
+    print('ERROR: PyChess requires Python >= 3.5.3')
     sys.exit(1)
 
 if sys.platform == "win32":

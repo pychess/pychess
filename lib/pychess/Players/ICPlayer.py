@@ -1,4 +1,3 @@
-import asyncio
 from collections import defaultdict
 
 from pychess.Players.Player import Player, PlayerIsDead, PassInterrupt, TurnInterrupt, GameEnded
@@ -109,8 +108,7 @@ class ICPlayer(Player):
 
     # Send the player move updates
 
-    @asyncio.coroutine
-    def makeMove(self, board1, move, board2):
+    async def makeMove(self, board1, move, board2):
         log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s" % (
             id(self), self, move, board1, board2))
         if board2 and not self.gamemodel.isObservationGame():
@@ -120,10 +118,10 @@ class ICPlayer(Player):
                 castle_notation = CASTLE_SAN
             self.connection.bm.sendMove(toAN(board2, move, castleNotation=castle_notation))
             # wait for fics to send back our move we made
-            item = yield from self.move_queue.get()
+            item = await self.move_queue.get()
             log.debug("ICPlayer.makeMove: fics sent back the move we made")
 
-        item = yield from self.move_queue.get()
+        item = await self.move_queue.get()
         try:
             if item == "end":
                 log.debug("ICPlayer.makeMove got: end")

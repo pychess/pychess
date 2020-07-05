@@ -55,13 +55,12 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
 
             self.store = Gtk.ListStore(str, str, str, str, int, str)
 
-            @asyncio.coroutine
-            def coro():
+            async def coro():
                 for file_name, title, author in entries:
                     progress = solving_progress.get(file_name)
                     progress_ratio_string, percent, reset_icon = self._compute_progress_info(progress)
                     self.store.append([file_name, title, author, progress_ratio_string, percent, reset_icon])
-                    yield from asyncio.sleep(0)
+                    await asyncio.sleep(0)
             create_task(coro())
 
             self.tv.set_model(self.store)

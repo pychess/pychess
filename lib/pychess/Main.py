@@ -584,8 +584,7 @@ class PyChess(Gtk.Application):
                                             Gtk.get_minor_version(),
                                             Gtk.get_micro_version()))
 
-    @asyncio.coroutine
-    def print_tasks(self):
+    async def print_tasks(self):
         while True:
             print(datetime.datetime.now().time())
             loop = asyncio.get_event_loop()
@@ -593,7 +592,7 @@ class PyChess(Gtk.Application):
             for task in tasks:
                 print(task)
             print("------------")
-            yield from asyncio.sleep(10)
+            await asyncio.sleep(10)
 
     def do_activate(self):
         # create_task(self.print_tasks())

@@ -71,8 +71,7 @@ class Games(GObject.GObject, Perspective):
         self.dockAlign = None
         self.dockLocation = addUserConfigPrefix("pydock.xml")
 
-    @asyncio.coroutine
-    def generalStart(self, gamemodel, player0tup, player1tup, loaddata=None):
+    async def generalStart(self, gamemodel, player0tup, player1tup, loaddata=None):
         """ The player tuples are:
         (The type af player in a System.const value,
         A callable creating the player,
@@ -109,7 +108,7 @@ class Games(GObject.GObject, Perspective):
             type, func, args, prename = playertup
             if type != LOCAL:
                 if type == ARTIFICIAL:
-                    player = yield from func(*args)
+                    player = await func(*args)
                 else:
                     player = func(*args)
                 players.append(player)

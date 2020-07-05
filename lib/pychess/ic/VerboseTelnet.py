@@ -180,19 +180,17 @@ class TelnetLines:
     def extendleft(self, iterable):
         self.lines.extendleft(iterable)
 
-    @asyncio.coroutine
-    def popleft(self):
+    async def popleft(self):
         try:
             return self.lines.popleft()
         except IndexError:
-            lines = yield from self._get_lines()
+            lines = await self._get_lines()
             self.lines.extend(lines)
             return self.lines.popleft() if self.lines else EmptyTelnetLine
 
-    @asyncio.coroutine
-    def _get_lines(self):
+    async def _get_lines(self):
         lines = []
-        line = yield from self.telnet.readline()
+        line = await self.telnet.readline()
         identifier = 0
 
         if line.startswith(self.line_prefix):
@@ -208,7 +206,7 @@ class TelnetLines:
                 cn_code = int(line[2:line.find(" ")])
                 if MY_ICC_PREFIX in line:
                     identifier = 0
-                line = yield from self.telnet.readline()
+                line = await self.telnet.readline()
 
             if unit:
                 while UNIT_END not in line:
@@ -223,7 +221,7 @@ class TelnetLines:
                                 unit_lines.append(parts[0])
                         else:
                             unit_lines.append(line)
-                    line = yield from self.telnet.readline()
+                    line = await self.telnet.readline()
                 if len(unit_lines) > 0:
                     text = "\n".join(unit_lines)
                     lines.append(TelnetLine(text, cn_code, CN))
@@ -244,11 +242,11 @@ class TelnetLines:
             if text:
                 line = text
             else:
-                line = yield from self.telnet.readline()
+                line = await self.telnet.readline()
 
             while not line.endswith(BLOCK_END):
                 lines.append(TelnetLine(line, code, BL))
-                line = yield from self.telnet.readline()
+                line = await self.telnet.readline()
             lines.append(TelnetLine(line[:-1], code, BL))
 
             if code != BLKCMD_PASSWORD:
@@ -279,9 +277,8 @@ class PredictionsTelnet:
         self.lines = TelnetLines(telnet, self.show_reply)
         self.__command_id = 1
 
-    @asyncio.coroutine
-    def parse(self):
-        line = yield from self.lines.popleft()
+    async def parse(self):
+        line = await self.lines.popleft()
 
         if not line.line:
             return  # TODO: necessary?
@@ -301,7 +298,7 @@ class PredictionsTelnet:
         predictions = self.reply_cmd_dict[line.code] \
             if line.code is not None and line.code in self.reply_cmd_dict else self.predictions
         for pred in list(predictions):
-            answer = yield from self.test_prediction(pred, line)
+            answer = await self.test_prediction(pred, line)
             # print(answer, "  parse_line: trying prediction %s for line '%s'" % (pred.name, line.line[:80]))
             if answer in (RETURN_MATCH, RETURN_MATCH_END):
                 log.debug("\n".join(pred.matches),
@@ -313,12 +310,11 @@ class PredictionsTelnet:
                 log.debug(line.line,
                           extra={"task": (self.telnet.name, "nonmatched")})
 
-    @asyncio.coroutine
-    def test_prediction(self, prediction, line):
+    async def test_prediction(self, prediction, line):
         lines = []
         answer = prediction.handle(line.line)
         while answer is RETURN_NEED_MORE:
-            line = yield from self.lines.popleft()
+            line = await self.lines.popleft()
             lines.append(line)
             answer = prediction.handle(line.line)
 

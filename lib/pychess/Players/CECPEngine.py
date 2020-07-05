@@ -172,20 +172,19 @@ class CECPEngine(ProtocolEngine):
     def start(self, event, is_dead):
         create_task(self.__startBlocking(event, is_dead))
 
-    @asyncio.coroutine
-    def __startBlocking(self, event, is_dead):
+    async def __startBlocking(self, event, is_dead):
         if self.protover == 1:
             self.emit("readyForMoves")
             return_value = "ready"
 
         if self.protover == 2:
             try:
-                return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
+                return_value = await asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
                 if return_value == "not ready":
-                    return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
+                    return_value = await asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
                     # Gaviota sends done=0 after "xboard" and after "protover 2" too
                     if return_value == "not ready":
-                        return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
+                        return_value = await asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
             except asyncio.TimeoutError:
                 log.warning("Got timeout error", extra={"task": self.defname})
                 is_dead.add(True)
@@ -283,10 +282,10 @@ class CECPEngine(ProtocolEngine):
         self.setBoardList([board], [])
 
     def setBoard(self, board, search=True):
-        def coro():
+        async def coro():
             if self.engineIsAnalyzing:
                 self.__stop_analyze()
-                yield from asyncio.sleep(0.1)
+                await asyncio.sleep(0.1)
 
             self.setBoardList([board], [])
             if search:
@@ -299,18 +298,17 @@ class CECPEngine(ProtocolEngine):
             @param move: The last move made
             @param board2: The board before the last move was made
         """
-        def coro():
+        async def coro():
             if self.engineIsAnalyzing:
                 self.__stop_analyze()
-                yield from asyncio.sleep(0.1)
+                await asyncio.sleep(0.1)
 
             self.setBoardList([board1], [])
             if not self.analyzing_paused:
                 self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
         create_task(coro())
 
-    @asyncio.coroutine
-    def makeMove(self, board1, move, board2):
+    async def makeMove(self, board1, move, board2):
         """ Gets a move from the engine (for player engines).
             @param board1: The current board
             @param move: The last move made
@@ -336,14 +334,14 @@ class CECPEngine(ProtocolEngine):
         self.readyForMoveNowCommand = True
 
         # Parse outputs
-        status = yield from self.queue.get()
+        status = await self.queue.get()
         if status == "not ready":
             log.warning(
                 "Engine seems to be protover=2, but is treated as protover=1",
                 extra={"task": self.defname})
-            status = yield from self.queue.get()
+            status = await self.queue.get()
         if status == "ready":
-            status = yield from self.queue.get()
+            status = await self.queue.get()
         if status == "invalid":
             raise InvalidMove
         if status == "del" or status == "die":
@@ -368,9 +366,8 @@ class CECPEngine(ProtocolEngine):
         self.mode = mode
 
     def setOptionInitialBoard(self, model):
-        @asyncio.coroutine
-        def coro():
-            yield from self.ready_moves_event.wait()
+        async def coro():
+            await self.ready_moves_event.wait()
             # We don't use the optionQueue here, as set board prints a whole lot of
             # stuff. Instead we just call it.
             self.setBoardList(model.boards[:], model.moves[:])
@@ -663,10 +660,9 @@ class CECPEngine(ProtocolEngine):
 
     # Parsing
 
-    @asyncio.coroutine
-    def parseLine(self, proc):
+    async def parseLine(self, proc):
         while True:
-            line = yield from wait_signal(proc, 'line')
+            line = await wait_signal(proc, 'line')
             if not line:
                 break
             else:

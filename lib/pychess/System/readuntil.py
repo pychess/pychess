@@ -27,8 +27,7 @@ class LimitOverrunError(Exception):
         self.consumed = consumed
 
 
-@asyncio.coroutine
-def _wait_for_data(self, func_name):
+async def _wait_for_data(self, func_name):
     """Wait until feed_data() or feed_eof() is called.
 
     If stream was paused, automatically resume it.
@@ -50,13 +49,12 @@ def _wait_for_data(self, func_name):
 
     self._waiter = asyncio.futures.Future(loop=self._loop)
     try:
-        yield from self._waiter
+        await self._waiter
     finally:
         self._waiter = None
 
 
-@asyncio.coroutine
-def readuntil(self, separator=b'\n'):
+async def readuntil(self, separator=b'\n'):
     """Read data from the stream until ``separator`` is found.
 
     On success, the data and separator will be removed from the
@@ -136,7 +134,7 @@ def readuntil(self, separator=b'\n'):
             raise IncompleteReadError(chunk, None)
 
         # _wait_for_data() will resume reading if stream was paused.
-        yield from self._wait_for_data('readuntil')
+        await self._wait_for_data('readuntil')
 
     if isep > self._limit:
         raise LimitOverrunError(

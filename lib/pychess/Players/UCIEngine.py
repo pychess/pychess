@@ -73,10 +73,9 @@ class UCIEngine(ProtocolEngine):
     def start(self, event, is_dead):
         create_task(self.__startBlocking(event, is_dead))
 
-    @asyncio.coroutine
-    def __startBlocking(self, event, is_dead):
+    async def __startBlocking(self, event, is_dead):
         try:
-            return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
+            return_value = await asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
         except asyncio.TimeoutError:
             log.warning("Got timeout error", extra={"task": self.defname})
             is_dead.add(True)
@@ -210,12 +209,11 @@ class UCIEngine(ProtocolEngine):
         if not self.readyMoves:
             return
 
-        @asyncio.coroutine
-        def coro():
+        async def coro():
             if self.needBestmove:
                 self.bestmove_event.clear()
                 print("stop", file=self.engine)
-                yield from self.bestmove_event.wait()
+                await self.bestmove_event.wait()
 
             self._recordMove(board, None, None)
             if search:
@@ -228,20 +226,18 @@ class UCIEngine(ProtocolEngine):
         if not self.readyMoves:
             return
 
-        @asyncio.coroutine
-        def coro():
+        async def coro():
             if self.needBestmove:
                 self.bestmove_event.clear()
                 print("stop", file=self.engine)
-                yield from self.bestmove_event.wait()
+                await self.bestmove_event.wait()
 
             self._recordMove(board1, move, board2)
             if not self.analyzing_paused:
                 self._searchNow()
         create_task(coro())
 
-    @asyncio.coroutine
-    def makeMove(self, board1, move, board2):
+    async def makeMove(self, board1, move, board2):
         log.debug("makeMove: move=%s self.pondermove=%s board1=%s board2=%s self.board=%s" % (
             move, self.pondermove, board1, board2, self.board), extra={"task": self.defname})
         assert self.readyMoves
@@ -260,7 +256,7 @@ class UCIEngine(ProtocolEngine):
 
         # Parse outputs
         try:
-            return_queue = yield from self.queue.get()
+            return_queue = await self.queue.get()
             if return_queue == "invalid":
                 raise InvalidMove
             if return_queue == "del" or return_queue == "die":
@@ -515,10 +511,9 @@ class UCIEngine(ProtocolEngine):
 
     # Parsing from engine
 
-    @asyncio.coroutine
-    def parseLine(self, proc):
+    async def parseLine(self, proc):
         while True:
-            line = yield from wait_signal(proc, 'line')
+            line = await wait_signal(proc, 'line')
             if not line:
                 break
             else:

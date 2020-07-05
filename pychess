@@ -43,8 +43,8 @@ if not getattr(sys, 'frozen', False):
         pass
 
 # Check requirements
-if sys.version_info < (3, 4, 2):
-    print('ERROR: PyChess requires Python >= 3.4.2')
+if sys.version_info < (3, 5, 3):
+    print('ERROR: PyChess requires Python >= 3.5.3')
     sys.exit(1)
 
 try:
@@ -234,9 +234,8 @@ while lel_oldlogs > conf.get("max_log_files"):
     lel_oldlogs -= 1
 
 
-@asyncio.coroutine
-def start(gtk_app):
-    yield from asyncio.sleep(0)
+async def start(gtk_app):
+    await asyncio.sleep(0)
     gtk_app.register()
     gtk_app.activate()
 

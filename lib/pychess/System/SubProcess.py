@@ -41,8 +41,7 @@ class SubProcess(GObject.GObject):
         self.argv = [str(u) for u in [self.path] + self.args]
         self.terminated = False
 
-    @asyncio.coroutine
-    def start(self):
+    async def start(self):
         log.debug("SubProcess.start(): create_subprocess_exec...", extra={"task": self.defname})
         if sys.platform == "win32":
             # To prevent engines opening console window
@@ -58,7 +57,7 @@ class SubProcess(GObject.GObject):
                                                 env=self.env,
                                                 cwd=self.cwd)
         try:
-            self.proc = yield from asyncio.wait_for(create, TIME_OUT_SECOND)
+            self.proc = await asyncio.wait_for(create, TIME_OUT_SECOND)
             self.pid = self.proc.pid
             # print(self.pid, self.path)
             if self.lowPriority:
@@ -87,14 +86,13 @@ class SubProcess(GObject.GObject):
     def write(self, line):
         self.write_task = create_task(self.write_stdin(self.proc.stdin, line))
 
-    @asyncio.coroutine
-    def write_stdin(self, writer, line):
+    async def write_stdin(self, writer, line):
         if self.terminated:
             return
         try:
             log.debug(line, extra={"task": self.defname})
             writer.write(line.encode())
-            yield from writer.drain()
+            await writer.drain()
         except BrokenPipeError:
             log.debug('SubProcess.write_stdin(): BrokenPipeError', extra={"task": self.defname})
             self.emit("died")
@@ -108,12 +106,11 @@ class SubProcess(GObject.GObject):
             self.emit("died")
             self.terminate()
 
-    @asyncio.coroutine
-    def read_stdout(self, reader):
+    async def read_stdout(self, reader):
         while True:
-            line = yield from reader.readline()
+            line = await reader.readline()
             if line:
-                yield
+                await asyncio.sleep(0)
 
                 try:
                     line = line.decode().rstrip()
@@ -215,10 +212,9 @@ class Application(Gtk.Application):
         print("xboard", file=proc)
         print("protover 2", file=proc)
 
-    @asyncio.coroutine
-    def parse_line(self, proc):
+    async def parse_line(self, proc):
         while True:
-            line = yield from wait_signal(proc, 'line')
+            line = await wait_signal(proc, 'line')
             if line:
                 print('  parse_line:', line[1])
             else:

@@ -81,12 +81,11 @@ class ExternalsDialog():
         self.window.present()
 
     def on_close_clicked(self, button):
-        @asyncio.coroutine
-        def coro():
+        async def coro():
             altpath = getEngineDataPrefix()
             if pgn.scoutfish_path is None and conf.get("download_scoutfish"):
                 binary = "https://github.com/pychess/scoutfish/releases/download/20170627/%s" % pgn.scoutfish
-                filename = yield from download_file_async(binary)
+                filename = await download_file_async(binary)
                 if filename is not None:
                     dest = shutil.move(filename, os.path.join(altpath, pgn.scoutfish))
                     os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
@@ -94,7 +93,7 @@ class ExternalsDialog():
 
             if pgn.chess_db_path is None and conf.get("download_chess_db"):
                 binary = "https://github.com/pychess/chess_db/releases/download/20170627/%s" % pgn.parser
-                filename = yield from download_file_async(binary)
+                filename = await download_file_async(binary)
                 if filename is not None:
                     dest = shutil.move(filename, os.path.join(altpath, pgn.parser))
                     os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
@@ -102,7 +101,7 @@ class ExternalsDialog():
 
             if TimeSeal.timestamp_path is None and conf.get("download_timestamp"):
                 binary = "http://download.chessclub.com.s3.amazonaws.com/timestamp/%s" % TimeSeal.timestamp
-                filename = yield from download_file_async(binary)
+                filename = await download_file_async(binary)
                 if filename is not None:
                     dest = shutil.move(filename, os.path.join(altpath, TimeSeal.timestamp))
                     os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)

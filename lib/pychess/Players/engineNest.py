@@ -165,9 +165,8 @@ class EngineDiscoverer(GObject.GObject):
             engine["options"] = list(options.values())
         return engine
 
-    @asyncio.coroutine
-    def __discoverE(self, engine):
-        subproc = yield from self.initEngine(engine, BLACK, False)
+    async def __discoverE(self, engine):
+        subproc = await self.initEngine(engine, BLACK, False)
         subproc.connect('readyForOptions', self.__discoverE2, engine)
         subproc.prestart()  # Sends the 'start line'
 
@@ -175,7 +174,7 @@ class EngineDiscoverer(GObject.GObject):
         is_dead = set()
         subproc.start(event, is_dead)
 
-        yield from event.wait()
+        await event.wait()
 
         if is_dead:
             # Check if the player died after engine_discovered by our own hands
@@ -488,8 +487,7 @@ class EngineDiscoverer(GObject.GObject):
     def getCountry(self, engine):
         return engine.get("country")
 
-    @asyncio.coroutine
-    def initEngine(self, engine, color, lowPriority):
+    async def initEngine(self, engine, color, lowPriority):
         name = engine['name']
         protocol = engine["protocol"]
         protover = 2 if engine.get("protover") is None else engine.get("protover")
@@ -510,7 +508,7 @@ class EngineDiscoverer(GObject.GObject):
         warnwords = ("illegal", "error", "exception")
         try:
             subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir, lowPriority=lowPriority)
-            yield from subprocess.start()
+            await subprocess.start()
         except OSError:
             raise PlayerIsDead
         except asyncio.TimeoutError:
@@ -540,17 +538,12 @@ class EngineDiscoverer(GObject.GObject):
 
         return engine_proc
 
-    @asyncio.coroutine
-    def initPlayerEngine(self,
-                         engine,
-                         color,
-                         diffi,
-                         variant,
-                         secs=0,
-                         incr=0,
-                         moves=0,
-                         forcePonderOff=False):
-        engine = yield from self.initEngine(engine, color, False)
+    async def initPlayerEngine(self, engine, color, diffi, variant,
+                               secs=0,
+                               incr=0,
+                               moves=0,
+                               forcePonderOff=False):
+        engine = await self.initEngine(engine, color, False)
 
         def optionsCallback(engine):
             engine.setOptionStrength(diffi, forcePonderOff)
@@ -562,9 +555,8 @@ class EngineDiscoverer(GObject.GObject):
         engine.prestart()
         return engine
 
-    @asyncio.coroutine
-    def initAnalyzerEngine(self, engine, mode, variant):
-        engine = yield from self.initEngine(engine, WHITE, True)
+    async def initAnalyzerEngine(self, engine, mode, variant):
+        engine = await self.initEngine(engine, WHITE, True)
 
         def optionsCallback(engine):
             engine.setOptionAnalyzing(mode)
@@ -609,8 +601,7 @@ class EngineDiscoverer(GObject.GObject):
 discoverer = EngineDiscoverer()
 
 
-@asyncio.coroutine
-def init_engine(analyzer_type, gamemodel, force_engine=None):
+async def init_engine(analyzer_type, gamemodel, force_engine=None):
     """
     Initializes and starts the engine analyzer of analyzer_type the user has
     configured in the Engines tab of the preferencesDialog, for gamemodel. If no
@@ -646,8 +637,7 @@ def init_engine(analyzer_type, gamemodel, force_engine=None):
             engine = anaengines[-1]
 
         if gamemodel.variant.variant in discoverer.getEngineVariants(engine):
-            analyzer = yield from discoverer.initAnalyzerEngine(engine, mode,
-                                                                gamemodel.variant)
+            analyzer = await discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
             log.debug("%s analyzer: %s" % (analyzer_type, repr(analyzer)))
 
     return analyzer

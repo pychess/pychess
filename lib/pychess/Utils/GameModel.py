@@ -271,8 +271,7 @@ class GameModel(GObject.GObject):
         else:
             return BLACK
 
-    @asyncio.coroutine
-    def start_analyzer(self, analyzer_type, force_engine=None):
+    async def start_analyzer(self, analyzer_type, force_engine=None):
         # Don't start regular analyzers
         if (self.practice_game or self.lesson_game) and force_engine is None and not self.solved:
             return
@@ -283,7 +282,7 @@ class GameModel(GObject.GObject):
             return
 
         from pychess.Players.engineNest import init_engine
-        analyzer = yield from init_engine(analyzer_type, self, force_engine=force_engine)
+        analyzer = await init_engine(analyzer_type, self, force_engine=force_engine)
         if analyzer is None:
             return
 
@@ -326,10 +325,9 @@ class GameModel(GObject.GObject):
         analyzer.pause()
         self.emit("analyzer_paused", analyzer, analyzer_type)
 
-    @asyncio.coroutine
-    def restart_analyzer(self, analyzer_type):
+    async def restart_analyzer(self, analyzer_type):
         self.remove_analyzer(analyzer_type)
-        yield from self.start_analyzer(analyzer_type)
+        await self.start_analyzer(analyzer_type)
 
     def on_analyze(self, analyzer, analysis):
         def safe_int(p):
@@ -709,8 +707,7 @@ class GameModel(GObject.GObject):
     # Run stuff
 
     def start(self):
-        @asyncio.coroutine
-        def coro():
+        async def coro():
             log.debug("GameModel.run: Starting. self=%s" % self)
             # Avoid racecondition when self.start is called while we are in
             # self.end
@@ -727,7 +724,7 @@ class GameModel(GObject.GObject):
                 is_dead = set()
                 player.start(event, is_dead)
 
-                yield from event.wait()
+                await event.wait()
 
                 if is_dead:
                     if player in self.players[WHITE]:
@@ -777,9 +774,9 @@ class GameModel(GObject.GObject):
                     if move is None:
 
                         if self.ply > self.lowply:
-                            move = yield from curPlayer.makeMove(self.boards[-1], self.moves[-1], self.boards[-2])
+                            move = await curPlayer.makeMove(self.boards[-1], self.moves[-1], self.boards[-2])
                         else:
-                            move = yield from curPlayer.makeMove(self.boards[-1], None, None)
+                            move = await curPlayer.makeMove(self.boards[-1], None, None)
                         log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % (
                             id(self), str(self.players), self.ply, move, str(curPlayer)))
                 except PlayerIsDead as e:
@@ -853,13 +850,13 @@ class GameModel(GObject.GObject):
                     status, reason = getStatus(self.boards[-1])
                     self.failed_playing_best = self.check_failed_playing_best(status)
                     if self.failed_playing_best:
-                        # print("failed_playing_best() == True -> yield from asyncio.sleep(1.5) ")
+                        # print("failed_playing_best() == True -> await asyncio.sleep(1.5) ")
                         # It may happen that analysis had no time to fill hints with best moves
                         # so we give him another chance with some additional time to think on it
                         self.spectators[HINT].setBoard(self.boards[-2])
                         # TODO: wait for an event (analyzer PV reaching 18 ply)
                         # instead of hard coded sleep time
-                        yield from asyncio.sleep(1.5)
+                        await asyncio.sleep(1.5)
                         self.failed_playing_best = self.check_failed_playing_best(status)
 
                 self.checkStatus()

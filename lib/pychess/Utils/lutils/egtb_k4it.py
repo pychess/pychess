@@ -33,8 +33,7 @@ class EgtbK4kit:
     def supports(self, size):
         return sum(size) < 7
 
-    @asyncio.coroutine
-    def scoreAllMoves(self, board, probeSoft=False):
+    async def scoreAllMoves(self, board, probeSoft=False):
         global URL, expression, PROMOTION_FLAGS
         fen = board.asFen().split()[0] + " w - - 0 1"
         if (fen, board.color) in self.table:
@@ -58,7 +57,7 @@ class EgtbK4kit:
 
         loop = asyncio.get_event_loop()
         future = loop.run_in_executor(None, get_data, URL, fen)
-        data = yield from future
+        data = await future
 
         # Parse
         for color, move_data in enumerate(data.split(b"\nNEXTCOLOR\n")):

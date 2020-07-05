@@ -35,9 +35,8 @@ class SetupPlayer:
             # force both virtual player to make_move()
             self.queue.put_nowait((action, param))
 
-    @asyncio.coroutine
-    def make_move(self):
-        item = yield from self.queue.get()
+    async def make_move(self):
+        item = await self.queue.get()
         return item
 
     def piece_moved(self, board, move, color):
@@ -89,10 +88,10 @@ class SetupModel(GObject.GObject):
         return
 
     def start(self):
-        def coro():
+        async def coro():
             self.emit("game_started")
             while True:
-                player0, player1 = yield from self.curplayer.make_move()
+                player0, player1 = await self.curplayer.make_move()
 
                 if isinstance(player0, SetupMove):
                     # print(player0.cord0, player0.cord1, player1)

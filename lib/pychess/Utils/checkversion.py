@@ -16,14 +16,13 @@ def isgit():
     return os.path.isdir(prefix.addDataPrefix(".git"))
 
 
-@asyncio.coroutine
-def checkversion():
+async def checkversion():
     if isgit():
         return
 
     new_version = None
 
-    filename = yield from download_file_async(URL)
+    filename = await download_file_async(URL)
 
     if filename is not None:
         with open(filename, encoding="utf-8") as f:

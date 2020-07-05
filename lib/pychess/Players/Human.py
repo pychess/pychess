@@ -143,8 +143,7 @@ class Human(Player):
         self.emit("offer", Offer(action, param=param))
 
     # Send the player move updates
-    @asyncio.coroutine
-    def makeMove(self, board1, move, board2):
+    async def makeMove(self, board1, move, board2):
         log.debug("Human.makeMove: move=%s, board1=%s board2=%s" % (
             move, board1, board2))
         if self.board.view.premove_piece and self.board.view.premove0 and \
@@ -165,7 +164,7 @@ class Human(Player):
             self.board.view.setPremove(None, None, None, None)
         self.gmwidg.setLocked(False)
 
-        item = yield from self.move_queue.get()
+        item = await self.move_queue.get()
         self.gmwidg.setLocked(True)
 
         if item == "del":

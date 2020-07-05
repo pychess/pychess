@@ -53,35 +53,32 @@ class DiscovererDialog:
         self.widgets["discovererDialog"].show_all()
         self.throbber.start()
 
-    @asyncio.coroutine
-    def start(self):
+    async def start(self):
         if self.finished:
             self.close()
 
         # let dialog window draw itself
-        yield from asyncio.sleep(0.1)
+        await asyncio.sleep(0.1)
 
         create_task(self.all_whatcher())
         create_task(self.discovered_whatcher())
 
         self.discoverer.discover()
 
-    @asyncio.coroutine
-    def discovered_whatcher(self):
+    async def discovered_whatcher(self):
         while True:
             if self.finished:
                 return
 
-            _discoverer, binname, _xmlenginevalue = yield from wait_signal(self.discoverer, "engine_discovered")
+            _discoverer, binname, _xmlenginevalue = await wait_signal(self.discoverer, "engine_discovered")
 
             if binname in self.nameToBar:
                 bar = self.nameToBar[binname]
                 bar.props.fraction = 1
 
-    @asyncio.coroutine
-    def all_whatcher(self):
+    async def all_whatcher(self):
         while True:
-            yield from wait_signal(self.discoverer, "all_engines_discovered")
+            await wait_signal(self.discoverer, "all_engines_discovered")
             break
 
         self.finished = True

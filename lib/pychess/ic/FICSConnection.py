@@ -181,8 +181,7 @@ class FICSConnection(Connection):
     def _start_managers(self):
         pass
 
-    @asyncio.coroutine
-    def _connect(self):
+    async def _connect(self):
         self.connecting = True
         self.emit("connecting")
         try:
@@ -195,7 +194,7 @@ class FICSConnection(Connection):
                     connected_event = asyncio.Event()
                     self.client = ICSTelnet(self.timeseal)
                     create_task(self.client.start(self.host, port, connected_event))
-                    yield from connected_event.wait()
+                    await connected_event.wait()
                 except socket.error as err:
                     log.debug("Failed to open port %d %s" % (port, err),
                               extra={"task": (self.host, "raw")})
@@ -206,13 +205,13 @@ class FICSConnection(Connection):
                 else:
                     break
 
-            yield from self.client.read_until("login: ")
+            await self.client.read_until("login: ")
             self.emit('connectingMsg', _("Logging on to server"))
 
             # login with registered handle
             if self.password:
                 self.client.write(self.username)
-                got = yield from self.client.read_until(
+                got = await self.client.read_until(
                     "password:", "enter the server as", "Try again.")
                 if got == 0:
                     self.client.sensitive = True
@@ -228,7 +227,7 @@ class FICSConnection(Connection):
                     self.client.write(self.username)
                 else:
                     self.client.write("guest")
-                got = yield from self.client.read_until(
+                got = await self.client.read_until(
                     "Press return",
                     "You are connected as a guest",
                     "If it is yours, type the password.",
@@ -242,7 +241,7 @@ class FICSConnection(Connection):
                 self.client.write("")
 
             while True:
-                line = yield from self.client.readline()
+                line = await self.client.readline()
                 if "Invalid password" in line:
                     raise LogOnException(BADPAS)
                 elif "is already logged in" in line:
@@ -275,7 +274,7 @@ class FICSConnection(Connection):
                     break
 
             self.emit('connectingMsg', _("Setting up environment"))
-            lines = yield from self.client.readuntil(b"ics%")
+            lines = await self.client.readuntil(b"ics%")
             self._post_connect_hook(lines)
             self.FatICS = self.client.FatICS
             self.USCN = self.client.USCN
@@ -314,11 +313,10 @@ class FICSConnection(Connection):
             self.connected = True
             self.emit("connected")
 
-            @asyncio.coroutine
-            def keep_alive():
+            async def keep_alive():
                 while self.isConnected():
                     self.client.run_command("date")
-                    yield from asyncio.sleep(30 * 60)
+                    await asyncio.sleep(30 * 60)
             self.keep_alive_task = create_task(keep_alive())
 
         except CanceledException as err:
@@ -327,13 +325,12 @@ class FICSConnection(Connection):
         finally:
             self.connecting = False
 
-    @asyncio.coroutine
-    def start(self):
+    async def start(self):
         try:
             if not self.isConnected():
-                yield from self._connect()
+                await self._connect()
             while self.isConnected():
-                yield from self.client.parse()
+                await self.client.parse()
         except CancelledError:
             pass
         except Exception as err:

@@ -119,10 +119,9 @@ class Engine(Player):
             answer = data[data.find(sstring) + len(sstring):data.find(estring, data.find(sstring))]
             self.emit("offer", Offer(CHAT_ACTION, answer))
 
-        @asyncio.coroutine
-        def get_answer(message):
+        async def get_answer(message):
             loop = asyncio.get_event_loop()
             future = loop.run_in_executor(None, answer, message)
-            yield from future
+            await future
 
         create_task(get_answer(message))

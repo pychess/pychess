@@ -297,10 +297,9 @@ class ICGameModel(GameModel):
     ############################################################################
 
     def onKibitzMessage(self, cm, name, gameno, text):
-        @asyncio.coroutine
-        def coro():
+        async def coro():
             if not self.gmwidg_ready.is_set():
-                yield from self.gmwidg_ready.wait()
+                await self.gmwidg_ready.wait()
             if gameno != self.ficsgame.gameno:
                 return
             self.emit("message_received", name, text)
@@ -363,8 +362,7 @@ class ICGameModel(GameModel):
         # know automatically if he/she accepts an offer, and will simply send
         # us the result.
 
-    @asyncio.coroutine
-    def checkStatus(self):
+    async def checkStatus(self):
         pass
 
     def onActionError(self, om, offer, error):

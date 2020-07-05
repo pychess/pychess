@@ -360,14 +360,13 @@ class EndgameAdvisor(Advisor):
     class StopNow(Exception):
         pass
 
-    @asyncio.coroutine
-    def start(self):
+    async def start(self):
         while True:
-            v = yield from self.queue.get()
+            v = await self.queue.get()
             if isinstance(v, Exception) and v == self.StopNow:
                 break
             elif v == self.board.board:
-                ret = yield from self.egtb.scoreAllMoves(v)
+                ret = await self.egtb.scoreAllMoves(v)
                 self.on_scored(v, ret)
             self.queue.task_done()
 

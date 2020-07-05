@@ -1212,12 +1212,11 @@ class FICSGames(GObject.GObject):
     def game_ended(self, game):
         if game in self:
             if not game.move_queue.empty():
-                @asyncio.coroutine
-                def coro(game):
+                async def coro(game):
                     # we have to give a chance to ICPlayer
                     # to process the latest move(style12) message
                     # and remove game from game list panel also
-                    yield from asyncio.sleep(0)
+                    await asyncio.sleep(0)
                     game = self[game]
                     self.emit("FICSGameEnded", game)
                     del self[game]

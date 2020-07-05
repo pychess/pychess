@@ -58,8 +58,7 @@ class AnalyzeGameDialog():
             self.widgets["analyze_game"].destroy()
 
         def run_analyze(button, *args):
-            @asyncio.coroutine
-            def coro():
+            async def coro():
                 persp = perspective_manager.get_perspective("games")
                 gmwidg = persp.cur_gmwidg()
                 gamemodel = gmwidg.gamemodel
@@ -68,7 +67,7 @@ class AnalyzeGameDialog():
                 conf.set("analyzer_check", True)
                 if HINT not in gamemodel.spectators:
                     try:
-                        yield from asyncio.wait_for(gamemodel.start_analyzer(HINT), 5.0)
+                        await asyncio.wait_for(gamemodel.start_analyzer(HINT), 5.0)
                     except asyncio.TimeoutError:
                         log.error("Got timeout error while starting hint analyzer")
                         return
@@ -83,7 +82,7 @@ class AnalyzeGameDialog():
                     conf.set("inv_analyzer_check", True)
                     if SPY not in gamemodel.spectators:
                         try:
-                            yield from asyncio.wait_for(gamemodel.start_analyzer(SPY), 5.0)
+                            await asyncio.wait_for(gamemodel.start_analyzer(SPY), 5.0)
                         except asyncio.TimeoutError:
                             log.error("Got timeout error while starting spy analyzer")
                             return
@@ -107,8 +106,7 @@ class AnalyzeGameDialog():
                 message.add_button(InfoBarMessageButton(_("Abort"), Gtk.ResponseType.CANCEL))
                 gmwidg.replaceMessages(message)
 
-                @asyncio.coroutine
-                def analyse_moves():
+                async def analyse_moves():
                     should_black = conf.get("shouldBlack")
                     should_white = conf.get("shouldWhite")
                     from_current = conf.get("fromCurrent")
@@ -123,7 +121,7 @@ class AnalyzeGameDialog():
                         self.analyzer.setBoard(board)
                         if self.threat_PV:
                             inv_analyzer.setBoard(board)
-                        yield from asyncio.sleep(move_time + 0.1)
+                        await asyncio.sleep(move_time + 0.1)
 
                         ply = board.ply - gamemodel.lowply
                         color = (ply - 1) % 2

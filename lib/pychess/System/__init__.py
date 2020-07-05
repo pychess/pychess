@@ -19,11 +19,10 @@ if MSYS2:
     ssl._create_default_https_context = ssl._create_unverified_context
 
 
-@asyncio.coroutine
-def download_file_async(url, progressbar=None):
+async def download_file_async(url, progressbar=None):
     loop = asyncio.get_event_loop()
     future = loop.run_in_executor(None, download_file, url)
-    temp_file = yield from future
+    temp_file = await future
     return temp_file
 
 

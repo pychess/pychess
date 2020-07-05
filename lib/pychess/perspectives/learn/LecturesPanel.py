@@ -131,8 +131,7 @@ def start_lecture_from(filename, index=None):
     lecture_file = addDataPrefix("learn/lectures/%s" % filename)
     steps = lecture_steps(lecture_file)
 
-    @asyncio.coroutine
-    def coro(gamemodel, steps):
+    async def coro(gamemodel, steps):
         exit_lecture = False
         inside_bsetup = False
         paused = False
@@ -222,7 +221,7 @@ def start_lecture_from(filename, index=None):
                         gamemodel.lecture_pause_event.clear()
                         paused = True
 
-                    yield from asyncio.sleep(0.1)
+                    await asyncio.sleep(0.1)
                     if not paused:
                         wait_sec = wait_sec - 0.1
 
