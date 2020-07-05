@@ -669,30 +669,3 @@ def is_cecp(engine_command):
         elif "Error" in line or "Illegal" in line or "Invalid" in line:
             break
     return cecp
-
-
-if __name__ == "__main__":
-    from pychess.external import gbulb
-    gbulb.install()
-    loop = asyncio.get_event_loop()
-
-    def discovering_started(discoverer, names):
-        print("discovering_started", names)
-
-    discoverer.connect("discovering_started", discovering_started)
-
-    def engine_discovered(discoverer, name, engine):
-        sys.stdout.write(".")
-
-    discoverer.connect("engine_discovered", engine_discovered)
-
-    def all_engines_discovered(discoverer):
-        print("all_engines_discovered")
-        print([engine["name"] for engine in discoverer.getEngines()])
-        loop.stop()
-
-    discoverer.connect("all_engines_discovered", all_engines_discovered)
-
-    discoverer.discover()
-
-    loop.run_forever()

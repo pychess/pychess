@@ -135,8 +135,6 @@ parser.add_argument('--ics-port', action='store', type=int,
                     help='the connection port of internet chess server (default is 5000)')
 parser.add_argument('chess_file', nargs='?', metavar='chessfile',
                     help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
-parser.add_argument('--gbulb-loop', action='store_true',
-                    help='use gbulb event loop based on GLib')
 parser.add_argument('--no-version-check', action='store_true',
                     help='disable online version check')
 
@@ -149,15 +147,6 @@ chess_file = args.chess_file
 ics_host = args.ics_host
 ics_port = args.ics_port
 version_check = not args.no_version_check
-
-gbulb_loop = args.gbulb_loop
-if gbulb_loop:
-    try:
-        from pychess.external import gbulb
-        gbulb.install(gtk=True)
-    except ImportError:
-        print("ERROR: PyChess requires gbulb to be installed.")
-        sys.exit(1)
 
 # Set sqlite temp dir path
 os.environ["SQLITE_TMPDIR"] = os.path.expanduser("~")
@@ -246,9 +235,7 @@ def glib_update(main_context, loop):
     loop.call_later(.01, glib_update, main_context, loop)
 
 
-if gbulb_loop:
-    loop = asyncio.get_event_loop()
-elif sys.platform == "win32":
+if sys.platform == "win32":
     from asyncio.windows_events import ProactorEventLoop
     loop = ProactorEventLoop()
     asyncio.set_event_loop(loop)
@@ -262,12 +249,9 @@ if log_debug:
     loop.set_debug(enabled=True)
 
 try:
-    if gbulb_loop:
-        loop.run_forever(application=gtk_app)
-    else:
-        main_context = GLib.MainContext.default()
-        create_task(start(gtk_app))
-        glib_update(main_context, loop)
-        loop.run_forever()
+    main_context = GLib.MainContext.default()
+    create_task(start(gtk_app))
+    glib_update(main_context, loop)
+    loop.run_forever()
 finally:
     loop.close()

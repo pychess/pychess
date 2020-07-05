@@ -6,10 +6,9 @@ import subprocess
 import sys
 import time
 
-from gi.repository import GObject, Gtk, Gio, GLib
+from gi.repository import GObject, GLib
 
 from pychess.compat import create_task
-from pychess.Utils import wait_signal
 from pychess.System.Log import log
 from pychess.Players.ProtocolEngine import TIME_OUT_SECOND
 
@@ -160,76 +159,3 @@ class SubProcess(GObject.GObject):
                 self.proc.send_signal(signal.SIGCONT)
             except ProcessLookupError:
                 log.debug("SubProcess.pause(): ProcessLookupError", extra={"task": self.defname})
-
-
-MENU_XML = """
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <menu id="app-menu">
-    <section>
-      <item>
-        <attribute name="action">app.subprocess</attribute>
-        <attribute name="label">Subprocess</attribute>
-      </item>
-      <item>
-        <attribute name="action">app.quit</attribute>
-        <attribute name="label">Quit</attribute>
-    </item>
-    </section>
-  </menu>
-</interface>
-"""
-
-
-class Application(Gtk.Application):
-    def __init__(self):
-        Gtk.Application.__init__(self, application_id="org.subprocess")
-        self.window = None
-
-    def do_startup(self):
-        Gtk.Application.do_startup(self)
-
-        action = Gio.SimpleAction.new("subprocess", None)
-        action.connect("activate", self.on_subprocess)
-        self.add_action(action)
-
-        action = Gio.SimpleAction.new("quit", None)
-        action.connect("activate", self.on_quit)
-        self.add_action(action)
-
-        builder = Gtk.Builder.new_from_string(MENU_XML, -1)
-        self.set_app_menu(builder.get_object("app-menu"))
-
-    def do_activate(self):
-        if not self.window:
-            self.window = Gtk.ApplicationWindow(application=self)
-
-        self.window.present()
-
-    def on_subprocess(self, action, param):
-        proc = SubProcess("python", [os.path.expanduser("~") + "/pychess/lib/pychess/Players/PyChess.py", ])
-        create_task(self.parse_line(proc))
-        print("xboard", file=proc)
-        print("protover 2", file=proc)
-
-    async def parse_line(self, proc):
-        while True:
-            line = await wait_signal(proc, 'line')
-            if line:
-                print('  parse_line:', line[1])
-            else:
-                print("no more lines")
-                break
-
-    def on_quit(self, action, param):
-        self.quit()
-
-
-if __name__ == "__main__":
-    from pychess.external import gbulb
-    gbulb.install(gtk=True)
-    app = Application()
-
-    loop = asyncio.get_event_loop()
-    loop.set_debug(enabled=True)
-    loop.run_forever(application=app)

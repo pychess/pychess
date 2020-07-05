@@ -278,7 +278,7 @@ if msi:
         "packages": ["asyncio", "gi", "sqlalchemy.dialects.sqlite", "sqlalchemy.sql.default_comparator", "pexpect", "pychess"] + perspectives,
         "include_files": include_files}
     if pychess.MSYS2:
-        build_exe_options["excludes"] = ["tkinter", "pychess.external.gbulb"]
+        build_exe_options["excludes"] = ["tkinter"]
     else:
         build_exe_options["include_msvcr"] = True
 
@@ -290,7 +290,7 @@ else:
                 "pychess.perspectives", "pychess.perspectives.welcome",
                 "pychess.perspectives.games", "pychess.perspectives.fics",
                 "pychess.perspectives.database", "pychess.perspectives.learn",
-                "pychess.external", "pychess.external.gbulb"]
+                "pychess.external"]
 
     build_exe_options = {}
     bdist_msi_options = {}
