@@ -1,6 +1,5 @@
 """ The task of this perspective, is to save, load and init new games """
 
-import asyncio
 import os
 import subprocess
 import tempfile

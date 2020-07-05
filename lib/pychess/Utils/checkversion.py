@@ -1,5 +1,4 @@
 import os.path
-import asyncio
 import json
 
 from gi.repository import GLib, Gtk
