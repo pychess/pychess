@@ -169,7 +169,7 @@ ENGINES_LIST = [
     ENGINE("arminius", "xboard", "de", 2757, NO_AUTO_DETECT, None),
     ENGINE("chronos", "uci", "ar", 2739, AUTO_DETECT, None),
     ENGINE("karballo", "uci", "es", 2730, AUTO_DETECT, None),
-    ENGINE("tiger", "uci", "gp", 2713, AUTO_DETECT, None),
+    ENGINE("tiger", "uci", "gp", 2713, NO_AUTO_DETECT, None),  # tiger - Report system security vulnerabilities
     ENGINE("devel", "uci", "no", 2765, NO_AUTO_DETECT, None),
     ENGINE("greko", "uci", "ru", 2752, AUTO_DETECT, None),
     ENGINE("ece-x3", "uci", "it", 2701, NO_AUTO_DETECT, None),
