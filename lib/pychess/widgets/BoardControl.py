@@ -8,8 +8,8 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny, toAN
 from pychess.Utils.const import ARTIFICIAL, FLAG_CALL, ABORT_OFFER, LOCAL, TAKEBACK_OFFER, \
     ADJOURN_OFFER, DRAW_OFFER, RESIGNATION, HURRY_ACTION, PAUSE_OFFER, RESUME_OFFER, RUNNING, \
-    DROP, DROP_VARIANTS, PAWN, QUEEN, KING, SITTUYINCHESS, QUEEN_PROMOTION, \
-    SCHESS, HAWK, ELEPHANT, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK
+    DROP, DROP_VARIANTS, PAWN, QUEEN, KING, SITTUYINCHESS, QUEEN_PROMOTION, KNIGHT_PROMOTION, \
+    SCHESS, HAWK, ELEPHANT, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK, LIGHTBRIGADECHESS, WHITE
 
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils.bitboard import iterBits
@@ -238,6 +238,8 @@ class BoardControl(Gtk.EventBox):
                 self.variant.variant != SITTUYINCHESS:
             if len(self.variant.PROMOTIONS) == 1:
                 promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
+            elif self.variant.variant == LIGHTBRIGADECHESS:
+                promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION if color == WHITE else KNIGHT_PROMOTION)
             else:
                 if conf.get("autoPromote"):
                     promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
@@ -994,10 +996,15 @@ class LockedActiveState(LockedBoardState):
             board = self.getBoard()
             if board[self.view.selected].sign == PAWN and \
                     cord.cord in board.PROMOTION_ZONE[1 - board.color]:
-                if conf.get("autoPromote"):
-                    promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+                if len(board.PROMOTIONS) == 1:
+                    promotion = lmove.PROMOTE_PIECE(board.PROMOTIONS[0])
+                elif board.variant == LIGHTBRIGADECHESS:
+                    promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION if 1 - board.color == WHITE else KNIGHT_PROMOTION)
                 else:
-                    promotion = self.parent.getPromotion()
+                    if conf.get("autoPromote"):
+                        promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+                    else:
+                        promotion = self.parent.getPromotion()
             else:
                 promotion = None
             self.view.setPremove(board[self.view.selected], self.view.selected,
@@ -1013,10 +1020,15 @@ class LockedActiveState(LockedBoardState):
             board = self.getBoard()
             if board[self.view.active].sign == PAWN and \
                     cord.cord in board.PROMOTION_ZONE[1 - board.color]:
-                if conf.get("autoPromote"):
-                    promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+                if len(board.PROMOTIONS) == 1:
+                    promotion = lmove.PROMOTE_PIECE(board.PROMOTIONS[0])
+                elif board.variant == LIGHTBRIGADECHESS:
+                    promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION if 1 - board.color == WHITE else KNIGHT_PROMOTION)
                 else:
-                    promotion = self.parent.getPromotion()
+                    if conf.get("autoPromote"):
+                        promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+                    else:
+                        promotion = self.parent.getPromotion()
             else:
                 promotion = None
             self.view.setPremove(self.getBoard()[self.view.active],

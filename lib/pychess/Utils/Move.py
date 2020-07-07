@@ -1,7 +1,8 @@
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import DROP, NORMAL_MOVE, PAWN, SITTUYINCHESS, QUEEN, KING, \
     WHITE, BLACK, W_OOO, W_OO, B_OOO, B_OO, QUEEN_CASTLE, FISCHERRANDOMCHESS, GATINGS,\
-    KING_CASTLE, CAMBODIANCHESS, ENPASSANT, PROMOTIONS, CASTLE_SAN, C1, G1, reprSign
+    KING_CASTLE, CAMBODIANCHESS, ENPASSANT, PROMOTIONS, CASTLE_SAN, C1, G1, reprSign, \
+    LIGHTBRIGADECHESS, KNIGHT
 from pychess.Utils.lutils.lmovegen import newMove
 from .lutils import lmove
 
@@ -36,7 +37,10 @@ class Move:
                     self.cord1.cord in board.PROMOTION_ZONE[board.board.color] and \
                     board.variant != SITTUYINCHESS:
                 if promotion is None:
-                    self.flag = lmove.FLAG_PIECE(QUEEN)
+                    if board.variant == LIGHTBRIGADECHESS:
+                        self.flag = lmove.FLAG_PIECE(QUEEN if board.board.color == WHITE else KNIGHT)
+                    else:
+                        self.flag = lmove.FLAG_PIECE(QUEEN)
                 else:
                     self.flag = lmove.FLAG_PIECE(promotion)
 

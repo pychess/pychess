@@ -6,7 +6,7 @@ from pychess.Utils.const import EMPTY, PAWN,\
     QUEEN, KNIGHT, BISHOP, ROOK, KING, HAWK, ELEPHANT, WHITE, BLACK,\
     SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, GIVEAWAYCHESS, CAMBODIANCHESS,\
     ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, CRAZYHOUSECHESS, ASEAN_VARIANTS,\
-    HORDECHESS, PLACEMENTCHESS, SCHESS, BPAWN, sliders,\
+    HORDECHESS, PLACEMENTCHESS, SCHESS, LIGHTBRIGADECHESS, BPAWN, sliders,\
     A8, A6, G6, F6, H1, C3, B2, B3, A3, D6, D8, E3, E1, E8, C7, F2, D1, E6, H3, D3, H2, G7, H6, H7,\
     ASEAN_QUEEN, ASEAN_BBISHOP, ASEAN_WBISHOP, NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT,\
     KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, \
@@ -259,6 +259,8 @@ def genAllMoves(board, drops=True):
     # In sittuyin only one queen allowed to exist any time per side
     if board.variant == SITTUYINCHESS and queens:
         PROMOTIONS = (NORMAL_MOVE, )
+    elif board.variant == LIGHTBRIGADECHESS:
+        PROMOTIONS = (QUEEN_PROMOTION, ) if board.color == WHITE else (KNIGHT_PROMOTION, )
 
     # Knights, Hawks, Elephants
     knightMoves = moveArray[KNIGHT]
@@ -542,6 +544,8 @@ def genCaptures(board):
     # In sittuyin promotion can't give capture
     if board.variant == SITTUYINCHESS:
         PROMOTIONS = (NORMAL_MOVE, )
+    elif board.variant == LIGHTBRIGADECHESS:
+        PROMOTIONS = (QUEEN_PROMOTION, ) if board.color == WHITE else (KNIGHT_PROMOTION, )
 
     # Knights
     knightMoves = moveArray[KNIGHT]
@@ -688,6 +692,8 @@ def genCheckEvasions(board):
         # In sittuyin promotion move not allowed to capture opponent pieces
         if board.variant == SITTUYINCHESS and board.boards[board.color][QUEEN]:
             PROMOTIONS = (NORMAL_MOVE, )
+        elif board.variant == LIGHTBRIGADECHESS:
+            PROMOTIONS = (QUEEN_PROMOTION, ) if board.color == WHITE else (KNIGHT_PROMOTION, )
         promotion_zone = variants[board.variant].PROMOTION_ZONE[color]
 
         # Captures of checking pieces (except by king, which we will test later)
