@@ -110,6 +110,7 @@ INGAME_ACTIONS = (RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER,
 # A few nice to have boards
 FEN_EMPTY = "4k3/8/8/8/8/8/8/4K3 w - - 0 1"
 FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+FEN_START_960 = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w HAha - 0 1"
 
 # Search values
 

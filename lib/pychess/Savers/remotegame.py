@@ -12,7 +12,7 @@ import string
 from random import choice, randint
 
 from pychess import VERSION
-from pychess.Utils.const import CRAZYHOUSECHESS, FISCHERRANDOMCHESS, reprResult
+from pychess.Utils.const import FEN_START, FEN_START_960, CRAZYHOUSECHESS, FISCHERRANDOMCHESS, reprResult
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import parseAny, toSAN
 from pychess.widgets import newGameDialog
@@ -28,7 +28,6 @@ from pychess.System.Log import log
 
 TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE, TYPE_EVENT, TYPE_FEN = range(5)
 CHESS960 = 'Fischerandom'
-DEFAULT_BOARD = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
 CAT_DL = _('Download link')
 CAT_HTML = _('HTML parsing')
@@ -227,6 +226,11 @@ class InternetGameInterface:
         # Check
         if game is None or game == '' or '_moves' not in game or game['_moves'] == '':
             return None
+
+        # Convert Chess960 to classical chess depending on the start position
+        if 'Variant' in game and 'FEN' in game:
+            if game['Variant'] == CHESS960 and game['FEN'] == FEN_START_960:
+                del game['Variant'], game['SetUp'], game['FEN']
 
         # Header
         pgn = ''
@@ -1363,7 +1367,7 @@ class InternetGameGameknot(InternetGameInterface):
 
             # Body
             board = LBoard()
-            board.applyFen(DEFAULT_BOARD)
+            board.applyFen(FEN_START)
             moves = game['_moves'].split('-')
             game['_moves'] = ''
             for move in moves:
@@ -1559,7 +1563,7 @@ class InternetGameChessCom(InternetGameInterface):
             if 'FEN' in game:
                 board.applyFen(game['FEN'])
             else:
-                board.applyFen(DEFAULT_BOARD)
+                board.applyFen(FEN_START)
             while len(moves) > 0:
                 move = self.decode_move(moves[:2])
                 moves = moves[2:]
@@ -1886,7 +1890,7 @@ class InternetGameSchacharena(InternetGameInterface):
         rxp_result = re.compile(r'.*>(1\-0|0\-1|1\/2\-1\/2)\s([^\<]+)<.*', re.IGNORECASE)
         player_count = 0
         board = LBoard()
-        board.applyFen(DEFAULT_BOARD)
+        board.applyFen(FEN_START)
 
         # Parse
         game = {}
