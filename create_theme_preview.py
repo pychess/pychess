@@ -19,7 +19,7 @@ PIECES = ((Piece(WHITE, KING), Piece(WHITE, QUEEN), Piece(WHITE, ROOK), None),
           (Piece(WHITE, PAWN), None, Piece(BLACK, BISHOP), Piece(BLACK, KNIGHT)),
           (None, Piece(BLACK, ROOK), Piece(BLACK, QUEEN), Piece(BLACK, KING)))
 
-themes = ['Pychess']
+themes = []
 
 pieces = addDataPrefix("pieces")
 themes += [d.capitalize() for d in listdir(pieces) if isdir(os.path.join(pieces,d)) and d != 'ttf']
