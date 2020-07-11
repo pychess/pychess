@@ -93,7 +93,7 @@ Go to https://msys2.github.io/ and download the x86_64 installer
 In C:\msys64\mingw32.exe terminal run:
 
 pacman -S mingw-w64-i686-python mingw-w64-i686-python-cairo mingw-w64-i686-gobject-introspection mingw-w64-i686-libffi
-pacman -S mingw-w64-i686-gtk3 mingw-w64-i686-python-gobject mingw-w64-i686-gtksourceview3
+pacman -S mingw-w64-i686-gtk3 mingw-w64-i686-python-gobject mingw-w64-i686-gtksourceview3 mingw-w64-i686-freetype
 pacman -S mingw-w64-i686-python-sqlalchemy mingw-w64-i686-python-pexpect mingw-w64-i686-python-psutil
 pip install websockets
 
