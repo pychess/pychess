@@ -1,6 +1,7 @@
 # Chess960 (Fischer Random Chess)
 
-import random
+from random import randrange
+from math import floor
 
 from pychess.Utils.const import FISCHERRANDOMCHESS, VARIANTS_SHUFFLE
 from pychess.Utils.Board import Board
@@ -24,50 +25,43 @@ class FischerandomBoard(Board):
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
 
+    def getFrcFen(self, position=519):
+        position = max(1, min(960, position))
+        pieces = ['', '', '', '', '', '', '', '']
+
+        # Bishops
+        pieces[floor(0.08 * (floor(25 * (position - 1)) % 100) + 1.5)] = 'b'
+        pieces[floor(0.08 * (floor(25 * floor((position - 1) / 4)) % 100) + 0.5)] = 'b'
+
+        # Queen
+        z = floor(floor((position - 1) / 4) / 4) / 6
+        p = floor(6 * (z - floor(z)) + 0.5)
+        for i in range(8):
+            if pieces[i] == '':
+                if p == 0:
+                    pieces[i] = 'q'
+                    break
+                p -= 1
+
+        # KRN
+        krn = ['nnrkr', 'nrnkr', 'nrknr', 'nrkrn', 'rnnkr', 'rnknr', 'rnkrn', 'rknnr', 'rknrn', 'rkrnn'][floor(z)]
+        for i in range(8):
+            if pieces[i] == '':
+                pieces[i] = krn[:1]
+                krn = krn[1:]
+
+        # Castling
+        castling = ''
+        for i in range(8):
+            if pieces[i] == 'r':
+                castling += reprFile[i]
+
+        # FEN
+        pieces = ''.join(pieces)
+        return '%s/pppppppp/8/8/8/8/PPPPPPPP/%s w %s%s - 0 1' % (pieces, pieces.upper(), castling.upper(), castling)
+
     def shuffle_start(self):
-        """ Create a random initial position.
-            The king is placed somewhere between the two rooks.
-            The bishops are placed on opposite-colored squares."""
-
-        positions = [1, 2, 3, 4, 5, 6, 7, 8]
-        board = [''] * 8
-        castl = ''
-
-        bishop = random.choice((1, 3, 5, 7))
-        board[bishop - 1] = 'b'
-        positions.remove(bishop)
-
-        bishop = random.choice((2, 4, 6, 8))
-        board[bishop - 1] = 'b'
-        positions.remove(bishop)
-
-        queen = random.choice(positions)
-        board[queen - 1] = 'q'
-        positions.remove(queen)
-
-        knight = random.choice(positions)
-        board[knight - 1] = 'n'
-        positions.remove(knight)
-
-        knight = random.choice(positions)
-        board[knight - 1] = 'n'
-        positions.remove(knight)
-
-        rook = positions[0]
-        board[rook - 1] = 'r'
-        castl += reprFile[rook - 1]
-
-        king = positions[1]
-        board[king - 1] = 'k'
-
-        rook = positions[2]
-        board[rook - 1] = 'r'
-        castl += reprFile[rook - 1]
-
-        fen = ''.join(board)
-        fen = fen + '/pppppppp/8/8/8/8/PPPPPPPP/' + fen.upper(
-        ) + ' w ' + castl.upper() + castl + ' - 0 1'
-        return fen
+        return self.getFrcFen(randrange(1, 960))
 
 
 if __name__ == '__main__':
