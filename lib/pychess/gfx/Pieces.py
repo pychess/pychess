@@ -160,8 +160,7 @@ def set_piece_theme(piece_set):
         try:
             chess_font_face, piece2char = get_chess_font_face(piece_set)
         except Exception:
-            from pychess.gfx.pychess_pieces import drawPiece2
-            drawPiece = drawPiece2
+            print("Can't create ttf piece set %s" % piece_set)
     elif piece_set in ('celtic', 'eyes', 'fantasy', 'fantasy_alt', 'freak',
                        'prmi', 'skulls', 'spatial'):
         all_in_one = True
