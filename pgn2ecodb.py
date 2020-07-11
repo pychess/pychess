@@ -26,6 +26,7 @@ from pychess.Savers.pgn import load
 from pychess.System.protoopen import protoopen
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.eco import ECO_MAIN_LANG, ECO_LANGS
+from pychess.Variants.fischerandom import FischerandomBoard
 
 
 path = os.path.join(addDataPrefix("eco.db"))
@@ -117,6 +118,16 @@ if __name__ == '__main__':
     for lang in ECO_LANGS:
         print("Processing %s" % lang.upper())
         feed("lang/%s/eco.pgn" % lang, lang)
+
+    # Start positions for Chess960
+    print("Processing Chess960")
+    chess960 = FischerandomBoard()
+    for i in range(960):
+        c.execute("insert into openings (mainline, endline, eco, lang, opening, fen) values (?, '1', '960', ?, ?, ?)",
+                  ('1' if i == 518 else '0',
+                   ECO_MAIN_LANG,
+                   'Chess%.3d' % (i + 1),
+                   chess960.getFrcFen(i + 1)))
 
     c.execute('vacuum')
     conn.close()
