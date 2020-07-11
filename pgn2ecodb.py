@@ -128,6 +128,4 @@ if __name__ == '__main__':
                    ECO_MAIN_LANG,
                    'Chess%.3d' % (i + 1),
                    chess960.getFrcFen(i + 1)))
-
-    c.execute('vacuum')
     conn.close()
