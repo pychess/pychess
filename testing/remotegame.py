@@ -192,6 +192,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://chess-samara.ru', False)]                                        # Not a game (homepage)
         self.executeTest(InternetGameChesssamara(), links)
 
+    @unittest.skip("You need to be a Premium Member to have access to this feature.")
     def test2700chess(self):
         links = [('https://2700CHESS.com/games/dominguez-perez-yu-yangyi-r19.6-hengshui-chn-2019-05-18', True),                     # Game
                  ('https://2700chess.com/games/download?slug=dominguez-perez-yu-yangyi-r19.6-hengshui-chn-2019-05-18#tag', True),   # Game with direct link
