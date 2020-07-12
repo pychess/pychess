@@ -52,6 +52,7 @@ PUZZLES = puzzles0 + puzzles1 + puzzles2 + puzzles3
 HINTS = {
     "r2qrbk1/5ppp/pn1p4/np2P1P1/3p4/5N2/PPB2PP1/R1BQR1K1 w - - 1 20": (38, "c2h7"),
     "3r1rk1/bpq2ppp/p1b1p3/2P5/1P2B3/P4Q2/1B3PPP/2R2RK1 w - - 3 18": (34, "e4h7"),
+    "8/8/3p1p2/1N2p3/4kNQ1/5n2/2K3B1/8 w - - 0 1": (0, "g2h1"),
 }
 
 

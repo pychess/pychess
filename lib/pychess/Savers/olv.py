@@ -196,8 +196,8 @@ class OLVFile(ChessFile):
         model.tags['White'] = "?"
         model.tags['Black'] = "?"
         model.tags['Termination'] = rec["Termination"]
-
         fen = rec["FEN"]
+        model.tags['FEN'] = fen
 
         model.boards = [model.variant(setup=fen)]
         model.variations = [model.boards]

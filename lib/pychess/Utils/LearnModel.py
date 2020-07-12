@@ -125,7 +125,7 @@ class LearnModel(GameModel):
             return
 
         full_moves = (self.ply - self.lowply) // 2 + 1
-        # print("Is Goal not reached?", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best)
+        # print("Is Goal not reached?", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best, self.tags, self.hints)
 
         if (self.goal.result == DRAW_IN and status == DRAW and full_moves <= self.goal.moves) or \
            (self.goal.result == MATE_IN and status == WHITEWON and full_moves <= self.goal.moves and self.starting_color == WHITE) or \
