@@ -4,7 +4,7 @@ import sys
 import subprocess
 from urllib.request import url2pathname
 
-from .Log import log
+from pychess.System.Log import log
 
 
 class Player():
