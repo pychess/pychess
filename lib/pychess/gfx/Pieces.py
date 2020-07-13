@@ -161,6 +161,9 @@ def set_piece_theme(piece_set):
             chess_font_face, piece2char = get_chess_font_face(piece_set)
         except Exception:
             print("Can't create ttf piece set %s" % piece_set)
+        all_in_one = False
+        drawPiece = drawPiece3
+        svg_pieces = get_svg_pieces("merida")
     elif piece_set in ('celtic', 'eyes', 'fantasy', 'fantasy_alt', 'freak',
                        'prmi', 'skulls', 'spatial'):
         all_in_one = True
