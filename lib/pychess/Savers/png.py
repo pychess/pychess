@@ -11,7 +11,7 @@ __label__ = _("Png image")
 __ending__ = "png"
 __append__ = False
 
-SQUARE = 40
+SQUARE = 80
 
 
 def save(file, model, position=None, flip=False):
