@@ -85,7 +85,7 @@ class TipOfTheDay:
             _("Time compensation is a feature that doesn't waste your clock time because of the latency of your Internet connection. The module can be downloaded from the menu <b>Edit</b> > <b>Externals</b>."),
             _("You can play against chess engines on an Internet chess server. Use the filter to include or exclude them from the available players."),
             _("The communication with an Internet chess server is not standardized. Therefore, you can only connect to the supported chess servers in PyChess, like freechess.org or chessclub.com"),
-            _("PyChess is able to download chess games remotely from the following websites:" + "\n\n" + ", ".join(get_internet_game_providers())),
+            _("PyChess is able to download chess games remotely from the following websites:") + "\n\n" + ", ".join(get_internet_game_providers()),
 
             # Externals
             _("PyChess uses the external module Scoutfish to evaluate the chess databases. For example, it is possible to extract the games where some pieces are in precise count or positions."),

@@ -1413,6 +1413,7 @@ class InternetGameChessCom(InternetGameInterface):
             return True
 
         # Games
+        url = url.replace('/live#g=', '/live/game/').replace('/daily#g=', '/daily/game/')
         rxp = re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(live|daily)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
@@ -2423,9 +2424,15 @@ def get_internet_game_providers():
 
 # Retrieve a game from a URL
 async def get_internet_game_as_pgn(url):
-    # Check the format
+    # Recognize the most popular identifiers
     if url in [None, '']:
         return None
+    if re.compile(r'^[a-z0-9-]{8}$', re.IGNORECASE).match(url) is not None:
+        url = 'https://lichess.org/%s' % url
+    elif url.isdigit():
+        url = 'https://www.chess.com/live/game/%s' % url
+
+    # Check the format
     p = urlparse(url.strip())
     if '' in [p.scheme, p.netloc]:
         return None
