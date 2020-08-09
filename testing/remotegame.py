@@ -48,6 +48,7 @@ class RemoteGameTestCase(unittest.TestCase):
     def testLichess(self):
         links = [('http://lichess.org/CA4bR2b8/black/analysis#12', True),                           # Game in advanced position
                  ('https://lichess.org/CA4bR2b8', True),                                            # Canonical address
+                 ('CA4bR2b8', False),                                                               # Short ID (possible via the generic function only)
                  ('https://lichess.org/game/export/CA4bR2b8', True),                                # Download link
                  ('https://LICHESS.org/embed/CA4bR2b8/black?theme=brown', True),                    # Embedded game
                  ('http://fr.lichess.org/@/thibault', False),                                       # Not a game (user page)
@@ -147,6 +148,8 @@ class RemoteGameTestCase(unittest.TestCase):
 
     def testChessCom(self):
         links = [('https://www.CHESS.com/live/game/3638784952#anchor', True),               # Live game
+                 ('3638784952', False),                                                     # Short ID (possible via the generic function only)
+                 ('https://chess.com/live#g=3638784952', True),                             # Another syntax
                  ('https://chess.com/de/live/game/3635508736?username=rikikits', True),     # Live game Chess960
                  ('https://www.chess.com/live/game/1936591455', True),                      # Live game CrazyHouse
                  ('https://www.chess.com/analysis/game/live/3874372792', True),             # Live analysis
