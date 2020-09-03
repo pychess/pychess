@@ -77,9 +77,7 @@ class DiscovererDialog:
                 bar.props.fraction = 1
 
     async def all_whatcher(self):
-        while True:
-            await wait_signal(self.discoverer, "all_engines_discovered")
-            break
+        await wait_signal(self.discoverer, "all_engines_discovered")
 
         self.finished = True
         self.close()
