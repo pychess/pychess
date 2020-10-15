@@ -48,6 +48,7 @@ class InternetGameInterface:
         self.allow_octet_stream = False
 
     def reset(self):
+        ''' Clear the internal variables used to fetch the games. '''
         self.id = None
         self.url_type = None
         self.data = None
@@ -58,10 +59,12 @@ class InternetGameInterface:
         return (proto != CAT_WS) or (sys.version_info.major >= 3 and sys.version_info.minor >= 5)  # Async WS needs 3.5 for SSL
 
     def is_async(self):
+        ''' Tell if the chess provider is using asynchronous code. '''
         _, proto = self.get_identity()
         return proto == CAT_WS
 
     def get_description(self):
+        ''' Return the description of the chess provider. '''
         name, _ = self.get_identity()
         return '%s' % name
 
@@ -145,7 +148,7 @@ class InternetGameInterface:
             return data
 
     def expand_links(self, links, url):
-        ''' Convert relative paths into full paths '''
+        ''' Convert relative paths into full paths. '''
         base = urlparse(url)
         for i, link in enumerate(links):
             e = urlparse(link)
@@ -228,9 +231,13 @@ class InternetGameInterface:
             return None
 
         # Convert Chess960 to classical chess depending on the start position
-        if 'Variant' in game and 'FEN' in game:
-            if game['Variant'] == CHESS960 and game['FEN'] == FEN_START_960:
-                del game['Variant'], game['SetUp'], game['FEN']
+        if 'FEN' in game:
+            if 'Variant' in game:
+                if game['Variant'] == CHESS960 and game['FEN'] == FEN_START_960:
+                    del game['Variant'], game['SetUp'], game['FEN']
+            else:
+                if game['FEN'] == FEN_START:
+                    del game['SetUp'], game['FEN']
 
         # Header
         pgn = ''
@@ -281,13 +288,13 @@ class InternetGameInterface:
         # Return the PGN with the local crlf
         return pgn.replace("\n", os.linesep)
 
-    def stripHtml(self, input):
-        ''' Remove any HTML mark from the input parameter '''
-        rxp = re.compile(r'<\/?[^<]+>', re.IGNORECASE)
+    def strip_html(self, input):
+        ''' Remove any HTML mark from the input parameter. '''
+        rxp = re.compile(r'<\/?[^>]+>', re.IGNORECASE)
         return rxp.sub('', input)
 
-    def isFen(self, fen):
-        ''' Test if the argument is a FEN position '''
+    def is_fen(self, fen):
+        ''' Test if the argument is a FEN position. '''
         try:
             rxp = re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE)
             return rxp.match(fen) is not None
@@ -296,15 +303,15 @@ class InternetGameInterface:
 
     # External
     def get_identity(self):
-        ''' (Abstract) Name and technique of the chess provider '''
+        ''' (Abstract) Name and technique of the chess provider. '''
         pass
 
     def assign_game(self, url):
-        ''' (Abstract) Detect the unique identifier of URL '''
+        ''' (Abstract) Detect the unique identifier of URL. '''
         pass
 
     def download_game(self):
-        ''' (Abstract) Download the game identified earlier by assign_game() '''
+        ''' (Abstract) Download the game identified earlier by assign_game(). '''
         pass
 
 
@@ -862,7 +869,7 @@ class InternetGame365chess(InternetGameInterface):
                         game[tag] = v
 
             # Players
-            line = self.stripHtml(line).strip()
+            line = self.strip_html(line).strip()
             m = rxp.match(line)
             if m is not None:
                 game['White'] = str(m.group(1)).strip()
@@ -1390,7 +1397,7 @@ class InternetGameGameknot(InternetGameInterface):
 # Chess.com
 class InternetGameChessCom(InternetGameInterface):
     def get_identity(self):
-        return 'Chess.com', CAT_HTML
+        return 'Chess.com', CAT_MISC
 
     def assign_game(self, url):
         # Positions
@@ -1399,7 +1406,7 @@ class InternetGameChessCom(InternetGameInterface):
             args = parse_qs(parsed.query)
             if 'fen' in args:
                 fen = args['fen'][0]
-                if self.isFen(fen):
+                if self.is_fen(fen):
                     self.url_type = TYPE_FEN
                     self.id = fen
                     return True
@@ -1519,22 +1526,31 @@ class InternetGameChessCom(InternetGameInterface):
 
         # Games
         else:
-            # Download
-            url = 'https://www.chess.com/%s/game/%s' % (self.url_type, self.id)
-            page = self.download(url, userAgent=True)  # Else 403 Forbidden
-            if page is None:
-                return None
+            if self.url_type == 'live':
+                # API since October 2020
+                url = 'https://www.chess.com/callback/live/game/%s' % self.id
+                bourne = self.send_xhr(url, {}, userAgent=True)
+                if bourne is None:
+                    return None
+            else:
+                # Fetch the page
+                url = 'https://www.chess.com/%s/game/%s' % (self.url_type, self.id)
+                page = self.download(url, userAgent=True)
+                if page is None:
+                    return None
 
-            # Extract the JSON
-            bourne = ''
-            pos1 = page.find('window.chesscom.dailyGame')
-            if pos1 != -1:
-                pos1 = page.find('(', pos1)
-                pos2 = page.find(')', pos1 + 1)
-                if pos2 > pos1:
-                    bourne = page[pos1 + 2:pos2 - 1].replace('\\\\\\/', '/').replace('\\"', '"')
-            if bourne == '':
-                return None
+                # Extract the JSON
+                bourne = ''
+                pos1 = page.find('window.chesscom.dailyGame')
+                if pos1 != -1:
+                    pos1 = page.find('(', pos1)
+                    pos2 = page.find(')', pos1 + 1)
+                    if pos2 > pos1:
+                        bourne = page[pos1 + 2:pos2 - 1].replace('\\\\\\/', '/').replace('\\"', '"')
+                if bourne == '':
+                    return None
+
+            # Read the JSON
             chessgame = self.json_loads(bourne)
             if not self.allow_extra and self.json_field(chessgame, 'game/isRated') and not self.json_field(chessgame, 'game/isFinished'):
                 return None
@@ -1550,7 +1566,7 @@ class InternetGameChessCom(InternetGameInterface):
                 game = headers
             if 'Variant' in game and game['Variant'] == 'Chess960':
                 game['Variant'] = CHESS960
-            game['_url'] = url
+            game['_url'] = url.replace('/callback/', '/')
 
             # Body
             moves = self.json_field(chessgame, 'moveList')
