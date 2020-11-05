@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-13 11:48+0200\n"
-"PO-Revision-Date: 2020-10-14 17:40+0000\n"
+"PO-Revision-Date: 2020-10-28 21:18+0000\n"
 "Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/gbtami/pychess/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -1751,14 +1751,14 @@ msgstr "Váš soupeř požádal o ukončení hry. Pokud tuto nabídku přijmete,
 
 #: lib/pychess/Players/Human.py:28
 msgid "Your opponent wants to adjourn the game."
-msgstr "Váš soupeř chce hru odložit."
+msgstr "Váš soupeř chce hru přerušit."
 
 #: lib/pychess/Players/Human.py:29
 msgid ""
 "Your opponent has asked that the game be adjourned. If you accept this "
 "offer, the game will be adjourned and you can resume it later (when your "
 "opponent is online and both players agree to resume)."
-msgstr "Váš soupeř požádal o odložení hry. Pokud tuto nabídku přijmete, hra bude odložena a vy v ní můžete pokračovat později (až váš soupeř bude připojen k internetu a až budou oba hráči souhlasit s pokračováním)."
+msgstr "Váš soupeř požádal o přerušení hry. Pokud tuto nabídku přijmete, hra bude přerušena a vy v ní můžete pokračovat později (až váš soupeř bude připojen k internetu a až budou oba hráči souhlasit s pokračováním)."
 
 #: lib/pychess/Players/Human.py:31
 #, python-format
@@ -1810,7 +1810,7 @@ msgstr "Nabídka přerušení"
 
 #: lib/pychess/Players/Human.py:46
 msgid "The adjourn offer"
-msgstr "Nabídka odložení"
+msgstr "Nabídka přerušení"
 
 #: lib/pychess/Players/Human.py:47
 msgid "The pause offer"
@@ -1846,7 +1846,7 @@ msgstr "Nabídnout přerušení"
 
 #: lib/pychess/Players/Human.py:58
 msgid "offer to adjourn"
-msgstr "Nabídnout odložení"
+msgstr "Nabídnout přerušení"
 
 #: lib/pychess/Players/Human.py:59
 msgid "offer a pause"
@@ -3176,7 +3176,7 @@ msgstr "Hra byla zabita"
 
 #: lib/pychess/Utils/repr.py:34
 msgid "The game has been adjourned"
-msgstr "Hra byla odložena"
+msgstr "Hra byla přerušena"
 
 #: lib/pychess/Utils/repr.py:35
 msgid "The game has been aborted"
@@ -3306,7 +3306,7 @@ msgstr "Protože hráč ztratil spojení"
 
 #: lib/pychess/Utils/repr.py:71
 msgid "Because both players agreed to an adjournment"
-msgstr "Protože oba hráči souhlasili s odložením hry"
+msgstr "Protože oba hráči souhlasili s přerušením hry"
 
 #: lib/pychess/Utils/repr.py:72
 msgid "Because the server was shut down"
@@ -3315,21 +3315,21 @@ msgstr "Protože server byl vypnut"
 #: lib/pychess/Utils/repr.py:74
 msgid ""
 "Because a player lost connection and the other player requested adjournment"
-msgstr "Protože hráč ztratil spojení a druhý hráč požaduje odložení"
+msgstr "Protože hráč ztratil spojení a druhý hráč požaduje přerušení"
 
 #: lib/pychess/Utils/repr.py:76
 #, python-format
 msgid ""
 "Because %(black)s lost connection to the server and %(white)s requested "
 "adjournment"
-msgstr "Protože %(black)s ztratil spojení se serverem a %(white)s  požaduje odložení"
+msgstr "Protože %(black)s ztratil spojení se serverem a %(white)s  požaduje přerušení"
 
 #: lib/pychess/Utils/repr.py:78
 #, python-format
 msgid ""
 "Because %(white)s lost connection to the server and %(black)s requested "
 "adjournment"
-msgstr "Protože %(white)s ztratil spojení se serverem a %(black)s  požaduje odložení"
+msgstr "Protože %(white)s ztratil spojení se serverem a %(black)s  požaduje přerušení"
 
 #: lib/pychess/Utils/repr.py:80
 #, python-format
@@ -3366,7 +3366,7 @@ msgstr "Protože hráč přerušil hru. Kterýkoli hráč může hru přerušit 
 msgid ""
 "Because a player disconnected and there are too few moves to warrant "
 "adjournment. No rating changes have occurred."
-msgstr "Protože se hráč odpojil a je příliš málo tahů na to, aby bylo vynuceno odložení. Žádné změny v hodnocení."
+msgstr "Protože se hráč odpojil a je příliš málo tahů na to, aby bylo vynuceno přerušení. Žádné změny v hodnocení."
 
 #: lib/pychess/Utils/repr.py:95
 msgid "Because the server was shut down. No rating changes have occurred."
@@ -4451,7 +4451,7 @@ msgstr "Poslal jste nabídku na přerušení"
 
 #: lib/pychess/widgets/gamenanny.py:256
 msgid "You sent an adjournment offer"
-msgstr "Poslal jste nabídku na odložení"
+msgstr "Poslal jste nabídku na přerušení"
 
 #: lib/pychess/widgets/gamenanny.py:258
 msgid "You sent a draw offer"
@@ -4507,7 +4507,7 @@ msgstr "Váš soupeř musí souhlasit s přerušením hry, protože byly provede
 
 #: lib/pychess/widgets/gamewidget.py:198
 msgid "This game can not be adjourned because one or both players are guests"
-msgstr "Tuto hru nelze odložit, protože jeden nebo oba dva hráči jsou hosty"
+msgstr "Tuto hru nelze přerušit, protože jeden nebo oba dva hráči jsou hosty"
 
 #: lib/pychess/widgets/gamewidget.py:216
 msgid "Claim Draw"
@@ -4543,7 +4543,7 @@ msgstr "je těžce pozadu, ale neodpojil se"
 
 #: lib/pychess/widgets/gamewidget.py:576
 msgid "Continue to wait for opponent, or try to adjourn the game?"
-msgstr "Pokračovat v čekání na soupeře, nebo se pokusit o odložení hry?"
+msgstr "Pokračovat v čekání na soupeře, nebo se pokusit o přerušení hry?"
 
 #: lib/pychess/widgets/gamewidget.py:588
 msgid "Wait"
@@ -4551,7 +4551,7 @@ msgstr "Čekat"
 
 #: lib/pychess/widgets/gamewidget.py:589
 msgid "Adjourn"
-msgstr "Odložit"
+msgstr "Přerušit"
 
 #: lib/pychess/widgets/gamewidget.py:656
 msgid "Jump to initial position"
@@ -5689,7 +5689,7 @@ msgstr "Datum/Čas"
 msgid ""
 " with whom you have an adjourned <b>%(timecontrol)s</b> <b>%(gametype)s</b> "
 "game is online."
-msgstr "s nímž jste měl odloženou hru <b>%(timecontrol)s</b> <b>%(gametype)s</b>, je připojen k síti."
+msgstr "s nímž jste měl přerušenou hru <b>%(timecontrol)s</b> <b>%(gametype)s</b>, je připojen k síti."
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:167
 msgid "Request Continuation"
@@ -5697,7 +5697,7 @@ msgstr "Požádat o pokračování"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:169
 msgid "Examine Adjourned Game"
-msgstr "Přezkoumat odloženou hru"
+msgstr "Přezkoumat přerušenou hru"
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:16
 msgid "Talking"
@@ -5977,7 +5977,7 @@ msgstr "Činné žádosti: %d"
 msgid ""
 " would like to resume your adjourned <b>%(time)s</b> <b>%(gametype)s</b> "
 "game."
-msgstr " chcete pokračovat ve své odložené hře <b>%(time)s</b> <b>%(gametype)s</b>."
+msgstr " chcete pokračovat ve své přerušené hře <b>%(time)s</b> <b>%(gametype)s</b>."
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:311
 #, python-format
