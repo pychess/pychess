@@ -61,7 +61,7 @@ install:
 #  - bash -lc "pacman -U --noconfirm --config <(echo) msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
 #  - bash -lc "pacman -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz --noconfirm"
 
-  - pacman -Syu --noconfirm
+  - bash -lc "pacman -Syu --noconfirm"
 
   # Workaround gcc9 update issues
   #- pacman -R --noconfirm mingw-w64-i686-gcc-ada mingw-w64-i686-gcc-objc || true;
