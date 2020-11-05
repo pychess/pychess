@@ -30,12 +30,12 @@ environment:
    STOCKFISH: stockfish-windows-amd64.exe
 
   matrix:
-#    - MSYS2_ARCH: x86_64
-#      MSYSTEM: MINGW64
-#      PKG_PREFIX: mingw-w64-x86_64
-    - MSYS2_ARCH: i686
-      MSYSTEM: MINGW32
-      PKG_PREFIX: mingw-w64-i686
+    - MSYS2_ARCH: x86_64
+      MSYSTEM: MINGW64
+      PKG_PREFIX: mingw-w64-x86_64
+#    - MSYS2_ARCH: i686
+#      MSYSTEM: MINGW32
+#      PKG_PREFIX: mingw-w64-i686
 
 cache:
   - "c:\\projects\\pychess\\engines"
@@ -64,7 +64,7 @@ install:
   - bash -lc "pacman -Syu --noconfirm"
 
   # Workaround gcc9 update issues
-  - pacman -R --noconfirm mingw-w64-i686-gcc-ada mingw-w64-i686-gcc-objc || true;
+  #- pacman -R --noconfirm mingw-w64-i686-gcc-ada mingw-w64-i686-gcc-objc || true;
   - pacman -R --noconfirm mingw-w64-x86_64-gcc-ada mingw-w64-x86_64-gcc-objc || true;
 
   - bash -lc "pacman -Su --noconfirm"
@@ -86,8 +86,10 @@ install:
   - "if not exist c:\\projects\\pychess\\engines\\stockfish_11_x64.exe appveyor DownloadFile https://github.com/niklasf/Stockfish/releases/download/fishnet-20200611/%STOCKFISH% -FileName c:\\projects\\pychess\\engines\\stockfish_11_x64.exe"
   - dir c:\projects\pychess\engines
 
-  - "if not exist C:\\msys64\\MINGW32\\DLLs mkdir C:\\msys64\\MINGW32\\DLLs"
-  - "if not exist C:\\msys64\\MINGW32\\DLLs\\sqlite3.dll copy C:\\msys64\\MINGW32\\bin\\libsqlite3-0.dll C:\\msys64\\MINGW32\\DLLs\\sqlite3.dll"
+  #- "if not exist C:\\msys64\\MINGW32\\DLLs mkdir C:\\msys64\\MINGW32\\DLLs"
+  #- "if not exist C:\\msys64\\MINGW32\\DLLs\\sqlite3.dll copy C:\\msys64\\MINGW32\\bin\\libsqlite3-0.dll C:\\msys64\\MINGW32\\DLLs\\sqlite3.dll"
+  - "if not exist C:\\msys64\\MINGW64\\DLLs mkdir C:\\msys64\\MINGW64\\DLLs"
+  - "if not exist C:\\msys64\\MINGW64\\DLLs\\sqlite3.dll copy C:\\msys64\\MINGW64\\bin\\libsqlite3-0.dll C:\\msys64\\MINGW64\\DLLs\\sqlite3.dll"
 
 test_script:
 #  - 'msiexec.exe /i c:\\projects\\pychess\\dist\pychess-0.99.2-mingw.msi /QN /L*V "msilog.log"'
