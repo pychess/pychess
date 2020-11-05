@@ -61,20 +61,20 @@ install:
 #  - bash -lc "pacman -U --noconfirm --config <(echo) msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
 #  - bash -lc "pacman -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz --noconfirm"
 
-  - bash -lc "pacman -Syu --noconfirm"
+  - pacman -Syu --noconfirm
 
   # Workaround gcc9 update issues
   #- pacman -R --noconfirm mingw-w64-i686-gcc-ada mingw-w64-i686-gcc-objc || true;
   #- pacman -R --noconfirm mingw-w64-x86_64-gcc-ada mingw-w64-x86_64-gcc-objc || true;
 
-  - bash -lc "pacman -Su --noconfirm"
+  - pacman -Su --noconfirm
 
   # we want python3.8
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python"
+  - pacman -S --needed --noconfirm %PKG_PREFIX%-python
 
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-gtk3 %PKG_PREFIX%-gtksourceview3 %PKG_PREFIX%-python-gobject %PKG_PREFIX%-python-cairo"
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python-psutil %PKG_PREFIX%-python-sqlalchemy %PKG_PREFIX%-python-pexpect"
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python-cx_Freeze %PKG_PREFIX%-zlib %PKG_PREFIX%-python-pip %PKG_PREFIX%-freetype"
+  - pacman -S --needed --noconfirm %PKG_PREFIX%-gtk3 %PKG_PREFIX%-gtksourceview3 %PKG_PREFIX%-python-gobject %PKG_PREFIX%-python-cairo
+  - pacman -S --needed --noconfirm %PKG_PREFIX%-python-psutil %PKG_PREFIX%-python-sqlalchemy %PKG_PREFIX%-python-pexpect
+  - pacman -S --needed --noconfirm %PKG_PREFIX%-python-cx_Freeze %PKG_PREFIX%-zlib %PKG_PREFIX%-python-pip %PKG_PREFIX%-freetype
 
   # check python version
   - "python --version"
