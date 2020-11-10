@@ -59,7 +59,7 @@ ENGINES_LIST = [
     ENGINE("houdini", "uci", "be", 3516, AUTO_DETECT, None),
     ENGINE("xiphos", "uci", "us", 3429, NO_AUTO_DETECT, None),  # xiphos - environment for Bible reading, study, and research
     ENGINE("fire", "uci", "us", 3426, NO_AUTO_DETECT, None),  # fire in mesa-demos https://www.archlinux.org/packages/extra/x86_64/mesa-demos/files/
-    ENGINE("ethereal", "uci", "us", 3442, AUTO_DETECT, None),
+    ENGINE("ethereal", "uci", "us", 3442, NO_AUTO_DETECT, None),  # wireshark in Suse (they use its old name still)
     ENGINE("fritz", "uci", "nl", 3381, AUTO_DETECT, None),
     ENGINE("laser", "uci", "us", 3364, AUTO_DETECT, None),
     ENGINE("defenchess", "uci", "tr", 3355, AUTO_DETECT, None),
