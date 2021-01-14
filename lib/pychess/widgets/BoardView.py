@@ -212,8 +212,12 @@ class BoardView(Gtk.DrawingArea):
         self.padding = 0  # Set to self.pad when setcords is active
         self.square = 0, 0, self.FILES, 1  # An object global variable with the current
         # board size
-        self.pad = 0.06  # Padding applied only when setcords is active
-
+        
+        if conf.get("hight") < 500:
+            self.pad = 0.02  
+        else:
+            self.pad = 0.06
+            
         self._selected = None
         self._hover = None
         self._active = None
@@ -410,6 +414,8 @@ class BoardView(Gtk.DrawingArea):
         """ Checks the configuration / preferences to see if the board
             co-ordinates should be displayed.
         """
+        if conf.get("hight") < 200:
+            return False
         self.show_cords = conf.get("showCords")
 
     def onShowCaptured(self, *args):
@@ -990,11 +996,14 @@ class BoardView(Gtk.DrawingArea):
 
     def drawCords(self, context, rectangle):
         thickness = 0.01
-        signsize = 0.02
+        signsize = 0.01
 
         if (not self.show_cords) and (not self.setup_position):
             return
-
+        
+        context.save()
+        context.translate(left, top)
+        context.scale(scale_xy, scale_xy)
         xc_loc, yc_loc, square, side = self.square
 
         if rectangle is not None and contains(rect((xc_loc, yc_loc, square)), rectangle):
