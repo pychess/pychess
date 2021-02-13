@@ -79,8 +79,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% ',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         # check that our relation has changed as expected
@@ -98,8 +98,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% ',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         game = self.connection.games.get(game)
@@ -124,8 +124,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% ',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -146,8 +146,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% ',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -167,8 +167,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% '
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -198,8 +198,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% ',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -249,8 +249,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% ',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         # check that our relation has changed as expected
@@ -268,8 +268,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% ',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -289,8 +289,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% '
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -319,8 +319,8 @@ class ExamineGameTests(EmittingTestCase):
             'fics% ',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)

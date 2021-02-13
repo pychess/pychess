@@ -72,8 +72,8 @@ class ObserveGameTests(EmittingTestCase):
             'Game 1: LectureBot moves: Nf3',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -94,8 +94,8 @@ class ObserveGameTests(EmittingTestCase):
             'Game 1: LectureBot moves: b6',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -192,8 +192,8 @@ class ObserveGameTests(EmittingTestCase):
             BLOCK_END,
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -256,8 +256,8 @@ class ObserveGameTests(EmittingTestCase):
             BLOCK_END,
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)

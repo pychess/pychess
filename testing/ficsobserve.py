@@ -1,11 +1,5 @@
 import unittest
 
-try:
-    import faulthandler
-    faulthandler.enable()
-except:
-    pass
-
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 from pychess.System import uistuff
@@ -100,8 +94,8 @@ class ObserveGameTests(EmittingTestCase):
             BLOCK_END
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(self.connection.client.commands[-1], "moves 463")
@@ -169,8 +163,8 @@ class ObserveGameTests(EmittingTestCase):
             '<12> ------r- --k----- ----p--- n-ppPb-p -----P-P -PP-K-P- PR------ ------R- W -1 0 0 0 0 11 463 schachbjm Maras 0 45 45 17 15 557871 274070 38 R/b8-g8 (0:10.025) Rg8 0 1 0',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -223,8 +217,8 @@ class ObserveGameTests(EmittingTestCase):
             "fics% "
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -241,8 +235,8 @@ class ObserveGameTests(EmittingTestCase):
             "fics% "
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -274,8 +268,8 @@ class ObserveGameTests(EmittingTestCase):
             "fics% "
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)

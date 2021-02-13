@@ -108,8 +108,8 @@ class PlayGameTests(EmittingTestCase):
 
         game = self.connection.games[game]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 4)
@@ -174,8 +174,8 @@ class PlayGameTests(EmittingTestCase):
 
         game = self.connection.games[game]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 4)
@@ -250,8 +250,8 @@ class PlayGameTests(EmittingTestCase):
 
         game = self.connection.games[game]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
@@ -264,8 +264,8 @@ class PlayGameTests(EmittingTestCase):
             "<12> rnbqkb-r pppppppp -----n-- -------- -------- -P----P- P-PPPP-P RNBQKBNR B -1 1 1 1 1 0 85 WLTL gbtami 1 1 0 39 39 59900 60000 2 P/g2-g3 (0:00.100) g3 1 1 285",
             "fics% "]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(game.move_queue.qsize(), 0)
