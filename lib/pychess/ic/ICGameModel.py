@@ -362,7 +362,7 @@ class ICGameModel(GameModel):
         # know automatically if he/she accepts an offer, and will simply send
         # us the result.
 
-    async def checkStatus(self):
+    def checkStatus(self):
         pass
 
     def onActionError(self, om, offer, error):
