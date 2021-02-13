@@ -57,8 +57,7 @@ class DatabaseTests(unittest.TestCase):
         loop = asyncio.get_event_loop()
         loop.set_debug(enabled=True)
 
-        @asyncio.coroutine
-        def coro():
+        async def coro():
             gamemodel = GameModel(TimeModel(1, 0))
 
             player0tup = (LOCAL, Human, (WHITE, "w"), "w")
@@ -85,7 +84,7 @@ class DatabaseTests(unittest.TestCase):
             create_task(self.games_persp.generalStart(gamemodel, player0tup, player1tup))
 
             # waiting for game end ...
-            yield from event.wait()
+            await event.wait()
 
             fen = "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3"
             self.assertEqual(gamemodel.boards[-1].board.asFen(), fen)

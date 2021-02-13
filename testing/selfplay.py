@@ -46,9 +46,9 @@ class CECPTests(unittest.TestCase):
         for vari in PYCHESS_VARIANTS:
             variant = variants[vari]
 
-            def coro():
-                self.p0 = yield from discoverer.initEngine(self.engine, WHITE, False)
-                self.p1 = yield from discoverer.initEngine(self.engine, BLACK, False)
+            async def coro():
+                self.p0 = await discoverer.initEngine(self.engine, WHITE, False)
+                self.p1 = await discoverer.initEngine(self.engine, BLACK, False)
 
             loop.run_until_complete(coro())
 
@@ -60,8 +60,7 @@ class CECPTests(unittest.TestCase):
             self.p0.connect("readyForOptions", optionsCallback)
             self.p1.connect("readyForOptions", optionsCallback)
 
-            @asyncio.coroutine
-            def coro(variant):
+            async def coro(variant):
                 self.game = GameModel(TimeModel(60, 0), variant)
                 self.game.setPlayers([self.p0, self.p1])
 
@@ -81,7 +80,7 @@ class CECPTests(unittest.TestCase):
                 print(variant.name)
                 self.game.start()
 
-                yield from event.wait()
+                await event.wait()
 
                 pgn = StringIO()
                 print(save(pgn, self.game))

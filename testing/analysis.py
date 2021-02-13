@@ -22,10 +22,9 @@ class DummyCECPAnalyzerEngine(GObject.GObject):
         self.defname = 'Dummy'
         self.Q = Queue()
 
-    @asyncio.coroutine
-    def putline(self, line):
+    async def putline(self, line):
         self.emit('line', line)
-        yield from asyncio.sleep(0)
+        await asyncio.sleep(0)
 
     def write(self, text):
         if text.strip() == 'protover 2':
@@ -69,10 +68,9 @@ class CECPTests(EmittingTestCase):
 
         return engine, analyzer
 
-    @asyncio.coroutine
-    def _testLine(self, engine, analyzer, board, analine, ply, moves, score, depth, nps):
+    async def _testLine(self, engine, analyzer, board, analine, ply, moves, score, depth, nps):
         self.traceSignal(analyzer, 'analyze')
-        yield from engine.putline(analine)
+        await engine.putline(analine)
         results = self.getSignalResults(analyzer)
         self.assertNotEqual(results, None, "signal wasn't sent")
         self.assertEqual(results, ([(ply, moves, score, depth, nps)], ))
@@ -91,16 +89,15 @@ class CECPTests(EmittingTestCase):
         self.analyzerA.setBoardList([board], [])
         self.analyzerI.setBoardList([board], [])
 
-        @asyncio.coroutine
-        def coro():
-            yield from self._testLine(
+        async def coro():
+            await self._testLine(
                 self.engineA, self.analyzerA, board,
                 "1. Mat1 0 1     Bxb7#", 0, ['Bxb7#'], MATE_VALUE, "1.", "")
 
             # Notice, in the opposite situation there is no forced mate. Black can
             # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
             # recognizing this.
-            yield from self._testLine(
+            await self._testLine(
                 self.engineI, self.analyzerI, board.switchColor(),
                 "10. -Mat 2 35 64989837     Bd4 Bxb7#",
                 0, ['Bd4', 'Bxb7#'], -MATE_VALUE, "10.", "185685248")
@@ -113,14 +110,13 @@ class CECPTests(EmittingTestCase):
         self.analyzerA.setBoardList([board], [])
         self.analyzerI.setBoardList([board], [])
 
-        @asyncio.coroutine
-        def coro():
-            yield from self._testLine(
+        async def coro():
+            await self._testLine(
                 self.engineA, self.analyzerA, board,
                 "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",
                 94, ['a8=Q+', 'Kf7', 'Qa2+', 'Kf6', 'Qd2', 'Kf5', 'g4+'], 1833, "9.", "190750365")
 
-            yield from self._testLine(
+            await self._testLine(
                 self.engineI, self.analyzerI, board.switchColor(),
                 "10. -1883 59 107386433     Kf7 a8=Q Ke6 Qa6+ Ke5 Qd6+ Kf5",
                 94, ['Kf7', 'a8=Q', 'Ke6', 'Qa6+', 'Ke5', 'Qd6+', 'Kf5'], -1883, "10.", "182010903")

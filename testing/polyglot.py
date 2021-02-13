@@ -90,8 +90,7 @@ class PolyglotTestCase(unittest.TestCase):
 
         self.database_persp.open_chessfile(PGN)
 
-        @asyncio.coroutine
-        def coro():
+        async def coro():
             def on_book_created(persp, event):
                 self.assertTrue(os.path.isfile(BIN))
 
@@ -114,7 +113,7 @@ class PolyglotTestCase(unittest.TestCase):
 
             self.database_persp.create_book(BIN)
 
-            yield from event.wait()
+            await event.wait()
 
         loop = asyncio.get_event_loop()
         loop.set_debug(enabled=True)

@@ -38,11 +38,10 @@ class DummyConnection(Connection):
             def write(self, text):
                 pass
 
-            @asyncio.coroutine
-            def readline(self):
+            async def readline(self):
                 if self.queue.empty():
                     raise asyncio.QueueEmpty
-                line = yield from self.queue.get()
+                line = await self.queue.get()
                 return line
 
         def __init__(self, predictions, reply_cmd_dict, replay_dg_dict, replay_cn_dict):
@@ -83,13 +82,12 @@ class DummyConnection(Connection):
     def putline(self, line):
         self.client.putline(line)
 
-    @asyncio.coroutine
-    def process_lines(self, lines):
+    async def process_lines(self, lines):
         for line in lines:
             self.putline(line)
         while True:
             try:
-                yield from self.client.parse()
+                await self.client.parse()
             except asyncio.QueueEmpty:
                 break
 
@@ -147,8 +145,8 @@ class EmittingTestCase(unittest.TestCase):
 
         random.shuffle(self.connection.client.predictions)
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertNotEqual(self.args, None, "%s signal wasn't sent" % signal)
@@ -165,8 +163,8 @@ class EmittingTestCase(unittest.TestCase):
         obj.connect('notify::' + prop, handler)
         random.shuffle(self.connection.client.predictions)
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertNotEqual(self.args, None,
@@ -183,8 +181,8 @@ class EmittingTestCase(unittest.TestCase):
         self.manager.connect(signal, handler)
         random.shuffle(self.connection.client.predictions)
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertNotEqual(self.prop_value, None, "%s signal wasn't sent" %
@@ -893,8 +891,8 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(self.connection.client.commands[-1], "moves 12")
@@ -986,8 +984,8 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(self.connection.client.commands[-1], "moves 463")
@@ -1267,8 +1265,8 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             '<s> 222 w=GuestRLJC ti=01 rt=0P t=5 i=0 r=u tp=blitz c=? rr=0-9999 a=t f=f',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         signal = 'playGameCreated'
@@ -1284,8 +1282,8 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             BLOCK_END,
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         lines == []
@@ -1303,8 +1301,8 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             '<wd> GuestGTFC',
         ]
 
-        def coro():
-            yield from self.connection.process_lines(lines)
+        async def coro():
+            await self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
         self.assertEqual(self.connection.challenges.challenges, {})

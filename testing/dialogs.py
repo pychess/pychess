@@ -2,7 +2,7 @@ import asyncio
 import unittest
 import sys
 
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk
 
 from pychess.compat import create_task
 from pychess.Utils.const import FEN_START, NORMALCHESS
@@ -61,8 +61,7 @@ class DialogTests(unittest.TestCase):
 
         dialog = newGameDialog.NewGameMode()
 
-        @asyncio.coroutine
-        def coro(dialog):
+        async def coro(dialog):
             def on_gmwidg_created(persp, gmwidg, event):
                 event.set()
 
@@ -72,7 +71,7 @@ class DialogTests(unittest.TestCase):
             dialog.run()
             dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
-            yield from event.wait()
+            await event.wait()
 
         self.loop.run_until_complete(coro(dialog))
 
@@ -81,8 +80,7 @@ class DialogTests(unittest.TestCase):
 
         dialog = newGameDialog.SetupPositionExtension()
 
-        @asyncio.coroutine
-        def coro(dialog):
+        async def coro(dialog):
             def on_gmwidg_created(persp, gmwidg, event):
                 event.set()
 
@@ -96,20 +94,19 @@ class DialogTests(unittest.TestCase):
             dialog.widgets["newgamedialog"].response(PASTE)
             dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
-            yield from event.wait()
+            await event.wait()
 
         self.loop.run_until_complete(coro(dialog))
 
     @unittest.skipIf(sys.platform == "win32",
-                     "Windows produces TypeError: could not get a reference to type class\n" + 
+                     "Windows produces TypeError: could not get a reference to type class\n" +
                      "on line: cls.sourcebuffer = GtkSource.Buffer()")
     def test3(self):
         """ Start a new game from enter notation dialog """
 
         dialog = newGameDialog.EnterNotationExtension()
 
-        @asyncio.coroutine
-        def coro(dialog):
+        async def coro(dialog):
             def on_gmwidg_created(persp, gmwidg, event):
                 event.set()
 
@@ -120,13 +117,12 @@ class DialogTests(unittest.TestCase):
             dialog.sourcebuffer.set_text("1. f3 e5 2. g4 Qh4")
             dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
-            yield from event.wait()
+            await event.wait()
 
         self.loop.run_until_complete(coro(dialog))
 
         # Show the firs move of the game
-        @asyncio.coroutine
-        def coro1():
+        async def coro1():
             def on_shown_changed(view, shown, event):
                 if shown == 1:
                     event.set()
@@ -140,7 +136,7 @@ class DialogTests(unittest.TestCase):
 
             view.setShownBoard(board)
 
-            yield from event.wait()
+            await event.wait()
 
         self.loop.run_until_complete(coro1())
 
@@ -169,8 +165,7 @@ class DialogTests(unittest.TestCase):
         """ Open engine discoverer dialog """
         dd = DiscovererDialog(discoverer)
 
-        @asyncio.coroutine
-        def coro():
+        async def coro():
             def on_all_engines_discovered(discoverer, event):
                 event.set()
 
@@ -179,7 +174,7 @@ class DialogTests(unittest.TestCase):
 
             create_task(dd.start())
 
-            yield from event.wait()
+            await event.wait()
 
         self.loop.run_until_complete(coro())
 
