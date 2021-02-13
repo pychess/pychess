@@ -7,6 +7,7 @@
 # Elvis M. Lukšić <meluksic@yahoo.com>, 2013
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
 # gbtami <gbtami@gmail.com>, 2015-2016
+# Ivan Vlahov <ivan.vlahov@gmail.com>, 2021
 # Marino Klisovic <marinoklisovic@protonmail.com>, 2020
 # Elvis M. Lukšić <meluksic@yahoo.com>, 2013
 # Elvis M. Lukšić <meluksic@yahoo.com>, 2013
@@ -16,8 +17,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-13 11:48+0200\n"
-"PO-Revision-Date: 2020-07-13 10:19+0000\n"
-"Last-Translator: Transifex Bot <>\n"
+"PO-Revision-Date: 2021-02-01 01:19+0000\n"
+"Last-Translator: Ivan Vlahov <ivan.vlahov@gmail.com>\n"
 "Language-Team: Croatian (http://www.transifex.com/gbtami/pychess/language/hr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,15 +37,15 @@ msgstr "_Nova partija"
 
 #: glade/PyChess.glade:249
 msgid "From _Default Start Position"
-msgstr ""
+msgstr "Iz _Zadane Početne Pozicije"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr ""
+msgstr "Iz _Prilagođene Pozicije"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"
-msgstr ""
+msgstr "Iz Notacije _Partije"
 
 #: glade/PyChess.glade:277
 msgid "From Cli_pboard"

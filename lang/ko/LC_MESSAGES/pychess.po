@@ -7,13 +7,14 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
 # 김준혁 <kjh9348@gmail.com>, 2016
 # 김준혁 <kjh9348@gmail.com>, 2016,2018-2019
+# 이상백 <esangbaek@ajou.ac.kr>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-13 11:48+0200\n"
-"PO-Revision-Date: 2020-07-13 10:19+0000\n"
-"Last-Translator: Transifex Bot <>\n"
+"PO-Revision-Date: 2020-12-20 08:25+0000\n"
+"Last-Translator: 이상백 <esangbaek@ajou.ac.kr>\n"
 "Language-Team: Korean (http://www.transifex.com/gbtami/pychess/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,19 +33,19 @@ msgstr "새 게임(_N)"
 
 #: glade/PyChess.glade:249
 msgid "From _Default Start Position"
-msgstr ""
+msgstr "초기 배치에서(_D)"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr ""
+msgstr "커스텀 배치에서(_C)"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"
-msgstr ""
+msgstr "게임 표기법에서(_G)"
 
 #: glade/PyChess.glade:277
 msgid "From Cli_pboard"
-msgstr ""
+msgstr "클립보드에서(_P)"
 
 #: glade/PyChess.glade:288
 msgid "Play _Internet Chess"
@@ -60,7 +61,7 @@ msgstr "최근 게임 불러오기(_R)"
 
 #: glade/PyChess.glade:329
 msgid "Load Re_mote Game"
-msgstr ""
+msgstr "원격 게임 불러오기(_M)"
 
 #: glade/PyChess.glade:347
 msgid "_Save Game"
@@ -72,11 +73,11 @@ msgstr "다른 이름으로 게임 저장(_A)"
 
 #: glade/PyChess.glade:375
 msgid "_Export Position"
-msgstr ""
+msgstr "배치 내보내기(_E)"
 
 #: glade/PyChess.glade:392
 msgid "Share _Game"
-msgstr ""
+msgstr "게임 공유(_G)"
 
 #: glade/PyChess.glade:420
 msgid "Player _Rating"
@@ -84,7 +85,7 @@ msgstr "선수 등급 매기기(_R)"
 
 #: glade/PyChess.glade:427
 msgid "_Analyze Game"
-msgstr ""
+msgstr "게임 분석(_A)"
 
 #: glade/PyChess.glade:477
 msgid "_Edit"
@@ -104,7 +105,7 @@ msgstr "엔진(_E)"
 
 #: glade/PyChess.glade:527
 msgid "Externals"
-msgstr ""
+msgstr "외부"
 
 #: glade/PyChess.glade:553
 msgid "_Actions"
@@ -112,27 +113,27 @@ msgstr "동작(_A)"
 
 #: glade/PyChess.glade:564
 msgid "Offer _Abort"
-msgstr ""
+msgstr "중단 요청(_A)"
 
 #: glade/PyChess.glade:574
 msgid "Offer Ad_journment"
-msgstr ""
+msgstr "연기 요청(_J)"
 
 #: glade/PyChess.glade:584 glade/fics_lounge.glade:1927
 msgid "Offer _Draw"
-msgstr "비김 제의(_D)"
+msgstr "무승부 요청(_D)"
 
 #: glade/PyChess.glade:595
 msgid "Offer _Pause"
-msgstr ""
+msgstr "일시 중지 요청(_P)"
 
 #: glade/PyChess.glade:605 glade/fics_lounge.glade:1825
 msgid "Offer _Resume"
-msgstr ""
+msgstr "계속하기 요청(_R)"
 
 #: glade/PyChess.glade:611
 msgid "Offer _Undo"
-msgstr ""
+msgstr "되돌리기 요청(_U)"
 
 #: glade/PyChess.glade:634
 msgid "_Call Flag"
@@ -144,11 +145,11 @@ msgstr "항복(_R)"
 
 #: glade/PyChess.glade:654
 msgid "Ask to _Move"
-msgstr ""
+msgstr "이동 요청(_M)"
 
 #: glade/PyChess.glade:669
 msgid "Auto Call _Flag"
-msgstr ""
+msgstr "자동 차례 넘기기(_F)"
 
 #: glade/PyChess.glade:682
 msgid "_View"
@@ -176,11 +177,11 @@ msgstr "로그 보기(_L)"
 
 #: glade/PyChess.glade:761
 msgid "_Hint arrow"
-msgstr ""
+msgstr "힌트 화살표(_H)"
 
 #: glade/PyChess.glade:773
 msgid "Sp_y arrow"
-msgstr ""
+msgstr "스파이 모드 화살표"
 
 #: glade/PyChess.glade:788 lib/pychess/perspectives/database/__init__.py:46
 msgid "Database"
@@ -192,23 +193,23 @@ msgstr "새 데이터베이스(_D)"
 
 #: glade/PyChess.glade:806
 msgid "Save database as"
-msgstr ""
+msgstr "다음의 이름으로 데이터베이스 저장하기"
 
 #: glade/PyChess.glade:822
 msgid "Create polyglot opening book"
-msgstr ""
+msgstr "폴리글롯 오프닝 북 생성하기"
 
 #: glade/PyChess.glade:834
 msgid "Import chessfile"
-msgstr ""
+msgstr "체스 파일 내보내기"
 
 #: glade/PyChess.glade:851
 msgid "Import annotated games from endgame.nl"
-msgstr ""
+msgstr "endgame.nl로 부터 주석달린 게임 불러오기"
 
 #: glade/PyChess.glade:861
 msgid "Import games from theweekinchess.com"
-msgstr ""
+msgstr "theweekinchess.com으로부터 게임 불러오기"
 
 #: glade/PyChess.glade:874
 msgid "_Help"
@@ -232,7 +233,7 @@ msgstr "PyChess 번역하기"
 
 #: glade/PyChess.glade:928
 msgid "Report an issue"
-msgstr ""
+msgstr "오류 보고하기"
 
 #: glade/PyChess.glade:1021
 msgid "Chess client"
@@ -266,7 +267,7 @@ msgstr "게임이 하나만 열려있을 때 탭 숨기기(_H)"
 msgid ""
 "If set, this hides the tab in the top of the playing window, when it is not "
 "needed."
-msgstr ""
+msgstr "설정하면, 필요하지 않을 때 재생 창 상단의 탭을 숨깁니다."
 
 #: glade/PyChess.glade:1201
 msgid "_Use main app closer [x] to close all games"
@@ -276,7 +277,7 @@ msgstr "메인 앱의 닫기 버튼 [x]으로 모든 게임 닫기(_U)"
 msgid ""
 "If set, clicking on main application window closer first time it closes all "
 "games."
-msgstr ""
+msgstr "설정하면, 메인 애플리케이션 창을 처음 클릭하면 모든 게임이 닫힙니다."
 
 #: glade/PyChess.glade:1220
 msgid "Auto _rotate board to current human player"
@@ -286,11 +287,11 @@ msgstr "현재 사람 플레이어로 보드 자동 회전(_R)"
 msgid ""
 "If set, the board will turn after each move, to show the natural view for "
 "the current player."
-msgstr ""
+msgstr "설정하면, 현재 플레이어의 시점에 맞춰 보드가 회전합니다."
 
 #: glade/PyChess.glade:1239
 msgid "Auto _promote to queen"
-msgstr ""
+msgstr "자동 여왕 승급(_P)"
 
 #: glade/PyChess.glade:1244
 msgid "If set, pawn promotes to queen without promotion dialog selection."
@@ -308,14 +309,14 @@ msgstr "설정하면 검은색 말이 아래를 향합니다. 모바일 기기�
 
 #: glade/PyChess.glade:1277
 msgid "Use a linear scale for the score"
-msgstr ""
+msgstr "일반 그래프로 점수 표시하기"
 
 #: glade/PyChess.glade:1282
 msgid ""
 "Unticked : the exponential stretching displays the full range of the score and enlarges the values around the null average.\n"
 "\n"
 "Ticked : the linear scale focuses on a limited range around the null average. It highlights the tiny errors and blunders better."
-msgstr ""
+msgstr "선택 안 함: 지수 확장은 점수의 전체 범위를 표시하고 null 평균을 중심으로 값을 확대합니다.\n\n선택 함 : 선형 눈금은 Null 평균 주변의 제한된 범위에 초점을 맞춥니다. 작은 오류와 실수에 대해 더 잘 설명합니다."
 
 #: glade/PyChess.glade:1297
 msgid "Show _captured pieces"
@@ -327,50 +328,50 @@ msgstr "설정하면 잡힌 말이 보드 옆에 표시됩니다."
 
 #: glade/PyChess.glade:1316
 msgid "Prefer figures in _notation"
-msgstr ""
+msgstr "표기법상의 숫자 선호"
 
 #: glade/PyChess.glade:1321
 msgid ""
 "If set, PyChess will use figures to express moved pieces, rather than "
 "uppercase letters."
-msgstr ""
+msgstr "설정하면, PyChess는 대문자가 아닌 그림을 사용하여 기물을 표현합니다."
 
 #: glade/PyChess.glade:1335 glade/analyze_game.glade:261
 msgid "Colorize analyzed moves"
-msgstr ""
+msgstr "분석된 이동 경로 다른 색으로 나타내기"
 
 #: glade/PyChess.glade:1340
 msgid "If set, PyChess will colorize suboptimal analyzed moves with red."
-msgstr ""
+msgstr "설정하면, PyChess는 최적화되지 않은 움직임을 빨간색으로 표시합니다."
 
 #: glade/PyChess.glade:1353
 msgid "Show elapsed move times"
-msgstr ""
+msgstr "경과된 이동 시간 표시"
 
 #: glade/PyChess.glade:1358
 msgid "If set, the elapsed time that a player used for the move is shown."
-msgstr ""
+msgstr "설정하면, 플레이어가 경과된 이동 시간이 표시됩니다."
 
 #: glade/PyChess.glade:1371 glade/analyze_game.glade:276
 msgid "Show evaluation values"
-msgstr ""
+msgstr "평가 점수 보여주기"
 
 #: glade/PyChess.glade:1376
 msgid "If set, the hint analyzer engine evaluation value is shown."
-msgstr ""
+msgstr "설정하면, 힌트 분석기 엔진 평가값이 표시됩니다."
 
 #: glade/PyChess.glade:1389
 msgid "Show FICS game numbers in tab labels"
-msgstr ""
+msgstr "탭 레이블에 FICS게임 번호 표시"
 
 #: glade/PyChess.glade:1394
 msgid ""
 "If set, FICS game numbers in tab labels next to player names are shown."
-msgstr ""
+msgstr "설정하면, 플레이어 이름 옆의 탭 레이블에 FICS게임 번호가 표시됩니다."
 
 #: glade/PyChess.glade:1407
 msgid "Show threatened and not protected pieces"
-msgstr ""
+msgstr "공격에 취약한 기물을 보여주세요"
 
 #: glade/PyChess.glade:1435
 msgid "<b>General Options</b>"
@@ -378,11 +379,11 @@ msgstr "<b>일반 옵션</b>"
 
 #: glade/PyChess.glade:1469
 msgid "F_ull board animation"
-msgstr ""
+msgstr "전체 보드 애니메이션(_U)"
 
 #: glade/PyChess.glade:1474
 msgid "Animate pieces, board rotation and more. Use this on fast machines."
-msgstr ""
+msgstr "애니메이션화 된 기물, 보드 회전 등. 높은 성능을 필요로 합니다."
 
 #: glade/PyChess.glade:1488
 msgid "Only animate _moves"
@@ -390,7 +391,7 @@ msgstr "이동 애니메이션만(_M)"
 
 #: glade/PyChess.glade:1493
 msgid "Only animate piece moves."
-msgstr ""
+msgstr "애니메이션 조각만 움직입니다."
 
 #: glade/PyChess.glade:1508
 msgid "No _animation"
@@ -414,7 +415,7 @@ msgstr "오프닝 북 사용(_B)"
 
 #: glade/PyChess.glade:1607
 msgid "If set, PyChess will suggest best opening moves on hint panel."
-msgstr ""
+msgstr "설정하면, PyChess는 힌트 창에서 최고의 첫 수를 제안합니다."
 
 #: glade/PyChess.glade:1633
 msgid "Polyglot book file:"
@@ -422,64 +423,64 @@ msgstr "Polyglot 북 파일:"
 
 #: glade/PyChess.glade:1678
 msgid "Book depth max:"
-msgstr ""
+msgstr "북 최대 깊이:"
 
 #: glade/PyChess.glade:1690
 msgid "Used by engine players and polyglot book creator"
-msgstr ""
+msgstr "엔진 플레이어와 폴리글롯 북 제작자에 의해서 사용됩니다"
 
 #: glade/PyChess.glade:1719
 msgid "Exact matches only"
-msgstr ""
+msgstr "정확히 일치하는 것 만"
 
 #: glade/PyChess.glade:1748
 msgid "Use _local tablebases"
-msgstr ""
+msgstr "로컬 테이블베이스 사용(_L)"
 
 #: glade/PyChess.glade:1753
 msgid ""
 "If set, PyChess will show game results for different moves in positions containing 6 or less pieces.\n"
 "You can download tablebase files from:\n"
 "http://www.olympuschess.com/egtb/gaviota/"
-msgstr ""
+msgstr "설정하면, PyChess는 6개 이하의 기물이 포함된 위치에서 다른 이동에 따른 게임 결과를 보여줍니다.\n당신은 여기서 테이블베이스 파일을 받을 수 있습니다:\nhttp://www.olympuschess.com/egtb/gaviota/"
 
 #: glade/PyChess.glade:1782
 msgid "Gaviota TB path:"
-msgstr ""
+msgstr "Gaviota 테이블베이스 경로:"
 
 #: glade/PyChess.glade:1822
 msgid "Use _online tablebases"
-msgstr ""
+msgstr "온라인 테이블베이스 사용(_U)"
 
 #: glade/PyChess.glade:1827
 msgid ""
 "If set, PyChess will show game results for different moves in positions containing 6 or less pieces.\n"
 "It will search positions from http://www.k4it.de/"
-msgstr ""
+msgstr "설정하면, PyChess는 6개 이하의 기물이 포함된 위치에서 다른 이동에 따른 게임 결과를 보여줍니다.\n다음과 같은 사이트에서 위치를 검색합니다 http://www.k4it.de/"
 
 #: glade/PyChess.glade:1848
 msgid "<b>Opening, endgame</b>"
-msgstr "<b>오프닝, 엔드게임</b>"
+msgstr "<b>첫번째, 최종전</b>"
 
 #: glade/PyChess.glade:1883
 msgid "Use _analyzer"
-msgstr ""
+msgstr "분석기 사용하기(_A)"
 
 #: glade/PyChess.glade:1923
 msgid ""
 "The analyzer will run in the background and analyze the game. <b>This is "
 "necessary for the hint mode to work</b>"
-msgstr ""
+msgstr "분석기는 백그라운드에서 실행되고 게임을 분석합니다. <b>이것은 힌트 모드가 동작되게 하는데 필수적 입니다</b>"
 
 #: glade/PyChess.glade:1957
 msgid "Use _inverted analyzer"
-msgstr ""
+msgstr "반전된 분석기 사용하기 (_I)"
 
 #: glade/PyChess.glade:1997
 msgid ""
 "The inverse analyzer will analyze the game as if your opponent was to move. "
 "<b>This is necessary for the spy mode to work</b>"
-msgstr ""
+msgstr "반전 분석기는 상대방이 움직이는 것처럼 게임을 분석합니다. <b>이것은 스파이 모드가 동작되게 하는데 필수적 입니다</b>"
 
 #: glade/PyChess.glade:2032 glade/analyze_game.glade:122
 msgid "Maximum analysis time in seconds:"
@@ -487,7 +488,7 @@ msgstr "최대 분석 시간(초):"
 
 #: glade/PyChess.glade:2061
 msgid "Infinite analysis"
-msgstr ""
+msgstr "무제한 분석"
 
 #: glade/PyChess.glade:2091
 msgid "<b>Analyzing</b>"
@@ -495,7 +496,7 @@ msgstr "<b>분석</b>"
 
 #: glade/PyChess.glade:2113
 msgid "_Hints"
-msgstr "힌트"
+msgstr "힌트(_H)"
 
 #: glade/PyChess.glade:2257
 msgid "Uninstall"
@@ -515,7 +516,7 @@ msgstr "측면 패널(_P)"
 
 #: glade/PyChess.glade:2435
 msgid "Background image path :"
-msgstr ""
+msgstr "배경이미지 경로:"
 
 #: glade/PyChess.glade:2473
 msgid "<b>Welcome screen</b>"
@@ -523,11 +524,11 @@ msgstr "<b>시작 화면</b>"
 
 #: glade/PyChess.glade:2527
 msgid "Texture:"
-msgstr ""
+msgstr "질감:"
 
 #: glade/PyChess.glade:2561
 msgid "Frame:"
-msgstr ""
+msgstr "프레임:"
 
 #: glade/PyChess.glade:2595
 msgid "Light Squares :"
@@ -543,7 +544,7 @@ msgstr "어두운 색 칸 :"
 
 #: glade/PyChess.glade:2674
 msgid "Reset Colours"
-msgstr ""
+msgstr "채색 지우기"
 
 #: glade/PyChess.glade:2688
 msgid "Sho_w cords"
@@ -553,7 +554,7 @@ msgstr "보드 번호 표시(_W)"
 msgid ""
 "If set, the playing board will display labels and ranks for each chess "
 "field. These are usable in chess notation."
-msgstr ""
+msgstr "설정하면, 플레이 보드에 각 체스 영역에 레이블과 순위가 표시됩니다. 이것들은 체스 표기법에서 사용할 수 있습니다."
 
 #: glade/PyChess.glade:2734
 msgid "<b>Board Style</b>"
@@ -565,11 +566,11 @@ msgstr "글꼴:"
 
 #: glade/PyChess.glade:2812
 msgid "<b>Move text</b>"
-msgstr ""
+msgstr "<b>텍스트 이동</b>"
 
 #: glade/PyChess.glade:2869
 msgid "<b>Chess Sets</b>"
-msgstr ""
+msgstr "<b>체스 설정</b>"
 
 #: glade/PyChess.glade:2893
 msgid "Themes"
@@ -577,7 +578,7 @@ msgstr "테마"
 
 #: glade/PyChess.glade:2918
 msgid "_Use sounds in PyChess"
-msgstr ""
+msgstr "PyChess에서 음향 사용 (_U)"
 
 #: glade/PyChess.glade:3180
 msgid "A player _checks:"
@@ -589,7 +590,7 @@ msgstr "이동할 때(_M):"
 
 #: glade/PyChess.glade:3208
 msgid "Game is _drawn:"
-msgstr "게임이 무승부일 때(_D)"
+msgstr "게임이 무승부일 때(_D):"
 
 #: glade/PyChess.glade:3223
 msgid "Game is _lost:"
@@ -597,7 +598,7 @@ msgstr "게임에 패배했을 때(_L):"
 
 #: glade/PyChess.glade:3238
 msgid "Game is _won:"
-msgstr "게임에 승리했을 때(_W)"
+msgstr "게임에 승리했을 때(_W):"
 
 #: glade/PyChess.glade:3253
 msgid "A player c_aptures:"
@@ -609,31 +610,31 @@ msgstr "게임이 준비됐을 때(_S):"
 
 #: glade/PyChess.glade:3334
 msgid "_Observed moves:"
-msgstr ""
+msgstr "관찰된 이동(_O):"
 
 #: glade/PyChess.glade:3349
 msgid "Observed _ends:"
-msgstr ""
+msgstr "관찰된 종료(_E):"
 
 #: glade/PyChess.glade:3463
 msgid "Short on _time:"
-msgstr ""
+msgstr "시간 부족(_T):"
 
 #: glade/PyChess.glade:3515
 msgid "_Invalid move:"
-msgstr "잘못된 움직임(_I):"
+msgstr "잘못된 이동(_I):"
 
 #: glade/PyChess.glade:3567
 msgid "Activate alarm when _remaining sec is:"
-msgstr ""
+msgstr "다음의 시간이 남았을 때 알람 작동하기(_R):"
 
 #: glade/PyChess.glade:3611
 msgid "_Puzzle success:"
-msgstr ""
+msgstr "성공한 퍼즐(_P) :"
 
 #: glade/PyChess.glade:3678
 msgid "_Variation choices:"
-msgstr ""
+msgstr "다른 선택(_V):"
 
 #: glade/PyChess.glade:3735
 msgid "<b>Play Sound When...</b>"
@@ -641,19 +642,19 @@ msgstr "<b>소리를 재생할 시점...</b>"
 
 #: glade/PyChess.glade:3757
 msgid "_Sounds"
-msgstr ""
+msgstr "음량(_S)"
 
 #: glade/PyChess.glade:3782
 msgid "_Auto save finished games to .pgn file"
-msgstr ""
+msgstr ".pgn 파일로 게임 자동 저장 완료"
 
 #: glade/PyChess.glade:3815
 msgid "Save files to:"
-msgstr ""
+msgstr "파일 저장하기:"
 
 #: glade/PyChess.glade:3842
 msgid "Use name format:"
-msgstr ""
+msgstr "이름 형식 사용하기:"
 
 #: glade/PyChess.glade:3886
 msgid "Names:  #n1, #n2"
@@ -665,29 +666,29 @@ msgstr "년, 월, 일: #y, #m, #d"
 
 #: glade/PyChess.glade:3937
 msgid "Save elapsed move _times"
-msgstr ""
+msgstr "경과된 이동 횟수 저장하기(_T)"
 
 #: glade/PyChess.glade:3962
 msgid "Save analyzing engine _evaluation values"
-msgstr ""
+msgstr "분석 엔진 평가 값 저장: (_E)"
 
 #: glade/PyChess.glade:3987
 msgid "Save _rating change values"
-msgstr ""
+msgstr "등급 변화 값 저장: (_R)"
 
 #: glade/PyChess.glade:4012
 msgid "Indent _PGN file"
-msgstr ""
+msgstr "PGN파일 정렬하기(_P)"
 
 #: glade/PyChess.glade:4017
 msgid ""
 "Warning: this option generates a formatted .pgn file which is not standards "
 "compliant"
-msgstr ""
+msgstr "경고: 이 옵션은 표준화되지 않은 .pgn파일을 생성합니다"
 
 #: glade/PyChess.glade:4038
 msgid "Save _own games only"
-msgstr ""
+msgstr "자기 게임만 저장하기(_O)"
 
 #: glade/PyChess.glade:4067 lib/pychess/perspectives/database/__init__.py:535
 msgid "Save"
@@ -715,27 +716,27 @@ msgstr "나이트"
 
 #: glade/PyChess.glade:4323 lib/pychess/Utils/repr.py:25
 msgid "King"
-msgstr ""
+msgstr "킹"
 
 #: glade/PyChess.glade:4369 glade/gating.glade:53 lib/pychess/Utils/repr.py:25
 msgid "Hawk"
-msgstr ""
+msgstr "호크"
 
 #: glade/PyChess.glade:4415 glade/gating.glade:99 lib/pychess/Utils/repr.py:25
 msgid "Elephant"
-msgstr ""
+msgstr "엘리펀트"
 
 #: glade/PyChess.glade:4446
 msgid "<b><big>Promote pawn to</big></b>"
-msgstr ""
+msgstr "<b><big>폰 승급하기</big></b>"
 
 #: glade/PyChess.glade:4510
 msgid "Default"
-msgstr ""
+msgstr "기본값"
 
 #: glade/PyChess.glade:4513
 msgid "Knights"
-msgstr ""
+msgstr "나이트"
 
 #: glade/PyChess.glade:4521
 msgid "Game information"
@@ -747,18 +748,18 @@ msgstr "장소:"
 
 #: glade/PyChess.glade:4650
 msgid "Rating change:"
-msgstr ""
+msgstr "등급 변화:"
 
 #: glade/PyChess.glade:4662 glade/PyChess.glade:4678
 msgid ""
 "For each player, the statistics provide the probability to win the game and "
 "the variation of your ELO if you lose / end into a tie / win, or simply the "
 "final ELO rating change"
-msgstr ""
+msgstr "각 플레이어에 대해  승리/무승부/패배한 경우의 ELO변화 확률 또는 단순히 최종 ELO등급 변화를 보여줍니다"
 
 #: glade/PyChess.glade:4706
 msgid "Black ELO:"
-msgstr ""
+msgstr "흑 ELO:"
 
 #: glade/PyChess.glade:4721
 msgid "Black:"
@@ -778,19 +779,19 @@ msgstr "백:"
 
 #: glade/PyChess.glade:4836
 msgid "Date:"
-msgstr ""
+msgstr "날짜:"
 
 #: glade/PyChess.glade:4849
 msgid "Result:"
-msgstr ""
+msgstr "결과:"
 
 #: glade/PyChess.glade:4861
 msgid "Game"
-msgstr ""
+msgstr "게임"
 
 #: glade/PyChess.glade:4873
 msgid "Players:"
-msgstr ""
+msgstr "플레이어:"
 
 #: glade/PyChess.glade:4911
 msgid "Event:"
@@ -798,23 +799,23 @@ msgstr "이벤트:"
 
 #: glade/PyChess.glade:4929
 msgid "Expected format as \"yyyy.mm.dd\" with the allowed joker \"?\""
-msgstr ""
+msgstr "\"?\"가 포함된 \"년.월.일\" 형식이어야 합니다"
 
 #: glade/PyChess.glade:4984
 msgid "Identification"
-msgstr ""
+msgstr "식별"
 
 #: glade/PyChess.glade:5075
 msgid "Additional tags"
-msgstr ""
+msgstr "추가 태그"
 
 #: glade/PyChess.glade:5109
 msgid "uci"
-msgstr ""
+msgstr "범용 체스 인터페이스"
 
 #: glade/PyChess.glade:5112
 msgid "xboard"
-msgstr ""
+msgstr "엑스보드"
 
 #: glade/PyChess.glade:5120
 msgid "Manage engines"
@@ -822,11 +823,11 @@ msgstr "엔진 관리"
 
 #: glade/PyChess.glade:5197
 msgid "Command:"
-msgstr "명령:"
+msgstr "명령어:"
 
 #: glade/PyChess.glade:5211
 msgid "Protocol:"
-msgstr "프로토콜"
+msgstr "프로토콜:"
 
 #: glade/PyChess.glade:5225
 msgid "Parameters:"
@@ -834,7 +835,7 @@ msgstr "매개변수:"
 
 #: glade/PyChess.glade:5239
 msgid "Command line parameters needed by the engine"
-msgstr ""
+msgstr "엔진에 필요한 명령어 파라미터"
 
 #: glade/PyChess.glade:5264
 msgid ""
@@ -848,23 +849,23 @@ msgstr "작업 디렉터리:"
 
 #: glade/PyChess.glade:5303
 msgid "The directory where the engine will be started from."
-msgstr ""
+msgstr "엔진이 시작될 디렉토리"
 
 #: glade/PyChess.glade:5344
 msgid "Runtime env command:"
-msgstr ""
+msgstr "런타임 환경 명령어:"
 
 #: glade/PyChess.glade:5361
 msgid "Runtime environment of engine command (wine or node)"
-msgstr ""
+msgstr "런타임 엔진 명령어 환경(wind 또는 node)"
 
 #: glade/PyChess.glade:5379
 msgid "Runtime env parameters:"
-msgstr ""
+msgstr "런타임 환경 매개변수:"
 
 #: glade/PyChess.glade:5393
 msgid "Command line parameters needed by the runtime env"
-msgstr ""
+msgstr "런타임 환경은 명령어 매개변수가 필요합니다"
 
 #: glade/PyChess.glade:5410
 msgid "Country:"
@@ -872,15 +873,15 @@ msgstr "국가:"
 
 #: glade/PyChess.glade:5424
 msgid "Country of origin of the engine"
-msgstr ""
+msgstr "엔진이 제작된 국가"
 
 #: glade/PyChess.glade:5438
 msgid "Comment:"
-msgstr "코멘트:"
+msgstr "댓글:"
 
 #: glade/PyChess.glade:5452
 msgid "Free comment about the engine"
-msgstr "엔진에 대한 자유로운 코멘트"
+msgstr "엔진에 대한 자유로운 댓글"
 
 #: glade/PyChess.glade:5471
 msgid "Environment"
@@ -894,7 +895,7 @@ msgstr "선호 레벨:"
 msgid ""
 "Level 1 is the weakest and level 20 is the strongest. You may not define a "
 "too high level if the engine is based on the depth to explore"
-msgstr ""
+msgstr "레벨 1이 가장 약하고 레벨 20이 가장 강합니다. 엔진이 탐색 할 깊이를 기반으로하는 경우 너무 높은 레벨을 설정 할 수 없습니다."
 
 #: glade/PyChess.glade:5556
 msgid "Restore the default options"
@@ -906,20 +907,20 @@ msgstr "옵션"
 
 #: glade/PyChess.glade:5648
 msgid "Add from folder"
-msgstr ""
+msgstr "폴더로 부터 추가하기"
 
 #: glade/PyChess.glade:5735
 msgid "Detected engines"
-msgstr ""
+msgstr "탐색된 엔진들"
 
 #: glade/PyChess.glade:5813
 msgid "Base path:"
-msgstr ""
+msgstr "기본 경로:"
 
 #: glade/PyChess.glade:5931
 #: lib/pychess/perspectives/database/FilterPanel.py:101
 msgid "Filter"
-msgstr ""
+msgstr "필터"
 
 #: glade/PyChess.glade:6004 glade/PyChess.glade:7309
 #: glade/fics_lounge.glade:3167 lib/pychess/Savers/remotegame.py:684
@@ -955,124 +956,124 @@ msgstr "흑"
 
 #: glade/PyChess.glade:6046 glade/PyChess.glade:6630
 msgid "Ignore colors"
-msgstr ""
+msgstr "색상 무시하기"
 
 #: glade/PyChess.glade:6062 lib/pychess/perspectives/database/gamelist.py:47
 msgid "Event"
-msgstr ""
+msgstr "이벤트"
 
 #: glade/PyChess.glade:6073
 msgid "ECO"
-msgstr ""
+msgstr "체스 오프닝 백과사전"
 
 #: glade/PyChess.glade:6095
 msgid "Elo"
-msgstr ""
+msgstr "ELO"
 
 #: glade/PyChess.glade:6114 glade/PyChess.glade:6144 glade/PyChess.glade:6549
 #: glade/PyChess.glade:6563 glade/PyChess.glade:6577 glade/PyChess.glade:6591
 #: glade/PyChess.glade:6605 glade/PyChess.glade:6732 glade/PyChess.glade:6746
 #: glade/PyChess.glade:6760 glade/PyChess.glade:6774 glade/PyChess.glade:6788
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: glade/PyChess.glade:6129 glade/PyChess.glade:6206 glade/PyChess.glade:6269
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: glade/PyChess.glade:6164 lib/pychess/perspectives/database/gamelist.py:47
 msgid "Date"
-msgstr ""
+msgstr "날짜"
 
 #: glade/PyChess.glade:6301 lib/pychess/perspectives/database/gamelist.py:47
 msgid "Site"
-msgstr ""
+msgstr "사이트"
 
 #: glade/PyChess.glade:6323
 msgid "Annotator"
-msgstr ""
+msgstr "주석"
 
 #: glade/PyChess.glade:6345 lib/pychess/perspectives/database/gamelist.py:47
 msgid "Result"
-msgstr ""
+msgstr "결과"
 
 #: glade/PyChess.glade:6359
 msgid "1-0"
-msgstr ""
+msgstr "1-0"
 
 #: glade/PyChess.glade:6374
 msgid "0-1"
-msgstr ""
+msgstr "0-1"
 
 #: glade/PyChess.glade:6389
 msgid "1/2-1/2"
-msgstr ""
+msgstr "1/2-1/2"
 
 #: glade/PyChess.glade:6404 lib/pychess/ic/__init__.py:296
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: glade/PyChess.glade:6427 glade/fics_lounge.glade:1130
 #: glade/fics_lounge.glade:1687
 #: lib/pychess/perspectives/database/gamelist.py:48
 msgid "Variant"
-msgstr ""
+msgstr "변형판"
 
 #: glade/PyChess.glade:6456
 msgid "Header"
-msgstr ""
+msgstr "헤더"
 
 #: glade/PyChess.glade:6644
 msgid "Imbalance"
-msgstr ""
+msgstr "불균형"
 
 #: glade/PyChess.glade:6835
 msgid "White move"
-msgstr ""
+msgstr "백 이동"
 
 #: glade/PyChess.glade:6858
 msgid "Black move"
-msgstr ""
+msgstr "흑 이동"
 
 #: glade/PyChess.glade:7221
 msgid "Not a capture (quiet) move"
-msgstr ""
+msgstr "잡을 수 없는 움직임 입니다"
 
 #: glade/PyChess.glade:7257
 msgid "Moved"
-msgstr ""
+msgstr "이동함"
 
 #: glade/PyChess.glade:7268
 msgid "Captured"
-msgstr ""
+msgstr "잡힌 말"
 
 #: glade/PyChess.glade:7290 glade/newInOut.glade:1421
 msgid "Side to move"
-msgstr ""
+msgstr "이동할 면"
 
 #: glade/PyChess.glade:7364
 msgid "Material/move"
-msgstr ""
+msgstr "기물/ 이동"
 
 #: glade/PyChess.glade:7414
 msgid "Sub-FEN :"
-msgstr ""
+msgstr "FEN 기반:"
 
 #: glade/PyChess.glade:7483
 msgid "Pattern"
-msgstr ""
+msgstr "패턴"
 
 #: glade/PyChess.glade:7513
 msgid "Scout"
-msgstr ""
+msgstr "스카웃"
 
 #: glade/analyze_game.glade:22
 msgid "Analyze game"
-msgstr ""
+msgstr "게임 분석"
 
 #: glade/analyze_game.glade:87
 msgid "Use analyzer:"
-msgstr ""
+msgstr "분석기 사용하기:"
 
 #: glade/analyze_game.glade:163
 msgid ""
@@ -1081,43 +1082,43 @@ msgid ""
 "evaluation for the move made in the game) exceeds this value, it will add an"
 " annotation for that move (consisting of the engine's Principal Variation "
 "for the move) to the Annotation panel"
-msgstr ""
+msgstr "분석기에서 평가 차이(최선의 이동에 대한 평가와 게임에서 이루어진 이동에 대한 평가의 차이)가 이 값을 초과하는 움직임을 발견하면 해당 이동에 대한 주석(이동을 위한 엔진의 주요 변형으로 됨)을 주석 패널에 추가합니다."
 
 #: glade/analyze_game.glade:164
 msgid "Variation annotation creation threshold in centipawns:"
-msgstr ""
+msgstr "변동 주석 생성 임계값(백분위):"
 
 #: glade/analyze_game.glade:198
 msgid "Analyze from current position"
-msgstr ""
+msgstr "현재 위치로부터 분석"
 
 #: glade/analyze_game.glade:214
 msgid "Analyze black moves"
-msgstr ""
+msgstr "흑 이동 분석"
 
 #: glade/analyze_game.glade:230
 msgid "Analyze white moves"
-msgstr ""
+msgstr "백 이동 분석"
 
 #: glade/analyze_game.glade:246
 msgid "Add threatening variation lines "
-msgstr ""
+msgstr "위협적인 변형 라인 추가"
 
 #: glade/discovererDialog.glade:18
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
-msgstr ""
+msgstr "<big><b>PyChess가 엔진을 찾고 있습니다. 잠시만 기다려 주세요.</b></big>"
 
 #: glade/discovererDialog.glade:77
 msgid "PyChess.py:"
-msgstr ""
+msgstr "PyChess.py:"
 
 #: glade/discovererDialog.glade:89
 msgid "ShredderLinuxChess:"
-msgstr ""
+msgstr "ShredderLinuxChess:"
 
 #: glade/discovererDialog.glade:101
 msgid "gnuchess:"
-msgstr ""
+msgstr "GNUChess:"
 
 #: glade/fics_logon.glade:8
 msgid "PyChess - Connect to Internet Chess"
@@ -1141,63 +1142,63 @@ msgstr "손님으로 로그온(_G)"
 
 #: glade/fics_logon.glade:209
 msgid "Host:"
-msgstr ""
+msgstr "호스트:"
 
 #: glade/fics_logon.glade:241
 msgid "Po_rts:"
-msgstr ""
+msgstr "포트(_R):"
 
 #: glade/fics_logon.glade:281
 msgid "Lag:"
-msgstr ""
+msgstr "지연:"
 
 #: glade/fics_logon.glade:290
 msgid "Use time compensation"
-msgstr ""
+msgstr "시간 보상 사용하기"
 
 #: glade/fics_logon.glade:379
 msgid "S_ign up"
-msgstr ""
+msgstr "가입하기(_I)"
 
 #: glade/fics_lounge.glade:35
 msgid "Challenge: <Player>"
-msgstr ""
+msgstr "도전: <Player>"
 
 #: glade/fics_lounge.glade:97
 msgid "Send Challenge"
-msgstr ""
+msgstr "도전하기"
 
 #: glade/fics_lounge.glade:133
 msgid "<big>Challenge:</big>"
-msgstr ""
+msgstr "<big>도전: </big>"
 
 #: glade/fics_lounge.glade:327 glade/fics_lounge.glade:806
 msgid "Lightning:"
-msgstr ""
+msgstr "밝기"
 
 #: glade/fics_lounge.glade:351 glade/fics_lounge.glade:830
 msgid "Standard:"
-msgstr ""
+msgstr "표준:"
 
 #: glade/fics_lounge.glade:375 glade/fics_lounge.glade:854
 msgid "Blitz:"
-msgstr ""
+msgstr "블리츠:"
 
 #: glade/fics_lounge.glade:399
 msgid "2 min, Fischer Random, Black"
-msgstr ""
+msgstr "2분, 피셔랜덤, 흑"
 
 #: glade/fics_lounge.glade:421
 msgid "10 min + 6 sec/move, White"
-msgstr ""
+msgstr "10분+6초/이동 1회, 백"
 
 #: glade/fics_lounge.glade:443
 msgid "5 min"
-msgstr ""
+msgstr "5 분"
 
 #: glade/fics_lounge.glade:551
 msgid "_Clear Seeks"
-msgstr ""
+msgstr "탐색 초기화(_C)"
 
 #: glade/fics_lounge.glade:575
 msgid "_Accept"
@@ -1205,19 +1206,19 @@ msgstr "허용(_A)"
 
 #: glade/fics_lounge.glade:599
 msgid "_Decline"
-msgstr ""
+msgstr "거절(_D)"
 
 #: glade/fics_lounge.glade:972
 msgid "Send all seeks"
-msgstr ""
+msgstr "모든 탐색 보내기"
 
 #: glade/fics_lounge.glade:1026
 msgid "Send seek"
-msgstr "탐색 보냄"
+msgstr "탐색 보내기"
 
 #: glade/fics_lounge.glade:1062
 msgid "Create Seek"
-msgstr ""
+msgstr "탐색 생성하기"
 
 #: glade/fics_lounge.glade:1090 glade/fics_lounge.glade:1647
 #: glade/fics_lounge.glade:2496 lib/pychess/ic/FICSObjects.py:54
@@ -1225,7 +1226,7 @@ msgstr ""
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:55
 #: lib/pychess/perspectives/fics/SeekChallenge.py:471
 msgid "Standard"
-msgstr ""
+msgstr "표준"
 
 #: glade/fics_lounge.glade:1104 glade/fics_lounge.glade:1661
 #: lib/pychess/ic/FICSObjects.py:52 lib/pychess/ic/__init__.py:144
@@ -1233,23 +1234,23 @@ msgstr ""
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:54
 #: lib/pychess/perspectives/fics/SeekChallenge.py:472
 msgid "Blitz"
-msgstr ""
+msgstr "블리츠"
 
 #: glade/fics_lounge.glade:1117 glade/fics_lounge.glade:1674
 #: lib/pychess/ic/FICSObjects.py:56 lib/pychess/ic/__init__.py:146
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:56
 #: lib/pychess/perspectives/fics/SeekChallenge.py:473
 msgid "Lightning"
-msgstr ""
+msgstr "밝기"
 
 #: glade/fics_lounge.glade:1143 glade/fics_lounge.glade:1487
 #: lib/pychess/ic/__init__.py:275
 msgid "Computer"
-msgstr ""
+msgstr "컴퓨터"
 
 #: glade/fics_lounge.glade:1167
 msgid "_Seeks / Challenges"
-msgstr ""
+msgstr "탐색/도전(_S)"
 
 #: glade/fics_lounge.glade:1188 lib/pychess/perspectives/fics/FicsHome.py:69
 #: lib/pychess/perspectives/fics/FicsHome.py:71
@@ -1265,111 +1266,111 @@ msgstr "시간"
 
 #: glade/fics_lounge.glade:1233
 msgid "Seek _Graph"
-msgstr ""
+msgstr "탐색 그래프(_G)"
 
 #: glade/fics_lounge.glade:1257
 msgid "0 Players Ready"
-msgstr ""
+msgstr "0명의 플레이어 준비 중"
 
 #: glade/fics_lounge.glade:1299
 #: lib/pychess/perspectives/fics/ParrentListSection.py:35
 msgid "Challenge"
-msgstr ""
+msgstr "도전"
 
 #: glade/fics_lounge.glade:1352 glade/fics_lounge.glade:1592
 #: lib/pychess/perspectives/fics/ParrentListSection.py:32
 msgid "Observe"
-msgstr ""
+msgstr "관전하기"
 
 #: glade/fics_lounge.glade:1405
 msgid "Start Private Chat"
-msgstr ""
+msgstr "개인 대화 시작"
 
 #: glade/fics_lounge.glade:1460
 msgid "Registered"
-msgstr ""
+msgstr "등록된"
 
 #: glade/fics_lounge.glade:1474 lib/pychess/System/conf.py:87
 msgid "Guest"
-msgstr ""
+msgstr "게스트"
 
 #: glade/fics_lounge.glade:1500
 msgid "Titled"
-msgstr ""
+msgstr "제목이 붙음"
 
 #: glade/fics_lounge.glade:1527
 msgid "_Player List"
-msgstr ""
+msgstr "플레이어 목록(_P)"
 
 #: glade/fics_lounge.glade:1714
 msgid "_Game List"
-msgstr ""
+msgstr "게임 목록(_G)"
 
 #: glade/fics_lounge.glade:1769
 msgid "_My games"
-msgstr ""
+msgstr "나의 게임(_M)"
 
 #: glade/fics_lounge.glade:1971
 msgid "Offer A_bort"
-msgstr ""
+msgstr "중단 요청하기(_B)"
 
 #: glade/fics_lounge.glade:2015
 msgid "Examine"
-msgstr ""
+msgstr "검사하기"
 
 #: glade/fics_lounge.glade:2072
 msgid "Pre_view"
-msgstr ""
+msgstr "미리보기(_V)"
 
 #: glade/fics_lounge.glade:2129
 msgid "_Archived"
-msgstr ""
+msgstr "달성된(_A)"
 
 #: glade/fics_lounge.glade:2254
 msgid "Asymmetric Random    "
-msgstr ""
+msgstr "대칭 랜덤"
 
 #: glade/fics_lounge.glade:2261
 msgid "Edit Seek"
-msgstr ""
+msgstr "탐색 수정"
 
 #: glade/fics_lounge.glade:2365 lib/pychess/Utils/GameModel.py:232
 #: lib/pychess/ic/__init__.py:153
 #: lib/pychess/perspectives/fics/SeekChallenge.py:470
 msgid "Untimed"
-msgstr ""
+msgstr "시간이 없음"
 
 #: glade/fics_lounge.glade:2417
 msgid "Minutes:  "
-msgstr ""
+msgstr "분:"
 
 #: glade/fics_lounge.glade:2445
 msgid "   Gain:  "
-msgstr ""
+msgstr "획득:"
 
 #: glade/fics_lounge.glade:2484
 msgid "Time control:  "
-msgstr ""
+msgstr "시간 제어:"
 
 #: glade/fics_lounge.glade:2538 glade/newInOut.glade:715
 msgid "<b>Time Control</b>"
-msgstr ""
+msgstr "<b>시간 제어</b>"
 
 #: glade/fics_lounge.glade:2595 glade/fics_lounge.glade:3127
 msgid "Don't care"
-msgstr ""
+msgstr "신경 안써요"
 
 #: glade/fics_lounge.glade:2660
 msgid "Your strength: "
-msgstr ""
+msgstr "힘:"
 
 #: glade/fics_lounge.glade:2702
 msgid "(Blitz)"
-msgstr ""
+msgstr "(블리츠)"
 
 #: glade/fics_lounge.glade:2731
 msgid "Opponent's strength: "
-msgstr ""
+msgstr "상대방 힘:"
 
 #: glade/fics_lounge.glade:2836
 msgid ""
@@ -1378,52 +1379,52 @@ msgid ""
 "preserved when\n"
 "a) your rating for the type of game sought has changed\n"
 "b) you change the variant or the time control"
-msgstr ""
+msgstr "이 버튼이 잠김 상태에 있을 때,\n당신과 상대방의 힘은 변화가 없습니다\na) 원하는 게임 유형에 대한 등급이 변경되었을 때\nb) 게임형식 혹은 시간 제어를 변경했을 때"
 
 #: glade/fics_lounge.glade:2876
 msgid "Center:"
-msgstr ""
+msgstr "중심:"
 
 #: glade/fics_lounge.glade:2915
 msgid "1200"
-msgstr ""
+msgstr "1200"
 
 #: glade/fics_lounge.glade:2969
 msgid "Tolerance:"
-msgstr ""
+msgstr "인내심"
 
 #: glade/fics_lounge.glade:3024
 #: lib/pychess/perspectives/fics/SeekChallenge.py:740
 msgid "Hide"
-msgstr ""
+msgstr "숨기기"
 
 #: glade/fics_lounge.glade:3070
 msgid "<b>Opponent Strength</b>"
-msgstr ""
+msgstr "<b>상대방 힘</b>"
 
 #: glade/fics_lounge.glade:3234
 msgid "<b>Your Color</b>"
-msgstr "<b>내 색</b>"
+msgstr "<b>나의 색상</b>"
 
 #: glade/fics_lounge.glade:3293
 msgid "Play normal chess rules"
-msgstr ""
+msgstr "일반 체스규칙으로 플레이하기"
 
 #: glade/fics_lounge.glade:3333
 msgid "Play"
-msgstr ""
+msgstr "플레이"
 
 #: glade/fics_lounge.glade:3399 glade/newInOut.glade:915
 msgid "<b>Chess Variant</b>"
-msgstr ""
+msgstr "<b>체스 변형판</b>"
 
 #: glade/fics_lounge.glade:3457
 msgid "Rated game"
-msgstr ""
+msgstr "등급변화 있는 게임"
 
 #: glade/fics_lounge.glade:3473
 msgid "Manually accept opponent"
-msgstr ""
+msgstr "수동으로 상대 수락하기"
 
 #: glade/fics_lounge.glade:3503
 msgid "<b>Options</b>"
@@ -1431,35 +1432,35 @@ msgstr "<b>옵션</b>"
 
 #: glade/findbar.glade:6
 msgid "window1"
-msgstr ""
+msgstr "창1"
 
 #: glade/findbar.glade:21
 msgid "0 of 0"
-msgstr ""
+msgstr "0 중의 0"
 
 #: glade/findbar.glade:66
 msgid "Search:"
-msgstr ""
+msgstr "탐색:"
 
 #: glade/findbar.glade:134
 msgid "_Previous"
-msgstr ""
+msgstr "이전(_P)"
 
 #: glade/findbar.glade:192
 msgid "_Next"
-msgstr ""
+msgstr "다음(_N)"
 
 #: glade/gating.glade:145
 msgid "Hawk at rook"
-msgstr ""
+msgstr "룩에 호크"
 
 #: glade/gating.glade:191
 msgid "Elephant at rook"
-msgstr ""
+msgstr "룩에 엘리펀트"
 
 #: glade/gating.glade:225
 msgid "<b><big>Gating piece</big></b>"
-msgstr ""
+msgstr "<b><big>게이팅 기물</big></b>"
 
 #: glade/newInOut.glade:45 lib/pychess/Main.py:763
 #: lib/pychess/widgets/newGameDialog.py:571
@@ -1476,27 +1477,27 @@ msgstr "FEN 복사"
 
 #: glade/newInOut.glade:143
 msgid "Clear"
-msgstr ""
+msgstr "비우기"
 
 #: glade/newInOut.glade:156
 msgid "Paste FEN"
-msgstr ""
+msgstr "포사이스 에드워즈 표기법 적용"
 
 #: glade/newInOut.glade:169
 msgid "Initial setup"
-msgstr ""
+msgstr "초기 설정"
 
 #: glade/newInOut.glade:275 glade/newInOut.glade:321 glade/taskers.glade:174
 msgid "Engine playing strength (1=weakest, 20=strongest)"
-msgstr ""
+msgstr "엔진 난이도(1=제일 낮음, 20=제일 높음)"
 
 #: glade/newInOut.glade:359
 msgid "White side - Click to exchange the players"
-msgstr ""
+msgstr "백 팀 - 플레이어를 바꾸시려면 클릭하세요"
 
 #: glade/newInOut.glade:371
 msgid "Black side - Click to exchange the players"
-msgstr ""
+msgstr "흑 팀 - 플레이어를 바꾸시려면 클릭하세요"
 
 #: glade/newInOut.glade:397
 msgid "<b>Players</b>"
@@ -1504,43 +1505,43 @@ msgstr "<b>플레이어</b>"
 
 #: glade/newInOut.glade:448
 msgid "_Untimed"
-msgstr ""
+msgstr "시간없는(_U)"
 
 #: glade/newInOut.glade:487
 msgid "Blitz:    5 min"
-msgstr ""
+msgstr "블리츠: 5분"
 
 #: glade/newInOut.glade:538
 msgid "Rapid:    15 min + 10 sec/move"
-msgstr ""
+msgstr "빠름: 15분+10초/이동 1회"
 
 #: glade/newInOut.glade:587
 msgid "Normal:   40 min + 15 sec/move"
-msgstr ""
+msgstr "일반: 40분+15초/이동 1회"
 
 #: glade/newInOut.glade:655
 msgid "Classical:    3 min / 40 moves"
-msgstr ""
+msgstr "일반 체스: 3분/이동 40회"
 
 #: glade/newInOut.glade:766
 msgid "_Play Normal chess"
-msgstr ""
+msgstr "일반 체스 플레이하기(_P)"
 
 #: glade/newInOut.glade:806
 msgid "Play Fischer Random chess"
-msgstr ""
+msgstr "피셔 랜덤 체스 플레이하기"
 
 #: glade/newInOut.glade:856
 msgid "Play Losers chess"
-msgstr ""
+msgstr "안티 체스 하기"
 
 #: glade/newInOut.glade:1001
 msgid "<b>Open Game</b>"
-msgstr ""
+msgstr "<b>오픈 게임</b>"
 
 #: glade/newInOut.glade:1244
 msgid "<b>Initial Position</b>"
-msgstr ""
+msgstr "<b>초기 배치</b>"
 
 #: glade/newInOut.glade:1301
 msgid "<b>Enter Game Notation</b>"
@@ -1548,39 +1549,39 @@ msgstr "<b>게임 기록 보기</b>"
 
 #: glade/newInOut.glade:1396
 msgid "Halfmove clock"
-msgstr ""
+msgstr "체스 시계"
 
 #: glade/newInOut.glade:1409
 msgid "En passant line"
-msgstr ""
+msgstr "앙파상 라인"
 
 #: glade/newInOut.glade:1433
 msgid "Move number"
-msgstr ""
+msgstr "이동한 수"
 
 #: glade/newInOut.glade:1443
 msgid "Black O-O"
-msgstr ""
+msgstr "흑 O-O"
 
 #: glade/newInOut.glade:1457
 msgid "Black O-O-O"
-msgstr ""
+msgstr "흑 O-O-O"
 
 #: glade/newInOut.glade:1471
 msgid "White O-O-O"
-msgstr ""
+msgstr "백 O-O-O"
 
 #: glade/newInOut.glade:1485
 msgid "White O-O"
-msgstr ""
+msgstr "백 O-O"
 
 #: glade/newInOut.glade:1558
 msgid "Rotate the board"
-msgstr ""
+msgstr "보드 회전"
 
 #: glade/saveGamesDialog.glade:7
 msgid "Quit PyChess"
-msgstr ""
+msgstr "PyChess종료"
 
 #: glade/saveGamesDialog.glade:24
 #: lib/pychess/perspectives/games/__init__.py:463
@@ -1589,25 +1590,25 @@ msgstr "저장하지 않고 닫기(_W)"
 
 #: glade/saveGamesDialog.glade:83
 msgid "_Save %d documents"
-msgstr ""
+msgstr "문서 %d개 저장하기(_S)"
 
 #: glade/saveGamesDialog.glade:141
 msgid ""
 "<big><b>There are %d games with unsaved moves. Save changes before "
 "closing?</b></big>"
-msgstr ""
+msgstr "<big><b>이동이 저장되지 않은 %d개의 게임이 있습니다. 변경된 사항을 저장하고 종료할까요?</b></big>"
 
 #: glade/saveGamesDialog.glade:161
 msgid "Select the games you want to save:"
-msgstr ""
+msgstr "저장하고자 하는 게임을 선택하세요:"
 
 #: glade/saveGamesDialog.glade:204
 msgid "If you don't save, new changes to your games will be permanently lost."
-msgstr ""
+msgstr "저장하지 않으면, 변경사항을 영원히 잃게 됩니다."
 
 #: glade/taskers.glade:42
 msgid "Detailed settings of players, time control and chess variant"
-msgstr ""
+msgstr "플레이어, 시간 제어, 체스 변형판 세부 설정"
 
 #: glade/taskers.glade:133
 msgid "_Opponent:"
@@ -1623,7 +1624,7 @@ msgstr "<b>게임 시작(_S)</b>"
 
 #: glade/taskers.glade:279
 msgid "Detailed connection settings"
-msgstr ""
+msgstr "세부 연결 설정"
 
 #: glade/taskers.glade:349
 msgid "Auto login on startup"
@@ -1639,11 +1640,11 @@ msgstr "<b>서버에 연결(_C)</b>"
 
 #: glade/taskers.glade:469
 msgid "Select a pgn or epd or fen chess file"
-msgstr ""
+msgstr "PGN이나 EPD혹은 FEN 체스 파일을 선택하세요"
 
 #: glade/taskers.glade:532
 msgid "_Recent:"
-msgstr ""
+msgstr "최근(_R):"
 
 #: glade/taskers.glade:542
 msgid "Create a new database"
@@ -1655,7 +1656,7 @@ msgstr "<b>데이터베이스 열기</b>"
 
 #: glade/taskers.glade:660
 msgid "View lectures, solve puzzles or start practicing endgames"
-msgstr ""
+msgstr "강의보기, 퍼즐 풀기 또는 최종전 연습 시작"
 
 #: glade/taskers.glade:723
 msgid "Category:"
@@ -1663,7 +1664,7 @@ msgstr "분류:"
 
 #: glade/taskers.glade:796
 msgid "<b>Start learning</b>"
-msgstr ""
+msgstr "<b>학습 시작</b>"
 
 #: glade/tipoftheday.glade:7
 msgid "Tip Of The day"
@@ -1675,23 +1676,23 @@ msgstr "시작할 때 팁 보이기"
 
 #: lib/pychess/Main.py:239
 msgid "All the links failed to fetch a relevant chess content."
-msgstr ""
+msgstr "모든 링크가 관련 체스 콘텐츠를 가져 오지 못했습니다."
 
 #: lib/pychess/Main.py:242
 msgid "Some links were invalid."
-msgstr ""
+msgstr "유효하지 않은 링크입니다."
 
 #: lib/pychess/Main.py:289
 msgid "The clipboard contains no relevant chess data."
-msgstr ""
+msgstr "클립보드에 관련된 체스 데이터가 없습니다."
 
 #: lib/pychess/Main.py:316
 msgid "Load a remote game"
-msgstr ""
+msgstr "원격 게임 불러오기"
 
 #: lib/pychess/Main.py:316
 msgid "Paste the link to download:"
-msgstr ""
+msgstr "다운로드하기 위해서는 이 링크를 복사하세요"
 
 #: lib/pychess/Main.py:521
 msgid "http://en.wikipedia.org/wiki/Chess"
@@ -1704,7 +1705,7 @@ msgstr "https://ko.wikipedia.org/wiki/%EC%B2%B4%EC%8A%A4_%EA%B7%9C%EC%B9%99"
 #: lib/pychess/Main.py:694 lib/pychess/widgets/gamenanny.py:80
 #: lib/pychess/perspectives/welcome/__init__.py:7
 msgid "Welcome"
-msgstr ""
+msgstr "환영합니다"
 
 #: lib/pychess/Main.py:769
 msgid "Open Game"
@@ -1713,116 +1714,116 @@ msgstr "게임 열기"
 #: lib/pychess/Database/PgnImport.py:191
 #, python-format
 msgid "Reading %s ..."
-msgstr ""
+msgstr "읽는중%s..."
 
 #: lib/pychess/Database/PgnImport.py:356 lib/pychess/Database/PgnImport.py:391
 #, python-format
 msgid "%(counter)s game headers from %(filename)s imported"
-msgstr ""
+msgstr "%(filename)s로 부터 가져온 %(counter)s게임 헤더"
 
 #: lib/pychess/Players/CECPEngine.py:804
 #, python-format
 msgid "The engine %s reports an error:"
-msgstr ""
+msgstr "%s엔진이 오류를 보고합니다:"
 
 #: lib/pychess/Players/Human.py:22
 msgid "Your opponent has offered you a draw."
-msgstr ""
+msgstr "상대방이 무승부를 요청했습니다."
 
 #: lib/pychess/Players/Human.py:23
 msgid ""
 "Your opponent has offered you a draw. If you accept this offer, the game "
 "will end with a score of 1/2 - 1/2."
-msgstr ""
+msgstr "상대가 무승부를 요청했습니다. 이 요청을 수락하면 둘 다 0.5점을 얻고 종료합니다."
 
 #: lib/pychess/Players/Human.py:25
 msgid "Your opponent wants to abort the game."
-msgstr ""
+msgstr "상대방이 게임을 중단하고 싶어 합니다"
 
 #: lib/pychess/Players/Human.py:26
 msgid ""
 "Your opponent has asked that the game be aborted. If you accept this offer, "
 "the game will end with no rating change."
-msgstr ""
+msgstr "상대방이 게임 중단을 요청했습니다. 이 요청을 받아들이면 등급 변화없이 게임이 종료됩니다."
 
 #: lib/pychess/Players/Human.py:28
 msgid "Your opponent wants to adjourn the game."
-msgstr ""
+msgstr "상대방이 게임을 연기하고 싶어 합니다."
 
 #: lib/pychess/Players/Human.py:29
 msgid ""
 "Your opponent has asked that the game be adjourned. If you accept this "
 "offer, the game will be adjourned and you can resume it later (when your "
 "opponent is online and both players agree to resume)."
-msgstr ""
+msgstr "상대방이 게임을 연기하기를 요청합니다. 이 요청을 받아들이면, 게임은 연기되고 나중에 계속할 수 있습니다(상대방이 온라인이고 서로 계속하기를 동의할 때)"
 
 #: lib/pychess/Players/Human.py:31
 #, python-format
 msgid "Your opponent wants to undo %s move(s)."
-msgstr ""
+msgstr "상대방이 %s만큼 무르고 싶어 합니다."
 
 #: lib/pychess/Players/Human.py:32
 #, python-format
 msgid ""
 "Your opponent has asked that the last %s move(s) be undone. If you accept "
 "this offer, the game will continue from the earlier position."
-msgstr ""
+msgstr "상대방이 마지막 %s이동을 취소하도록 요청했습니다. 이 요청을 수락하면 게임은 이전 위치에서 계속됩니다."
 
 #: lib/pychess/Players/Human.py:34
 msgid "Your opponent wants to pause the game."
-msgstr ""
+msgstr "상대방이 게임을 중지하고 싶어 합니다."
 
 #: lib/pychess/Players/Human.py:35
 msgid ""
 "Your opponent has asked that the game be paused. If you accept this offer, "
 "the game clock will be paused until both players agree to resume the game."
-msgstr ""
+msgstr "상대방이 게임을 연기하기를 요청합니다. 이 요청을 받아들이면, 서로가 계속하기를 동의할 때 까지 게임 시간은 멈출 것 입니다."
 
 #: lib/pychess/Players/Human.py:37
 msgid "Your opponent wants to resume the game."
-msgstr ""
+msgstr "상대방이 게임을 계속하고 싶어 합니다."
 
 #: lib/pychess/Players/Human.py:38
 msgid ""
 "Your opponent has asked that the game be resumed. If you accept this offer, "
 "the game clock will continue from where it was paused."
-msgstr ""
+msgstr "상대방이 게임을 연기하기를 요청합니다. 이 요청을 받아들이면, 게임 시간은 멈췄던 곳에서 계속하게 될 것 입니다."
 
 #: lib/pychess/Players/Human.py:42
 msgid "The resignation"
-msgstr ""
+msgstr "기권"
 
 #: lib/pychess/Players/Human.py:43
 msgid "The flag call"
-msgstr ""
+msgstr "플래그 호출"
 
 #: lib/pychess/Players/Human.py:44
 msgid "The draw offer"
-msgstr ""
+msgstr "무승부 제안"
 
 #: lib/pychess/Players/Human.py:45
 msgid "The abort offer"
-msgstr ""
+msgstr "중단 요청"
 
 #: lib/pychess/Players/Human.py:46
 msgid "The adjourn offer"
-msgstr ""
+msgstr "연기 요청"
 
 #: lib/pychess/Players/Human.py:47
 msgid "The pause offer"
-msgstr ""
+msgstr "일시정지 요청"
 
 #: lib/pychess/Players/Human.py:48
 msgid "The resume offer"
-msgstr ""
+msgstr "계속하기 요청"
 
 #: lib/pychess/Players/Human.py:49
 msgid "The offer to switch sides"
-msgstr ""
+msgstr "사이드 전환 제안"
 
 #: lib/pychess/Players/Human.py:50
 msgid "The takeback offer"
-msgstr ""
+msgstr "회수 요청"
 
 #: lib/pychess/Players/Human.py:54
 msgid "resign"
@@ -1830,140 +1831,140 @@ msgstr "항복"
 
 #: lib/pychess/Players/Human.py:55
 msgid "call your opponents flag"
-msgstr ""
+msgstr "상대방 플래그 호출하기"
 
 #: lib/pychess/Players/Human.py:56
 msgid "offer a draw"
-msgstr ""
+msgstr "무승부 요청"
 
 #: lib/pychess/Players/Human.py:57
 msgid "offer an abort"
-msgstr ""
+msgstr "중단 요청하기"
 
 #: lib/pychess/Players/Human.py:58
 msgid "offer to adjourn"
-msgstr ""
+msgstr "연기를 요청하다"
 
 #: lib/pychess/Players/Human.py:59
 msgid "offer a pause"
-msgstr ""
+msgstr "일시정지 요청"
 
 #: lib/pychess/Players/Human.py:60
 msgid "offer to resume"
-msgstr ""
+msgstr "계속하기 요청"
 
 #: lib/pychess/Players/Human.py:61
 msgid "offer to switch sides"
-msgstr ""
+msgstr "사이드 전환 제안"
 
 #: lib/pychess/Players/Human.py:62
 msgid "offer a takeback"
-msgstr ""
+msgstr "회수 요청"
 
 #: lib/pychess/Players/Human.py:63
 msgid "ask your opponent to move"
-msgstr ""
+msgstr "상대방에게 움직여 달라고 요청하세요"
 
 #: lib/pychess/Players/Human.py:67
 msgid "Your opponent is not out of time."
-msgstr ""
+msgstr "상대방은 시간이 없습니다."
 
 #: lib/pychess/Players/Human.py:68
 msgid "The clock hasn't been started yet."
-msgstr ""
+msgstr "시계가 아직 시작되지 않았습니다."
 
 #: lib/pychess/Players/Human.py:70
 msgid "You can't switch colors during the game."
-msgstr ""
+msgstr "게임중에는 색을 바꿀 수 없습니다."
 
 #: lib/pychess/Players/Human.py:71
 msgid "You have tried to undo too many moves."
-msgstr ""
+msgstr "당신은 너무 많은 이동을 되돌리려고 했습니다."
 
 #: lib/pychess/Players/Human.py:196
 msgid "Your opponent asks you to hurry!"
-msgstr ""
+msgstr "상대방이 재촉합니다!"
 
 #: lib/pychess/Players/Human.py:198
 msgid ""
 "Generally this means nothing, as the game is time-based, but if you want to"
 "             please your opponent, perhaps you should get going."
-msgstr ""
+msgstr "일반적으로 게임은 시간 기반이기 때문에 이것은 아무 의미도 없지만, 만약 여러분이 상대방을 기쁘게 하고 싶다면, 아마도 여러분은 진행해야 할 것입니다."
 
 #: lib/pychess/Players/Human.py:275
 #: lib/pychess/perspectives/fics/ParrentListSection.py:30
 #: lib/pychess/perspectives/fics/SeekListPanel.py:335
 msgid "Accept"
-msgstr ""
+msgstr "수락"
 
 #: lib/pychess/Players/Human.py:277
 #: lib/pychess/perspectives/fics/SeekListPanel.py:337
 msgid "Decline"
-msgstr ""
+msgstr "거절"
 
 #: lib/pychess/Players/Human.py:285
 #, python-format
 msgid "%s was declined by your opponent"
-msgstr ""
+msgstr "%s가 상대방에 의해 거절되었습니다"
 
 #: lib/pychess/Players/Human.py:287
 #, python-format
 msgid "Resend %s?"
-msgstr ""
+msgstr "%s를 다시보내시겠습니까?"
 
 #: lib/pychess/Players/Human.py:298
 msgid "Resend"
-msgstr ""
+msgstr "다시 보내기"
 
 #: lib/pychess/Players/Human.py:306
 #, python-format
 msgid "%s was withdrawn by your opponent"
-msgstr ""
+msgstr "%s가 상대방에 의해 철회되었습니다."
 
 #: lib/pychess/Players/Human.py:308
 msgid "Your opponent seems to have changed their mind."
-msgstr ""
+msgstr "상대방이 마음을 바꾼 것 같아 보입니다."
 
 #: lib/pychess/Players/Human.py:326
 #, python-format
 msgid "Unable to accept %s"
-msgstr ""
+msgstr "%s를 수락할 수 없습니다."
 
 #: lib/pychess/Players/Human.py:327
 msgid "Probably because it has been withdrawn."
-msgstr ""
+msgstr "아마도 철회되었을 것입니다."
 
 #: lib/pychess/Players/Human.py:334
 #, python-format
 msgid "%s returns an error"
-msgstr ""
+msgstr "%s에 오류 발생"
 
 #: lib/pychess/Savers/chesspastebin.py:19
 msgid ""
 "The current game is over. First, please verify the properties of the game."
-msgstr ""
+msgstr "현재 게임은 종료되었습니다. 먼저 게임 속성을 확인하십시오."
 
 #: lib/pychess/Savers/chesspastebin.py:21
 msgid ""
 "The current game is not terminated. Its export may have a limited interest."
-msgstr ""
+msgstr "현재 게임은 종료되지 않았습니다. 내보내기가 제한 될 수 있습니다."
 
 #: lib/pychess/Savers/chesspastebin.py:22
 #, python-format
 msgid "Should %s publicly publish your game as PGN on chesspastebin.com ?"
-msgstr ""
+msgstr "%s가 chesspastebin.com에 PGN형식으로 게임을 게시해야 합니까?"
 
 #: lib/pychess/Savers/chesspastebin.py:57
 msgid "Game shared at "
-msgstr ""
+msgstr "게임 공유하기"
 
 #: lib/pychess/Savers/chesspastebin.py:59
 msgid "(Link is available on clipboard.)"
-msgstr ""
+msgstr "(링크는 클립보드에서 사용할 수 있습니다.)"
 
 #: lib/pychess/Savers/epd.py:10
 msgid "Chess Position"
-msgstr ""
+msgstr "체스 배치"
 
 #: lib/pychess/Savers/epd.py:166 lib/pychess/Savers/remotegame.py:847
 #: lib/pychess/Savers/remotegame.py:848 lib/pychess/Utils/isoCountries.py:9
@@ -1974,151 +1975,151 @@ msgstr "알 수 없음"
 
 #: lib/pychess/Savers/fen.py:12
 msgid "Simple Chess Position"
-msgstr ""
+msgstr "간단한 체스 배치"
 
 #: lib/pychess/Savers/fen.py:68 lib/pychess/Savers/pgn.py:783
 msgid "The game can't be loaded, because of an error parsing FEN"
-msgstr ""
+msgstr "FEN을 파싱하는데 오류가 생겨서 게임을 로드할 수 없습니다"
 
 #: lib/pychess/Savers/html.py:6
 msgid "Html Diagram"
-msgstr ""
+msgstr "HTML다이어그램"
 
 #: lib/pychess/Savers/olv.py:10
 msgid "Chess Compositions from yacpdb.org"
-msgstr ""
+msgstr "yacpdb.org가 만든 체스"
 
 #: lib/pychess/Savers/pgn.py:41
 msgid "Chess Game"
-msgstr ""
+msgstr "체스 게임"
 
 #: lib/pychess/Savers/pgn.py:328
 msgid "Analyzer's primary variation"
-msgstr ""
+msgstr "분석기의 주요 변형"
 
 #: lib/pychess/Savers/pgn.py:454
 msgid "Importing game headers..."
-msgstr ""
+msgstr "게임 헤더 불러오는 중..."
 
 #: lib/pychess/Savers/pgn.py:472
 msgid "Creating .bin index file..."
-msgstr ""
+msgstr ".bin 인덱스 파일 생성 중..."
 
 #: lib/pychess/Savers/pgn.py:499
 msgid "Creating .scout index file..."
-msgstr ""
+msgstr ".scout 인덱스 파일 생성 중..."
 
 #: lib/pychess/Savers/pgn.py:817
 msgid "Invalid move."
-msgstr ""
+msgstr "잘못된 이동"
 
 #: lib/pychess/Savers/pgn.py:963
 #, python-format
 msgid "Error parsing %(mstr)s"
-msgstr ""
+msgstr "%(mstr)s를 파싱하는 중에 문제가 생겼습니다"
 
 #: lib/pychess/Savers/pgn.py:996
 #, python-format
 msgid ""
 "The game can't be read to end, because of an error parsing move %(moveno)s "
 "'%(notation)s'."
-msgstr ""
+msgstr "이동 %(moveno)s의 '%(notation)s'을 파싱하는 도중 오류가 발생하여 게임을 끝까지 읽을 수 없습니다."
 
 #: lib/pychess/Savers/pgn.py:999
 #, python-format
 msgid "The move failed because %s."
-msgstr ""
+msgstr "%s에 의해 이동에 실패했습니다."
 
 #: lib/pychess/Savers/pgn.py:1009
 #, python-format
 msgid "Error parsing move %(moveno)s %(mstr)s"
-msgstr ""
+msgstr "이동 %(moveno)s%(mstr)s를 파싱하는 중 오류 발생"
 
 #: lib/pychess/Savers/png.py:10
 msgid "Png image"
-msgstr ""
+msgstr "png이미지"
 
 #: lib/pychess/Savers/remotegame.py:32
 msgid "Download link"
-msgstr ""
+msgstr "다운로드 링크"
 
 #: lib/pychess/Savers/remotegame.py:33
 msgid "HTML parsing"
-msgstr ""
+msgstr "HTML파싱"
 
 #: lib/pychess/Savers/remotegame.py:34
 msgid "Application programming interface"
-msgstr ""
+msgstr "응용프로그램 프로그래밍 인터페이스"
 
 #: lib/pychess/Savers/remotegame.py:35
 msgid "Various techniques"
-msgstr ""
+msgstr "다양한 기술"
 
 #: lib/pychess/Savers/remotegame.py:36
 msgid "Websockets"
-msgstr ""
+msgstr "웹 소켓"
 
 #: lib/pychess/Savers/remotegame.py:1516
 msgid "The first move is not provided"
-msgstr ""
+msgstr "아무것도 움직이지 않았습니다"
 
 #: lib/pychess/Savers/remotegame.py:1679
 msgid "Puzzle"
-msgstr ""
+msgstr "퍼즐"
 
 #: lib/pychess/Savers/remotegame.py:1682
 #, python-format
 msgid "Puzzle %s"
-msgstr ""
+msgstr "퍼즐 %s"
 
 #: lib/pychess/Savers/remotegame.py:2079
 #, python-format
 msgid "%d moves to find"
-msgstr ""
+msgstr "찾으시려면 %d번 움직이세요"
 
 #: lib/pychess/Savers/txt.py:6
 msgid "Text Diagram"
-msgstr ""
+msgstr "텍스트 다이어그램"
 
 #: lib/pychess/System/ping.py:35
 msgid "Destination Host Unreachable"
-msgstr ""
+msgstr "호스트에게 연결할 수 없습니다"
 
 #: lib/pychess/System/ping.py:77
 msgid "Died"
-msgstr ""
+msgstr "죽음"
 
 #: lib/pychess/Utils/GameModel.py:150
 msgid "Local Event"
-msgstr ""
+msgstr "로컬 이벤트"
 
 #: lib/pychess/Utils/GameModel.py:151
 msgid "Local Site"
-msgstr ""
+msgstr "로컬 사이트"
 
 #: lib/pychess/Utils/TimeModel.py:251
 #: lib/pychess/perspectives/games/annotationPanel.py:1074
 msgid "min"
-msgstr ""
+msgstr "분"
 
 #: lib/pychess/Utils/TimeModel.py:253
 #: lib/pychess/perspectives/games/annotationPanel.py:1078
 #: lib/pychess/perspectives/games/annotationPanel.py:1085
 msgid "sec"
-msgstr ""
+msgstr "초"
 
 #: lib/pychess/Utils/__init__.py:32
 msgid "Illegal"
-msgstr ""
+msgstr "불법"
 
 #: lib/pychess/Utils/__init__.py:56 lib/pychess/Utils/__init__.py:57
 msgid "Mate"
-msgstr ""
+msgstr "짝"
 
 #: lib/pychess/Utils/checkversion.py:34
 #, python-format
 msgid "<b>New version %s is available!</b>"
-msgstr ""
+msgstr "<b>새로운 %s버전이 사용가능합니다!</b>"
 
 #: lib/pychess/Utils/isoCountries.py:11
 msgid "Andorra"
@@ -2682,439 +2683,439 @@ msgstr "몬테네그로"
 
 #: lib/pychess/Utils/isoCountries.py:152
 msgid "Saint Martin (French part)"
-msgstr ""
+msgstr "세인트 마틴 (프랑스 령)"
 
 #: lib/pychess/Utils/isoCountries.py:153
 msgid "Madagascar"
-msgstr ""
+msgstr "마다가스카르"
 
 #: lib/pychess/Utils/isoCountries.py:154
 msgid "Marshall Islands"
-msgstr ""
+msgstr "마셜 제도"
 
 #: lib/pychess/Utils/isoCountries.py:155
 msgid "Macedonia (the former Yugoslav Republic of)"
-msgstr ""
+msgstr "마케도니아"
 
 #: lib/pychess/Utils/isoCountries.py:156
 msgid "Mali"
-msgstr ""
+msgstr "말리"
 
 #: lib/pychess/Utils/isoCountries.py:157
 msgid "Myanmar"
-msgstr ""
+msgstr "미얀마"
 
 #: lib/pychess/Utils/isoCountries.py:158
 msgid "Mongolia"
-msgstr ""
+msgstr "몽골"
 
 #: lib/pychess/Utils/isoCountries.py:159
 msgid "Macao"
-msgstr ""
+msgstr "마카오"
 
 #: lib/pychess/Utils/isoCountries.py:160
 msgid "Northern Mariana Islands"
-msgstr ""
+msgstr "북마리아나 제도"
 
 #: lib/pychess/Utils/isoCountries.py:161
 msgid "Martinique"
-msgstr ""
+msgstr "마르티니크"
 
 #: lib/pychess/Utils/isoCountries.py:162
 msgid "Mauritania"
-msgstr ""
+msgstr "모리타니"
 
 #: lib/pychess/Utils/isoCountries.py:163
 msgid "Montserrat"
-msgstr ""
+msgstr "몬트세렛"
 
 #: lib/pychess/Utils/isoCountries.py:164
 msgid "Malta"
-msgstr ""
+msgstr "몰타"
 
 #: lib/pychess/Utils/isoCountries.py:165
 msgid "Mauritius"
-msgstr ""
+msgstr "모리셔스"
 
 #: lib/pychess/Utils/isoCountries.py:166
 msgid "Maldives"
-msgstr ""
+msgstr "몰디브"
 
 #: lib/pychess/Utils/isoCountries.py:167
 msgid "Malawi"
-msgstr ""
+msgstr "말라위"
 
 #: lib/pychess/Utils/isoCountries.py:168
 msgid "Mexico"
-msgstr ""
+msgstr "멕시코"
 
 #: lib/pychess/Utils/isoCountries.py:169
 msgid "Malaysia"
-msgstr ""
+msgstr "말레이시아"
 
 #: lib/pychess/Utils/isoCountries.py:170
 msgid "Mozambique"
-msgstr ""
+msgstr "모잠비크"
 
 #: lib/pychess/Utils/isoCountries.py:171
 msgid "Namibia"
-msgstr ""
+msgstr "나미비아"
 
 #: lib/pychess/Utils/isoCountries.py:172
 msgid "New Caledonia"
-msgstr ""
+msgstr "뉴칼레도니아"
 
 #: lib/pychess/Utils/isoCountries.py:173
 msgid "Niger"
-msgstr ""
+msgstr "니제르"
 
 #: lib/pychess/Utils/isoCountries.py:174
 msgid "Norfolk Island"
-msgstr ""
+msgstr "노퍽섬"
 
 #: lib/pychess/Utils/isoCountries.py:175
 msgid "Nigeria"
-msgstr ""
+msgstr "나이지리아"
 
 #: lib/pychess/Utils/isoCountries.py:176
 msgid "Nicaragua"
-msgstr ""
+msgstr "니카라과"
 
 #: lib/pychess/Utils/isoCountries.py:177
 msgid "Netherlands"
-msgstr ""
+msgstr "네덜란드"
 
 #: lib/pychess/Utils/isoCountries.py:178
 msgid "Norway"
-msgstr ""
+msgstr "노르웨이"
 
 #: lib/pychess/Utils/isoCountries.py:179
 msgid "Nepal"
-msgstr ""
+msgstr "네팔"
 
 #: lib/pychess/Utils/isoCountries.py:180
 msgid "Nauru"
-msgstr ""
+msgstr "나우루"
 
 #: lib/pychess/Utils/isoCountries.py:181
 msgid "Niue"
-msgstr ""
+msgstr "니우에"
 
 #: lib/pychess/Utils/isoCountries.py:182
 msgid "New Zealand"
-msgstr ""
+msgstr "뉴질랜드"
 
 #: lib/pychess/Utils/isoCountries.py:183
 msgid "Oman"
-msgstr ""
+msgstr "오만"
 
 #: lib/pychess/Utils/isoCountries.py:184
 msgid "Panama"
-msgstr ""
+msgstr "파나마"
 
 #: lib/pychess/Utils/isoCountries.py:185
 msgid "Peru"
-msgstr ""
+msgstr "페루"
 
 #: lib/pychess/Utils/isoCountries.py:186
 msgid "French Polynesia"
-msgstr ""
+msgstr "프랑스령 폴리네시아"
 
 #: lib/pychess/Utils/isoCountries.py:187
 msgid "Papua New Guinea"
-msgstr ""
+msgstr "파푸아뉴기니"
 
 #: lib/pychess/Utils/isoCountries.py:188
 msgid "Philippines"
-msgstr ""
+msgstr "필리핀"
 
 #: lib/pychess/Utils/isoCountries.py:189
 msgid "Pakistan"
-msgstr ""
+msgstr "파키스탄"
 
 #: lib/pychess/Utils/isoCountries.py:190
 msgid "Poland"
-msgstr ""
+msgstr "폴란드"
 
 #: lib/pychess/Utils/isoCountries.py:191
 msgid "Saint Pierre and Miquelon"
-msgstr ""
+msgstr "생피에르 미클롱"
 
 #: lib/pychess/Utils/isoCountries.py:192
 msgid "Pitcairn"
-msgstr ""
+msgstr "핏케언 제도"
 
 #: lib/pychess/Utils/isoCountries.py:193
 msgid "Puerto Rico"
-msgstr ""
+msgstr "푸에르토리코"
 
 #: lib/pychess/Utils/isoCountries.py:194
 msgid "Palestine, State of"
-msgstr ""
+msgstr "팔레스타인"
 
 #: lib/pychess/Utils/isoCountries.py:195
 msgid "Portugal"
-msgstr ""
+msgstr "포르투갈"
 
 #: lib/pychess/Utils/isoCountries.py:196
 msgid "Palau"
-msgstr ""
+msgstr "팔라우"
 
 #: lib/pychess/Utils/isoCountries.py:197
 msgid "Paraguay"
-msgstr ""
+msgstr "파라과이"
 
 #: lib/pychess/Utils/isoCountries.py:198
 msgid "Qatar"
-msgstr ""
+msgstr "카타르"
 
 #: lib/pychess/Utils/isoCountries.py:199
 msgid "Réunion"
-msgstr ""
+msgstr "레위니옹"
 
 #: lib/pychess/Utils/isoCountries.py:200
 msgid "Romania"
-msgstr ""
+msgstr "루마니아"
 
 #: lib/pychess/Utils/isoCountries.py:201
 msgid "Serbia"
-msgstr ""
+msgstr "세르비아"
 
 #: lib/pychess/Utils/isoCountries.py:202
 msgid "Russian Federation"
-msgstr ""
+msgstr "러시아"
 
 #: lib/pychess/Utils/isoCountries.py:203
 msgid "Rwanda"
-msgstr ""
+msgstr "르완다"
 
 #: lib/pychess/Utils/isoCountries.py:204
 msgid "Saudi Arabia"
-msgstr ""
+msgstr "사우디아라비아"
 
 #: lib/pychess/Utils/isoCountries.py:205
 msgid "Solomon Islands"
-msgstr ""
+msgstr "솔로몬 섬"
 
 #: lib/pychess/Utils/isoCountries.py:206
 msgid "Seychelles"
-msgstr ""
+msgstr "세이셸"
 
 #: lib/pychess/Utils/isoCountries.py:207
 msgid "Sudan"
-msgstr ""
+msgstr "수단"
 
 #: lib/pychess/Utils/isoCountries.py:208
 msgid "Sweden"
-msgstr ""
+msgstr "스웨덴"
 
 #: lib/pychess/Utils/isoCountries.py:209
 msgid "Singapore"
-msgstr ""
+msgstr "싱가포르"
 
 #: lib/pychess/Utils/isoCountries.py:210
 msgid "Saint Helena, Ascension and Tristan da Cunha"
-msgstr ""
+msgstr "세인트헬레나 어센션 트리스탄 다쿠냐"
 
 #: lib/pychess/Utils/isoCountries.py:211
 msgid "Slovenia"
-msgstr ""
+msgstr "슬로베니아"
 
 #: lib/pychess/Utils/isoCountries.py:212
 msgid "Svalbard and Jan Mayen"
-msgstr ""
+msgstr "스발바르 얀마옌 제도"
 
 #: lib/pychess/Utils/isoCountries.py:213
 msgid "Slovakia"
-msgstr ""
+msgstr "슬로바키아"
 
 #: lib/pychess/Utils/isoCountries.py:214
 msgid "Sierra Leone"
-msgstr ""
+msgstr "시에라리온"
 
 #: lib/pychess/Utils/isoCountries.py:215
 msgid "San Marino"
-msgstr ""
+msgstr "산마리노"
 
 #: lib/pychess/Utils/isoCountries.py:216
 msgid "Senegal"
-msgstr ""
+msgstr "세네갈"
 
 #: lib/pychess/Utils/isoCountries.py:217
 msgid "Somalia"
-msgstr ""
+msgstr "소말리아"
 
 #: lib/pychess/Utils/isoCountries.py:218
 msgid "Suriname"
-msgstr ""
+msgstr "수리남"
 
 #: lib/pychess/Utils/isoCountries.py:219
 msgid "South Sudan"
-msgstr ""
+msgstr "남수단"
 
 #: lib/pychess/Utils/isoCountries.py:220
 msgid "Sao Tome and Principe"
-msgstr ""
+msgstr "상투메 프린시페"
 
 #: lib/pychess/Utils/isoCountries.py:221
 msgid "El Salvador"
-msgstr ""
+msgstr "엘살바도르"
 
 #: lib/pychess/Utils/isoCountries.py:222
 msgid "Sint Maarten (Dutch part)"
-msgstr ""
+msgstr "신트마르턴(네덜란드 구성국)"
 
 #: lib/pychess/Utils/isoCountries.py:223
 msgid "Syrian Arab Republic"
-msgstr ""
+msgstr "시리아"
 
 #: lib/pychess/Utils/isoCountries.py:224
 msgid "Eswatini"
-msgstr ""
+msgstr "에스와티니"
 
 #: lib/pychess/Utils/isoCountries.py:225
 msgid "Turks and Caicos Islands"
-msgstr ""
+msgstr "터크스 케이커스 제도"
 
 #: lib/pychess/Utils/isoCountries.py:226
 msgid "Chad"
-msgstr ""
+msgstr "차드"
 
 #: lib/pychess/Utils/isoCountries.py:227
 msgid "French Southern Territories"
-msgstr ""
+msgstr "프랑스령 남방"
 
 #: lib/pychess/Utils/isoCountries.py:228
 msgid "Togo"
-msgstr ""
+msgstr "토고"
 
 #: lib/pychess/Utils/isoCountries.py:229
 msgid "Thailand"
-msgstr ""
+msgstr "태국"
 
 #: lib/pychess/Utils/isoCountries.py:230
 msgid "Tajikistan"
-msgstr ""
+msgstr "타지키스탄"
 
 #: lib/pychess/Utils/isoCountries.py:231
 msgid "Tokelau"
-msgstr ""
+msgstr "토켈라우"
 
 #: lib/pychess/Utils/isoCountries.py:232
 msgid "Timor-Leste"
-msgstr ""
+msgstr "동티모르"
 
 #: lib/pychess/Utils/isoCountries.py:233
 msgid "Turkmenistan"
-msgstr ""
+msgstr "투르크메니스탄"
 
 #: lib/pychess/Utils/isoCountries.py:234
 msgid "Tunisia"
-msgstr ""
+msgstr "튀니지"
 
 #: lib/pychess/Utils/isoCountries.py:235
 msgid "Tonga"
-msgstr ""
+msgstr "통가"
 
 #: lib/pychess/Utils/isoCountries.py:237
 msgid "Turkey"
-msgstr ""
+msgstr "터키"
 
 #: lib/pychess/Utils/isoCountries.py:238
 msgid "Trinidad and Tobago"
-msgstr ""
+msgstr "트리니다드 토바고"
 
 #: lib/pychess/Utils/isoCountries.py:239
 msgid "Tuvalu"
-msgstr ""
+msgstr "투발루"
 
 #: lib/pychess/Utils/isoCountries.py:240
 msgid "Taiwan (Province of China)"
-msgstr ""
+msgstr "대만"
 
 #: lib/pychess/Utils/isoCountries.py:241
 msgid "Tanzania, United Republic of"
-msgstr ""
+msgstr "탄자니아 연합공화국"
 
 #: lib/pychess/Utils/isoCountries.py:242
 msgid "Ukraine"
-msgstr ""
+msgstr "우크라이나"
 
 #: lib/pychess/Utils/isoCountries.py:243
 msgid "Uganda"
-msgstr ""
+msgstr "우간다"
 
 #: lib/pychess/Utils/isoCountries.py:244
 msgid "United States Minor Outlying Islands"
-msgstr ""
+msgstr "미국령 군소 제도"
 
 #: lib/pychess/Utils/isoCountries.py:245
 msgid "United States of America"
-msgstr ""
+msgstr "미국"
 
 #: lib/pychess/Utils/isoCountries.py:246
 msgid "Uruguay"
-msgstr ""
+msgstr "우루과이"
 
 #: lib/pychess/Utils/isoCountries.py:247
 msgid "Uzbekistan"
-msgstr ""
+msgstr "우즈베키스탄"
 
 #: lib/pychess/Utils/isoCountries.py:248
 msgid "Holy See"
-msgstr ""
+msgstr "바티칸 시국"
 
 #: lib/pychess/Utils/isoCountries.py:249
 msgid "Saint Vincent and the Grenadines"
-msgstr ""
+msgstr "세인트 빈센트 그레나딘"
 
 #: lib/pychess/Utils/isoCountries.py:250
 msgid "Venezuela (Bolivarian Republic of)"
-msgstr ""
+msgstr "베네수엘라(볼리바르 공화국)"
 
 #: lib/pychess/Utils/isoCountries.py:251
 msgid "Virgin Islands (British)"
-msgstr ""
+msgstr "버진아일랜드(영국령)"
 
 #: lib/pychess/Utils/isoCountries.py:252
 msgid "Virgin Islands (U.S.)"
-msgstr ""
+msgstr "버진아일랜드(미국령)"
 
 #: lib/pychess/Utils/isoCountries.py:253
 msgid "Viet Nam"
-msgstr ""
+msgstr "베트남"
 
 #: lib/pychess/Utils/isoCountries.py:254
 msgid "Vanuatu"
-msgstr ""
+msgstr "바누아투"
 
 #: lib/pychess/Utils/isoCountries.py:255
 msgid "Wallis and Futuna"
-msgstr ""
+msgstr "왈리스 푸투나"
 
 #: lib/pychess/Utils/isoCountries.py:256
 msgid "Samoa"
-msgstr ""
+msgstr "사모아"
 
 #: lib/pychess/Utils/isoCountries.py:257
 msgid "Yemen"
-msgstr ""
+msgstr "예멘"
 
 #: lib/pychess/Utils/isoCountries.py:258
 msgid "Mayotte"
-msgstr ""
+msgstr "마요트"
 
 #: lib/pychess/Utils/isoCountries.py:260
 msgid "South Africa"
-msgstr ""
+msgstr "남아프리카"
 
 #: lib/pychess/Utils/isoCountries.py:261
 msgid "Zambia"
-msgstr ""
+msgstr "잠비아"
 
 #: lib/pychess/Utils/isoCountries.py:262
 msgid "Zimbabwe"
-msgstr ""
+msgstr "짐바브웨"
 
 #: lib/pychess/Utils/repr.py:24
 msgid "Pawn"
@@ -3122,39 +3123,39 @@ msgstr "폰"
 
 #: lib/pychess/Utils/repr.py:27
 msgid "P"
-msgstr ""
+msgstr "폰"
 
 #: lib/pychess/Utils/repr.py:27
 msgid "N"
-msgstr ""
+msgstr "나이트"
 
 #: lib/pychess/Utils/repr.py:27 lib/pychess/ic/__init__.py:296
 msgid "B"
-msgstr ""
+msgstr "비숍"
 
 #: lib/pychess/Utils/repr.py:27
 msgid "R"
-msgstr ""
+msgstr "룩"
 
 #: lib/pychess/Utils/repr.py:27
 msgid "Q"
-msgstr ""
+msgstr "퀸"
 
 #: lib/pychess/Utils/repr.py:27
 msgid "K"
-msgstr ""
+msgstr "킹"
 
 #: lib/pychess/Utils/repr.py:27 lib/pychess/ic/__init__.py:297
 msgid "H"
-msgstr ""
+msgstr "h"
 
 #: lib/pychess/Utils/repr.py:27
 msgid "E"
-msgstr ""
+msgstr "e"
 
 #: lib/pychess/Utils/repr.py:30
 msgid "The game ended in a draw"
-msgstr ""
+msgstr "게임은 무승부로 끝났습니다"
 
 #: lib/pychess/Utils/repr.py:31
 #, python-format
@@ -3168,78 +3169,78 @@ msgstr "%(black)s이(가) 게임을 이겼습니다."
 
 #: lib/pychess/Utils/repr.py:33
 msgid "The game has been killed"
-msgstr ""
+msgstr "게임이 종료되었습니다"
 
 #: lib/pychess/Utils/repr.py:34
 msgid "The game has been adjourned"
-msgstr ""
+msgstr "게임이 연기되었습니다"
 
 #: lib/pychess/Utils/repr.py:35
 msgid "The game has been aborted"
-msgstr ""
+msgstr "게임이 중단 되었습니다"
 
 #: lib/pychess/Utils/repr.py:36
 msgid "Unknown game state"
-msgstr ""
+msgstr "알 수 없는 게임 상태"
 
 #: lib/pychess/Utils/repr.py:37
 msgid "Game cancelled"
-msgstr ""
+msgstr "게임 취소 됨"
 
 #: lib/pychess/Utils/repr.py:42
 msgid "Because neither player has sufficient material to mate"
-msgstr ""
+msgstr "양 플레이어는 충분한 양의 기물이 없기 때문에"
 
 #: lib/pychess/Utils/repr.py:44
 msgid "Because the same position was repeated three times in a row"
-msgstr ""
+msgstr "같은 위치가 3 번 연속 반복 되었기 때문에"
 
 #: lib/pychess/Utils/repr.py:45
 msgid "Because the last 50 moves brought nothing new"
-msgstr ""
+msgstr "최근 50번의 이동이 아무런 영향이 없었기 때문에"
 
 #: lib/pychess/Utils/repr.py:46
 msgid "Because both players ran out of time"
-msgstr ""
+msgstr "양 플레이어가 시간이 없기 때문에"
 
 #: lib/pychess/Utils/repr.py:47
 #, python-format
 msgid "Because %(mover)s stalemated"
-msgstr ""
+msgstr "%(mover)s는 스테일메이트 입니다"
 
 #: lib/pychess/Utils/repr.py:48
 msgid "Because both players agreed to a draw"
-msgstr ""
+msgstr "서로가 무승부에 동의했기 때문에"
 
 #: lib/pychess/Utils/repr.py:49 lib/pychess/Utils/repr.py:62
 msgid "Because of adjudication by an admin"
-msgstr ""
+msgstr "관리자의 결정으로 인해"
 
 #: lib/pychess/Utils/repr.py:50
 msgid "Because the game exceed the max length"
-msgstr ""
+msgstr "게임이 최대 시간을 초과했기 때문에"
 
 #: lib/pychess/Utils/repr.py:52
 #, python-format
 msgid ""
 "Because %(white)s ran out of time and %(black)s has insufficient material to"
 " mate"
-msgstr ""
+msgstr "%(white)s은 시간이 부족하고 %(black)s는 충분한 양의 기물이 없기 때문에"
 
 #: lib/pychess/Utils/repr.py:54
 #, python-format
 msgid ""
 "Because %(black)s ran out of time and %(white)s has insufficient material to"
 " mate"
-msgstr ""
+msgstr "%(black)s은 시간이 부족하고 %(white)s는 충분한 양의 기물이 없기 때문에"
 
 #: lib/pychess/Utils/repr.py:56
 msgid "Because both players have the same amount of pieces"
-msgstr ""
+msgstr "서로가 같은 양의 기물을 가지고 있기 때문에"
 
 #: lib/pychess/Utils/repr.py:57
 msgid "Because both king reached the eight row"
-msgstr ""
+msgstr "서로의 킹이 8번째 열에 도달했기 때문에"
 
 #: lib/pychess/Utils/repr.py:58
 #, python-format
@@ -3249,7 +3250,7 @@ msgstr "%(loser)s이(가) 항복했습니다."
 #: lib/pychess/Utils/repr.py:59
 #, python-format
 msgid "Because %(loser)s ran out of time"
-msgstr ""
+msgstr "%(loser)s의 시간이 다 되었기 때문에"
 
 #: lib/pychess/Utils/repr.py:60
 #, python-format
@@ -3259,180 +3260,180 @@ msgstr "%(loser)s이(가) 체크메이트가 되었습니다."
 #: lib/pychess/Utils/repr.py:61
 #, python-format
 msgid "Because %(loser)s disconnected"
-msgstr ""
+msgstr "%(loser)s의 연결이 끊어졌기 때문에"
 
 #: lib/pychess/Utils/repr.py:63
 #, python-format
 msgid "Because %(winner)s has fewer pieces"
-msgstr ""
+msgstr "%(winner)s의 기물이 더 적기 때문에"
 
 #: lib/pychess/Utils/repr.py:64
 #, python-format
 msgid "Because %(winner)s lost all pieces"
-msgstr ""
+msgstr "%(winner)s의 기물이 하나도 없기 때문에"
 
 #: lib/pychess/Utils/repr.py:65
 #, python-format
 msgid "Because %(loser)s king exploded"
-msgstr ""
+msgstr "%(loser)s의 킹이 죽었기 때문에"
 
 #: lib/pychess/Utils/repr.py:66
 #, python-format
 msgid "Because %(winner)s king reached the center"
-msgstr ""
+msgstr "%(winner)s의 킹이 중심부에 도달했기 때문에"
 
 #: lib/pychess/Utils/repr.py:67
 #, python-format
 msgid "Because %(winner)s was giving check 3 times"
-msgstr ""
+msgstr "%(winner)s가 체크를 세번 했기 때문에"
 
 #: lib/pychess/Utils/repr.py:68
 #, python-format
 msgid "Because %(winner)s king reached the eight row"
-msgstr ""
+msgstr "%(winner)s의 킹이 여덟번째 열에 도달했기 때문에"
 
 #: lib/pychess/Utils/repr.py:69
 #, python-format
 msgid "Because %(winner)s wiped out white horde"
-msgstr ""
+msgstr "%(winner)s가 모든 폰을 잡았기 때문에"
 
 #: lib/pychess/Utils/repr.py:70
 msgid "Because a player lost connection"
-msgstr ""
+msgstr "플레이어가 접속이 끊겼기 때문에"
 
 #: lib/pychess/Utils/repr.py:71
 msgid "Because both players agreed to an adjournment"
-msgstr ""
+msgstr "서로가 연기하는 것에 동의했기 때문에"
 
 #: lib/pychess/Utils/repr.py:72
 msgid "Because the server was shut down"
-msgstr ""
+msgstr "서버가 멈췄기 때문에"
 
 #: lib/pychess/Utils/repr.py:74
 msgid ""
 "Because a player lost connection and the other player requested adjournment"
-msgstr ""
+msgstr "플레이어가 연결이 끊겼고 다른 플레이어가 연기를 요청했기 때문에"
 
 #: lib/pychess/Utils/repr.py:76
 #, python-format
 msgid ""
 "Because %(black)s lost connection to the server and %(white)s requested "
 "adjournment"
-msgstr ""
+msgstr "%(black)s의 연결이 끊어졌고 %(white)s가 연기를 요청했기 때문에"
 
 #: lib/pychess/Utils/repr.py:78
 #, python-format
 msgid ""
 "Because %(white)s lost connection to the server and %(black)s requested "
 "adjournment"
-msgstr ""
+msgstr "%(white)s는 서버와의 연결이 끊어졌고 %(black)s가 연기를 요청했습니다"
 
 #: lib/pychess/Utils/repr.py:80
 #, python-format
 msgid "Because %(white)s lost connection to the server"
-msgstr ""
+msgstr "%(white)s은 서버와의 연결이 끊어졌기 때문에"
 
 #: lib/pychess/Utils/repr.py:82
 #, python-format
 msgid "Because %(black)s lost connection to the server"
-msgstr ""
+msgstr "%(black)s은 서버와의 연결이 끊어졌기 때문에"
 
 #: lib/pychess/Utils/repr.py:84
 msgid "Because of adjudication by an admin. No rating changes have occurred."
-msgstr ""
+msgstr "관리자의 결정 때문입니다. 등급의 변동이 없습니다."
 
 #: lib/pychess/Utils/repr.py:86
 msgid ""
 "Because both players agreed to abort the game. No rating changes have "
 "occurred."
-msgstr ""
+msgstr "서로가 게임을 중단하기로 결정했기 때문입니다. 등급에는 변화는 없습니다."
 
 #: lib/pychess/Utils/repr.py:88
 msgid "Because of courtesy by a player. No rating changes have occurred."
-msgstr ""
+msgstr "플레이어의 배려 덕분입니다. 등급의 변동이 없습니다."
 
 #: lib/pychess/Utils/repr.py:90
 msgid ""
 "Because a player aborted the game. Either player can abort the game without"
 "       the other's consent before the second move. No rating changes have "
 "occurred."
-msgstr ""
+msgstr "플레이어가 게임을 중단했기 때문입니다. 두 플레이어는 두번째 이동전에 상대방의 동의없이 게임을 중단할 수 있습니다. 등급에는 변화가 없습니다."
 
 #: lib/pychess/Utils/repr.py:93
 msgid ""
 "Because a player disconnected and there are too few moves to warrant "
 "adjournment. No rating changes have occurred."
-msgstr ""
+msgstr "플레이어의 연결이 끊어졌고 연기하기에는 이동이 너무 적습니다. 등급의 변동이 없습니다."
 
 #: lib/pychess/Utils/repr.py:95
 msgid "Because the server was shut down. No rating changes have occurred."
-msgstr ""
+msgstr "서버가 꺼졌습니다. 등급의 변동이 없습니다."
 
 #: lib/pychess/Utils/repr.py:96
 #, python-format
 msgid "Because the %(white)s engine died"
-msgstr ""
+msgstr "%(white)s의 엔진이 멈췄기 때문에"
 
 #: lib/pychess/Utils/repr.py:97
 #, python-format
 msgid "Because the %(black)s engine died"
-msgstr ""
+msgstr "%(black)s의 엔진이 멈췄기 때문에"
 
 #: lib/pychess/Utils/repr.py:98
 msgid "Because the connection to the server was lost"
-msgstr ""
+msgstr "서버와의 연결이 끊어졌기 때문에"
 
 #: lib/pychess/Utils/repr.py:99
 msgid "The reason is unknown"
-msgstr ""
+msgstr "이유는 모르겠습니다"
 
 #: lib/pychess/Utils/repr.py:100
 msgid "Because practice goal reached"
-msgstr ""
+msgstr "학습 목표에 도달했기 때문에"
 
 #: lib/pychess/Variants/asean.py:20
 msgid ""
 "ASEAN: http://www.ncf-"
 "phil.org/downloadables/2014/May/Asean_chess/Laws_of_ASEAN_Chess_2011_Nov_26.doc"
-msgstr ""
+msgstr "동남아시아 국가 연합 체스: http://www.ncf-phil.org/downloadables/2014/May/Asean_chess/Laws_of_ASEAN_Chess_2011_Nov_26.doc"
 
 #: lib/pychess/Variants/asean.py:21
 msgid "ASEAN"
-msgstr ""
+msgstr "동남아시아 국가 연합 체스"
 
 #: lib/pychess/Variants/asean.py:42
 msgid "Makruk: http://en.wikipedia.org/wiki/Makruk"
-msgstr ""
+msgstr "막룩: http://en.wikipedia.org/wiki/Makruk"
 
 #: lib/pychess/Variants/asean.py:43
 msgid "Makruk"
-msgstr ""
+msgstr "막룩"
 
 #: lib/pychess/Variants/asean.py:70
 msgid "Cambodian: http://www.khmerinstitute.org/culture/ok.html"
-msgstr ""
+msgstr "캄보디아 체스: http://www.khmerinstitute.org/culture/ok.html"
 
 #: lib/pychess/Variants/asean.py:71
 msgid "Cambodian"
-msgstr ""
+msgstr "캄보디아"
 
 #: lib/pychess/Variants/asean.py:98
 msgid ""
 "Ai-Wok: http://www.open-"
 "aurec.com/wbforum/viewtopic.php?p=199364&sid=20963a1de2c164050de019e5ed6bf7c4#p199364"
-msgstr ""
+msgstr "Ai-Wok: http://www.open-aurec.com/wbforum/viewtopic.php?p=199364&sid=20963a1de2c164050de019e5ed6bf7c4#p199364"
 
 #: lib/pychess/Variants/asean.py:99
 msgid "Ai-Wok"
-msgstr ""
+msgstr "Ai-Wok"
 
 #: lib/pychess/Variants/asean.py:127
 msgid "Sittuyin: http://en.wikipedia.org/wiki/Sittuyin"
-msgstr ""
+msgstr "시투인 체스: http://en.wikipedia.org/wiki/Sittuyin"
 
 #: lib/pychess/Variants/asean.py:128
 msgid "Sittuyin"
-msgstr ""
+msgstr "시투인 체스"
 
 #: lib/pychess/Variants/asymmetricrandom.py:12
 msgid ""
@@ -3442,68 +3443,68 @@ msgid ""
 "* Pieces placed randomly behind the pawns, SUBJECT TO THE CONSTRAINT THAT THE BISHOPS ARE BALANCED\n"
 "* No castling\n"
 "* Black's arrangement DOES NOT mirrors white's"
-msgstr ""
+msgstr "FICS 와일드/4: http://www.freechess.org/Help/HelpFiles/wild.html\n*무작위로 선택된 기물들(2개의 퀸 또는 3개의 룩 가능)\n*각 색깔에는 하나의 킹만\n*비숍의 균형을 생각하면서 폰 뒤의 기물은 무작위로 놓는다\n*캐슬링 없음\n*흑은 백과 같은 배치를 가지면 안됨"
 
 #: lib/pychess/Variants/asymmetricrandom.py:18
 msgid "Asymmetric Random"
-msgstr ""
+msgstr "비대칭 랜덤"
 
 #: lib/pychess/Variants/atomic.py:15
 msgid "FICS atomic: http://www.freechess.org/Help/HelpFiles/atomic.html"
-msgstr ""
+msgstr "FICS 아토믹 체스: http://www.freechess.org/Help/HelpFiles/atomic.html"
 
 #: lib/pychess/Variants/atomic.py:16 lib/pychess/ic/FICSObjects.py:58
 msgid "Atomic"
-msgstr ""
+msgstr "아토믹 체스"
 
 #: lib/pychess/Variants/blindfold.py:8
 msgid ""
 "Classic chess rules with hidden figurines\n"
 "http://en.wikipedia.org/wiki/Blindfold_chess"
-msgstr ""
+msgstr "일반 눈가림 체스\nhttp://en.wikipedia.org/wiki/Blindfold_chess"
 
 #: lib/pychess/Variants/blindfold.py:10
 #: lib/pychess/widgets/newGameDialog.py:343
 msgid "Blindfold"
-msgstr ""
+msgstr "눈 가리기"
 
 #: lib/pychess/Variants/blindfold.py:19
 msgid ""
 "Classic chess rules with hidden pawns\n"
 "http://en.wikipedia.org/wiki/Blindfold_chess"
-msgstr ""
+msgstr "폰이 가려진 일반 체스\nhttp://en.wikipedia.org/wiki/Blindfold_chess"
 
 #: lib/pychess/Variants/blindfold.py:21
 msgid "Hidden pawns"
-msgstr ""
+msgstr "숨겨진 폰"
 
 #: lib/pychess/Variants/blindfold.py:30
 msgid ""
 "Classic chess rules with hidden pieces\n"
 "http://en.wikipedia.org/wiki/Blindfold_chess"
-msgstr ""
+msgstr "기물이 가려진 일반 체스\nhttp://en.wikipedia.org/wiki/Blindfold_chess"
 
 #: lib/pychess/Variants/blindfold.py:32
 msgid "Hidden pieces"
-msgstr ""
+msgstr "숨겨진 기물"
 
 #: lib/pychess/Variants/blindfold.py:41
 msgid ""
 "Classic chess rules with all pieces white\n"
 "http://en.wikipedia.org/wiki/Blindfold_chess"
-msgstr ""
+msgstr "모든 기물이 흰색인 일반 체스\nhttp://en.wikipedia.org/wiki/Blindfold_chess"
 
 #: lib/pychess/Variants/blindfold.py:43
 msgid "All white"
-msgstr ""
+msgstr "전부 흰색"
 
 #: lib/pychess/Variants/bughouse.py:10
 msgid "FICS bughouse: http://www.freechess.org/Help/HelpFiles/bughouse.html"
-msgstr ""
+msgstr "FICS 버그하우스 체스: http://www.freechess.org/Help/HelpFiles/bughouse.html"
 
 #: lib/pychess/Variants/bughouse.py:11 lib/pychess/ic/FICSObjects.py:60
 msgid "Bughouse"
-msgstr ""
+msgstr "버그하우스 체스"
 
 #: lib/pychess/Variants/corner.py:12
 msgid ""
@@ -3513,46 +3514,46 @@ msgid ""
 "* Bishops must start on opposite color squares\n"
 "* Black's starting position is obtained by rotating white's position 180 degrees around the board's center\n"
 "* No castling"
-msgstr ""
+msgstr "http://brainking.com/en/GameRules?tp=2\n1열과 8열의 기물위치는 무작위로 지정됩니다\n왕은 오른쪽 모서리에 있습니다\n비숍은 반대 색상 칸에서 시작해야 합니다\n흑의 시작 위치는 보드 중앙을 기준으로 백의 위치를 ​​180도 돌려서 얻습니다 \n캐슬링 없음"
 
 #: lib/pychess/Variants/corner.py:18
 msgid "Corner"
-msgstr ""
+msgstr "모서리"
 
 #: lib/pychess/Variants/crazyhouse.py:10
 msgid ""
 "FICS crazyhouse: http://www.freechess.org/Help/HelpFiles/crazyhouse.html"
-msgstr ""
+msgstr "FICS 크레이지하우스 체스: http://www.freechess.org/Help/HelpFiles/crazyhouse.html"
 
 #: lib/pychess/Variants/crazyhouse.py:11 lib/pychess/ic/FICSObjects.py:62
 msgid "Crazyhouse"
-msgstr ""
+msgstr "크레이지 하우스"
 
 #: lib/pychess/Variants/euroshogi.py:17
 msgid "EuroShogi: http://en.wikipedia.org/wiki/EuroShogi"
-msgstr ""
+msgstr "유로쇼기: http://en.wikipedia.org/wiki/EuroShogi"
 
 #: lib/pychess/Variants/euroshogi.py:18
 msgid "EuroShogi"
-msgstr ""
+msgstr "유로쇼기"
 
 #: lib/pychess/Variants/fischerandom.py:14
 msgid ""
 "http://en.wikipedia.org/wiki/Chess960\n"
 "FICS wild/fr: http://www.freechess.org/Help/HelpFiles/wild.html"
-msgstr ""
+msgstr "http://en.wikipedia.org/wiki/Chess960\nFICS wild/fr: http://www.freechess.org/Help/HelpFiles/wild.html"
 
 #: lib/pychess/Variants/fischerandom.py:16
 msgid "Fischer Random"
-msgstr ""
+msgstr "피셔 랜덤"
 
 #: lib/pychess/Variants/giveaway.py:15
 msgid "ICC giveaway: https://www.chessclub.com/user/help/Giveaway"
-msgstr ""
+msgstr "ICC 안티체스: https://www.chessclub.com/user/help/Giveaway"
 
 #: lib/pychess/Variants/giveaway.py:16
 msgid "Giveaway"
-msgstr ""
+msgstr "안티 체스"
 
 #: lib/pychess/Variants/horde.py:12
 msgid ""
@@ -3560,103 +3561,103 @@ msgid ""
 "White wants to checkmate as usual.\n"
 "White pawns on the first rank may move two squares,\n"
 "similar to pawns on the second rank."
-msgstr ""
+msgstr "흑은 백의 모든 기물을 잡으면 됩니다.\n백은 체크메이트를 하면 됩니다.\n두번째 줄에 있는 폰 처럼 첫번째 줄에 있는 백의 폰은 2칸을 움직일 수 있습니다."
 
 #: lib/pychess/Variants/horde.py:16
 msgid "Horde"
-msgstr ""
+msgstr "던세이니 체스"
 
 #: lib/pychess/Variants/kingofthehill.py:15
 msgid ""
 "Bringing your king legally to the center (e4, d4, e5, d5) instantly wins the game!\n"
 "Normal rules apply in other cases and checkmate also ends the game."
-msgstr ""
+msgstr "왕을 중앙 (e4, d4, e5, d5)으로 데려 오면 즉시 승리합니다!\n다른 경우에는 일반 규칙이 적용되며 체크 메이트 또한 게임을 끝냅니다."
 
 #: lib/pychess/Variants/kingofthehill.py:17
 msgid "King of the hill"
-msgstr ""
+msgstr "킹 오브 더 힐 체스"
 
 #: lib/pychess/Variants/knightodds.py:13
 msgid "One player starts with one less knight piece"
-msgstr ""
+msgstr "한 플레이어는 하나 적은 나이트 기물을 가지고 시작합니다"
 
 #: lib/pychess/Variants/knightodds.py:14
 msgid "Knight odds"
-msgstr ""
+msgstr "나이트 패널티"
 
 #: lib/pychess/Variants/lightbrigade.py:11
 msgid ""
 "Variant explained at https://www.chessvariants.com/rules/charge-of-the-"
 "light-brigade"
-msgstr ""
+msgstr "변형판 설명 https://www.chessvariants.com/rules/charge-of-the-light-brigade"
 
 #: lib/pychess/Variants/lightbrigade.py:12
 msgid "Charge of the light brigade"
-msgstr ""
+msgstr "경기병여단의 돌격 체스"
 
 #: lib/pychess/Variants/losers.py:13
 msgid "FICS losers: http://www.freechess.org/Help/HelpFiles/losers_chess.html"
-msgstr ""
+msgstr "FICS 루저체스: http://www.freechess.org/Help/HelpFiles/losers_chess.html"
 
 #: lib/pychess/Variants/losers.py:14 lib/pychess/ic/FICSObjects.py:64
 msgid "Losers"
-msgstr ""
+msgstr "패배자"
 
 #: lib/pychess/Variants/normal.py:8
 msgid ""
 "Classic chess rules\n"
 "http://en.wikipedia.org/wiki/Chess"
-msgstr ""
+msgstr "일반 체스 규칙\nhttp://en.wikipedia.org/wiki/Chess"
 
 #: lib/pychess/Variants/normal.py:10 lib/pychess/widgets/newGameDialog.py:291
 msgid "Normal"
-msgstr ""
+msgstr "보통"
 
 #: lib/pychess/Variants/pawnodds.py:13
 msgid "One player starts with one less pawn piece"
-msgstr ""
+msgstr "한 명의 플레이어가 하나 적은 폰을 가지고 시작합니다"
 
 #: lib/pychess/Variants/pawnodds.py:14
 msgid "Pawn odds"
-msgstr ""
+msgstr "폰 패널티"
 
 #: lib/pychess/Variants/pawnspassed.py:14
 msgid ""
 "FICS wild/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 "White pawns start on 5th rank and black pawns on the 4th rank"
-msgstr ""
+msgstr "FICS 와일드/8a: http://www.freechess.org/Help/HelpFiles/wild.html\n백의 폰은 5째줄, 흑의 폰은 4째줄에서 시작한다"
 
 #: lib/pychess/Variants/pawnspassed.py:16
 msgid "Pawns Passed"
-msgstr ""
+msgstr "패스된 폰"
 
 #: lib/pychess/Variants/pawnspushed.py:14
 msgid ""
 "FICS wild/8: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 "Pawns start on 4th and 5th ranks rather than 2nd and 7th"
-msgstr ""
+msgstr "FICS 와일드/8: http://www.freechess.org/Help/HelpFiles/wild.html\n폰은 2,7째줄이아닌 4,5째줄에서 시작한다"
 
 #: lib/pychess/Variants/pawnspushed.py:16
 msgid "Pawns Pushed"
-msgstr ""
+msgstr "푸시된 폰"
 
 #: lib/pychess/Variants/placement.py:12
 msgid ""
 "Pre-chess: "
 "https://en.wikipedia.org/wiki/List_of_chess_variants#Different_starting_position"
-msgstr ""
+msgstr "프리-체스(Pre-chess): https://en.wikipedia.org/wiki/List_of_chess_variants#Different_starting_position"
 
 #: lib/pychess/Variants/placement.py:13
 msgid "Placement"
-msgstr ""
+msgstr "놓기"
 
 #: lib/pychess/Variants/queenodds.py:11
 msgid "One player starts with one less queen piece"
-msgstr ""
+msgstr "한 플레이어는 한개 적은 퀸을 가지고 시작합니다"
 
 #: lib/pychess/Variants/queenodds.py:12
 msgid "Queen odds"
-msgstr ""
+msgstr "퀸 패널티"
 
 #: lib/pychess/Variants/racingkings.py:18
 msgid ""
@@ -3667,11 +3668,11 @@ msgid ""
 "their king to the last row, the game is a draw\n"
 "(this rule is to compensate for the advantage of white that they may move first.)\n"
 "Apart from the above, pieces move and capture precisely as in normal chess."
-msgstr ""
+msgstr "이 게임에서, 체크는 완전히 금지됩니다: 킹을 체크되는 곳으로 이동하는 것은 금지될 뿐만 아니라, 상대 킹을 체크하는 것도 금지됩니다.\n이 게임의 목적은 자신의 왕을 8열로 옮기는 첫 번째 선수가 되는 것 입니다.\n백은 8열로 왕을 옮기고 흑은 마지막 행으로 바로 이동할 때 게임은 무승부입니다(이 규칙은 흰색은 먼저 움직일 수 있는 이점을 보상하는 것입니다).\n위의 것들과 별도로, 일반적인 체스처럼 기물들은 이동하고 말을 잡습니다."
 
 #: lib/pychess/Variants/racingkings.py:26
 msgid "Racing Kings"
-msgstr ""
+msgstr "레이싱 킹 체스"
 
 #: lib/pychess/Variants/randomchess.py:19
 msgid ""
@@ -3681,28 +3682,28 @@ msgid ""
 "* Pieces placed randomly behind the pawns\n"
 "* No castling\n"
 "* Black's arrangement mirrors white's"
-msgstr ""
+msgstr "FICS 와일드/3: http://www.freechess.org/Help/HelpFiles/wild.html\n무작위로 선택된 기물들(2개의 퀸 또는 3개의 룩 가능)\n각 색깔에는 하나의 킹만\n폰 뒤의 기물들은 무작위로 놓는다\n캐슬링 없음\n흑의 배치는 백의 배치와 대칭이다"
 
 #: lib/pychess/Variants/randomchess.py:25
 #: lib/pychess/widgets/TaskerManager.py:167
 msgid "Random"
-msgstr ""
+msgstr "무작위"
 
 #: lib/pychess/Variants/rookodds.py:11
 msgid "One player starts with one less rook piece"
-msgstr ""
+msgstr "한 명의 플레이어가 하나 적은 룩을 가지고 시작합니다"
 
 #: lib/pychess/Variants/rookodds.py:12
 msgid "Rook odds"
-msgstr ""
+msgstr "룩 패널티"
 
 #: lib/pychess/Variants/seirawan.py:14
 msgid "S-Chess: https://en.wikipedia.org/wiki/Seirawan_chess"
-msgstr ""
+msgstr "S-체스: https://en.wikipedia.org/wiki/Seirawan_chess"
 
 #: lib/pychess/Variants/seirawan.py:15
 msgid "S-Chess"
-msgstr ""
+msgstr "S-체스"
 
 #: lib/pychess/Variants/shuffle.py:15
 msgid ""
@@ -3711,50 +3712,50 @@ msgid ""
 "* Random arrangement of the pieces behind the pawns\n"
 "* No castling\n"
 "* Black's arrangement mirrors white's"
-msgstr ""
+msgstr "xboard 노캐슬: http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS 와일드/2: http://www.freechess.org/Help/HelpFiles/wild.html\n* 폰 뒤의 기물들은 무작위로 배치됩니다\n* 캐슬링 없음\n* 흑은 백의 기물들과 대칭입니다"
 
 #: lib/pychess/Variants/shuffle.py:19 lib/pychess/widgets/newGameDialog.py:345
 #: lib/pychess/perspectives/fics/SeekChallenge.py:605
 msgid "Shuffle"
-msgstr ""
+msgstr "섞기"
 
 #: lib/pychess/Variants/suicide.py:18
 msgid ""
 "FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html"
-msgstr ""
+msgstr "FICS 자살 체스: http://www.freechess.org/Help/HelpFiles/suicide_chess.html"
 
 #: lib/pychess/Variants/suicide.py:19 lib/pychess/ic/FICSObjects.py:66
 msgid "Suicide"
-msgstr ""
+msgstr "자살 체스"
 
 #: lib/pychess/Variants/theban.py:11
 msgid ""
 "Variant developed by Kai Laskos: "
 "http://talkchess.com/forum/viewtopic.php?t=40990"
-msgstr ""
+msgstr "Kai Laskos에 의해 개발된 변형판: http://talkchess.com/forum/viewtopic.php?t=40990"
 
 #: lib/pychess/Variants/theban.py:12
 msgid "Theban"
-msgstr ""
+msgstr "더반 체스"
 
 #: lib/pychess/Variants/threecheck.py:11
 msgid "Win by giving check 3 times"
-msgstr ""
+msgstr "체크를 3번하였기 때문에 승리입니다"
 
 #: lib/pychess/Variants/threecheck.py:12
 msgid "Three-check"
-msgstr ""
+msgstr "3체크"
 
 #: lib/pychess/Variants/upsidedown.py:11
 msgid ""
 "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 "http://en.wikipedia.org/wiki/Chess_variant#Chess_with_different_starting_positions\n"
 "Pawns start on their 7th rank rather than their 2nd rank!"
-msgstr ""
+msgstr "FICS 와일드/5: http://www.freechess.org/Help/HelpFiles/wild.html\nhttp://en.wikipedia.org/wiki/Chess_variant#Chess_with_different_starting_positions\n폰은 2째줄이 아닌 7째줄에서 시작합니다!"
 
 #: lib/pychess/Variants/upsidedown.py:14
 msgid "Upside Down"
-msgstr ""
+msgstr "상하반전"
 
 #: lib/pychess/Variants/wildcastle.py:11
 msgid ""
@@ -3765,11 +3766,11 @@ msgid ""
 "* so they are not on the same files as White's King and Queen.\n"
 "* Castling is done similarly to normal chess:\n"
 "* o-o-o indicates long castling and o-o short castling."
-msgstr ""
+msgstr "xboard 와일드캐슬 체스 http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS 와일드/0: http://www.freechess.org/Help/HelpFiles/wild.html\n* 백은 일반 체스 처럼 배치합니다.\n* 흑의 기물도 같게 배치하지만, 킹과 퀸의 위치가 바뀝니다.,\n* 따라서 백의 킹과 퀸처럼 같은 파일에 있지 않습니다.\n* 일반 체스처럼 캐슬링을 합니다:\n* o-o-o 는 롱 캐슬링을 의미하고 o-o는 짧은 캐슬링을 의미합니다."
 
 #: lib/pychess/Variants/wildcastle.py:18
 msgid "Wildcastle"
-msgstr ""
+msgstr "와일드캐슬 체스"
 
 #: lib/pychess/Variants/wildcastleshuffle.py:11
 msgid ""
@@ -3782,108 +3783,108 @@ msgid ""
 "* Subject to these constraints the position of the                  pieces on their first ranks is random.\n"
 "* Castling is done similarly to normal chess:\n"
 "* o-o-o indicates long castling and o-o short castling."
-msgstr ""
+msgstr "xboard 와일드캐슬 체스 http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS 와일드/1: http://www.freechess.org/Help/HelpFiles/wild.html\n* 이 변형판에서는 양쪽다 같은 기물을 가지고 시작합니다.\n* 백의 킹은 d1이나 e1에서 시작하고 흑의 킹은 d8이나 e8에서 시작합니다,\n* 비숍은 항상 반대 색깔에 있습니다.\n* 이러한 제약조건에 따라 첫 번째 줄에 있는 기물의 위치는 무작위입니다.\n* 일반 체스처럼 캐슬링을 합니다:\n* o-o-o 는 롱 캐슬링을 의미하고 o-o는 짧은 캐슬링을 의미합니다."
 
 #: lib/pychess/Variants/wildcastleshuffle.py:21
 msgid "Wildcastle shuffle"
-msgstr ""
+msgstr "와일드캐슬 체스 섞기"
 
 #: lib/pychess/ic/FICSConnection.py:161
 msgid "The connection was broken - got \"end of file\" message"
-msgstr ""
+msgstr "연결이 끊어졌습니다. \"더이상 파일이 없습니다\" 메시지를 받았습니다"
 
 #: lib/pychess/ic/FICSConnection.py:162
 #, python-format
 msgid "'%s' is not a registered name"
-msgstr ""
+msgstr "'%s'은 등록된 이름이 아닙니다"
 
 #: lib/pychess/ic/FICSConnection.py:163
 msgid ""
 "The entered password was invalid.\n"
 "If you forgot your password, go to <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> to request a new one over email."
-msgstr ""
+msgstr "비밀번호를 잘 못 입력하셨습니다.\n비밀번호를 잊으셨다면 <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a>로 가서 이메일로 새로운 비밀번호를 요청하세요."
 
 #: lib/pychess/ic/FICSConnection.py:167
 #, python-format
 msgid "Sorry '%s' is already logged in"
-msgstr ""
+msgstr "죄송합니다 %s은 이미 로그인되어 있습니다"
 
 #: lib/pychess/ic/FICSConnection.py:169
 #, python-format
 msgid "'%s' is a registered name.  If it is yours, type the password."
-msgstr ""
+msgstr "'%s'은 등록된 이름입니다. 본인이시면, 비밀번호를 입력해 주세요."
 
 #: lib/pychess/ic/FICSConnection.py:170
 msgid ""
 "Due to abuse problems, guest connections have been prevented.\n"
 "You can still register on http://www.freechess.org"
-msgstr ""
+msgstr "악용의 우려가 있기 때문에 게스트 접속이 거부되었습니다.\n여기서 등록 할 수 있습니다 http://www.freechess.org"
 
 #: lib/pychess/ic/FICSConnection.py:189
 msgid "Connecting to server"
-msgstr ""
+msgstr "서버 연결 중"
 
 #: lib/pychess/ic/FICSConnection.py:209
 msgid "Logging on to server"
-msgstr ""
+msgstr "서버 로그인 중"
 
 #: lib/pychess/ic/FICSConnection.py:276
 msgid "Setting up environment"
-msgstr ""
+msgstr "환경 설정 중"
 
 #: lib/pychess/ic/FICSObjects.py:32 lib/pychess/ic/FICSObjects.py:44
 #, python-format
 msgid "%(player)s is %(status)s"
-msgstr ""
+msgstr "%(player)s은 %(status)s입니다"
 
 #: lib/pychess/ic/FICSObjects.py:43
 msgid "not playing"
-msgstr ""
+msgstr "플레이 중 아님"
 
 #: lib/pychess/ic/FICSObjects.py:68 lib/pychess/ic/__init__.py:209
 msgid "Wild"
-msgstr ""
+msgstr "와일드 체스"
 
 #: lib/pychess/ic/FICSObjects.py:133
 msgid "Online"
-msgstr ""
+msgstr "온라인"
 
 #: lib/pychess/ic/FICSObjects.py:135 lib/pychess/ic/FICSObjects.py:161
 msgid "Offline"
-msgstr ""
+msgstr "오프라인"
 
 #: lib/pychess/ic/FICSObjects.py:151
 msgid "Available"
-msgstr ""
+msgstr "유효한"
 
 #: lib/pychess/ic/FICSObjects.py:153
 msgid "Playing"
-msgstr ""
+msgstr "플레이 중"
 
 #: lib/pychess/ic/FICSObjects.py:159
 msgid "Idle"
-msgstr ""
+msgstr "쉬고 있음"
 
 #: lib/pychess/ic/FICSObjects.py:163
 msgid "Examining"
-msgstr ""
+msgstr "검사 중"
 
 #: lib/pychess/ic/FICSObjects.py:165
 msgid "Not Available"
-msgstr ""
+msgstr "유효하지 않음"
 
 #: lib/pychess/ic/FICSObjects.py:167
 msgid "Running Simul Match"
-msgstr ""
+msgstr "시뮬레이션 경기 진행"
 
 #: lib/pychess/ic/FICSObjects.py:169
 msgid "In Tournament"
-msgstr ""
+msgstr "토너먼트"
 
 #: lib/pychess/ic/FICSObjects.py:336 lib/pychess/ic/FICSObjects.py:541
 #: lib/pychess/perspectives/fics/SeekChallenge.py:549
 msgid "Unrated"
-msgstr ""
+msgstr "등급없음"
 
 #: lib/pychess/ic/FICSObjects.py:539
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:55
@@ -3891,312 +3892,312 @@ msgstr ""
 #: lib/pychess/perspectives/fics/SeekChallenge.py:359
 #: lib/pychess/perspectives/fics/SeekListPanel.py:72
 msgid "Rated"
-msgstr ""
+msgstr "등급 매겨짐"
 
 #: lib/pychess/ic/FICSObjects.py:547
 #: lib/pychess/perspectives/fics/SeekChallenge.py:344
 #, python-format
 msgid "%d min"
-msgstr ""
+msgstr "%d분"
 
 #: lib/pychess/ic/FICSObjects.py:549
 #, python-format
 msgid " + %d sec"
-msgstr ""
+msgstr "+%d초"
 
 #: lib/pychess/ic/FICSObjects.py:567
 #, python-format
 msgid "%(player)s plays %(color)s"
-msgstr ""
+msgstr "%(player)s는 %(color)s색으로 플레이 중"
 
 #: lib/pychess/ic/FICSObjects.py:569
 #: lib/pychess/perspectives/fics/SeekListPanel.py:318
 msgid "white"
-msgstr ""
+msgstr "백"
 
 #: lib/pychess/ic/FICSObjects.py:569
 #: lib/pychess/perspectives/fics/SeekListPanel.py:318
 msgid "black"
-msgstr ""
+msgstr "흑"
 
 #: lib/pychess/ic/FICSObjects.py:617
 msgid "This is a continuation of an adjourned match"
-msgstr ""
+msgstr "연기된 경기의 재개 경기 입니다"
 
 #: lib/pychess/ic/FICSObjects.py:725
 msgid "Opponent Rating"
-msgstr ""
+msgstr "상대방 등급"
 
 #: lib/pychess/ic/FICSObjects.py:727
 msgid "Manual Accept"
-msgstr ""
+msgstr "수동 수락"
 
 #: lib/pychess/ic/FICSObjects.py:913
 msgid "Private"
-msgstr ""
+msgstr "개인"
 
 #: lib/pychess/ic/ICLogon.py:231 lib/pychess/ic/ICLogon.py:237
 msgid "Connection Error"
-msgstr ""
+msgstr "연결 에러"
 
 #: lib/pychess/ic/ICLogon.py:233
 msgid "Log on Error"
-msgstr ""
+msgstr "로그인 에러"
 
 #: lib/pychess/ic/ICLogon.py:235
 msgid "Connection was closed"
-msgstr ""
+msgstr "연결이 종료되었습니다"
 
 #: lib/pychess/ic/ICLogon.py:241
 msgid "Address Error"
-msgstr ""
+msgstr "주소 오류"
 
 #: lib/pychess/ic/ICLogon.py:244
 msgid "Auto-logout"
-msgstr ""
+msgstr "자동 로그아웃"
 
 #: lib/pychess/ic/ICLogon.py:246
 msgid "You have been logged out because you were idle more than 60 minutes"
-msgstr ""
+msgstr "60분 이상 활동이 없어서 로그아웃 되었습니다"
 
 #: lib/pychess/ic/ICLogon.py:333
 msgid "Guest logins disabled by FICS server"
-msgstr ""
+msgstr "FICS서버에 의해 게스트로그인이 비 활성화 되었습니다"
 
 #: lib/pychess/ic/__init__.py:147
 msgid "1-minute"
-msgstr ""
+msgstr "1-분"
 
 #: lib/pychess/ic/__init__.py:148
 msgid "3-minute"
-msgstr ""
+msgstr "3-분"
 
 #: lib/pychess/ic/__init__.py:149
 msgid "5-minute"
-msgstr ""
+msgstr "5-분"
 
 #: lib/pychess/ic/__init__.py:150
 msgid "15-minute"
-msgstr ""
+msgstr "15-분"
 
 #: lib/pychess/ic/__init__.py:151
 msgid "45-minute"
-msgstr ""
+msgstr "45-분"
 
 #: lib/pychess/ic/__init__.py:152
 msgid "Chess960"
-msgstr ""
+msgstr "체스960"
 
 #: lib/pychess/ic/__init__.py:154
 msgid "Examined"
-msgstr ""
+msgstr "검토됨"
 
 #: lib/pychess/ic/__init__.py:155 lib/pychess/ic/__init__.py:156
 #: lib/pychess/ic/__init__.py:157
 msgid "Other"
-msgstr ""
+msgstr "다른"
 
 #: lib/pychess/ic/__init__.py:228
 msgid "Bullet"
-msgstr ""
+msgstr "불렛 체스"
 
 #: lib/pychess/ic/__init__.py:273
 msgid "Administrator"
-msgstr ""
+msgstr "관리자"
 
 #: lib/pychess/ic/__init__.py:274
 msgid "Blindfold Account"
-msgstr ""
+msgstr "눈가림 체스 계정"
 
 #: lib/pychess/ic/__init__.py:276
 msgid "Team Account"
-msgstr ""
+msgstr "팀 계정"
 
 #: lib/pychess/ic/__init__.py:277
 msgid "Unregistered"
-msgstr ""
+msgstr "등록되지 않은"
 
 #: lib/pychess/ic/__init__.py:278
 msgid "Chess Advisor"
-msgstr ""
+msgstr "체스 도우미"
 
 #: lib/pychess/ic/__init__.py:279
 msgid "Service Representative"
-msgstr ""
+msgstr "서비스 상담원"
 
 #: lib/pychess/ic/__init__.py:280
 msgid "Tournament Director"
-msgstr ""
+msgstr "토너먼트 디렉터"
 
 #: lib/pychess/ic/__init__.py:281
 msgid "Mamer Manager"
-msgstr ""
+msgstr "아케이드 게임 에뮬레이터 매니저"
 
 #: lib/pychess/ic/__init__.py:282
 msgid "Grand Master"
-msgstr ""
+msgstr "그랜드 마스터"
 
 #: lib/pychess/ic/__init__.py:283
 msgid "International Master"
-msgstr ""
+msgstr "인터내셔널 마스터"
 
 #: lib/pychess/ic/__init__.py:284
 msgid "FIDE Master"
-msgstr ""
+msgstr "피데 마스터"
 
 #: lib/pychess/ic/__init__.py:285
 msgid "Woman Grand Master"
-msgstr ""
+msgstr "여성 그랜드 마스터"
 
 #: lib/pychess/ic/__init__.py:286
 msgid "Woman International Master"
-msgstr ""
+msgstr "여성 인터내셔널 마스터"
 
 #: lib/pychess/ic/__init__.py:287
 msgid "Woman FIDE Master"
-msgstr ""
+msgstr "여성 피데 마스터"
 
 #: lib/pychess/ic/__init__.py:288
 msgid "Dummy Account"
-msgstr ""
+msgstr "가짜 계정"
 
 #: lib/pychess/ic/__init__.py:289
 msgid "Candidate Master"
-msgstr ""
+msgstr "캔디데이트 마스터"
 
 #: lib/pychess/ic/__init__.py:290
 msgid "FIDE Arbeiter"
-msgstr ""
+msgstr "피데아비터"
 
 #: lib/pychess/ic/__init__.py:291
 msgid "National Master"
-msgstr ""
+msgstr "내셔널 마스터"
 
 #: lib/pychess/ic/__init__.py:292
 msgid "Display Master"
-msgstr ""
+msgstr "디스플레이 마스터"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "C"
-msgstr ""
+msgstr "C"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "T"
-msgstr ""
+msgstr "T"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "U"
-msgstr ""
+msgstr "U"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "CA"
-msgstr ""
+msgstr "CA"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "SR"
-msgstr ""
+msgstr "SR"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "TD"
-msgstr ""
+msgstr "TD"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "TM"
-msgstr ""
+msgstr "TM"
 
 #: lib/pychess/ic/__init__.py:297
 msgid "GM"
-msgstr ""
+msgstr "그랜드 마스터"
 
 #: lib/pychess/ic/__init__.py:297
 msgid "IM"
-msgstr ""
+msgstr "인터내셔널 마스터"
 
 #: lib/pychess/ic/__init__.py:297
 msgid "FM"
-msgstr ""
+msgstr "피데 마스터"
 
 #: lib/pychess/ic/__init__.py:297
 msgid "WGM"
-msgstr ""
+msgstr "여성 그랜드 마스터"
 
 #: lib/pychess/ic/__init__.py:297
 msgid "WIM"
-msgstr ""
+msgstr "여성 인터내셔널 마스터"
 
 #: lib/pychess/ic/__init__.py:297
 msgid "WFM"
-msgstr ""
+msgstr "여성 피데 마스터"
 
 #: lib/pychess/ic/__init__.py:297
 msgid "D"
-msgstr ""
+msgstr "D"
 
 #: lib/pychess/ic/__init__.py:298
 msgid "CM"
-msgstr ""
+msgstr "캔디데이트 마스터"
 
 #: lib/pychess/ic/__init__.py:298
 msgid "FA"
-msgstr ""
+msgstr "피데 아비터"
 
 #: lib/pychess/ic/__init__.py:298
 msgid "NM"
-msgstr ""
+msgstr "내셔널 마스터"
 
 #: lib/pychess/ic/__init__.py:298
 msgid "DM"
-msgstr ""
+msgstr "DM"
 
 #: lib/pychess/perspectives/__init__.py:132
 msgid "<b><big>PyChess was unable to load your panel settings</big></b>"
-msgstr ""
+msgstr "<b><big>PyChess가 패널 설정을 불러올 수 없습니다</big></b>"
 
 #: lib/pychess/perspectives/__init__.py:134
 msgid ""
 "Your panel settings have been reset. If this problem repeats,"
 "                         you should report it to the developers"
-msgstr ""
+msgstr "패널 설정이 초기화되었습니다. 이런 현상이 반복된다면 개발자에게 보고해야 합니다"
 
 #: lib/pychess/widgets/ChannelsPanel.py:176
 msgid "Friends"
-msgstr ""
+msgstr "친구"
 
 #: lib/pychess/widgets/ChannelsPanel.py:187
 msgid "Admin"
-msgstr ""
+msgstr "관리자"
 
 #: lib/pychess/widgets/ChannelsPanel.py:197
 msgid "More channels"
-msgstr ""
+msgstr "더 많은 채널 알아보기"
 
 #: lib/pychess/widgets/ChannelsPanel.py:205
 msgid "More players"
-msgstr ""
+msgstr "더 많은 플레이어 알아보기"
 
 #: lib/pychess/widgets/ChannelsPanel.py:215
 msgid "Computers"
-msgstr ""
+msgstr "컴퓨터"
 
 #: lib/pychess/widgets/ChannelsPanel.py:225
 msgid "BlindFold"
-msgstr ""
+msgstr "눈가림 체스"
 
 #: lib/pychess/widgets/ChannelsPanel.py:235
 msgid "Guests"
-msgstr ""
+msgstr "게스트"
 
 #: lib/pychess/widgets/ChatView.py:46
 msgid "Observers"
-msgstr ""
+msgstr "관전자"
 
 #: lib/pychess/widgets/ChatView.py:94
 msgid "Go on"
-msgstr ""
+msgstr "계속 하기"
 
 #: lib/pychess/widgets/ChatView.py:101 lib/pychess/widgets/gamewidget.py:300
 msgid "Pause"
-msgstr ""
+msgstr "일시 정지"
 
 #: lib/pychess/widgets/ExternalsDialog.py:19
 msgid "Ask for permissions"
@@ -4206,19 +4207,19 @@ msgstr "권한 요청"
 msgid ""
 "Some PyChess features require further permission in order to download "
 "external components"
-msgstr ""
+msgstr "PyChess의 일부 기능을 위해 외부 프로그램을 다운로드할 수 있는 권한이 필요합니다"
 
 #: lib/pychess/widgets/ExternalsDialog.py:37
 msgid "database querying needs scoutfish"
-msgstr ""
+msgstr "데이터베이스에 쿼리하려면 scoutfish가 필요합니다"
 
 #: lib/pychess/widgets/ExternalsDialog.py:47
 msgid "database opening tree needs chess_db"
-msgstr ""
+msgstr "데이터베이스를 열려면 chess_db가 필요합니다"
 
 #: lib/pychess/widgets/ExternalsDialog.py:57
 msgid "ICC lag compensation needs timestamp"
-msgstr ""
+msgstr "ICC 지연 보상에는 타임스탬프가 필요합니다"
 
 #: lib/pychess/widgets/ExternalsDialog.py:66
 msgid "Don't show this dialog on startup."
@@ -4226,96 +4227,96 @@ msgstr "시작 시 이 대화상자 보이지 않기"
 
 #: lib/pychess/widgets/InfoPanel.py:88
 msgid "No conversation's selected"
-msgstr ""
+msgstr "선택된 대화 없음"
 
 #: lib/pychess/widgets/InfoPanel.py:127
 msgid "Loading player data"
-msgstr ""
+msgstr "플레이어 정보 로딩 중"
 
 #: lib/pychess/widgets/InfoPanel.py:175
 msgid "Receiving list of players"
-msgstr ""
+msgstr "플레이어 목록을 받는 중"
 
 #: lib/pychess/widgets/LearnInfoBar.py:76
 msgid "Your turn."
-msgstr ""
+msgstr "당신 차례 입니다"
 
 #: lib/pychess/widgets/LearnInfoBar.py:77
 msgid "Hint"
-msgstr ""
+msgstr "힌트"
 
 #: lib/pychess/widgets/LearnInfoBar.py:78
 msgid "Best move"
-msgstr ""
+msgstr "최적 이동"
 
 #: lib/pychess/widgets/LearnInfoBar.py:85
 #, python-format
 msgid "Well done! %s completed."
-msgstr ""
+msgstr "잘했어요! %s가 완료되었습니다. "
 
 #: lib/pychess/widgets/LearnInfoBar.py:88
 msgid "Well done!"
-msgstr ""
+msgstr "잘했어요!"
 
 #: lib/pychess/widgets/LearnInfoBar.py:89
 msgid "Next"
-msgstr ""
+msgstr "다음"
 
 #: lib/pychess/widgets/LearnInfoBar.py:98
 msgid "Continue"
-msgstr ""
+msgstr "계속하기"
 
 #: lib/pychess/widgets/LearnInfoBar.py:107
 msgid "Not the best move!"
-msgstr ""
+msgstr "최적 이동이 아닙니다!"
 
 #: lib/pychess/widgets/LearnInfoBar.py:108
 msgid "Retry"
-msgstr ""
+msgstr "다시 시도"
 
 #: lib/pychess/widgets/LearnInfoBar.py:121
 msgid "Cool! Now let see how it goes in the main line."
-msgstr ""
+msgstr "좋아! 이제 메인에서 어떻게 진행되는지 보자."
 
 #: lib/pychess/widgets/LearnInfoBar.py:122
 msgid "Back to main line"
-msgstr ""
+msgstr "메인으로 가기"
 
 #: lib/pychess/widgets/LogDialog.py:21
 msgid "PyChess Information Window"
-msgstr ""
+msgstr "PyChess 정보 창"
 
 #: lib/pychess/widgets/LogDialog.py:200 lib/pychess/widgets/LogDialog.py:205
 msgid "of"
-msgstr ""
+msgstr "의"
 
 #: lib/pychess/widgets/TaskerManager.py:304
 #: lib/pychess/perspectives/learn/LecturesPanel.py:17
 msgid "Lectures"
-msgstr ""
+msgstr "강의"
 
 #: lib/pychess/widgets/TaskerManager.py:305
 #: lib/pychess/perspectives/learn/LessonsPanel.py:18
 msgid "Lessons"
-msgstr ""
+msgstr "강의"
 
 #: lib/pychess/widgets/TaskerManager.py:306
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:21
 msgid "Puzzles"
-msgstr ""
+msgstr "퍼즐"
 
 #: lib/pychess/widgets/TaskerManager.py:307
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:21
 msgid "Endgames"
-msgstr ""
+msgstr "최종전"
 
 #: lib/pychess/widgets/ViewsPanel.py:33
 msgid "You have opened no conversations yet"
-msgstr ""
+msgstr "아직 아무런 대화도 시작하지 않았습니다"
 
 #: lib/pychess/widgets/ViewsPanel.py:68
 msgid "Only registered users may talk to this channel"
-msgstr ""
+msgstr "등록된 사용자만 이 채널에서 대화할 수 있습니다"
 
 #: lib/pychess/widgets/analyzegameDialog.py:95
 msgid "Game analyzing in progress..."
@@ -4345,7 +4346,7 @@ msgstr "값"
 
 #: lib/pychess/widgets/enginesDialog.py:185
 msgid "Select engine"
-msgstr ""
+msgstr "엔진 선택하기"
 
 #: lib/pychess/widgets/enginesDialog.py:190
 msgid "Executable files"
@@ -4357,25 +4358,25 @@ msgstr "실행 파일"
 #: lib/pychess/widgets/enginesDialog.py:323
 #, python-format
 msgid "<big><b>Unable to add %s</b></big>"
-msgstr ""
+msgstr "<big><b>%s를 추가할 수 없습니다</b></big>"
 
 #: lib/pychess/widgets/enginesDialog.py:218
 msgid "The engine is already installed under the same name"
-msgstr ""
+msgstr "똑같은 이름으로 설치된 엔진이 있습니다"
 
 #: lib/pychess/widgets/enginesDialog.py:248
 msgid " is not installed"
-msgstr ""
+msgstr "은 설치되지 않았습니다"
 
 #: lib/pychess/widgets/enginesDialog.py:259
 #, python-format
 msgid "<big><b>%s is not marked executable in the filesystem</b></big>"
-msgstr ""
+msgstr "<big><b>%s은 파일시스템에서 실행가능으로 표시되지 않았습니다</b></big>"
 
 #: lib/pychess/widgets/enginesDialog.py:261
 #, python-format
 msgid "Try chmod a+x %s"
-msgstr ""
+msgstr "chmod a+x %s를 시도해 보세요"
 
 #: lib/pychess/widgets/enginesDialog.py:300
 #: lib/pychess/widgets/enginesDialog.py:324
@@ -4384,20 +4385,20 @@ msgstr "이 실행 파일에 문제가 있습니다."
 
 #: lib/pychess/widgets/enginesDialog.py:345
 msgid "Choose a folder"
-msgstr ""
+msgstr "폴더를 선택하세요"
 
 #: lib/pychess/widgets/enginesDialog.py:380
 #: lib/pychess/perspectives/database/__init__.py:480
 msgid "Import"
-msgstr ""
+msgstr "불러오기"
 
 #: lib/pychess/widgets/enginesDialog.py:381
 msgid "File name"
-msgstr ""
+msgstr "파일이름"
 
 #: lib/pychess/widgets/enginesDialog.py:456
 msgid "Select working directory"
-msgstr ""
+msgstr "작업 디렉토리를 선택하세요"
 
 #: lib/pychess/widgets/enginesDialog.py:647
 msgid "Do you really want to restore the default options of the engine ?"
@@ -4405,29 +4406,29 @@ msgstr "엔진 기본 옵션으로 되돌리시겠습니까?"
 
 #: lib/pychess/widgets/gameinfoDialog.py:63
 msgid "New"
-msgstr ""
+msgstr "새로운"
 
 #: lib/pychess/widgets/gameinfoDialog.py:123
 msgid "Tag"
-msgstr ""
+msgstr "태그"
 
 #: lib/pychess/widgets/gameinfoDialog.py:200
 msgid "Pick a date"
-msgstr ""
+msgstr "날짜를 선택하세요"
 
 #: lib/pychess/widgets/gamenanny.py:112
 #, python-format
 msgid " invalid engine move: %s"
-msgstr ""
+msgstr "유효하지 않은 엔진의 이동: %s"
 
 #: lib/pychess/widgets/gamenanny.py:133
 msgid "Offer Rematch"
-msgstr ""
+msgstr "재대국 요청"
 
 #: lib/pychess/widgets/gamenanny.py:135 lib/pychess/widgets/gamenanny.py:149
 #, python-format
 msgid "Observe %s"
-msgstr ""
+msgstr "%s관전하기"
 
 #: lib/pychess/widgets/gamenanny.py:173
 msgid "Play Rematch"
@@ -4435,163 +4436,163 @@ msgstr "재경기"
 
 #: lib/pychess/widgets/gamenanny.py:176
 msgid "Undo one move"
-msgstr ""
+msgstr "이동 1회 되돌리기"
 
 #: lib/pychess/widgets/gamenanny.py:179
 msgid "Undo two moves"
-msgstr ""
+msgstr "이동 2회 되돌리기"
 
 #: lib/pychess/widgets/gamenanny.py:254
 msgid "You sent an abort offer"
-msgstr ""
+msgstr "당신은 중단 요청을 했습니다"
 
 #: lib/pychess/widgets/gamenanny.py:256
 msgid "You sent an adjournment offer"
-msgstr ""
+msgstr "당신은 연기를 요청했습니다"
 
 #: lib/pychess/widgets/gamenanny.py:258
 msgid "You sent a draw offer"
-msgstr ""
+msgstr "당신은 무승부 요청을 했습니다"
 
 #: lib/pychess/widgets/gamenanny.py:260
 msgid "You sent a pause offer"
-msgstr ""
+msgstr "당신은 일시중지 요청을 했습니다"
 
 #: lib/pychess/widgets/gamenanny.py:262
 msgid "You sent a resume offer"
-msgstr ""
+msgstr "당신은 계속하기 요청을 했습니다"
 
 #: lib/pychess/widgets/gamenanny.py:264
 msgid "You sent an undo offer"
-msgstr ""
+msgstr "당신은 되돌리기 요청을 했습니다"
 
 #: lib/pychess/widgets/gamenanny.py:266
 msgid "You asked your opponent to move"
-msgstr ""
+msgstr "당신은 상대방에게 움직일 것을 요청했습니다"
 
 #: lib/pychess/widgets/gamenanny.py:268
 msgid "You sent flag call"
-msgstr ""
+msgstr "차례 넘기기를 했습니다"
 
 #: lib/pychess/widgets/gamenanny.py:289
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
-msgstr ""
+msgstr "<big><b>엔진, %s, 종료됨</b></big>"
 
 #: lib/pychess/widgets/gamenanny.py:291
 msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
 "             You can try to start a new game with the engine, or try to play against another one."
-msgstr ""
+msgstr "PyChes는 엔진 연결이 끊겼는데, 아마도 엔진이 꺼졌기 때문일 것이다.\n이 엔진과 새로운 게임을 시작하거나, 다른 엔진과 게임을 할 수 있습니다."
 
 #: lib/pychess/widgets/gamewidget.py:175
 msgid ""
 "This game can be automatically aborted without rating loss because"
 "                       there has not yet been two moves made"
-msgstr ""
+msgstr "이 게임은 아직 두번의 이동이 없었기 때문에 등급 변화없이 자동으로 중단이 될 수 있습니다."
 
 #: lib/pychess/widgets/gamewidget.py:178
 msgid "Offer Abort"
-msgstr ""
+msgstr "중단 요청"
 
 #: lib/pychess/widgets/gamewidget.py:180
 msgid ""
 "Your opponent must agree to abort the game because there"
 "                       has been two or more moves made"
-msgstr ""
+msgstr "두 번 이상의 이동이 있었기 때문에 상대방이 중단하는 데 동의해야 합니다"
 
 #: lib/pychess/widgets/gamewidget.py:198
 msgid "This game can not be adjourned because one or both players are guests"
-msgstr ""
+msgstr "한명 혹은 두명 다 게스트이기 때문에 게임은 연기될 수 없습니다"
 
 #: lib/pychess/widgets/gamewidget.py:216
 msgid "Claim Draw"
-msgstr ""
+msgstr "무승부 요구하기"
 
 #: lib/pychess/widgets/gamewidget.py:301
 msgid "Resume"
-msgstr ""
+msgstr "계속하기"
 
 #: lib/pychess/widgets/gamewidget.py:303
 msgid "Offer Pause"
-msgstr ""
+msgstr "일시정지 요청하기"
 
 #: lib/pychess/widgets/gamewidget.py:304
 msgid "Offer Resume"
-msgstr ""
+msgstr "계속하기 요청"
 
 #: lib/pychess/widgets/gamewidget.py:308
 msgid "Undo"
-msgstr ""
+msgstr "되돌리기"
 
 #: lib/pychess/widgets/gamewidget.py:310
 msgid "Offer Undo"
-msgstr ""
+msgstr "되돌리기 요청"
 
 #: lib/pychess/widgets/gamewidget.py:557
 msgid " has lagged for 30 seconds"
-msgstr ""
+msgstr "30초 동안 지연됨"
 
 #: lib/pychess/widgets/gamewidget.py:575
 msgid " is lagging heavily but hasn't disconnected"
-msgstr ""
+msgstr "심하게 뒤떨어지지만 연결이 끊어지지는 않았음"
 
 #: lib/pychess/widgets/gamewidget.py:576
 msgid "Continue to wait for opponent, or try to adjourn the game?"
-msgstr ""
+msgstr "상대방을 기다리시겠습니까, 아니면 게임을 연기하시겠습니까?"
 
 #: lib/pychess/widgets/gamewidget.py:588
 msgid "Wait"
-msgstr ""
+msgstr "기다리기"
 
 #: lib/pychess/widgets/gamewidget.py:589
 msgid "Adjourn"
-msgstr ""
+msgstr "연기하기"
 
 #: lib/pychess/widgets/gamewidget.py:656
 msgid "Jump to initial position"
-msgstr ""
+msgstr "초기 배치로 돌아가기"
 
 #: lib/pychess/widgets/gamewidget.py:661
 msgid "Step back one move"
-msgstr ""
+msgstr "한칸 뒤로 가기"
 
 #: lib/pychess/widgets/gamewidget.py:666
 msgid "Go back to the main line"
-msgstr ""
+msgstr "메인라인 으로 가기"
 
 #: lib/pychess/widgets/gamewidget.py:671
 msgid "Go back to the parent line"
-msgstr ""
+msgstr "상위 라인으로 가기"
 
 #: lib/pychess/widgets/gamewidget.py:676
 msgid "Step forward one move"
-msgstr ""
+msgstr "한칸 앞으로 가기"
 
 #: lib/pychess/widgets/gamewidget.py:681
 msgid "Jump to latest position"
-msgstr ""
+msgstr "최근 배치로 돌아가기"
 
 #: lib/pychess/widgets/gamewidget.py:686
 msgid "Find position in current database"
-msgstr ""
+msgstr "현재 데이터베이스에서 배치 찾기"
 
 #: lib/pychess/widgets/gamewidget.py:691
 msgid "Save arrows/circles"
-msgstr ""
+msgstr "화살표/동그라미 저장하기"
 
 #: lib/pychess/widgets/gamewidget.py:728
 msgid "No database is currently opened."
-msgstr ""
+msgstr "현재 열려있는 데이터베이스가 없습니다."
 
 #: lib/pychess/widgets/gamewidget.py:742
 msgid "The position does not exist in the database."
-msgstr ""
+msgstr "데이터베이스에 배치가 존재하지 않습니다."
 
 #: lib/pychess/widgets/gamewidget.py:752
 msgid "An approximate position has been found. Do you want to display it ?"
-msgstr ""
+msgstr "대략적인 배치를 찾았습니다. 표시 하시겠습니까?"
 
 #: lib/pychess/widgets/newGameDialog.py:84
 msgid "Human Being"
@@ -4603,7 +4604,7 @@ msgstr "분:"
 
 #: lib/pychess/widgets/newGameDialog.py:253
 msgid "Moves:"
-msgstr ""
+msgstr "이동:"
 
 #: lib/pychess/widgets/newGameDialog.py:253
 msgid "Gain:"
@@ -4611,125 +4612,125 @@ msgstr "획득:"
 
 #: lib/pychess/widgets/newGameDialog.py:286
 msgid "Classical"
-msgstr ""
+msgstr "일반 체스"
 
 #: lib/pychess/widgets/newGameDialog.py:290
 msgid "Rapid"
-msgstr ""
+msgstr "고속 체스"
 
 #: lib/pychess/widgets/newGameDialog.py:294
 #, python-format
 msgid "%(name)s %(minutes)d min / %(moves)d moves %(duration)s"
-msgstr ""
+msgstr "%(name)s%(minutes)d분/%(moves)d이동%(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:302
 #, python-format
 msgid "%(name)s %(minutes)d min %(sign)s %(gain)d sec/move %(duration)s"
-msgstr ""
+msgstr "%(name)s%(minutes)d분%(sign)s%(gain)d초/이동 %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:310
 #, python-format
 msgid "%(name)s %(minutes)d min %(duration)s"
-msgstr ""
+msgstr "%(name)s%(minutes)d분 %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:318
 #, python-format
 msgid "Estimated duration : %(min)d - %(max)d minutes"
-msgstr ""
+msgstr "예상 시간: %(min)d - %(max)d분"
 
 #: lib/pychess/widgets/newGameDialog.py:344
 msgid "Odds"
-msgstr ""
+msgstr "홀수"
 
 #: lib/pychess/widgets/newGameDialog.py:346
 #: lib/pychess/perspectives/fics/SeekChallenge.py:606
 msgid "Other (standard rules)"
-msgstr ""
+msgstr "또 다른(일반 규칙)"
 
 #: lib/pychess/widgets/newGameDialog.py:348
 #: lib/pychess/perspectives/fics/SeekChallenge.py:608
 msgid "Other (non standard rules)"
-msgstr ""
+msgstr "또 다른(일반 규칙 아님)"
 
 #: lib/pychess/widgets/newGameDialog.py:349
 msgid "Asian variants"
-msgstr ""
+msgstr "아시아 변형판"
 
 #: lib/pychess/widgets/newGameDialog.py:383
 msgid " chess"
-msgstr ""
+msgstr "체스"
 
 #: lib/pychess/widgets/newGameDialog.py:428
 msgid "Start position from the opening book"
-msgstr ""
+msgstr "오프닝 북으로부터 배치 시작하기"
 
 #: lib/pychess/widgets/newGameDialog.py:429
 msgid "Type an ECO code or a keyword (with wildcard *):"
-msgstr ""
+msgstr "ECO코드 혹은 키워드를 입력하세요(와일드카드 *):"
 
 #: lib/pychess/widgets/newGameDialog.py:434
 msgid "No position was found. Do you want to use the default setup ?"
-msgstr ""
+msgstr "배치가 없습니다. 기본 설정을 사용하시겠습니까?"
 
 #: lib/pychess/widgets/newGameDialog.py:751
 msgid "Setup Position"
-msgstr ""
+msgstr "배치 설정"
 
 #: lib/pychess/widgets/newGameDialog.py:838
 msgid "Type or paste PGN game or FEN positions here"
-msgstr ""
+msgstr "PGN게임이나 FEN배치를 입력하거나 복사하세요"
 
 #: lib/pychess/widgets/newGameDialog.py:882
 msgid "Enter Game"
-msgstr ""
+msgstr "게임 입장"
 
 #: lib/pychess/widgets/preferencesDialog.py:155
 msgid "Select book file"
-msgstr ""
+msgstr "북 파일 선택하기"
 
 #: lib/pychess/widgets/preferencesDialog.py:162
 msgid "Opening books"
-msgstr ""
+msgstr "오프닝 북"
 
 #: lib/pychess/widgets/preferencesDialog.py:195
 msgid "Select Gaviota TB path"
-msgstr ""
+msgstr "Gaviota 테이블베이스를 선택하세요"
 
 #: lib/pychess/widgets/preferencesDialog.py:397
 msgid "Open Sound File"
-msgstr ""
+msgstr "음성 파일 열기"
 
 #: lib/pychess/widgets/preferencesDialog.py:407
 msgid "Sound files"
-msgstr ""
+msgstr "음성 파일"
 
 #: lib/pychess/widgets/preferencesDialog.py:414
 msgid "No sound"
-msgstr ""
+msgstr "소리 없음"
 
 #: lib/pychess/widgets/preferencesDialog.py:415
 msgid "Beep"
-msgstr ""
+msgstr "삐- 소리내기"
 
 #: lib/pychess/widgets/preferencesDialog.py:416
 msgid "Select sound file..."
-msgstr ""
+msgstr "음성파일을 선택하세요..."
 
 #: lib/pychess/widgets/preferencesDialog.py:555
 msgid "Undescribed panel"
-msgstr ""
+msgstr "설명없는 패널"
 
 #: lib/pychess/widgets/preferencesDialog.py:646
 msgid "Select background image file"
-msgstr ""
+msgstr "배경 이미지 선택"
 
 #: lib/pychess/widgets/preferencesDialog.py:653
 msgid "Images"
-msgstr ""
+msgstr "이미지"
 
 #: lib/pychess/widgets/preferencesDialog.py:840
 msgid "Select auto save path"
-msgstr ""
+msgstr "자동 저장 경로 선택"
 
 #: lib/pychess/widgets/tipOfTheDay.py:25
 msgid ""
@@ -4737,144 +4738,144 @@ msgid ""
 "chess enthusiast: bug reports, source code, documentation, translations, "
 "feature requests, user assistance... Let's get in touch at "
 "<b>https://pychess.github.io</b>"
-msgstr ""
+msgstr "PyChess는 모든 체스 사용자가 향상시킬 수있는 오픈 소스 체스 애플리케이션입니다 : 버그 보고서, 소스 코드, 문서, 번역, 기능 요청, 사용자 지원 ... <b>https://pychess.github.io</b>에서 문의 해주세요."
 
 #: lib/pychess/widgets/tipOfTheDay.py:26
 msgid ""
 "PyChess supports a wide range of chess engines, variants, Internet servers, "
 "and lessons. It is a perfect desktop application to conveniently improve "
 "your chess skills."
-msgstr ""
+msgstr "PyChess는 다양한 체스 엔진, 변형 판, 인터넷 서버 및 강의를 지원합니다. 체스 실력을 편리하게 향상시킬 수있는 완벽한 데스크톱 응용 프로그램입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:27
 msgid ""
 "The releases of PyChess hold the name of historical world chess champions. "
 "Do you know the name of the current world chess champion?"
-msgstr ""
+msgstr "발매된 Pychess에는 역사적인 세계 체스 챔피언의 이름을 가지고 있습니다. 여러분은 현재 세계 체스 챔피언의 이름을 알고 있나요?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:28
 msgid ""
 "Did you know that you can help translate PyChess into your own language, "
 "<b>Help</b> > <b>Translate PyChess</b>."
-msgstr ""
+msgstr "PyChess를 당신의 언어로 번역할 수 있다는 것을 아십니까?, <b>도움</b>><b>PyChess번역하기</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:29
 msgid ""
 "A game consists of an opening, a middle-game and an end-game. PyChess is "
 "able to train you thanks to its opening book, its supported chess engines "
 "and its training module."
-msgstr ""
+msgstr "게임은 오프닝, 중간 게임 및 최종전으로 구성됩니다. PyChess는 서적, 지원되는 체스 엔진 및 교육 모듈 덕분에 당신을 훈련시킬 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:32
 msgid ""
 "Did you know that it is possible to finish a chess game in just 2 turns?"
-msgstr ""
+msgstr "2차례만에 체스게임을 끝낼 수 있다는 것을 아십니까?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:33
 msgid ""
 "Did you know that a knight is better placed in the center of the board?"
-msgstr ""
+msgstr "나이트가 보드 중앙에 더 잘 배치된다는 것을 알고 있습니까?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:34
 msgid ""
 "Did you know that moving the queen at the very beginning of a game does not "
 "offer any particular advantage?"
-msgstr ""
+msgstr "게임 초반에 퀸을 움직여도 특별한 이점이 없다는 것을 알고 계셨습니까?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:35
 msgid ""
 "Did you know that having two-colored bishops working together is very "
 "powerful?"
-msgstr ""
+msgstr "두 가지 색의 비숍을 활용하는 것이 매우 강력하다는 것을 알고 있습니까?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:36
 msgid "Did you know that the rooks are generally engaged late in the game?"
-msgstr ""
+msgstr "룩이 일반적으로 게임 후반에 관여한다는 것을 알고 있습니까?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:37
 msgid ""
 "Did you know that the king can move across two squares under certain "
 "conditions? This is called castling."
-msgstr ""
+msgstr "킹은 특정 조건에서 2칸을 넘을 수 있다는 것을 아십니까? 이것은 캐슬링이라고 불립니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:38
 msgid ""
 "Did you know that the number of possible chess games exceeds the number of "
 "atoms in the Universe?"
-msgstr ""
+msgstr "체스의 모든 경우의 수는 우주의 모든 원자의 개수보다 많은 것을 아십니까?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:41
 msgid ""
 "You can start a new game with <b>Game</b> > <b>New Game</b>, then choose the"
 " <b>Players</b>, <b>Time Control</b> and <b>Chess Variants</b>."
-msgstr ""
+msgstr "<b>게임</b>><b>새 게임</b>으로 새로운 게임을 시작 할 수 있습니다, 그러고 나서 <b>플레이어</b>,<b>시간 제어</b>,<b>체스 변형판</b>을 선택하세요."
 
 #: lib/pychess/widgets/tipOfTheDay.py:42
 msgid ""
 "You can choose from 20 different difficulties to play against the computer. "
 "It will mainly affect the engines available time to think."
-msgstr ""
+msgstr "20단계의 난이도를 가진 컴퓨터를 상대할 수 있습니다. 주로 엔진이 연산하는 시간에 영향을 미칩니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:43
 msgid ""
 "The level 20 engine difficulty gives full autonomy to the chess engine in "
 "managing its own time during the game."
-msgstr ""
+msgstr "레벨20 엔진은 연산할 때 시간제약을 받지 않습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:44
 msgid ""
 "To save a game use <b>Game</b> > <b>Save Game As</b>, provide the filename, "
 "and choose where you want it to be saved. At the bottom choose the extension"
 " type of the file, and <b>Save</b>."
-msgstr ""
+msgstr "게임을 저장하려면 <b>게임</b>><b>다른 이름으로 게임 저장하기</b>, 파일 이름을 입력하고 원하는 경로를 선택하세요. 제일 아래에서 파일형식을 선택하고 <b>저장하기</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:45
 msgid ""
 " Calling the flag is the termination of the current game when the time of "
 "your opponent is over. If the clock is on your side, click on the menu item "
 "<b>Actions</b> > <b>Call Flag</b> to claim the victory."
-msgstr ""
+msgstr "플래그 호출은 상대방의 시간이 다 되었을 때 현재 게임이 종료되는 것 입니다. 타이머가 당신쪽에 있다면 메뉴를 눌러 <b>Actions</b>><b>Call Flag</b>를 눌러 승리를 거두세요."
 
 #: lib/pychess/widgets/tipOfTheDay.py:46
 msgid ""
 "Press <b>Ctrl+Z</b> to ask your opponent to rollback the last played move. "
 "Against a computer or for an unrated game, undoing is generally "
 "automatically accepted."
-msgstr ""
+msgstr "<b>컨트롤+Z</b>를 눌러 최근 이동 되돌리기를 요청하세요. 컴퓨터나 점수가 매겨지지 않는 게임에서는, 되돌리기는 자동적으로 가능합니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:47
 msgid ""
 "To play in <b>Fullscreen mode</b>, just press the key <b>F11</b>. Press it "
 "again to exit this mode."
-msgstr ""
+msgstr "<b>F11</b>을 눌러 <b>전체화면 모드</b>에서 플레이 하세요. 다시 누르면 종료됩니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:48
 msgid ""
 "Many sounds are emitted by PyChess while you are playing if you activate "
 "them in the preferences: <b>Settings</b> > <b>Preferences</b> > <b>Sound "
 "tab</b> > <b>Use sounds in PyChess</b>."
-msgstr ""
+msgstr "PyChess를 플레이하는 동안 소리를 듣고 싶으시다면 : <b>설정</b>><b>환경설정</b>><b>소리</b>><b>PyChess에서 소리 사용하기</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:49
 msgid ""
 "Did you know that a game is generally finished after 20 to 40 moves per "
 "player? The estimated duration of a game is displayed when you configure a "
 "new game."
-msgstr ""
+msgstr "게임은 일반적으로 플레이어 당 20 ~ 40 개의 이동 후에 완료된다는 것을 알고 계셨습니까? 새 게임을 구성 할 때 게임의 예상 시간이 표시됩니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:50
 msgid ""
 "The standard file format to manage chess games is <b>PGN</b>. It stands for "
 "Portable Game Notation. Do not get confused with PNG which is a common file "
 "format to store drawings and pictures."
-msgstr ""
+msgstr "체스 게임을 관리하는 표준 파일 형식은<b>PGN</b>입니다. Portable Game Notation의 약자입니다. 그림을 저장하는 일반적인 파일 형식인 PNG와 혼동하지 마십시오."
 
 #: lib/pychess/widgets/tipOfTheDay.py:51
 msgid ""
 "You can share a position by using the exchange format <b>FEN</b>, which "
 "stands for Forsyth-Edwards Notation. This format is also adapted for the "
 "chess variants."
-msgstr ""
+msgstr "Forsyth-Edwards Notation을 나타내는 교환 형식 <b>FEN</b>을 사용하여 배치를 공유 할 수 있습니다. 이 형식은 체스 변형판에도 적용됩니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:54
 msgid ""
@@ -4882,40 +4883,40 @@ msgid ""
 "chess analysis. By default, PyChess recommends the use of the free engine "
 "named Stockfish which is renowned to be among the strongest engines in the "
 "world."
-msgstr ""
+msgstr "로컬 체스 분석을 사용하려면 기본 설정에서 체스 엔진을 선택해야합니다. 기본적으로 PyChess는 세계에서 가장 강력한 엔진 중 하나로 유명한 Stockfish라는 무료 엔진을 사용할 것을 권장합니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:55
 msgid ""
 "<b>Hint mode</b> analyzes your game to show you the best current move. "
 "Enable it with the shortcut <b>Ctrl+H</b> or from the <b>View</b> menu."
-msgstr ""
+msgstr "<b>힌트 모드</b>는 최선의 이동을 보여주기 위해서 게임을 분석합니다. <b>컨트롤+H</b>또는 <b>보기</b> 메뉴에서 사용하세요."
 
 #: lib/pychess/widgets/tipOfTheDay.py:56
 msgid ""
 "<b>Spy mode</b> analyzes the threats and shows the best move that your "
 "opponent would play if it was his turn. Enable it with the shortcut "
 "<b>Ctrl+Y</b> or from the <b>View</b> menu."
-msgstr ""
+msgstr "<b>스파이 모드</b>는 위협을 분석하고 상대방이 자기 차례에 둘 최선의 수를 분석합니다. <b>컨트롤+Y</b> 또는 <b>보기</b> 메뉴에서 사용하세요."
 
 #: lib/pychess/widgets/tipOfTheDay.py:57
 msgid ""
 "<b>Ponder</b> is an option available in some chess engines that allows "
 "thinking when it is not the engine's turn. Using this feature will consume "
 "more resources on your computer."
-msgstr ""
+msgstr "<b>생각하기</b>는 일부 체스 엔진에서 사용할 수 있는 옵션으로, 엔진의 차례가 아닐 때 생각할 수 있습니다. 이 기능을 사용하면 컴퓨터에서 더 많은 리소스를 사용합니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:58
 msgid ""
 "<b>MultiPV</b> is an option of some chess engines that shows other possible "
 "good moves. They are displayed in the panel <b>Hints</b>. The value can be "
 "adapted from that panel with a double-click on the displayed figure."
-msgstr ""
+msgstr "<b>MultiPV</b>는 다른 좋은 수를 보여주는 일부 체스 엔진의 옵션입니다. 패널 <b>힌트</b>에 표시됩니다. 표시된 그림을 두 번 클릭하여 해당 패널에서 값을 조정할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:59
 msgid ""
 "You cannot use the local chess analysis mode while you are playing an "
 "unterminated game over the Internet. Else you would be a cheater."
-msgstr ""
+msgstr "인터넷을 통해 게임을 플레이하는 동안에는 로컬 체스 분석 모드를 사용할 수 없습니다. 그렇지 않으면 당신은 부정행위를 하는 것 입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:60
 msgid ""
@@ -4923,14 +4924,14 @@ msgid ""
 "if White and Black have the same number of pawns. The position of all the "
 "pieces and their mobility are some of the factors that contribute to the "
 "engine score."
-msgstr ""
+msgstr "+2.3의 평가는 백과 흑이 동일한 수의 폰을 가지고 있더라도 2 개 이상의 폰을 더 가진 것처럼 하는 백에 대한 이점입니다. 모든 기물의 위치와 이동성은 엔진 점수에 영향을 미치는 요소 중 일부입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:61
 msgid ""
 "PyChess includes a chess engine that offers an evaluation for any chess "
 "position. Winning against PyChess engine is a coherent way to succeed in "
 "chess and improve your skills."
-msgstr ""
+msgstr "PyChess에는 모든 체스 배치에 대한 평가를 제공하는 체스 엔진이 포함되어 있습니다. PyChess 엔진을 상대로 승리하는 것은 체스에서 성공하고 실력을 향상시키는 방법입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:62
 msgid ""
@@ -4940,7 +4941,7 @@ msgid ""
 "menu. The difference of points gives you your chance to win and the "
 "projected evolution of your rating. If your rating is provisional, it is "
 "appended with a question mark '?', for example 1399?."
-msgstr ""
+msgstr "등급은 당신의 힘입니다. 1500은 좋은 평균 선수, 2000은 전국 챔피언, 2800은 인류 최고의 체스 챔피언입니다. <b>게임</b> 메뉴의 <b>속성</b>을 통해 플레이어의 등급을 볼 수 있습니다. 점수의 차이는 승리의 기회와 예상되는 등급의 변화를 보여줍니다. 등급이 잠정적이면 물음표 '?'가 추가됩니다, 예를 들어 : 1399?."
 
 #: lib/pychess/widgets/tipOfTheDay.py:63
 msgid ""
@@ -4949,64 +4950,64 @@ msgid ""
 "in 1970. Schematically, the concept is to engage +/- 20 points for a game "
 "and that you will win or lose proportionally to the difference of ELO points"
 " you have with your opponent."
-msgstr ""
+msgstr "체스 실력을 평가하기위한 여러 등급 시스템이 있습니다. 가장 일반적인 것은 1970 년에 수립 된 ELO (Arpad Elo가 만듦)입니다. 개략적인 개념은 게임에 대해 +/- 20 점을 부여하고 상대방과의 ELO 점수의 차이에 비례하여 승패를 결정하는 것 입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:64
 msgid ""
 "Each chess engine has its own evaluation function. It is normal to get "
 "varying scores for the same position when using different engines."
-msgstr ""
+msgstr "각 체스 엔진에는 자체 평가 기능이 있습니다. 다른 엔진을 사용할 때 동일한 배치에 대해 다양한 점수를 얻는 것은 정상입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:67
 msgid ""
 "The opening book gives you the first few moves that are considered to be "
 "good from a theoretical perspective. You are free to play any other legal "
 "move."
-msgstr ""
+msgstr "오프닝 북은 이론적으로 좋다고 여겨지는 처음 몇 가지 이동을 제공합니다. 당신은 허용되는 범위 안에서 자유롭게 이동할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:68
 msgid ""
 "The <b>Gaviota tables</b> are precalculated positions that tell the final "
 "outcome of the current game in terms of win, loss or draw."
-msgstr ""
+msgstr "<b>Gaviota 표</b>는 승리, 패배 또는 무승부 측면에서 현재 게임의 최종 결과를 알려주는 미리 계산 된 배치입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:69
 msgid ""
 "Did you know that your computer is too small to store a 7-piece endgame "
 "database? That's why the Gaviota tablebase is limited to 5 pieces."
-msgstr ""
+msgstr "7 개의 최종전 데이터베이스를 저장하기에는 컴퓨터가 너무 작다는 사실을 알고 계셨습니까? 이것이 Gaviota 테이블베이스가 5 개로 제한되는 이유입니다"
 
 #: lib/pychess/widgets/tipOfTheDay.py:70
 msgid ""
 "A tablebase can be connected either to PyChess, or to a compatible chess "
 "engine."
-msgstr ""
+msgstr "테이블베이스는 PyChess 또는 호환되는 체스 엔진에 연결이 가능합니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:71
 msgid ""
 "The <b>DTZ</b> is the distance to zero, so the remaining possible moves to "
 "end the game in a tie as soon as possible."
-msgstr ""
+msgstr "<b>DTZ</b>는 0까지의 거리이므로, 가능한 한 빨리 무승부로 게임을 끝내기 위해 남은 이동 수 입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:74
 msgid ""
 "The chess variants consist of changing the start position, the rules of the "
 "game, the types of the pieces... The gameplay is totally modified, so you "
 "must use specialized chess engines to play against the computer."
-msgstr ""
+msgstr "체스 변형판은 시작 배치, 게임 규칙, 기물의 유형을 변경하는 것으로 구성됩니다. 게임 플레이가 완전히 수정되었으므로 컴퓨터와 대결하려면 특수 체스 엔진을 사용해야합니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:75
 msgid ""
 "In Chess960, the order of the main pieces are shuffled in a precise manner. "
 "Therefore, you cannot use the opening book and you should change your "
 "tactical habits."
-msgstr ""
+msgstr "체스960에서는 주요 기물의 순서가 정확한 방식으로 섞여 있습니다. 따라서 오프닝 북을 사용할 수 없으며 전술적 습관을 바꿔야합니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:76
 msgid ""
 "When playing crazyhouse chess, the captured pieces change of ownership and "
 "can reappear on the board at a later turn."
-msgstr ""
+msgstr "크레이지 하우스 체스를 할 때, 잡힌 기물들은 소유권이 바뀌며 나중에 다시 보드에 나타날 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:77
 msgid ""
@@ -5014,32 +5015,32 @@ msgid ""
 "must give your pieces to your opponent by forcing the captures like at "
 "draughts (aka checkers). The outcome of the game can change completely if "
 "you make an incorrect move."
-msgstr ""
+msgstr "자살 체스, 기브 어웨이 체스, 또는 안티 체스는 모두 같은 변형판입니다: 당신은 드래프트(체커)에서처럼 공격함으로써 당신의 기물을 상대에게 주어야 합니다. 잘못 움직이면 게임의 결과가 완전히 바뀔 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:78
 msgid ""
 "Playing horde in PyChess consists in destroying an onslaught of 36 white "
 "pawns with a normal set of black pieces."
-msgstr ""
+msgstr "PyChess에서 던세이니 체스는 일반 흑팀 기물로 36개의 백 폰을 잡는 것이다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:79
 msgid ""
 "You might be interested in playing King of the hill where the goal is to "
 "either checkmate or to place your king in the middle of the board, instead "
 "of protecting it in a corner of the board as usual."
-msgstr ""
+msgstr "여러분은 평소처럼 보드 한구석의 킹을 보호하는 대신 체크메이트나 보드의 중앙에 왕을 배치하는 것이 목표인 킹 오브더 힐 체스를 플레이하는 것에 관심이 있을 지도 모릅니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:80
 msgid ""
 "A lot of fun is offered by atomic chess where one destroys all the "
 "surrounding main pieces at each capture."
-msgstr ""
+msgstr "아토믹 체스는 매번 기물을 잡을 때마다 주변의 기물을 파괴하는 큰 재미를 줍니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:81
 msgid ""
 "The experienced chess players can use blind pieces by starting a new variant"
 " game."
-msgstr ""
+msgstr "숙련된 체스 플레이어들은 새 변형판을 시작할 때 블라인드 기물을 사용할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:84
 msgid ""
@@ -5047,79 +5048,79 @@ msgid ""
 "can find your games later and see the evolution of your rating. In "
 "<b>Preferences</b> PyChess provides the possibility to save your played "
 "games locally as well."
-msgstr ""
+msgstr "나중에 게임을 찾고 등급의 변화를 볼 수 있도록 인터넷 체스 서버에서 게임하려면 온라인으로 등록해야 합니다. <b>기본 설정</b>에서 PyChess는 플레이한 게임을 로컬로 저장할 수도 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:85
 msgid ""
 "Time compensation is a feature that doesn't waste your clock time because of"
 " the latency of your Internet connection. The module can be downloaded from "
 "the menu <b>Edit</b> > <b>Externals</b>."
-msgstr ""
+msgstr "시간 보정은 인터넷 연결 지연 시간 때문에 시간을 낭비하지 않는 기능입니다. 모듈은 <b>Edit</b> > <b>Externals</b> 메뉴에서 다운로드할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:86
 msgid ""
 "You can play against chess engines on an Internet chess server. Use the "
 "filter to include or exclude them from the available players."
-msgstr ""
+msgstr "인터넷 체스 서버에서 체스 엔진을 상대로 게임을 할 수 있습니다. 필터를 사용하여 플레이어에 추가하거나 제외합니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:87
 msgid ""
 "The communication with an Internet chess server is not standardized. "
 "Therefore, you can only connect to the supported chess servers in PyChess, "
 "like freechess.org or chessclub.com"
-msgstr ""
+msgstr "인터넷 체스 서버와의 통신이 표준화되지 않았습니다. 따라서 PyChess에서 지원되는 체스 서버(예: freechess.org 또는 chessclub.com)에만 연결할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:88
 msgid ""
 "PyChess is able to download chess games remotely from the following websites:\n"
 "\n"
 ", "
-msgstr ""
+msgstr "PyChess는 다음 웹 사이트에서 원격으로 체스 게임을 다운로드할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:91
 msgid ""
 "PyChess uses the external module Scoutfish to evaluate the chess databases. "
 "For example, it is possible to extract the games where some pieces are in "
 "precise count or positions."
-msgstr ""
+msgstr "PyChess는 외부 모듈인 Scoutfish를 사용하여 체스 데이터베이스를 평가합니다. 예를 들어, 일부 기물이 정확한 카운트나 위치에 있는 게임을 추출할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:92
 msgid ""
 "Parser/ChessDB is an external module used by PyChess to show the expected "
 "outcome for a given position."
-msgstr ""
+msgstr "파서/체스DB는 PyChess가 특정 배치에 대한 예상 결과를 표시하기 위해 사용하는 외부 모듈입니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:93
 msgid ""
 "SQLite is an internal module used to describe the loaded PGN files, so that "
 "PyChess can retrieve the games very quickly during a search."
-msgstr ""
+msgstr "SQLite는 PGN 파일을 읽는 데 사용되는 내부 모듈입니다. 따라서 PyChess는 게임을 매우 빠르게 검색할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:94
 msgid ""
 "PyChess generates three information files when a PGN file is opened: .sqlite"
 " (description), .scout (positions), .bin (book and outcomes). These files "
 "can be removed manually if desired."
-msgstr ""
+msgstr "PGN 파일이 열리면 PyChess는 .sqlite(설명), .scout(배치), .bin(북 및 결과)의 세 가지 정보 파일을 생성합니다. 원하는 경우 이러한 파일을 수동으로 제거할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:97
 msgid ""
 "PyChess provides offline lessons to learn chess so that you will never be "
 "disappointed if you have no Internet connection."
-msgstr ""
+msgstr "PyChes는 체스를 배울 수 있는 오프라인 강의를 제공하므로 인터넷 연결이 없어도 괜찮습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:98
 msgid ""
 "To start Learning, click on the <b>Book icon</b> available on the "
 "<b>Welcome</b> screen. Or choose a category next to the button to start an "
 "activity directly."
-msgstr ""
+msgstr "학습을 시작하려면 <b>시작</b> 화면에서 사용할 수 있는 <b>북 아이콘</b>을 클릭합니다. 또는 단추 옆에 있는 카테고리를 선택하여 작업을 직접 시작할 수 있습니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:99
 msgid ""
 "The <b>Lectures</b> are commented games to learn step-by-step strategy and "
 "principles of some chess techniques. Just watch, read and learn."
-msgstr ""
+msgstr "강의는 몇몇 체스 기술의 단계별 전략과 원리를 배우기 위한 코멘트 게임입니다. 그냥 보고, 읽고, 배우세요."
 
 #: lib/pychess/widgets/tipOfTheDay.py:100
 msgid ""
@@ -5127,21 +5128,21 @@ msgid ""
 "consists of certain main pieces : 1 rook vs 1 bishop, 1 queen versus 2 "
 "rooks, etc... Knowing the right endgame moves will help you not miss a "
 "checkmate!"
-msgstr ""
+msgstr "폰의 수가 무엇이든, 보드가 1개의 룩 대 1개의 비숍, 1개의 퀸 대 2개의 룩 등 특정한 주요 기물들로 구성될 때 최종전이 시작됩니다. 올바른 최종전 이동을 알면 체크메이트를 놓칠 수 없습니다!"
 
 #: lib/pychess/widgets/tipOfTheDay.py:101
 msgid ""
 "A <b>Puzzle</b> is a set of simple positions classified by themes where you "
 "guess the best moves. It helps you understand patterns to perform an "
 "accurate attack or defense."
-msgstr ""
+msgstr "<b>퍼즐</b>은 가장 좋은 이동을 예측하는 테마별로 분류된 간단한 배치 모음 입니다. 정확한 공격 또는 방어를 수행하기 위한 패턴을 이해하는 데 도움이 됩니다."
 
 #: lib/pychess/widgets/tipOfTheDay.py:102
 msgid ""
 "A <b>Lesson</b> is a complex study that explains the tactics for a given "
 "position. It is common to view circles and arrows over the board to focus on"
 " the behavior of the pieces, the threats, etc..."
-msgstr ""
+msgstr "<b>강의</b>는 주어진 배치에 대해 전술을 설명하는 복잡한 학습입니다. 일반적으로 보드의 원과 화살표를 보고 기물의 이동, 위협 등에 초점을 맞추는 것이 일반적입니다."
 
 #: lib/pychess/Utils/lutils/LBoard.py:211
 #, python-format
@@ -5149,7 +5150,7 @@ msgid ""
 "FEN needs 6 data fields. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "FEN는 6개의 데이터 영역이 필요합니다.\n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:214
 #, python-format
@@ -5157,7 +5158,7 @@ msgid ""
 "FEN needs at least 2 data fields in fenstr. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "FEN은 최소 2개의 데이터필드가 필요합니다.\n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:237
 #, python-format
@@ -5165,7 +5166,7 @@ msgid ""
 "Needs 7 slashes in piece placement field. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "기물 구성 영역에는 7개의 슬래시가 필요합니다.\n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:241
 #, python-format
@@ -5173,7 +5174,7 @@ msgid ""
 "Active color field must be one of w or b. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "활성화된 색은 흰색이나 검은색이어야 합니다.\n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:257
 #, python-format
@@ -5181,7 +5182,7 @@ msgid ""
 "Castling availability field is not legal. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "캐슬링 가능한 영역이 아닙니다.\n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:261
 #, python-format
@@ -5189,68 +5190,68 @@ msgid ""
 "En passant cord is not legal. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "앙파상 번호가 잘못되었습니다.\n\n%s"
 
 #: lib/pychess/Utils/lutils/lmove.py:316
 msgid "invalid promoted piece"
-msgstr ""
+msgstr "유효하지않은 승급 기물"
 
 #: lib/pychess/Utils/lutils/lmove.py:337
 msgid "the move needs a piece and a cord"
-msgstr ""
+msgstr "이동에는 기물과 번호가 필요합니다"
 
 #: lib/pychess/Utils/lutils/lmove.py:413
 #, python-format
 msgid "the captured cord (%s) is incorrect"
-msgstr ""
+msgstr "잡은 번호(%s)가 잘못되었습니다"
 
 #: lib/pychess/Utils/lutils/lmove.py:425
 msgid "pawn capture without target piece is invalid"
-msgstr ""
+msgstr "폰이 목표물 없이 말을 잡는것은 유효하지 않습니다"
 
 #: lib/pychess/Utils/lutils/lmove.py:429
 #, python-format
 msgid "the end cord (%s) is incorrect"
-msgstr ""
+msgstr "마지막 번호(%s)가 잘못되었습니다"
 
 #: lib/pychess/Utils/lutils/lmove.py:522
 #, python-format
 msgid "no %(piece)s is able to move to %(cord)s"
-msgstr ""
+msgstr "%(cord)s로 %(piece)s를 이동할 수 없습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:32
 #: lib/pychess/perspectives/games/commentPanel.py:198
 #: lib/pychess/perspectives/games/commentPanel.py:216
 msgid "and"
-msgstr ""
+msgstr "그리고"
 
 #: lib/pychess/Utils/lutils/strateval.py:50
 msgid "draws"
-msgstr ""
+msgstr "무승부"
 
 #: lib/pychess/Utils/lutils/strateval.py:52
 msgid "mates"
-msgstr ""
+msgstr "짝"
 
 #: lib/pychess/Utils/lutils/strateval.py:57
 msgid "puts opponent in check"
-msgstr ""
+msgstr "상대에게 체크를 하다"
 
 #: lib/pychess/Utils/lutils/strateval.py:82
 msgid "improves king safety"
-msgstr ""
+msgstr "킹을 안전하게 하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:84
 msgid "slightly improves king safety"
-msgstr ""
+msgstr "약간 킹을 안전하게 하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:115
 msgid "moves a rook to an open file"
-msgstr ""
+msgstr "오픈파일로 룩 이동하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:117
 msgid "moves an rook to a half-open file"
-msgstr ""
+msgstr "하프 오픈파일로 룩 이동하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:128
 #: lib/pychess/Utils/lutils/strateval.py:130
@@ -5258,439 +5259,439 @@ msgstr ""
 #: lib/pychess/Utils/lutils/strateval.py:135
 #, python-format
 msgid "moves bishop into fianchetto: %s"
-msgstr ""
+msgstr "피앙케토로 비숍 이동하기: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:142
 #, python-format
 msgid "promotes a Pawn to a %s"
-msgstr ""
+msgstr "폰 %s로 승급하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:145
 msgid "castles"
-msgstr ""
+msgstr "캐슬링"
 
 #: lib/pychess/Utils/lutils/strateval.py:170
 msgid "takes back material"
-msgstr ""
+msgstr "기물 되찾기"
 
 #: lib/pychess/Utils/lutils/strateval.py:174
 #: lib/pychess/Utils/lutils/strateval.py:182
 msgid "sacrifices material"
-msgstr ""
+msgstr "기물 희생하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:176
 msgid "exchanges material"
-msgstr ""
+msgstr "기물 교환하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:178
 msgid "captures material"
-msgstr ""
+msgstr "잡기"
 
 #: lib/pychess/Utils/lutils/strateval.py:305
 #, python-format
 msgid "rescues a %s"
-msgstr ""
+msgstr "%s 구하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:308
 #, python-format
 msgid "threatens to win material by %s"
-msgstr ""
+msgstr "기물을 %s만큼 얻으려고 위협하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:310
 #, python-format
 msgid "increases the pressure on %s"
-msgstr ""
+msgstr "%s에게 압박 주기"
 
 #: lib/pychess/Utils/lutils/strateval.py:312
 #, python-format
 msgid "defends %s"
-msgstr ""
+msgstr "%s 방어하기"
 
 #: lib/pychess/Utils/lutils/strateval.py:351
 #, python-format
 msgid "pins an enemy %(oppiece)s on the %(piece)s at %(cord)s"
-msgstr ""
+msgstr "%(cord)s의 %(piece)s에 상대방 %(oppiece)s을 고정합니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:384
 #, python-format
 msgid "White has a new piece in outpost: %s"
-msgstr ""
+msgstr "백의 전초기지에 새로운 기물이 들어왔습니다: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:393
 #, python-format
 msgid "Black has a new piece in outpost: %s"
-msgstr ""
+msgstr "흑의 전초기지에 새로운 기물이 들어왔습니다: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:435
 #, python-format
 msgid "%(color)s has a new passed pawn on %(cord)s"
-msgstr ""
+msgstr "%(color)s는 %(cord)s에서 새로운 패스드 폰을 얻었습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:492
 msgid "half-open"
-msgstr ""
+msgstr "하프 오픈"
 
 #: lib/pychess/Utils/lutils/strateval.py:494
 #, python-format
 msgid "in the %(x)s%(y)s file"
-msgstr ""
+msgstr "%(x)s%(y)s파일에"
 
 #: lib/pychess/Utils/lutils/strateval.py:497
 #, python-format
 msgid "in the %(x)s%(y)s files"
-msgstr ""
+msgstr "%(x)s%(y)s파일들에"
 
 #: lib/pychess/Utils/lutils/strateval.py:501
 #, python-format
 msgid "%(color)s got a double pawn %(place)s"
-msgstr ""
+msgstr "%(color)s는 %(place)s에서 더블드 폰이 되었습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:503
 #, python-format
 msgid "%(color)s got new double pawns %(place)s"
-msgstr ""
+msgstr "%(color)s는 %(place)s에서 새로운 더블드 폰이 되었습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:512
 #, python-format
 msgid "%(color)s got an isolated pawn in the %(x)s file"
 msgid_plural "%(color)s got isolated pawns in the %(x)s files"
-msgstr[0] ""
+msgstr[0] "%(color)s는 %(x)s번째 세로줄에 하나의 폰이 있습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:520
 #, python-format
 msgid "%s moves pawns into stonewall formation"
-msgstr ""
+msgstr "%s가 스톤월구조로 폰을 이동했습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:537
 #: lib/pychess/Utils/lutils/strateval.py:547
 #, python-format
 msgid "%s can no longer castle"
-msgstr ""
+msgstr "%s은 더 이상 캐슬링을 할 수 없습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:540
 #: lib/pychess/Utils/lutils/strateval.py:550
 #, python-format
 msgid "%s can no longer castle in queenside"
-msgstr ""
+msgstr "%s은 더 이상 퀸 쪽에서 캐슬링을 할 수 없습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:543
 #: lib/pychess/Utils/lutils/strateval.py:553
 #, python-format
 msgid "%s can no longer castle in kingside"
-msgstr ""
+msgstr "%s은 더 이상 킹 쪽에서 캐슬링을 할 수 없습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:588
 #, python-format
 msgid "%(opcolor)s has a new trapped bishop on %(cord)s"
-msgstr ""
+msgstr "%(opcolor)s는 %(cord)s에서 함정에 빠진 새로운 비숍이 있습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:613
 #, python-format
 msgid "develops a pawn: %s"
-msgstr ""
+msgstr "폰 승급: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:615
 #, python-format
 msgid "brings a pawn closer to the backrow: %s"
-msgstr ""
+msgstr "폰 뒷줄로 가까이 가져오기: %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:632
 #, python-format
 msgid "brings a %(piece)s closer to enemy king: %(cord)s"
-msgstr ""
+msgstr "상대방 킹에 %(piece)s 가까이 가져가기: %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:637
 #, python-format
 msgid "develops a %(piece)s: %(cord)s"
-msgstr ""
+msgstr "%(piece)s 승급: %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:657
 #, python-format
 msgid "places a %(piece)s more active: %(cord)s"
-msgstr ""
+msgstr "%(piece)s 능동적인 위치에 놓기: %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:686
 msgid "White should do pawn storm in right"
-msgstr ""
+msgstr "백은 오른쪽에서 폰 스톰을 해야한다"
 
 #: lib/pychess/Utils/lutils/strateval.py:689
 msgid "Black should do pawn storm in left"
-msgstr ""
+msgstr "흑은 왼쪽에서 폰 스톰을 해야한다"
 
 #: lib/pychess/Utils/lutils/strateval.py:693
 msgid "White should do pawn storm in left"
-msgstr ""
+msgstr "백은 왼쪽에서 폰 스톰을 해야한다"
 
 #: lib/pychess/Utils/lutils/strateval.py:696
 msgid "Black should do pawn storm in right"
-msgstr ""
+msgstr "흑은 오른쪽에서 폰 스톰을 해야한다"
 
 #: lib/pychess/Utils/lutils/strateval.py:723
 msgid "Black has a rather cramped position"
-msgstr ""
+msgstr "흑은 cramped position입니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:725
 msgid "Black has a slightly cramped position"
-msgstr ""
+msgstr "흑은 cramped position에 가깝습니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:727
 msgid "White has a rather cramped position"
-msgstr ""
+msgstr "백은 cramped position입니다"
 
 #: lib/pychess/Utils/lutils/strateval.py:729
 msgid "White has a slightly cramped position"
-msgstr ""
+msgstr "백은 cramped position에 가깝습니다"
 
 #: lib/pychess/ic/managers/ChatManager.py:202
 #: lib/pychess/ic/managers/ICCChatManager.py:44
 msgid "Shout"
-msgstr ""
+msgstr "샤우트"
 
 #: lib/pychess/ic/managers/ChatManager.py:203
 #: lib/pychess/ic/managers/ICCChatManager.py:45
 msgid "Chess Shout"
-msgstr ""
+msgstr "체스 샤우트"
 
 #: lib/pychess/ic/managers/ChatManager.py:214
 #, python-format
 msgid "Unofficial channel %d"
-msgstr ""
+msgstr "비공식채널 %d"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:26
 msgid "Filters"
-msgstr ""
+msgstr "필터"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:30
 msgid "Filters panel can filter game list by various conditions"
-msgstr ""
+msgstr "필터 패널은 다양한 조건으로 게임 목록을 필터링 할 수 있습니다."
 
 #: lib/pychess/perspectives/database/FilterPanel.py:118
 msgid "Edit selected filter"
-msgstr ""
+msgstr "선택한 필터 수정"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:123
 msgid "Remove selected filter"
-msgstr ""
+msgstr "선택한 필터 제거"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:128
 msgid "Add new filter"
-msgstr ""
+msgstr "새로운 필터 추가"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:133
 msgid "Seq"
-msgstr ""
+msgstr "순서"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:135
 msgid ""
 "Create new sequence where listed conditions may be satisfied at different "
 "times in a game"
-msgstr ""
+msgstr "게임에서 다른 시간에 나열된 조건이 충족될 수 있는 새로운 순서를 만듭니다."
 
 #: lib/pychess/perspectives/database/FilterPanel.py:140
 msgid "Str"
-msgstr ""
+msgstr "Seven Tag Roster"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:142
 msgid ""
 "Create new streak sequence where listed conditions have to be satisfied in "
 "consecutive (half)moves"
-msgstr ""
+msgstr "연속된 (절반의)이동에서 나열된 조건이 충족되어야하는 새 연속 시퀀스 생성하기"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:147
 msgid "Filter game list by various conditions"
-msgstr ""
+msgstr "다양한 조건으로 게임 필터링하기"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:182
 #: lib/pychess/perspectives/database/FilterPanel.py:187
 msgid "Sequence"
-msgstr ""
+msgstr "순서"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:194
 #: lib/pychess/perspectives/database/FilterPanel.py:199
 #: lib/pychess/perspectives/database/FilterPanel.py:202
 msgid "Streak"
-msgstr ""
+msgstr "흐름"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:10
 msgid "Openings"
-msgstr ""
+msgstr "오프닝"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:14
 msgid "Openings panel can filter game list by opening moves"
-msgstr ""
+msgstr "오프닝 패널은 오프닝 동작을 통해 게임 목록을 필터링 할 수 있습니다."
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:35
 msgid "Move"
-msgstr ""
+msgstr "이동"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:40
 #: lib/pychess/perspectives/fics/FicsHome.py:120
 #: lib/pychess/perspectives/games/__init__.py:57
 msgid "Games"
-msgstr ""
+msgstr "게임들"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:45
 msgid "Winning %"
-msgstr ""
+msgstr "승률"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:74
 msgid "Filter game list by opening moves"
-msgstr ""
+msgstr "오프닝 이동으로 게임 목록 필터링하기"
 
 #: lib/pychess/perspectives/database/PreviewPanel.py:13
 msgid "Preview"
-msgstr ""
+msgstr "미리 보기"
 
 #: lib/pychess/perspectives/database/PreviewPanel.py:17
 msgid "Preview panel can filter game list by current game moves"
-msgstr ""
+msgstr "미리보기 패널은 현재 게임 이동으로 게임 목록을 필터링 할 수 있습니다."
 
 #: lib/pychess/perspectives/database/PreviewPanel.py:43
 msgid "Filter game list by current game moves"
-msgstr ""
+msgstr "현재 게임 이동으로 게임 목록 필터링하기"
 
 #: lib/pychess/perspectives/database/PreviewPanel.py:47
 msgid "Add sub-fen filter from position/circles"
-msgstr ""
+msgstr "배치/동그라미로 FEN하위 항목 추가하기"
 
 #: lib/pychess/perspectives/database/__init__.py:91
 msgid "Import PGN file"
-msgstr ""
+msgstr "PGN파일 불러오기"
 
 #: lib/pychess/perspectives/database/__init__.py:95
 msgid "Save to PGN file as..."
-msgstr ""
+msgstr "다른이름으로 PGN파일 저장하기..."
 
 #: lib/pychess/perspectives/database/__init__.py:205
 msgid "Open"
-msgstr ""
+msgstr "열기"
 
 #: lib/pychess/perspectives/database/__init__.py:219
 msgid "Opening chessfile..."
-msgstr ""
+msgstr "체스파일 여는 중..."
 
 #: lib/pychess/perspectives/database/__init__.py:358
 #: lib/pychess/perspectives/database/__init__.py:374
 msgid "Save as"
-msgstr ""
+msgstr "다음과 같은 이름으로 저장"
 
 #: lib/pychess/perspectives/database/__init__.py:410
 #: lib/pychess/perspectives/games/__init__.py:830
 msgid "Open chess file"
-msgstr ""
+msgstr "체스 파일 열기"
 
 #: lib/pychess/perspectives/database/__init__.py:460
 msgid "Recreating indexes..."
-msgstr ""
+msgstr "인덱스 재생성중..."
 
 #: lib/pychess/perspectives/database/__init__.py:484
 msgid "Preparing to start import..."
-msgstr ""
+msgstr "불러오기 준비 중..."
 
 #: lib/pychess/perspectives/database/__init__.py:495
 #: lib/pychess/perspectives/database/__init__.py:502
 #, python-format
 msgid "%s games processed"
-msgstr ""
+msgstr "%s게임 진행 됨"
 
 #: lib/pychess/perspectives/database/__init__.py:509
 msgid "Create New Polyglot Opening Book"
-msgstr ""
+msgstr "새 폴리글롯 오프닝 북 만들기"
 
 #: lib/pychess/perspectives/database/__init__.py:525
 msgid "Create Polyglot Book"
-msgstr ""
+msgstr "폴리글롯 북 생성하기"
 
 #: lib/pychess/perspectives/database/__init__.py:609
 msgid "Create New Pgn Database"
-msgstr ""
+msgstr "새 PGN 데이터베이스 생성하기"
 
 #: lib/pychess/perspectives/database/__init__.py:629
 #, python-format
 msgid "<big><b>File '%s' already exists.</b></big>"
-msgstr ""
+msgstr "<big><b>파일 '%s'는 이미 존재합니다.</b></big>"
 
 #: lib/pychess/perspectives/database/__init__.py:652
 #, python-format
 msgid ""
 "%(path)s\n"
 "containing %(count)s games"
-msgstr ""
+msgstr "%(path)s\n%(count)s게임 보관 중"
 
 #: lib/pychess/perspectives/database/gamelist.py:46
 msgid "Id"
-msgstr ""
+msgstr "아이디"
 
 #: lib/pychess/perspectives/database/gamelist.py:46
 msgid "W Elo"
-msgstr ""
+msgstr "백 ELO"
 
 #: lib/pychess/perspectives/database/gamelist.py:46
 msgid "B Elo"
-msgstr ""
+msgstr "흑 ELO"
 
 #: lib/pychess/perspectives/database/gamelist.py:47
 msgid "Round"
-msgstr ""
+msgstr "라운드"
 
 #: lib/pychess/perspectives/database/gamelist.py:48
 msgid "Length"
-msgstr ""
+msgstr "길이"
 
 #: lib/pychess/perspectives/database/gamelist.py:48
 msgid "Time control"
-msgstr ""
+msgstr "시간 제어"
 
 #: lib/pychess/perspectives/database/gamelist.py:69
 msgid "First games"
-msgstr ""
+msgstr "첫번째 게임"
 
 #: lib/pychess/perspectives/database/gamelist.py:73
 msgid "Previous games"
-msgstr ""
+msgstr "이전 게임"
 
 #: lib/pychess/perspectives/database/gamelist.py:77
 msgid "Next games"
-msgstr ""
+msgstr "다음 게임"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:24
 #: lib/pychess/perspectives/fics/ParrentListSection.py:37
 msgid "Archived"
-msgstr ""
+msgstr "달성한"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:28
 msgid "Adjourned, history and journal games list"
-msgstr ""
+msgstr "연기된, 기록된, 저널 게임 목록"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:56
 #: lib/pychess/perspectives/fics/SeekListPanel.py:74
 msgid "Clock"
-msgstr ""
+msgstr "시계"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:57
 #: lib/pychess/perspectives/fics/GameListPanel.py:60
 #: lib/pychess/perspectives/fics/SeekListPanel.py:73
 msgid "Type"
-msgstr ""
+msgstr "유형"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:58
 msgid "Date/Time"
-msgstr ""
+msgstr "날짜/시간"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:138
 #, python-format
 msgid ""
 " with whom you have an adjourned <b>%(timecontrol)s</b> <b>%(gametype)s</b> "
 "game is online."
-msgstr ""
+msgstr "연기한 <b>%(timecontrol)s</b><b>%(gametype)s</b>게임이 온라인에 있습니다."
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:167
 msgid "Request Continuation"
-msgstr ""
+msgstr "재개 요청하기"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:169
 msgid "Examine Adjourned Game"
-msgstr ""
+msgstr "연기된 게임 분석"
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:16
 msgid "Talking"
@@ -5698,7 +5699,7 @@ msgstr "대화"
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:20
 msgid "List of server channels"
-msgstr ""
+msgstr "서버 채널 목록"
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:44
 #: lib/pychess/perspectives/fics/ParrentListSection.py:34
@@ -5717,68 +5718,68 @@ msgstr "콘솔"
 
 #: lib/pychess/perspectives/fics/ConsolePanel.py:15
 msgid "Command line interface to the chess server"
-msgstr ""
+msgstr "체스 서버에 대한 명령어 인터페이스"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:69
 #: lib/pychess/perspectives/fics/FicsHome.py:71
 #: lib/pychess/perspectives/games/bookPanel.py:404
 msgid "Win"
-msgstr ""
+msgstr "승리"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:69
 #: lib/pychess/perspectives/fics/FicsHome.py:71
 #: lib/pychess/perspectives/games/bookPanel.py:398
 msgid "Draw"
-msgstr ""
+msgstr "무승부"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:69
 #: lib/pychess/perspectives/fics/FicsHome.py:71
 #: lib/pychess/perspectives/games/bookPanel.py:401
 msgid "Loss"
-msgstr ""
+msgstr "패배"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:71
 msgid "Need"
-msgstr ""
+msgstr "필요"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:71
 msgid "Best"
-msgstr ""
+msgstr "최고"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:83
 msgid ""
 "On FICS, your \"Wild\" rating encompasses all of the"
 "                         following variants at all time controls:\n"
-msgstr ""
+msgstr "FICS의 \"Wild\" 등급에는 항상 다음과 같은 모든 변형판이 포함됩니다:\n"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:109
 msgid "Sanctions"
-msgstr ""
+msgstr "허가"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:114
 msgid "Email"
-msgstr ""
+msgstr "이메일"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:129
 msgid "Spent"
-msgstr ""
+msgstr "소비"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:130
 msgid "online in total"
-msgstr ""
+msgstr "완전히 온라인"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:136
 msgid "Ping"
-msgstr ""
+msgstr "핑"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:144
 msgid "Connecting"
-msgstr ""
+msgstr "연결"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:170
 #: lib/pychess/perspectives/fics/ParrentListSection.py:36
 msgid "Finger"
-msgstr ""
+msgstr "손가락"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:188
 msgid ""
@@ -5787,14 +5788,14 @@ msgid ""
 "remain active with the ability to play games. (With some restrictions. For "
 "example, no premium videos, some limitations in channels, and so on.) To "
 "register an account, go to "
-msgstr ""
+msgstr "현재 게스트로 로그인되어 있지만 30일 동안 무료 평가판이 있고, 그 이후에는 무료이며 게임 기능을 통해 계정을 계속 사용할 수 있습니다. (일부 제한 사항 포함. 예를 들어, 프리미엄 비디오가 없고 일부 채널 제한이 있습니다.) 계정을 등록하려면"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:197
 msgid ""
 "You are currently logged in as a guest. A guest can't play rated games and "
 "therefore isn't able to play as many of the types of matches offered as a "
 "registered user. To register an account, go to "
-msgstr ""
+msgstr "현재 게스트로 로그인되어 있습니다. 게스트는 등급이 지정된 게임을 할 수 없으므로 등록된 사용자에게 제공되는 여러 유형의 대국을 할 수 없습니다. 계정을 등록하려면"
 
 #: lib/pychess/perspectives/fics/GameListPanel.py:15
 msgid "Game List"
@@ -5807,7 +5808,7 @@ msgstr "진행 중인 게임 목록"
 #: lib/pychess/perspectives/fics/GameListPanel.py:195
 #, python-format
 msgid "Games running: %d"
-msgstr ""
+msgstr "게임 중: %d"
 
 #: lib/pychess/perspectives/fics/NewsPanel.py:7
 msgid "News"
@@ -5820,12 +5821,12 @@ msgstr "서버 소식 목록"
 #: lib/pychess/perspectives/fics/ParrentListSection.py:31
 #: lib/pychess/perspectives/fics/SeekListPanel.py:166
 msgid "Assess"
-msgstr ""
+msgstr "평가"
 
 #: lib/pychess/perspectives/fics/ParrentListSection.py:33
 #: lib/pychess/perspectives/fics/__init__.py:577
 msgid "Follow"
-msgstr ""
+msgstr "팔로우"
 
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:12
 msgid "Player List"
@@ -5838,17 +5839,17 @@ msgstr "플레이어 목록"
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:53
 #: lib/pychess/perspectives/fics/SeekListPanel.py:70
 msgid "Name"
-msgstr ""
+msgstr "이름"
 
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:57
 msgid "Status"
-msgstr ""
+msgstr "상태"
 
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:143
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:173
 #, python-format
 msgid "Players: %d"
-msgstr ""
+msgstr "플레이어: %d"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:201
 msgid ""
@@ -5856,349 +5857,349 @@ msgid ""
 "                 can't establish ratings, and the chain button's state has "
 "no effect when                 there is no rating to which to tie \"Opponent"
 " Strength\" to"
-msgstr ""
+msgstr "게스트로 로그인했으므로 체인 버튼을 사용할 수 없습니다. 게스트는 등급을 설정할 수 없으며, \"상대 힘\"과 비슷한 등급이 없을 경우 체인 버튼의 상태는 아무런 영향을 미치지 않습니다."
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:249
 msgid "Challenge: "
-msgstr ""
+msgstr "도전:"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:290
 msgid "If set you can refuse players accepting your seek"
-msgstr ""
+msgstr "설정된 경우 플레이어가 탐색을 수락하는 것을 거부 할 수 있습니다."
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:294
 #: lib/pychess/perspectives/fics/SeekChallenge.py:297
 msgid "This option is not applicable because you're challenging a player"
-msgstr ""
+msgstr "플레이어에 도전하고 있기 때문에 이 옵션은 적용할 수 없습니다."
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:310
 msgid "Edit Seek: "
-msgstr ""
+msgstr "탐색 수정:"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:341
 #, python-format
 msgid "%(minutes)d min + %(gain)d sec/move"
-msgstr ""
+msgstr "%(minutes)d분 +%(gain)d초/이동"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:362
 msgid "Manual"
-msgstr ""
+msgstr "매뉴얼"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:525
 msgid "Any strength"
-msgstr ""
+msgstr "아무 힘"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:581
 msgid "You can't play rated games because you are logged in as a guest"
-msgstr ""
+msgstr "게스트로 로그인하였기 때문에 등급제 게임을 할 수 없습니다"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:585
 msgid "You can't play rated games because \"Untimed\" is checked, "
-msgstr ""
+msgstr "\"시간제한 없음\"이 선택되었기 때문에 등급제 게임을 할 수 없습니다"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:586
 msgid "and on FICS, untimed games can't be rated"
-msgstr ""
+msgstr "FICS에 따르면, 시간 제한 없는 게임은 등급이 지정되지 않습니다"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:590
 msgid "This option is not available because you're challenging a guest, "
-msgstr ""
+msgstr "게스트에 도전하고 있기 때문에 이 옵션은 사용할 수 없습니다."
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:591
 msgid "and guests can't play rated games"
-msgstr ""
+msgstr "게스트는 등급제 게임을 할 수 없습니다"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:706
 msgid "You can't select a variant because \"Untimed\" is checked, "
-msgstr ""
+msgstr "'시간 제한 없음'이 선택되어 있기 때문에 변형판을 선택할 수 없습니다"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:707
 msgid "and on FICS, untimed games have to be normal chess rules"
-msgstr ""
+msgstr "FICS에 따르면, 시간 제한이 없는 게임은 일반 체스 규칙을 따라야 합니다"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:743
 msgid "Change Tolerance"
-msgstr ""
+msgstr "인내심 변경하기"
 
 #: lib/pychess/perspectives/fics/SeekGraphPanel.py:10
 msgid "Seek Graph"
-msgstr ""
+msgstr "탐색 그래프"
 
 #: lib/pychess/perspectives/fics/SeekGraphPanel.py:14
 msgid "Handle seeks on graphical way"
-msgstr ""
+msgstr "그래픽 방식으로 탐색 처리"
 
 #: lib/pychess/perspectives/fics/SeekGraphPanel.py:49
 msgid " min"
-msgstr ""
+msgstr "분"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:19
 msgid "Seeks / Challenges"
-msgstr ""
+msgstr "탐색/ 도전"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:23
 msgid "Handle seeks and challenges"
-msgstr ""
+msgstr "탐색, 도전 처리하기"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:167
 msgid "Effect on ratings by the possible outcomes"
-msgstr ""
+msgstr "가능한 결과에 따른 등급에 미치는 영향"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:182
 msgid "Win:"
-msgstr ""
+msgstr "승리:"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:185
 msgid "Draw:"
-msgstr ""
+msgstr "무승부:"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:188
 msgid "Loss:"
-msgstr ""
+msgstr "패배:"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:191
 msgid "New RD:"
-msgstr ""
+msgstr "새로운 표준편차:"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:259
 #, python-format
 msgid "Active seeks: %d"
-msgstr ""
+msgstr "활성화된 탐색: %d"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:306
 #, python-format
 msgid ""
 " would like to resume your adjourned <b>%(time)s</b> <b>%(gametype)s</b> "
 "game."
-msgstr ""
+msgstr "연기된 <b>%(time)s</b><b>%(gametype)s</b>게임을 재개하고 싶어 합니다"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:311
 #, python-format
 msgid ""
 " challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game"
-msgstr ""
+msgstr "<b>%(time)s</b>%(rated)s<b>%(gametype)s</b>게임에 도전하세요"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:316
 #, python-format
 msgid " where <b>%(player)s</b> plays <b>%(color)s</b>."
-msgstr ""
+msgstr "<b>%(player)s</b>가 <b>%(color)s</b>플레이 중."
 
 #: lib/pychess/perspectives/fics/__init__.py:65
 msgid "ICS"
-msgstr ""
+msgstr "인터넷 체스 서버"
 
 #: lib/pychess/perspectives/fics/__init__.py:75
 msgid "Log Off"
-msgstr ""
+msgstr "로그 오프"
 
 #: lib/pychess/perspectives/fics/__init__.py:99
 msgid "New game from 1-minute playing pool"
-msgstr ""
+msgstr "1분짜리 게임하기"
 
 #: lib/pychess/perspectives/fics/__init__.py:104
 msgid "New game from 3-minute playing pool"
-msgstr ""
+msgstr "3분짜리 게임하기"
 
 #: lib/pychess/perspectives/fics/__init__.py:109
 msgid "New game from 5-minute playing pool"
-msgstr ""
+msgstr "5분짜리 게임하기"
 
 #: lib/pychess/perspectives/fics/__init__.py:114
 msgid "New game from 15-minute playing pool"
-msgstr ""
+msgstr "15분짜리 게임하기"
 
 #: lib/pychess/perspectives/fics/__init__.py:119
 msgid "New game from 25-minute playing pool"
-msgstr ""
+msgstr "25분짜리 게임하기"
 
 #: lib/pychess/perspectives/fics/__init__.py:124
 msgid "New game from Chess960 playing pool"
-msgstr ""
+msgstr "체스960으로 새 게임 하기"
 
 #: lib/pychess/perspectives/fics/__init__.py:388
 msgid "You have to set kibitz on to see bot messages here."
-msgstr ""
+msgstr "봇 메시지를 보려면 kibitz를 켜놓으십시오."
 
 #: lib/pychess/perspectives/fics/__init__.py:407
 msgid ""
 "You may only have 3 outstanding seeks at the same time. If you want"
 "             to add a new seek you must clear your currently active seeks. "
 "Clear your seeks?"
-msgstr ""
+msgstr "한번에 3 개의 탐색만 할 수 있습니다. 새 탐색을 추가하려면 현재 활성화된 탐색을 지워야합니다. 당신의 탐색을 지우시겠습니까?"
 
 #: lib/pychess/perspectives/fics/__init__.py:428
 msgid "You can't touch this! You are examining a game."
-msgstr ""
+msgstr "건들면 안됩니다! 게임을 분석 중 입니다."
 
 #: lib/pychess/perspectives/fics/__init__.py:441
 msgid " has declined your offer for a match"
-msgstr ""
+msgstr "요청을 거절했습니다"
 
 #: lib/pychess/perspectives/fics/__init__.py:455
 msgid " is censoring you"
-msgstr ""
+msgstr "검열중입니다"
 
 #: lib/pychess/perspectives/fics/__init__.py:469
 msgid " noplay listing you"
-msgstr ""
+msgstr "리스트에 내용이 없습니다"
 
 #: lib/pychess/perspectives/fics/__init__.py:484
 msgid " uses a formula not fitting your match request:"
-msgstr ""
+msgstr "대국 요청에 맞지 않는 형식을 사용 하고 있습니다:"
 
 #: lib/pychess/perspectives/fics/__init__.py:499
 msgid "to manual accept"
-msgstr ""
+msgstr "수동 수락"
 
 #: lib/pychess/perspectives/fics/__init__.py:502
 msgid "to automatic accept"
-msgstr ""
+msgstr "자동수락"
 
 #: lib/pychess/perspectives/fics/__init__.py:504
 msgid "rating range now"
-msgstr ""
+msgstr "현재 등급 범위"
 
 #: lib/pychess/perspectives/fics/__init__.py:505
 msgid "Seek updated"
-msgstr ""
+msgstr "탐색 업데이트 됨"
 
 #: lib/pychess/perspectives/fics/__init__.py:518
 msgid "Your seeks have been removed"
-msgstr ""
+msgstr "탐색이 제거되었습니다"
 
 #: lib/pychess/perspectives/fics/__init__.py:538
 msgid " has arrived"
-msgstr ""
+msgstr "도착함"
 
 #: lib/pychess/perspectives/fics/__init__.py:544
 msgid " has departed"
-msgstr ""
+msgstr "출발했다"
 
 #: lib/pychess/perspectives/fics/__init__.py:547
 msgid " is present"
-msgstr ""
+msgstr "참석했다"
 
 #: lib/pychess/perspectives/games/__init__.py:36
 msgid "Detect type automatically"
-msgstr ""
+msgstr "유형 자동 검색"
 
 #: lib/pychess/perspectives/games/__init__.py:155
 msgid "<big><b>Error loading game</big></b>"
-msgstr ""
+msgstr "<big><b>게임 로드 오류</big></b>"
 
 #: lib/pychess/perspectives/games/__init__.py:256
 msgid "Save Game"
-msgstr ""
+msgstr "게임 저장하기"
 
 #: lib/pychess/perspectives/games/__init__.py:256
 msgid "Export position"
-msgstr ""
+msgstr "배치 내보내기"
 
 #: lib/pychess/perspectives/games/__init__.py:278
 #, python-format
 msgid "<big><b>Unknown file type '%s'</b></big>"
-msgstr ""
+msgstr "<big><b>확인되지 않은 형식'%s'</b></big>"
 
 #: lib/pychess/perspectives/games/__init__.py:281
 #, python-format
 msgid ""
 "Was unable to save '%(uri)s' as PyChess doesn't know the format "
 "'%(ending)s'."
-msgstr ""
+msgstr "PyChess는 '%(ending)s' 형식을 몰라 '%(uri)s'를 저장할 수 없습니다."
 
 #: lib/pychess/perspectives/games/__init__.py:297
 #, python-format
 msgid "<big><b>Unable to save file '%s'</b></big>"
-msgstr ""
+msgstr "<big><b>'%s'을 저장할 수 없습니다</b></big>"
 
 #: lib/pychess/perspectives/games/__init__.py:299
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "    Please ensure that you have given the right path and try again."
-msgstr ""
+msgstr "파일을 저장하는 데 필요한 권한이 없습니다.\n올바른 경로를 지정했는지 확인한 후 다시 시도하십시오."
 
 #: lib/pychess/perspectives/games/__init__.py:308
 msgid "_Replace"
-msgstr ""
+msgstr "바꾸기(_R)"
 
 #: lib/pychess/perspectives/games/__init__.py:311
 msgid "File exists"
-msgstr ""
+msgstr "파일 존재함"
 
 #: lib/pychess/perspectives/games/__init__.py:314
 #, python-format
 msgid ""
 "<big><b>A file named '%s' already exists. Would you like to replace "
 "it?</b></big>"
-msgstr ""
+msgstr "<big><b>파일 '%s'는 이미 존재합니다. 덮어 씌우겠습니까?</b></big>"
 
 #: lib/pychess/perspectives/games/__init__.py:316
 #, python-format
 msgid ""
 "The file already exists in '%s'. If you replace it, its content will be "
 "overwritten."
-msgstr ""
+msgstr "파일 '%s'이 이미 존재합니다. 바꾸면 내용을 덮어씁니다."
 
 #: lib/pychess/perspectives/games/__init__.py:333
 msgid "Could not save the file"
-msgstr ""
+msgstr "파일을 저장할 수 없습니다"
 
 #: lib/pychess/perspectives/games/__init__.py:335
 msgid "<big><b>PyChess was not able to save the game</b></big>"
-msgstr ""
+msgstr "<big><b>PyChess가 게임을 저장할 수 없습니다</b></big>"
 
 #: lib/pychess/perspectives/games/__init__.py:336
 #, python-format
 msgid "The error was: %s"
-msgstr ""
+msgstr "에러: %s"
 
 #: lib/pychess/perspectives/games/__init__.py:361
 #, python-format
 msgid "There is %d game with unsaved moves."
 msgid_plural "There are %d games with unsaved moves."
-msgstr[0] ""
+msgstr[0] "이동이 저장되지 않은 %d개의 게임이 있습니다."
 
 #: lib/pychess/perspectives/games/__init__.py:364
 msgid "Save moves before closing?"
-msgstr ""
+msgstr "종료하기전에 경로를 저장하겠습니까?"
 
 #: lib/pychess/perspectives/games/__init__.py:376
 msgid ""
 "Unable to save to configured file."
 "                                                     Save the games before "
 "closing?"
-msgstr ""
+msgstr "구성 파일에 저장할 수 없습니다. 닫기 전에 게임을 저장하시겠습니까?"
 
 #: lib/pychess/perspectives/games/__init__.py:398
 msgid "vs."
-msgstr ""
+msgstr "대"
 
 #: lib/pychess/perspectives/games/__init__.py:405
 #, python-format
 msgid "_Save %d document"
 msgid_plural "_Save %d documents"
-msgstr[0] ""
+msgstr[0] "%d문서 저장(_S)"
 
 #: lib/pychess/perspectives/games/__init__.py:452
 msgid "Save the current game before you close it?"
-msgstr ""
+msgstr "종료하기 전에 현재 게임을 저장하시겠습니까?"
 
 #: lib/pychess/perspectives/games/__init__.py:458
 msgid ""
 "Unable to save to configured file."
 "                                             Save the current game before "
 "you close it?"
-msgstr ""
+msgstr "구성 파일에 저장할 수 없습니다. 현재 게임을 닫기 전에 저장하시겠습니까?"
 
 #: lib/pychess/perspectives/games/__init__.py:474
 msgid ""
 "It is not possible later to continue the game,\n"
 "if you don't save it."
-msgstr ""
+msgstr "나중에 게임을 계속할 수 없습니다.\n만약 저장하지 않는다면."
 
 #: lib/pychess/perspectives/games/__init__.py:838
 msgid "All Chess Files"
-msgstr ""
+msgstr "모든 체스 파일"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:26
 msgid "Annotation"
@@ -6206,265 +6207,265 @@ msgstr "주석"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:29
 msgid "Annotated game"
-msgstr ""
+msgstr "주석처리된 게임"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:354
 msgid "Refresh"
-msgstr ""
+msgstr "새로고침"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:360
 msgid "Add start comment"
-msgstr ""
+msgstr "시작 댓글 추가"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:365
 #: lib/pychess/perspectives/games/annotationPanel.py:456
 msgid "Add comment"
-msgstr ""
+msgstr "댓글 추가"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:368
 #: lib/pychess/perspectives/games/annotationPanel.py:456
 msgid "Edit comment"
-msgstr ""
+msgstr "댓글 수정"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:373
 msgid "Good move"
-msgstr ""
+msgstr "좋은 이동이군요"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:374
 msgid "Bad move"
-msgstr ""
+msgstr "나쁜 이동이군요"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:375
 msgid "Excellent move"
-msgstr ""
+msgstr "훌륭한 이동이군요입니다"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:376
 msgid "Very bad move"
-msgstr ""
+msgstr "매우 나쁜 이동이군요"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:377
 msgid "Interesting move"
-msgstr ""
+msgstr "흥미로운 이동이군요"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:378
 msgid "Suspicious move"
-msgstr ""
+msgstr "믿기 힘든 이동이군요"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:379
 msgid "Forced move"
-msgstr ""
+msgstr "어쩔수 없는 이동이군요"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:385
 msgid "Add move symbol"
-msgstr ""
+msgstr "이동 기호 추가"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:390
 msgid "Drawish"
-msgstr ""
+msgstr "Drawish(오프닝의 한 종류)"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:391
 msgid "Unclear position"
-msgstr ""
+msgstr "확실하지 않은 위치"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:392
 msgid "Slight advantage"
-msgstr ""
+msgstr "약간 우위"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:393
 msgid "Moderate advantage"
-msgstr ""
+msgstr "중간 우위"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:394
 msgid "Decisive advantage"
-msgstr ""
+msgstr "상당한 우위"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:395
 msgid "Crushing advantage"
-msgstr ""
+msgstr "엄청난 우위"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:396
 msgid "Zugzwang"
-msgstr ""
+msgstr "추크츠방"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:397
 msgid "Development advantage"
-msgstr ""
+msgstr "성장 우위"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:398
 msgid "Initiative"
-msgstr ""
+msgstr "주도권"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:399
 msgid "With attack"
-msgstr ""
+msgstr "공격으로"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:400
 msgid "Compensation"
-msgstr ""
+msgstr "보상"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:401
 msgid "Counterplay"
-msgstr ""
+msgstr "반격"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:402
 msgid "Time pressure"
-msgstr ""
+msgstr "시간 압박"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:408
 msgid "Add evaluation symbol"
-msgstr ""
+msgstr "평가 기호 추가"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:416
 msgid "Comment"
-msgstr ""
+msgstr "댓글"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:420
 msgid "Symbols"
-msgstr ""
+msgstr "상징"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:424
 msgid "All the evaluations"
-msgstr ""
+msgstr "모든 평가"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:428
 msgid "Remove"
-msgstr ""
+msgstr "제거"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1066
 msgid "No time control"
-msgstr ""
+msgstr "시간 제어 없음"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1074
 msgid "mins"
-msgstr ""
+msgstr "분"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1078
 #: lib/pychess/perspectives/games/annotationPanel.py:1085
 msgid "secs"
-msgstr ""
+msgstr "초"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1081
 #, python-format
 msgid "%(time)s for %(count)d moves"
-msgstr ""
+msgstr "%(count)d이동에 %(time)s"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1085
 msgid "move"
-msgstr ""
+msgstr "이동"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1103
 #, python-format
 msgid "round %s"
-msgstr ""
+msgstr "라운드 %s"
 
 #: lib/pychess/perspectives/games/bookPanel.py:21
 msgid "Hints"
-msgstr ""
+msgstr "힌트"
 
 #: lib/pychess/perspectives/games/bookPanel.py:26
 msgid ""
 "The hint panel will provide computer advice during each stage of the game"
-msgstr ""
+msgstr "힌트 패널은 게임의 각 단계에서 힌트를 제공합니다."
 
 #: lib/pychess/perspectives/games/bookPanel.py:28
 msgid "Official PyChess panel."
-msgstr ""
+msgstr "공식 PyChess 패널"
 
 #: lib/pychess/perspectives/games/bookPanel.py:92
 msgid "Opening Book"
-msgstr ""
+msgstr "오프닝 북"
 
 #: lib/pychess/perspectives/games/bookPanel.py:94
 msgid ""
 "The opening book will try to inspire you during the opening phase of the "
 "game by showing you common moves made by chess masters"
-msgstr ""
+msgstr "오프닝 북은 체스 마스터가 하는 일반적인 이동을 보여줌으로써 게임의 시작 단계에서 영감을 주려고 할 것 입니다."
 
 #: lib/pychess/perspectives/games/bookPanel.py:155
 #, python-format
 msgid "Analysis by %s"
-msgstr ""
+msgstr "%s로 분석하기"
 
 #: lib/pychess/perspectives/games/bookPanel.py:157
 #, python-format
 msgid ""
 "%s will try to predict which move is best and which side has the advantage"
-msgstr ""
+msgstr "%s는 어떤 이동이 가장 좋고 어느 쪽이 유리한지 예측하려고 할 것이다"
 
 #: lib/pychess/perspectives/games/bookPanel.py:159
 #, python-format
 msgid "Threat analysis by %s"
-msgstr ""
+msgstr "%s로 위협 분석하기"
 
 #: lib/pychess/perspectives/games/bookPanel.py:162
 #, python-format
 msgid ""
 "%s will identify what threats would exist if it were your opponent's turn to"
 " move"
-msgstr ""
+msgstr "%s는 상대가 움직일 때 어떤 위협이 존재하는지 파악합니다."
 
 #: lib/pychess/perspectives/games/bookPanel.py:189
 #: lib/pychess/perspectives/games/bookPanel.py:299
 msgid "Calculating..."
-msgstr ""
+msgstr "계산 중..."
 
 #: lib/pychess/perspectives/games/bookPanel.py:335
 msgid ""
 "Engine scores are in units of pawns, from White's point of view. Double "
 "clicking on analysis lines you can insert them into Annotation panel as "
 "variations."
-msgstr ""
+msgstr "엔진 점수는 백의 관점에서 볼 때 폰 단위로 표시됩니다. 분석 라인을 두 번 클릭하면 주석 패널에 분석 라인을 삽입할 수 있습니다."
 
 #: lib/pychess/perspectives/games/bookPanel.py:338
 msgid ""
 "Adding suggestions can help you find ideas, but slows down the computer's "
 "analysis."
-msgstr ""
+msgstr "제안을 추가하면 아이디어를 찾는 데 도움이 되지만 컴퓨터의 분석 속도는 느려집니다."
 
 #: lib/pychess/perspectives/games/bookPanel.py:344
 msgid "Endgame Table"
-msgstr ""
+msgstr "최종전 표"
 
 #: lib/pychess/perspectives/games/bookPanel.py:354
 msgid ""
 "The endgame table will show exact analysis when there are few pieces on the "
 "board."
-msgstr ""
+msgstr "최종전 표는 보드에 기물이 거의 없을 때 정확한 분석을 보여줍니다."
 
 #: lib/pychess/perspectives/games/bookPanel.py:402
 #: lib/pychess/perspectives/games/bookPanel.py:405
 #, python-format
 msgid "Mate in %d"
-msgstr ""
+msgstr "%d와 짝"
 
 #: lib/pychess/perspectives/games/bookPanel.py:654
 msgid ""
 "In this position,\n"
 "there is no legal move."
-msgstr ""
+msgstr "이 위치에서는,\n움직일 곳이 없습니다."
 
 #: lib/pychess/perspectives/games/chatPanel.py:15
 msgid ""
 "The chat panel lets you communicate with your opponent during the game, "
 "assuming he or she is interested"
-msgstr ""
+msgstr "채팅 패널을 사용하면 게임 중에 상대방과 대화 할 수 있습니다."
 
 #: lib/pychess/perspectives/games/commentPanel.py:12
 msgid "Comments"
-msgstr ""
+msgstr "댓글"
 
 #: lib/pychess/perspectives/games/commentPanel.py:17
 msgid "The comments panel will try to analyze and explain the moves played"
-msgstr ""
+msgstr "댓글 패널은 플레이 한 동작을 분석하고 설명합니다."
 
 #: lib/pychess/perspectives/games/commentPanel.py:126
 msgid "Initial position"
-msgstr ""
+msgstr "초기 배치"
 
 #: lib/pychess/perspectives/games/commentPanel.py:262
 #, python-format
 msgid "%(color)s moves a %(piece)s to %(cord)s"
-msgstr ""
+msgstr "%(color)s가 %(piece)s를 %(cord)s로 이동한다"
 
 #: lib/pychess/perspectives/games/engineOutputPanel.py:11
 msgid "Engines"
@@ -6474,7 +6475,7 @@ msgstr "엔진"
 msgid ""
 "The engine output panel shows the thinking output of chess engines (computer"
 " players) during a game"
-msgstr ""
+msgstr "엔진 출력 패널은 게임 중 체스 엔진 (컴퓨터 플레이어)의 출력 값을 보여줍니다."
 
 #: lib/pychess/perspectives/games/engineOutputPanel.py:41
 msgid "No chess engines (computer players) are participating in this game."
@@ -6488,94 +6489,94 @@ msgstr "이동 기록"
 msgid ""
 "The moves sheet keeps track of the players' moves and lets you navigate "
 "through the game history"
-msgstr ""
+msgstr "이동 시트는 플레이어의 이동을 추적하고 게임 기록을 탐색할 수 있게 해줍니다."
 
 #: lib/pychess/perspectives/games/scorePanel.py:13
 msgid "Score"
-msgstr ""
+msgstr "점수"
 
 #: lib/pychess/perspectives/games/scorePanel.py:15
 msgid ""
 "The score panel tries to evaluate the positions and shows you a graph of the"
 " game progress"
-msgstr ""
+msgstr "점수 패널은 배치를 평가하고 게임 진행 상황을 그래프로 보여줍니다."
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:25
 msgid "Practice endgames with computer"
-msgstr ""
+msgstr "컴퓨터와 최종전 연습하기"
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:64
 #: lib/pychess/perspectives/learn/LecturesPanel.py:67
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:27
 msgid "Title"
-msgstr ""
+msgstr "제목"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:21
 msgid "Study FICS lectures offline"
-msgstr ""
+msgstr "FICS 오프라인 강의 학습하기"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:71
 msgid "Author"
-msgstr ""
+msgstr "저자"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:22
 msgid "Guided interactive lessons in \"guess the move\" style"
-msgstr ""
+msgstr "\"이동 예상\" 스타일의 대화형 강의"
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:25
 msgid "Lichess practice studies Puzzles from GM games and Chess compositions"
-msgstr ""
+msgstr "Lichess학습은 GM games와 Chess Compositions의 퍼즐들을 공부합니다"
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:45
 msgid "others"
-msgstr ""
+msgstr "그 밖에"
 
 #: lib/pychess/perspectives/learn/__init__.py:24
 msgid "Learn"
-msgstr ""
+msgstr "학습하기"
 
 #: lib/pychess/perspectives/learn/__init__.py:35
 msgid "Quit Learning"
-msgstr ""
+msgstr "학습 종료"
 
 #: lib/pychess/perspectives/learn/__init__.py:108
 msgid "lichess"
-msgstr ""
+msgstr "리체스"
 
 #: lib/pychess/perspectives/learn/__init__.py:108
 msgid "wtharvey"
-msgstr ""
+msgstr "WTHarvey"
 
 #: lib/pychess/perspectives/learn/__init__.py:108
 msgid "yacpdb"
-msgstr ""
+msgstr "Yet Another Chess Problem Database"
 
 #: lib/pychess/perspectives/learn/__init__.py:108
 msgid "lessons"
-msgstr ""
+msgstr "강의"
 
 #: lib/pychess/perspectives/learn/__init__.py:130
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:35
 msgid "Progress"
-msgstr ""
+msgstr "진행"
 
 #: lib/pychess/perspectives/learn/__init__.py:135
 msgid "Reset my progress"
-msgstr ""
+msgstr "진행 초기화 하기"
 
 #: lib/pychess/perspectives/learn/__init__.py:141
 msgid "You will lose all your progress data!"
-msgstr ""
+msgstr "모든 진행 데이터를 잃어버릴 수 있습니다!"
 
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:31
 msgid "Source"
-msgstr ""
+msgstr "출처"
 
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:40
 msgid "Reset"
-msgstr ""
+msgstr "초기화"
 
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:107
 #, python-brace-format
 msgid "This will reset the progress to 0 for the puzzle \"{title}\""
-msgstr ""
+msgstr "이것은 퍼즐 \"{title}\"의 진행률을 0으로 초기화 합니다."

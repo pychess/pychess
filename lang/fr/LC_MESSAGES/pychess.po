@@ -14,6 +14,7 @@
 # MARTIN Damien <damien@martin-damien.fr>, 2013-2014
 # minicore <minicore@jypino.eu>, 2013
 # Pierre Boulenguez, 2007
+# Sebastien VINOT <sebastien.vinot@logisphere.fr>, 2020
 # ea1cd8241cb389ffb6f92bc6891eff5d_dc12308 <70dced5587d47e18d88f9298024d96f8_93383>, 2014
 # Xavier Lüthi <xavier@luthi.eu>, 2014
 # Xavier Lüthi <xavier@luthi.eu>, 2014
@@ -22,8 +23,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-13 11:48+0200\n"
-"PO-Revision-Date: 2020-07-15 00:21+0000\n"
-"Last-Translator: ecrucru\n"
+"PO-Revision-Date: 2020-11-21 10:44+0000\n"
+"Last-Translator: Sebastien VINOT <sebastien.vinot@logisphere.fr>\n"
 "Language-Team: French (http://www.transifex.com/gbtami/pychess/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5084,7 +5085,7 @@ msgid ""
 "PyChess is able to download chess games remotely from the following websites:\n"
 "\n"
 ", "
-msgstr ""
+msgstr "PyChess est en mesure de télécharger des parties d'échec"
 
 #: lib/pychess/widgets/tipOfTheDay.py:91
 msgid ""
