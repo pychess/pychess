@@ -95,6 +95,7 @@ In C:\msys64\mingw64.exe terminal run:
 pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-cairo mingw-w64-x86_64-gobject-introspection mingw-w64-x86_64-libffi
 pacman -S mingw-w64-x86_64-gtk3 mingw-w64-x86_64-python-gobject mingw-w64-x86_64-gtksourceview3 mingw-w64-x86_64-freetype
 pacman -S mingw-w64-x86_64-python-sqlalchemy mingw-w64-x86_64-python-pexpect mingw-w64-x86_64-python-psutil
+pacman -S --needed base-devel mingw-w64-x86_64-toolchain
 pacman -S mingw-w64-x86_64-python-pip
 pip install websockets
 
