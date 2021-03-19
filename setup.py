@@ -11,9 +11,6 @@ import subprocess
 this_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path = [os.path.join(this_dir, "lib")] + sys.path
 
-from pychess.Savers.pgn import PGNFile
-from pychess.System.protoopen import protoopen
-
 
 msi = False
 if sys.argv[-1] == "bdist_msi":
@@ -120,7 +117,7 @@ if not isfile("eco.db"):
     with open("pgn2ecodb.py") as fh:
         exec(fh.read())
 
-if not isfile(os.path.abspath("pieces/Pychess.png")):
+if not isfile(os.path.abspath("pieces/Spatial.png")):
     with open("create_theme_preview.py") as fh:
         exec(fh.read())
 
@@ -161,14 +158,18 @@ DATA_FILES += [('share/gtksourceview-3.0/language-specs', ['gtksourceview-3.0/la
 DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
 DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
 
-# Lectures, puzzles, lessons
-for filename in glob('learn/puzzles/*.pgn'):
-    chessfile = PGNFile(protoopen(filename))
-    chessfile.init_tag_database()
+if not isfile(os.path.abspath("learn/puzzles/mate_in_4.sqlite")):
+    from pychess.Savers.pgn import PGNFile
+    from pychess.System.protoopen import protoopen
 
-for filename in glob('learn/lessons/*.pgn'):
-    chessfile = PGNFile(protoopen(filename))
-    chessfile.init_tag_database()
+    # Lectures, puzzles, lessons
+    for filename in glob('learn/puzzles/*.pgn'):
+        chessfile = PGNFile(protoopen(filename))
+        chessfile.init_tag_database()
+
+    for filename in glob('learn/lessons/*.pgn'):
+        chessfile = PGNFile(protoopen(filename))
+        chessfile.init_tag_database()
 
 DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.olv'))]
 DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.pgn'))]
