@@ -104,6 +104,8 @@ python ./pychess
 
 To create .msi installer:
 pacman -S mingw-w64-x86_64-python-cx_Freeze
+# You may need this on licalized Windows unless cx_Freeze will fail
+export LC_ALL=C
 python setup.py bdist_msi
 
 -------------------------
