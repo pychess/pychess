@@ -7,6 +7,7 @@ from io import StringIO
 from os.path import getmtime
 import re
 import textwrap
+import sys
 
 import pexpect
 
@@ -380,10 +381,16 @@ MODERN = "-modern" if cpuinfo['popcnt'] else ""
 
 altpath = getEngineDataPrefix()
 
-scoutfish = "scoutfish_x%s%s%s" % (cpuinfo['bitness'], MODERN, cpuinfo['binext'])
+if sys.platform == "win32":
+    scoutfish = "scoutfish_x64.exe"
+else:
+    scoutfish = "scoutfish_x%s%s%s" % (cpuinfo['bitness'], MODERN, cpuinfo['binext'])
 scoutfish_path = shutil.which(scoutfish, mode=os.X_OK, path=altpath)
 
-parser = "parser_x%s%s%s" % (cpuinfo['bitness'], MODERN, cpuinfo['binext'])
+if sys.platform == "win32":
+    parser = "parser_x64.exe"
+else:
+    parser = "parser_x%s%s%s" % (cpuinfo['bitness'], MODERN, cpuinfo['binext'])
 chess_db_path = shutil.which(parser, mode=os.X_OK, path=altpath)
 
 
