@@ -3265,7 +3265,7 @@ msgstr "Parce que %(loser)s a dépassé son temps réglementaire"
 #: lib/pychess/Utils/repr.py:60
 #, python-format
 msgid "Because %(loser)s was checkmated"
-msgstr "Parce %(loser)s était échec et mat"
+msgstr "Parce que %(loser)s est échec et mat"
 
 #: lib/pychess/Utils/repr.py:61
 #, python-format
