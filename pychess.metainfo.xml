@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2006 Thomas Dybdahl Ahle <lobais@gmail.com>, 2013 Tamás Bajusz <gbtami@gmail.com> -->
-<desktop-application>
+<component type="desktop-application">
  <id type="desktop">pychess.desktop</id>
- <licence>GFDL</licence>
+ <metadata_license>GFDL</metadata_license>
+ <project_license>GPL-3.0</project_license>
  <name>PyChess</name>
  <summary>Chess client</summary>
  <description>
@@ -47,12 +48,15 @@
    <li>Easy to use and intuitive look and feel</li>
   </ul>
  </description>
+ <content_rating type="oars-1.1">
+   <content_attribute id="social-chat">mild</content_attribute>
+ </content_rating>
  <screenshots>
-  <screenshot type="default" width="450" height="438">http://pychess.org/images/feature-1.png</screenshot>
-  <screenshot width="532" height="421">http://pychess.org/images/feature-2.png</screenshot>
-  <screenshot width="470" height="392">http://pychess.org/images/feature-3.png</screenshot>
+  <screenshot type="default" width="450" height="438">https://pychess.github.io/images/feature-1.png</screenshot>
+  <screenshot width="532" height="421">https://pychess.github.io/images/feature-2.png</screenshot>
+  <screenshot width="470" height="392">https://pychess.github.io/images/feature-3.png</screenshot>
  </screenshots>
- <url type="homepage">http://pychess.org</url>
+ <url type="homepage">http://pychess.github.io</url>
  <updatecontact>pychess-people@googlegroups.com</updatecontact>
-</desktop-application>
+</component>
 
