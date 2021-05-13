@@ -13,30 +13,31 @@ pnames = ('Pawn', 'Knight', 'Bishop', 'Rook', 'Queen', 'King')
 size = 800.0
 
 
-def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False, variant=None):
+def drawPiece3(piece, context, x, y, psize, allwhite=False, allpawns=False, asean=False, variant=None):
     """Rendering pieces using .svg chess figurines"""
 
     color = WHITE if allwhite else piece.color
+    sign = PAWN if allpawns else piece.sign
     if variant is not None and variant == SITTUYINCHESS:
-        image = sittuyin_svg_pieces[color][piece.sign]
+        image = sittuyin_svg_pieces[color][sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
         offset_y = 0
     elif asean:
-        image = makruk_svg_pieces[color][piece.sign]
+        image = makruk_svg_pieces[color][sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
         offset_y = 0
     elif all_in_one:
         image = svg_pieces
         w, h = image.props.width / 6, image.props.height / 2
-        offset_x = piece_ord[piece.sign] * psize
+        offset_x = piece_ord[sign] * psize
         offset_y = 0 if color == BLACK else psize
     else:
         if variant is not None and variant == SCHESS:
-            image = schess_svg_pieces[color][piece.sign]
+            image = schess_svg_pieces[color][sign]
         else:
-            image = svg_pieces[color][piece.sign]
+            image = svg_pieces[color][sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
         offset_y = 0
@@ -54,7 +55,7 @@ def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False, variant
         image.render_cairo(context)
     elif all_in_one:
         pieceid = '#%s%s' % ('White' if color == 0 else 'Black',
-                             pnames[piece.sign - 1])
+                             pnames[sign - 1])
         image.render_cairo_sub(context, id=pieceid)
     else:
         image.render_cairo(context)
@@ -64,20 +65,21 @@ def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False, variant
     context.restore()
 
 
-def drawPiece4(piece, context, x, y, psize, allwhite=False, asean=False, variant=None):
+def drawPiece4(piece, context, x, y, psize, allwhite=False, allpawns=False, asean=False, variant=None):
     """Rendering pieces using .ttf chessfont figurines"""
 
     if asean:
-        drawPiece3(piece, context, x, y, psize, allwhite=allwhite, asean=True)
+        drawPiece3(piece, context, x, y, psize, allwhite=allwhite, allpawns=allpawns, asean=True)
         return
 
     color = WHITE if allwhite else piece.color
+    sign = PAWN if allpawns else piece.sign
 
     context.set_font_face(chess_font_face)
     context.set_font_size(psize)
     context.move_to(x, y + psize)
 
-    context.text_path(piece2char[color][piece.sign])
+    context.text_path(piece2char[color][sign])
     close_path = False
     for cmd, points in context.copy_path():
         if cmd == 0:

@@ -1,5 +1,5 @@
 from pychess.Utils.const import VARIANTS_BLINDFOLD, BLINDFOLDCHESS, HIDDENPAWNSCHESS, \
-    HIDDENPIECESCHESS, ALLWHITECHESS
+    HIDDENPIECESCHESS, ALLWHITECHESS, ALLPAWNSCHESS, ALLWHITEPAWNSCHESS
 from pychess.Utils.Board import Board
 
 
@@ -41,6 +41,28 @@ class AllWhiteBoard(Board):
     __desc__ = _("Classic chess rules with all pieces white\n" +
                  "http://en.wikipedia.org/wiki/Blindfold_chess")
     name = _("All white")
+    cecp_name = "normal"
+    need_initial_board = False
+    standard_rules = True
+    variant_group = VARIANTS_BLINDFOLD
+
+
+class AllPawnsBoard(Board):
+    variant = ALLPAWNSCHESS
+    __desc__ = _("Classic chess rules with all pieces pawns\n" +
+                 "http://en.wikipedia.org/wiki/Blindfold_chess")
+    name = _("All pawns")
+    cecp_name = "normal"
+    need_initial_board = False
+    standard_rules = True
+    variant_group = VARIANTS_BLINDFOLD
+
+
+class AllWhitePawnsBoard(Board):
+    variant = ALLWHITEPAWNSCHESS
+    __desc__ = _("Classic chess rules with all pieces white pawns\n" +
+                 "http://en.wikipedia.org/wiki/Blindfold_chess")
+    name = _("All white pawns")
     cecp_name = "normal"
     need_initial_board = False
     standard_rules = True
