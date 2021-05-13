@@ -3,7 +3,7 @@ from pychess.Utils.const import NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERR
     RANDOMCHESS, ASYMMETRICRANDOMCHESS, UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, THEBANCHESS, \
     BUGHOUSECHESS, PAWNSPASSEDCHESS, ATOMICCHESS, CRAZYHOUSECHESS, LOSERSCHESS, SUICIDECHESS, \
     PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, ALLWHITECHESS, BLINDFOLDCHESS, \
-    HIDDENPIECESCHESS, HIDDENPAWNSCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, THREECHECKCHESS, \
+    HIDDENPIECESCHESS, HIDDENPAWNSCHESS, ALLPAWNSCHESS, ALLWHITEPAWNSCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, THREECHECKCHESS, \
     AIWOKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, CAMBODIANCHESS, SITTUYINCHESS, EUROSHOGICHESS, \
     RACINGKINGSCHESS, MAKRUKCHESS, SETUPCHESS, GIVEAWAYCHESS, HORDECHESS, PLACEMENTCHESS, SCHESS, \
     LIGHTBRIGADECHESS
@@ -31,7 +31,7 @@ from .rookodds import RookOddsBoard
 from .queenodds import QueenOddsBoard
 from .wildcastle import WildcastleBoard
 from .wildcastleshuffle import WildcastleShuffleBoard
-from .blindfold import BlindfoldBoard, HiddenPawnsBoard, HiddenPiecesBoard, AllWhiteBoard
+from .blindfold import BlindfoldBoard, HiddenPawnsBoard, HiddenPiecesBoard, AllWhiteBoard, AllPawnsBoard, AllWhitePawnsBoard
 from .kingofthehill import KingOfTheHillBoard
 from .threecheck import ThreeCheckBoard
 from .racingkings import RacingKingsBoard
@@ -68,6 +68,8 @@ variants = {NORMALCHESS: NormalBoard,
             BLINDFOLDCHESS: BlindfoldBoard,
             HIDDENPAWNSCHESS: HiddenPawnsBoard,
             HIDDENPIECESCHESS: HiddenPiecesBoard,
+            ALLPAWNSCHESS: AllPawnsBoard,
+            ALLWHITEPAWNSCHESS: AllWhitePawnsBoard,
             WILDCASTLECHESS: WildcastleBoard,
             WILDCASTLESHUFFLECHESS: WildcastleShuffleBoard,
             KINGOFTHEHILLCHESS: KingOfTheHillBoard,

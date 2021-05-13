@@ -20,7 +20,7 @@ from pychess.Utils.const import ASEAN_VARIANTS, DROP_VARIANTS, WAITING_TO_START,
     KING_CASTLE, QUEEN_CASTLE, WILDCASTLESHUFFLECHESS, \
     WILDCASTLECHESS, PAWN, KNIGHT, SITTUYINCHESS, BLACK
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
-    HiddenPiecesBoard, AllWhiteBoard
+    HiddenPiecesBoard, AllWhiteBoard, AllPawnsBoard, AllWhitePawnsBoard
 from . import preferencesDialog
 from pychess.perspectives import perspective_manager
 from pychess.widgets.preferencesDialog import board_items
@@ -160,7 +160,8 @@ class BoardView(Gtk.DrawingArea):
             gamemodel = GameModel()
         self.model = gamemodel
 
-        self.allwhite = self.model.variant == AllWhiteBoard
+        self.allwhite = (self.model.variant == AllWhiteBoard) or (self.model.variant == AllWhitePawnsBoard)
+        self.allpawns = (self.model.variant == AllPawnsBoard) or (self.model.variant == AllWhitePawnsBoard)
         self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
         self.setup_position = setup_position
@@ -1224,7 +1225,7 @@ class BoardView(Gtk.DrawingArea):
         context.transform(invmatrix)
         Pieces.drawPiece(piece, context,
                          cx_loc + CORD_PADDING, cy_loc + CORD_PADDING,
-                         side - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean,
+                         side - CORD_PADDING * 2, allwhite=self.allwhite, allpawns=self.allpawns, asean=self.asean,
                          variant=self.model.variant.variant)
         context.transform(matrix)
 
