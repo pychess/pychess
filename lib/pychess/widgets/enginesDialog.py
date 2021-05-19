@@ -198,6 +198,10 @@ class EnginesDialog():
             filter.add_pattern("*%s" % vm.ext)
 
         engine_chooser_dialog.add_filter(filter)
+        filter = Gtk.FileFilter()
+        filter.set_name(_("All Files"))
+        filter.add_pattern("*")
+        engine_chooser_dialog.add_filter(filter)
         self.add = False
 
         def add(button):
