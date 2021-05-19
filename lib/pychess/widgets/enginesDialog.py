@@ -192,6 +192,7 @@ class EnginesDialog():
         filter.add_mime_type("application/x-sharedlib")
         filter.add_mime_type("application/x-ms-dos-executable")
         filter.add_mime_type("application/x-msdownload")
+        filter.add_mime_type("application/x-sharedlib")
         filter.add_pattern("*.exe")
         for vm in VM_LIST:
             filter.add_pattern("*%s" % vm.ext)
