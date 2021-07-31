@@ -797,7 +797,7 @@ class ThemeTab:
 
             :return: (a List) of themes
         """
-        themes = ['Pychess']
+        themes = []
 
         pieces = addDataPrefix("pieces")
         themes += [d.capitalize()
