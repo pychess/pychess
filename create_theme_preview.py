@@ -24,10 +24,7 @@ PIECES = ((Piece(WHITE, KING), Piece(WHITE, QUEEN), Piece(WHITE, ROOK), None),
 themes = []
 
 pieces = addDataPrefix("pieces")
-themes += [d.capitalize() for d in listdir(pieces) if isdir(os.path.join(pieces,d)) and d != 'ttf']
-
-ttf = addDataPrefix("pieces/ttf")
-themes += ['ttf-' + splitext(d)[0].capitalize() for d in listdir(ttf) if splitext(d)[1] == '.ttf']
+themes += [d.capitalize() for d in listdir(pieces) if isdir(os.path.join(pieces,d))]
 themes.sort()
 
 for theme in themes:

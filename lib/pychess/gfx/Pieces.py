@@ -4,7 +4,6 @@ from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK,
     reprSign, SITTUYINCHESS, HAWK, ELEPHANT, SCHESS
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
-from pychess.System.cairoextras import create_cairo_font_face_for_file
 
 
 piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
@@ -13,7 +12,7 @@ pnames = ('Pawn', 'Knight', 'Bishop', 'Rook', 'Queen', 'King')
 size = 800.0
 
 
-def drawPiece3(piece, context, x, y, psize, allwhite=False, allpawns=False, asean=False, variant=None):
+def drawPiece(piece, context, x, y, psize, allwhite=False, allpawns=False, asean=False, variant=None):
     """Rendering pieces using .svg chess figurines"""
 
     color = WHITE if allwhite else piece.color
@@ -65,39 +64,6 @@ def drawPiece3(piece, context, x, y, psize, allwhite=False, allpawns=False, asea
     context.restore()
 
 
-def drawPiece4(piece, context, x, y, psize, allwhite=False, allpawns=False, asean=False, variant=None):
-    """Rendering pieces using .ttf chessfont figurines"""
-
-    if asean:
-        drawPiece3(piece, context, x, y, psize, allwhite=allwhite, allpawns=allpawns, asean=True)
-        return
-
-    color = WHITE if allwhite else piece.color
-    sign = PAWN if allpawns else piece.sign
-
-    context.set_font_face(chess_font_face)
-    context.set_font_size(psize)
-    context.move_to(x, y + psize)
-
-    context.text_path(piece2char[color][sign])
-    close_path = False
-    for cmd, points in context.copy_path():
-        if cmd == 0:
-            context.move_to(*points)
-            if close_path:
-                context.set_source_rgb(1, 1, 1)
-                context.fill_preserve()
-                context.set_source_rgb(0, 0, 0)
-                close_path = False
-        elif cmd == 1:
-            context.line_to(*points)
-        elif cmd == 2:
-            context.curve_to(*points)
-        else:
-            close_path = True
-    context.fill()
-
-
 surfaceCache = {}
 
 pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, HAWK, ELEPHANT)
@@ -121,66 +87,32 @@ def get_svg_pieces(svgdir):
     return rsvg_handles
 
 
-def get_chess_font_face(name):
-    """Set chess font and char mapping for a chess .ttf"""
-    name = name[4:]
-    if name in ('alpha', 'berlin', 'cheq'):
-        char_map = ('phbrqk', 'ojntwl')
-    else:
-        char_map = ('pnbrqk', 'omvtwl')
-
-    piece_chars = [[None] * 7, [None] * 7]
-    for color in (WHITE, BLACK):
-        for piece, char in zip(pieces, char_map[color]):
-            piece_chars[color][piece] = char
-
-    face = create_cairo_font_face_for_file(addDataPrefix("pieces/ttf/%s.ttf" %
-                                                         name))
-    return face, piece_chars
-
-
 all_in_one = None
-drawPiece = None
 svg_pieces = None
 makruk_svg_pieces = get_svg_pieces("makruk")
 sittuyin_svg_pieces = get_svg_pieces("sittuyin")
 schess_svg_pieces = get_svg_pieces("merida")
-chess_font_face = None
 piece2char = None
 
 
 def set_piece_theme(piece_set):
     global all_in_one
-    global drawPiece
     global svg_pieces
-    global chess_font_face
     global piece2char
 
     piece_set = piece_set.lower()
-    if piece_set.startswith("ttf-"):
-        drawPiece = drawPiece4
-        try:
-            chess_font_face, piece2char = get_chess_font_face(piece_set)
-        except Exception:
-            print("Can't create ttf piece set %s" % piece_set)
-            all_in_one = False
-            drawPiece = drawPiece3
-            svg_pieces = get_svg_pieces("merida")
-    elif piece_set in ('celtic', 'eyes', 'fantasy', 'fantasy_alt', 'freak',
+    if piece_set in ('celtic', 'eyes', 'fantasy', 'fantasy_alt', 'freak',
                        'prmi', 'skulls', 'spatial'):
         all_in_one = True
-        drawPiece = drawPiece3
-        svg_pieces = get_svg_pieces(piece_set)
     else:
         all_in_one = False
-        drawPiece = drawPiece3
-        try:
-            svg_pieces = get_svg_pieces(piece_set)
-        except Exception:
-            print("Can't create piece set %s" % piece_set)
-            all_in_one = False
-            drawPiece = drawPiece3
-            svg_pieces = get_svg_pieces("merida")
+
+    try:
+        svg_pieces = get_svg_pieces(piece_set)
+    except Exception:
+        print("Can't create piece set %s" % piece_set)
+        all_in_one = False
+        svg_pieces = get_svg_pieces("merida")
 
 
 set_piece_theme(conf.get("pieceTheme"))
