@@ -3,6 +3,8 @@ import os
 from os import listdir
 from os.path import isdir, isfile, splitext
 
+import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import cairo
 
