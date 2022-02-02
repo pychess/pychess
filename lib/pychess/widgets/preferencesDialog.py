@@ -802,11 +802,8 @@ class ThemeTab:
         pieces = addDataPrefix("pieces")
         themes += [d.capitalize()
                    for d in listdir(pieces)
-                   if isdir(os.path.join(pieces, d)) and d != 'ttf']
+                   if isdir(os.path.join(pieces, d))]
 
-        ttf = addDataPrefix("pieces/ttf")
-        themes += ["ttf-" + splitext(d)[0].capitalize()
-                   for d in listdir(ttf) if splitext(d)[1] == '.ttf']
         themes.sort()
 
         return themes

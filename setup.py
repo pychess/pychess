@@ -156,7 +156,6 @@ DATA_FILES += [('share/gtksourceview-3.0/language-specs', ['gtksourceview-3.0/la
 
 # Piece sets
 DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
-DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
 
 if not isfile(os.path.abspath("learn/puzzles/mate_in_4.sqlite")):
     from pychess.Savers.pgn import PGNFile
@@ -178,7 +177,7 @@ DATA_FILES += [("share/pychess/learn/lessons", glob('learn/lessons/*.pgn'))]
 DATA_FILES += [("share/pychess/learn/lessons", glob('learn/lessons/*.sqlite'))]
 DATA_FILES += [("share/pychess/learn/lectures", glob('learn/lectures/*.txt'))]
 
-for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d)) and d != 'ttf']:
+for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d))]:
     DATA_FILES += [("share/pychess/pieces/" + dir, glob('pieces/' + dir + '/*.svg'))]
 
 # Manpages
