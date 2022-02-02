@@ -88,6 +88,8 @@ class wait_signal(asyncio.Future):
             return False
         try:
             super().cancel(msg=msg)
+        except TypeError:  # It has msg parameter only form Python 3.9
+            super().cancel()
         except AttributeError:
             pass
         try:
