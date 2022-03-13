@@ -3,7 +3,7 @@ import os
 from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, \
-    WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE, UNKNOWN_REASON
+    WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE, SKIPPED
 from pychess.Utils.LearnModel import LearnModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
@@ -17,8 +17,6 @@ from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
 from pychess.System import conf
 from pychess.System.protoopen import protoopen
-
-from lib.pychess.Utils.const import SKIPPED
 
 __title__ = _("Puzzles")
 
