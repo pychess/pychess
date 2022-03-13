@@ -6,6 +6,8 @@ from collections import defaultdict
 from gi.repository import Gtk, GObject
 
 import pychess
+
+from lib.pychess.Utils.const import CANCELLED, PRACTICE_GOAL_REACHED, UNKNOWN_REASON, SKIPPED
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
@@ -690,13 +692,21 @@ class GameWidget(GObject.GObject):
         self.saveButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image8))
         self.saveButton.set_tooltip_text(_("Save arrows/circles"))
         toolbar.insert(self.saveButton, -1)
-
+        
         def on_clicked(button, func):
             # Prevent moving in game while lesson not finished
             if self.gamemodel.lesson_game and not self.gamemodel.solved:
                 return
             else:
                 func()
+
+        # Add skip button if game is puzzle or lesson
+        if self.gamemodel.puzzle_game or self.gamemodel.lesson_game:
+            image9 = get_pixbuf("glade/skip.png")
+            skipButton = Gtk.ToolButton.new(Gtk.Image.new_from_pixbuf(image9))
+            skipButton.set_tooltip_text(_("Skip to next puzzle"))
+            toolbar.insert(skipButton, -1)
+            self.cids[skipButton] = skipButton.connect("clicked", on_clicked, self.skip_game)
 
         self.cids[firstButton] = firstButton.connect("clicked", on_clicked, self.board.view.showFirst)
         self.cids[prevButton] = prevButton.connect("clicked", on_clicked, self.board.view.showPrev)
@@ -796,6 +806,9 @@ class GameWidget(GObject.GObject):
         view.saved_circles |= view.circles
 
         self.on_shapes_changed(self.board)
+
+    def skip_game(self):
+        self.gamemodel.check_goal(DRAW, SKIPPED)
 
     def light_on_off(self, on):
         child = self.tabcontent.get_child()

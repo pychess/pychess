@@ -3,7 +3,7 @@ import os
 from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, \
-    WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE
+    WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE, UNKNOWN_REASON
 from pychess.Utils.LearnModel import LearnModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
@@ -17,6 +17,8 @@ from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
 from pychess.System import conf
 from pychess.System.protoopen import protoopen
+
+from lib.pychess.Utils.const import SKIPPED
 
 __title__ = _("Puzzles")
 
@@ -72,7 +74,10 @@ def start_puzzle_from(filename, index=None):
         try:
             index = progress.index(0)
         except ValueError:
-            index = 0
+            try:
+                index = progress.index(2)
+            except ValueError:
+                index = 0
 
     rec = records[index]
 
@@ -123,14 +128,21 @@ def start_puzzle_game(gamemodel, filename, records, index, rec, from_lesson=Fals
         gamemodel.emit("players_changed")
     gamemodel.connect("game_started", on_game_started, opp_name, color)
 
-    def goal_checked(gamemodle):
-        if gamemodel.reason == PRACTICE_GOAL_REACHED:
+    def goal_checked(gamemodel):
+        reason = gamemodel.reason
+        if reason == PRACTICE_GOAL_REACHED:
+            stat = 1
+        elif reason == SKIPPED:
+            stat = 2
+        else:
+            stat = 0
+        if reason is not None:
             if from_lesson:
                 progress = lessons_solving_progress[gamemodel.source]
             else:
                 progress = puzzles_solving_progress[gamemodel.source]
 
-            progress[gamemodel.current_index] = 1
+            progress[gamemodel.current_index] = stat
 
             if from_lesson:
                 lessons_solving_progress[gamemodel.source] = progress
