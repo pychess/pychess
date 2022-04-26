@@ -612,6 +612,8 @@ class CECPEngine(ProtocolEngine):
         print("analyze", file=self.engine)
         self.engineIsAnalyzing = True
 
+        if not conf.get("infinite_depth"):
+            self.__setDepth(conf.get("max_depth_spin"))
         if not conf.get("infinite_analysis"):
             loop = asyncio.get_event_loop()
             loop.call_later(conf.get("max_analysis_spin"), self.__stop_analyze)

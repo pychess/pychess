@@ -1,5 +1,6 @@
 import asyncio
 import collections
+from lib.pychess.System import command
 
 from pychess.compat import create_task
 from pychess.Utils import wait_signal
@@ -433,7 +434,7 @@ class UCIEngine(ProtocolEngine):
     def hasOption(self, key):
         return key in self.options
 
-    # Internal
+    # Internal        
 
     def _newGame(self):
         print("ucinewgame", file=self.engine)
@@ -476,11 +477,15 @@ class UCIEngine(ProtocolEngine):
 
             if self.analysis_depth is not None:
                 commands.append("go depth %s" % self.analysis_depth)
-            elif conf.get("infinite_analysis"):
-                commands.append("go infinite")
             else:
-                move_time = int(conf.get("max_analysis_spin")) * 1000
-                commands.append("go movetime %s" % move_time)
+                if not conf.get("infinite_depth"):
+                    commands.append("go depth %s" % conf.get("max_depth_spin"))
+                else:
+                    commands.append("go infinite")
+                if not conf.get("infinite_analysis"):
+                    loop = asyncio.get_event_loop()
+                    loop.call_later(conf.get("max_analysis_spin"), lambda : print("stop", file=self.engine))
+                
 
         if self.hasOption("MultiPV") and self.multipvSetting > 1:
             self.multipvExpected = min(self.multipvSetting,
