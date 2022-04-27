@@ -434,7 +434,7 @@ class UCIEngine(ProtocolEngine):
         return key in self.options
 
     # Internal
-    
+
     def _newGame(self):
         print("ucinewgame", file=self.engine)
 
