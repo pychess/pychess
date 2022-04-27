@@ -1,6 +1,5 @@
 import asyncio
 import collections
-from lib.pychess.System import command
 
 from pychess.compat import create_task
 from pychess.Utils import wait_signal
@@ -434,8 +433,8 @@ class UCIEngine(ProtocolEngine):
     def hasOption(self, key):
         return key in self.options
 
-    # Internal        
-
+    # Internal
+    
     def _newGame(self):
         print("ucinewgame", file=self.engine)
 
