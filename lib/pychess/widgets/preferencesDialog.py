@@ -281,6 +281,8 @@ class HintTab:
 
         uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin")
         uistuff.keep(self.widgets["infinite_analysis"], "infinite_analysis")
+        uistuff.keep(self.widgets["infinite_depth"], "infinite_depth")
+        uistuff.keep(self.widgets["max_depth_spin"], "max_depth_spin")
 
 
 # Sound initing
