@@ -114,7 +114,7 @@ def offencive_moves_rook(model, ply, phase):
         if not tfile & oppawns:
             yield _("moves a rook to an open file")
         else:
-            yield _("moves a rook to a half-open file")
+            yield _("moves an rook to a half-open file")
 
 
 def offencive_moves_fianchetto(model, ply, phase):
