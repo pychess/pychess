@@ -8,7 +8,7 @@ from pychess.perspectives.learn.EndgamesPanel import start_endgame_from
 from pychess.perspectives.learn.LessonsPanel import start_lesson_from
 from pychess.widgets import preferencesDialog
 
-HINT, MOVE, RETRY, CONTINUE, BACK_TO_MAINLINE, NEXT = range(6)
+HINT, MOVE, RETRY, CONTINUE, BACK_TO_MAINLINE, NEXT, SKIP, PREVIOUS = range(8)
 
 
 css = """
@@ -76,6 +76,9 @@ class LearnInfoBar(Gtk.InfoBar):
         self.content_area.add(Gtk.Label(_("Your turn.")))
         self.add_button(_("Hint"), HINT)
         self.add_button(_("Best move"), MOVE)
+        if not self.gamemodel.end_game and self.gamemodel.current_index > 0:
+            self.add_button(_("Previous"), PREVIOUS)
+        self.add_button(_("Skip"), SKIP)
         self.show_all()
 
     def get_next_puzzle(self):
@@ -189,7 +192,7 @@ class LearnInfoBar(Gtk.InfoBar):
             self.boardview.backToMainLine()
             self.boardcontrol.game_preview = False
 
-        elif response == NEXT:
+        elif response in (NEXT, SKIP):
             if self.gamemodel.puzzle_game:
                 if self.gamemodel.from_lesson:
                     start_lesson_from(self.gamemodel.source, self.gamemodel.current_index + 1)
@@ -199,6 +202,19 @@ class LearnInfoBar(Gtk.InfoBar):
                 start_endgame_from(self.gamemodel.source)
             elif self.gamemodel.lesson_game:
                 start_lesson_from(self.gamemodel.source, self.gamemodel.current_index + 1)
+            else:
+                print(self.gamemodel.__dir__())
+        
+        elif response == PREVIOUS:
+            if self.gamemodel.puzzle_game:
+                if self.gamemodel.from_lesson:
+                    start_lesson_from(self.gamemodel.source, self.gamemodel.current_index - 1)
+                else:
+                    start_puzzle_from(self.gamemodel.source, self.gamemodel.current_index - 1)
+            elif self.gamemodel.end_game:
+                start_endgame_from(self.gamemodel.source)
+            elif self.gamemodel.lesson_game:
+                start_lesson_from(self.gamemodel.source, self.gamemodel.current_index - 1)
             else:
                 print(self.gamemodel.__dir__())
 
