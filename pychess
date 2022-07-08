@@ -185,8 +185,13 @@ else:
         libintl.bind_textdomain_codeset(domain, 'UTF-8')
     elif sys.platform == 'darwin':
         import ctypes
-        libintl = ctypes.cdll.LoadLibrary('libintl.dylib')
+        try:
+            libintl = ctypes.cdll.LoadLibrary('libintl.dylib')
+        except OSError:
+            # This is default install location if using brew to install dependencies
+            libintl = ctypes.cdll.LoadLibrary('/usr/local/lib/libintl.dylib')
         libintl.bindtextdomain(domain, locale_dir)
+
     else:
         locale.bindtextdomain(domain, locale_dir)
 
