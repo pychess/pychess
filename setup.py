@@ -144,8 +144,6 @@ DATA_FILES += [('share/mime/packages', ['pychess.xml'])]
 DATA_FILES += [('share/metainfo', ['pychess.metainfo.xml'])]
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
 DATA_FILES += [('share/icons/hicolor/scalable/apps', ['pychess.svg'])]
-DATA_FILES += [('share/menu', ['menu/pychess'])]
-DATA_FILES += [('share/pixmaps', ['pychess.svg', 'pychess.xmp'])]
 if sys.platform == "win32":
     DATA_FILES += [("share/pychess/sounds", glob('sounds/*.wav'))]
     DATA_FILES += [("share/pychess/engines", glob('engines/*.*'))]
