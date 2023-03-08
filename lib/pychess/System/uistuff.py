@@ -3,7 +3,13 @@ import sys
 import xml.etree.cElementTree as ET
 # from io import BytesIO
 
+import gi
+gi.require_version('Gdk', '3.0')
+gi.require_version('GObject', '2.0')
+gi.require_version('Gtk', '3.0')
+gi.require_version('Pango', '1.0')
 from gi.repository import Gtk, Gdk, GObject, Pango
+gi.require_version('GdkPixbuf', '2.0')
 from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.System import conf

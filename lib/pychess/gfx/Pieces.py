@@ -1,3 +1,5 @@
+import gi
+gi.require_version('Rsvg', '2.0')
 from gi.repository import Rsvg
 
 from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN, \
