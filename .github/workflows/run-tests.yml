@@ -1,0 +1,77 @@
+# Copyright (C) 2023 Sebastian Pipping <sebastian@pipping.org>
+# Licensed under GPL v3 or later
+
+name: Run the test suite
+
+# Drop permissions to minimum for security
+permissions:
+  contents: read
+
+on:
+- pull_request
+- push
+
+jobs:
+  run-tests:
+    name: Run the test suite
+    strategy:
+      matrix:
+        python-version: [3.7, 3.11]  # no particular need for in-between versions
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        set -x
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends --yes -V \
+            gettext \
+            gir1.2-gdkpixbuf-2.0 \
+            gir1.2-glib-2.0 \
+            gir1.2-gstreamer-1.0 \
+            gir1.2-gtk-3.0 \
+            gir1.2-gtksource-3.0 \
+            gir1.2-pango-1.0 \
+            gir1.2-rsvg-2.0 \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            libgirepository1.0-dev \
+            stockfish \
+            xvfb
+
+    - name: Install from sources
+      run: |
+        set -x
+        python3 --version
+        python3 -m venv venv
+        source venv/bin/activate
+
+        pip3 install -U pip setuptools wheel
+        pip3 install -r requirements.txt
+        diff -u0 requirements.txt <(pip3 freeze)  # enforces complete pinning
+
+        time PYTHONPATH=lib python pgn2ecodb.py
+        time PYTHONPATH=lib python3 create_theme_preview.py
+
+        pip3 install -e .
+
+        pychess --help  # smoke test
+
+    - name: Run the test suite (with virtual X11 server)
+      run: |
+        set -x
+        source venv/bin/activate
+
+        export DISPLAY=:1
+        Xvfb "${DISPLAY}" &
+        xvfb_pid=$!
+
+        cd testing
+        ./run3 run_tests.py
+
+        kill -s SIGTERM "${xvfb_pid}"
