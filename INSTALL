@@ -121,4 +121,4 @@ brew install librsvg
 # (optional) brew install gettext
 
 2. pip install
-see req.txt
+see requirements.txt
