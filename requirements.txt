@@ -9,7 +9,7 @@ ptyprocess==0.6.0
 py==1.11.0
 pycairo==1.23.0
 PyGObject==3.42.2
-PyOgg==0.6.13a1
+PyOgg==0.6.14a1
 PyOpenAL==0.7.11a1
 pyparsing==2.4.7
 pytest==5.4.2
