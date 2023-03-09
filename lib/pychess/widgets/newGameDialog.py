@@ -10,7 +10,13 @@ from operator import attrgetter
 from itertools import groupby
 from io import StringIO
 
+import gi
+gi.require_version('Gdk', '3.0')
+gi.require_version('GLib', '2.0')
+gi.require_version('GObject', '2.0')
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk, Gtk, GLib, GObject
+gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
 
 from pychess.Utils.IconLoader import load_icon, get_pixbuf

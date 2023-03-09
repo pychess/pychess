@@ -6,6 +6,13 @@ from time import time
 from io import StringIO
 
 import cairo
+import gi
+gi.require_version('Gdk', '3.0')
+gi.require_version('GLib', '2.0')
+gi.require_version('GObject', '2.0')
+gi.require_version('Gtk', '3.0')
+gi.require_version('Pango', '1.0')
+gi.require_version('PangoCairo', '1.0')
 from gi.repository import GLib, Gtk, Gdk, GObject, Pango, PangoCairo
 
 from pychess.Savers import pgn

@@ -22,7 +22,7 @@ if sys.argv[-1] == "bdist_msi":
         print("ERROR: can't import cx_Freeze!")
         sys.exit(1)
 else:
-    from distutils.core import setup
+    from setuptools import setup
 
 if sys.version_info < (3, 5, 0):
     print('ERROR: PyChess requires Python >= 3.5.0')
@@ -43,18 +43,6 @@ pychess = load_module("pychess", *find_module("pychess", ["lib"]))
 VERSION = pychess.VERSION
 
 NAME = "pychess"
-
-# We have to subclass register command because
-# PyChess from another author already exist on pypi.
-
-from distutils.command.register import register
-
-
-class RegisterCommand(register):
-    def run(self):
-        self.distribution.metadata.name = "PyChess-%s" % pychess.VERSION_NAME
-        register.run(self)
-
 
 DESC = "Chess client"
 
@@ -100,11 +88,11 @@ CLASSIFIERS = [
     'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
     'Operating System :: POSIX',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
     'Topic :: Games/Entertainment :: Board Games']
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
@@ -300,7 +288,6 @@ else:
     executables = {}
 
 setup(
-    cmdclass={"register": RegisterCommand},
     name=NAME,
     version=VERSION,
     author='Pychess team',

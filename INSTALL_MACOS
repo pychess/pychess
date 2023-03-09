@@ -5,4 +5,4 @@ brew install gtk+3 pygobject3 gtksourceview3 librsvg gst-python
 
 And then install the python depdencies:
 
-pip install -r req.txt
+pip install -r requirements.txt
