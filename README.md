@@ -1,4 +1,5 @@
-[![Python-CI](https://github.com/pychess/pychess/actions/workflows/run-tests.yml/badge.svg)](https://github.com/pychess/pychess/actions/workflows/run-tests.yml)[![codecov](https://codecov.io/gh/pychess/pychess/branch/master/graph/badge.svg)](https://codecov.io/gh/pychess/pychess)
+[![Python-CI](https://github.com/pychess/pychess/actions/workflows/run-tests.yml/badge.svg)](https://github.com/pychess/pychess/actions/workflows/run-tests.yml)
+[![codecov](https://codecov.io/gh/pychess/pychess/branch/master/graph/badge.svg)](https://codecov.io/gh/pychess/pychess)
 [![Documentation Status](https://readthedocs.org/projects/pychess/badge/?version=latest)](http://pychess.readthedocs.org/en/latest/?badge=latest)
 
 PyChess - a free chess client for Linux/Windows
