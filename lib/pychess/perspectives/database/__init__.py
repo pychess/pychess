@@ -460,6 +460,7 @@ class Database(GObject.GObject, Perspective):
         GLib.idle_add(self.progressbar.set_text, _("Recreating indexes..."))
 
         # .sqlite
+        drop_indexes(self.chessfile.engine)
         create_indexes(self.chessfile.engine)
 
         # .scout
