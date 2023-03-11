@@ -165,10 +165,11 @@ class PerspectiveManager:
     def on_persp_toggled(self, button):
         active = button.get_active()
         if active:
-            for item in self.current_perspective.menuitems:
-                item.hide()
-            for toolbutton in self.current_perspective.toolbuttons:
-                toolbutton.hide()
+            if self.current_perspective is not None:
+                for item in self.current_perspective.menuitems:
+                    item.hide()
+                for toolbutton in self.current_perspective.toolbuttons:
+                    toolbutton.hide()
 
             name = button.get_name()
             perspective, button, index = self.perspectives[name]
