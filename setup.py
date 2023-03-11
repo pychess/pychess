@@ -14,7 +14,7 @@ sys.path = [os.path.join(this_dir, "lib")] + sys.path
 
 
 msi = False
-if sys.argv[-1] == "bdist_msi":
+if "bdist_msi" in sys.argv[1:]:
     try:
         from cx_Freeze import setup, Executable
         msi = True
