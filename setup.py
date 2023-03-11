@@ -234,14 +234,14 @@ if msi:
     for mo in gtk_mo:
         mofile = os.path.join(lang_path, mo)
         if os.path.isfile(mofile):
-            include_files.append((mofile, "share/locale/" + mo))
+            include_files.append("share/locale/" + mo)
 
     for dll in gtk_exec:
-        include_files.append((os.path.join(gtk_exec_path, dll), dll))
+        include_files.append(os.path.join(gtk_exec_path, dll))
 
     # Let's add gtk data
     for lib in gtk_data:
-        include_files.append((os.path.join(gtk_data_path, lib), lib))
+        include_files.append(os.path.join(gtk_data_path, lib))
 
     base = None
     # Lets not open the console while running the app
