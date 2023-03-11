@@ -143,14 +143,14 @@ class TagDatabase:
 
         self.cols = [col.label(col2label[col]) for col in col2label]
 
-        self.select = select(self.cols)\
+        self.select = select(*self.cols)\
             .outerjoin(pl1, game.c.white_id == pl1.c.id)\
             .outerjoin(pl2, game.c.black_id == pl2.c.id)\
             .outerjoin(event, game.c.event_id == event.c.id)\
             .outerjoin(site, game.c.site_id == site.c.id)\
             .outerjoin(annotator, game.c.annotator_id == annotator.c.id)
 
-        self.select_offsets = select(game.c.offset)\
+        self.select_offsets = select(game.c.offset.label("Offset"))\
             .outerjoin(pl1, game.c.white_id == pl1.c.id)\
             .outerjoin(pl2, game.c.black_id == pl2.c.id)\
             .outerjoin(event, game.c.event_id == event.c.id)\
@@ -297,7 +297,7 @@ class TagDatabase:
 
         with self.engine.connect() as connection:
             result = connection.execute(query)
-            records = result.fetchall()
+            records = result.mappings().fetchall()
 
         return records
 
@@ -305,7 +305,7 @@ class TagDatabase:
         query = self.select_offsets.where(self.where_tags).where(game.c.offset > last_seen[1])
         with self.engine.connect() as connection:
             result = connection.execute(query)
-            offsets = [rec[0] for rec in result.fetchall()]
+            offsets = [rec[0] for rec in result.mappings().fetchall()]
         return offsets
 
     def get_info(self, rec):
@@ -321,5 +321,5 @@ class TagDatabase:
     def get_exta_tags(self, rec):
         with self.engine.connect() as connection:
             result = connection.execute(select(tag_game).where(tag_game.c.game_id == rec["Id"]))
-            exta_tags = result.fetchall()
+            exta_tags = result.mappings().fetchall()
         return exta_tags
