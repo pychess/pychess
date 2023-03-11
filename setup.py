@@ -234,7 +234,7 @@ if msi:
     for mo in gtk_mo:
         mofile = os.path.join(lang_path, mo)
         if os.path.isfile(mofile):
-            include_files.append("share/locale/" + mo)
+            include_files.append(os.path.join(lang_path, mo))
 
     for dll in gtk_exec:
         include_files.append(os.path.join(gtk_exec_path, dll))
