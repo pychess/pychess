@@ -17,7 +17,6 @@ msi = False
 if sys.argv[-1] == "bdist_msi":
     try:
         from cx_Freeze import setup, Executable
-        from cx_Freeze.windist import bdist_msi
         msi = True
     except ImportError:
         print("ERROR: can't import cx_Freeze!")
