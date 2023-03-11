@@ -143,16 +143,19 @@ class TagDatabase:
 
         self.cols = [col.label(col2label[col]) for col in col2label]
 
-        self.from_obj = [
-            game.outerjoin(pl1, game.c.white_id == pl1.c.id)
-            .outerjoin(pl2, game.c.black_id == pl2.c.id)
-            .outerjoin(event, game.c.event_id == event.c.id)
-            .outerjoin(site, game.c.site_id == site.c.id)
-            .outerjoin(annotator, game.c.annotator_id == annotator.c.id)]
+        self.select = select(self.cols)\
+            .outerjoin(pl1, game.c.white_id == pl1.c.id)\
+            .outerjoin(pl2, game.c.black_id == pl2.c.id)\
+            .outerjoin(event, game.c.event_id == event.c.id)\
+            .outerjoin(site, game.c.site_id == site.c.id)\
+            .outerjoin(annotator, game.c.annotator_id == annotator.c.id)
 
-        self.select = select(self.cols, from_obj=self.from_obj)
-
-        self.select_offsets = select([game.c.offset, ], from_obj=self.from_obj)
+        self.select_offsets = select(game.c.offset)\
+            .outerjoin(pl1, game.c.white_id == pl1.c.id)\
+            .outerjoin(pl2, game.c.black_id == pl2.c.id)\
+            .outerjoin(event, game.c.event_id == event.c.id)\
+            .outerjoin(site, game.c.site_id == site.c.id)\
+            .outerjoin(annotator, game.c.annotator_id == annotator.c.id)
 
         with self.engine.connect() as connection:
             self.colnames = connection.execute(self.select).keys()
