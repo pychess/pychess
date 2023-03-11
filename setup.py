@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 from glob import glob
@@ -102,12 +103,14 @@ stderr = sys.stderr
 stdout = sys.stdout
 
 if not isfile("eco.db"):
-    with open("pgn2ecodb.py") as fh:
-        exec(fh.read())
+    print("ERROR: File 'eco.db' is missing, please generate using command:\n"
+          "       # PYTHONPATH=lib python3 pgn2ecodb.py", file=sys.stderr)
+    sys.exit(1)
 
 if not isfile(os.path.abspath("pieces/Spatial.png")):
-    with open("create_theme_preview.py") as fh:
-        exec(fh.read())
+    print("ERROR: Preview images of pieces themes are missing, please generate using command:\n"
+          "       # PYTHONPATH=lib python3 create_theme_preview.py", file=sys.stderr)
+    sys.exit(1)
 
 # restore
 sys.stderr = stderr
