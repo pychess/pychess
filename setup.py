@@ -251,10 +251,10 @@ if msi:
     executables = [Executable("pychess",
                               base=base,
                               icon="pychess.ico",
-                              shortcutName="PyChess",
-                              shortcutDir="DesktopFolder"),
+                              shortcut_name="PyChess",
+                              shortcut_dir="DesktopFolder"),
                    Executable(script="lib/__main__.py",
-                              targetName="pychess-engine.exe",
+                              target_name="pychess-engine.exe",
                               base=base)]
 
     bdist_msi_options = {
