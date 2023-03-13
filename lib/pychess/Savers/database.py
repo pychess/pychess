@@ -61,7 +61,7 @@ def save(path, model, offset, flip=False):
         if not name:
             return None
 
-        selection = select([table.c.id], table.c.name == name)
+        selection = select(table.c.id).where(table.c.name == name)
         result = conn.execute(selection)
         id_ = result.scalar()
         if id_ is None:
