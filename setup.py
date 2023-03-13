@@ -14,10 +14,9 @@ sys.path = [os.path.join(this_dir, "lib")] + sys.path
 
 
 msi = False
-if sys.argv[-1] == "bdist_msi":
+if "bdist_msi" in sys.argv[1:]:
     try:
         from cx_Freeze import setup, Executable
-        from cx_Freeze.windist import bdist_msi
         msi = True
     except ImportError:
         print("ERROR: can't import cx_Freeze!")
@@ -235,14 +234,14 @@ if msi:
     for mo in gtk_mo:
         mofile = os.path.join(lang_path, mo)
         if os.path.isfile(mofile):
-            include_files.append((mofile, "share/locale/" + mo))
+            include_files.append(os.path.join(lang_path, mo))
 
     for dll in gtk_exec:
-        include_files.append((os.path.join(gtk_exec_path, dll), dll))
+        include_files.append(os.path.join(gtk_exec_path, dll))
 
     # Let's add gtk data
     for lib in gtk_data:
-        include_files.append((os.path.join(gtk_data_path, lib), lib))
+        include_files.append(os.path.join(gtk_data_path, lib))
 
     base = None
     # Lets not open the console while running the app
@@ -252,10 +251,10 @@ if msi:
     executables = [Executable("pychess",
                               base=base,
                               icon="pychess.ico",
-                              shortcutName="PyChess",
-                              shortcutDir="DesktopFolder"),
+                              shortcut_name="PyChess",
+                              shortcut_dir="DesktopFolder"),
                    Executable(script="lib/__main__.py",
-                              targetName="pychess-engine.exe",
+                              target_name="pychess-engine.exe",
                               base=base)]
 
     bdist_msi_options = {

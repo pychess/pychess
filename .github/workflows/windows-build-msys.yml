@@ -1,0 +1,54 @@
+# Copyright (C) 2023 Sebastian Pipping <sebastian@pipping.org>
+# Licensed under GPL v3 or later
+
+name: Build for Windows
+
+# Drop permissions to minimum for security
+permissions:
+  contents: read
+
+on:
+  pull_request:
+  push:
+  schedule:
+    - cron: '0 2 * * 5'  # Every Friday at 2am
+
+jobs:
+  checks:
+    name: Build for Windows
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install build dependencies
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: |
+          mingw-w64-x86_64-gtk3
+          mingw-w64-x86_64-gtksourceview3
+          mingw-w64-x86_64-python
+          mingw-w64-x86_64-python-cairo
+          mingw-w64-x86_64-python-cx_Freeze
+          mingw-w64-x86_64-python-gobject
+          mingw-w64-x86_64-python-pexpect
+          mingw-w64-x86_64-python-psutil
+          mingw-w64-x86_64-python-sqlalchemy
+
+    - name: Build
+      run: |-
+        set -x
+        PYTHONPATH=lib python3 pgn2ecodb.py
+        PYTHONPATH=lib python3 create_theme_preview.py
+        python3 setup.py bdist_msi --help
+        python3 setup.py bdist_msi
+
+    - name: Store Windows binaries
+      uses: actions/upload-artifact@v3
+      with:
+        name: pychess_win64_msi_${{ github.sha }}
+        path: dist/*.msi
+        if-no-files-found: error
