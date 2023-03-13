@@ -201,7 +201,10 @@ def drop_indexes(engine):
 def create_indexes(engine):
     for table in metadata.tables.values():
         for index in table.indexes:
-            index.create(bind=engine)
+            try:
+                index.create(bind=engine)
+            except OperationalError as e:
+                print(e)
 
 
 def ini_schema_version(engine):
