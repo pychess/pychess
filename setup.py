@@ -216,6 +216,7 @@ if msi:
     gtk_exec = ['libgtksourceview-3.0-1.dll',
                 'libjpeg-8.dll',
                 'librsvg-2-2.dll',
+                'libwinpthread-1.dll',
                 ]
 
     # We need to add all the libraries too (for themes, etc..)
