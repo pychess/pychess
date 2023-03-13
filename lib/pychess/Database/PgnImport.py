@@ -57,8 +57,6 @@ class PgnImport():
         self.conn = self.engine.connect()
         self.CHUNK = 1000
 
-        self.count_source = select([func.count()]).select_from(source)
-
         self.ins_event = event.insert()
         self.ins_site = site.insert()
         self.ins_player = player.insert()
@@ -117,9 +115,8 @@ class PgnImport():
 
     def ini_names(self, name_table, field):
         if field != GAME and field != STAT:
-            s = select([name_table])
             name_dict = dict([(n.name.title().translate(removeDic), n.id)
-                              for n in self.conn.execute(s)])
+                              for n in self.conn.execute(select(name_table))])
 
             if field == EVENT:
                 self.event_dict = name_dict
@@ -132,8 +129,7 @@ class PgnImport():
             elif field == SOURCE:
                 self.source_dict = name_dict
 
-        s = select([func.max(name_table.c.id).label('maxid')])
-        maxid = self.conn.execute(s).scalar()
+        maxid = self.conn.execute(select(func.max(name_table.c.id).label('maxid'))).scalar()
         if maxid is None:
             next_id = 1
         else:
@@ -150,7 +146,7 @@ class PgnImport():
         self.progressbar = progressbar
 
         orig_filename = filename
-        count_source = self.conn.execute(self.count_source.where(source.c.name == orig_filename)).scalar()
+        count_source = self.conn.execute(select(func.count()).select_from(source).where(source.c.name == orig_filename)).scalar()
         if count_source > 0:
             log.info("%s is already imported" % filename)
             return
@@ -200,9 +196,6 @@ class PgnImport():
 
             get_id = self.get_id
 
-            # use transaction to avoid autocommit slowness
-            # and to let undo importing (rollback) if self.cancel was set
-            trans = self.conn.begin()
             try:
                 i = 0
                 for tags in read_games(handle):
@@ -211,7 +204,7 @@ class PgnImport():
                         continue
 
                     if self.cancel:
-                        trans.rollback()
+                        self.conn.rollback()
                         return
 
                     fenstr = tags["FEN"]
@@ -391,7 +384,7 @@ class PgnImport():
                         "%(counter)s game headers from %(filename)s imported" % ({"counter": i, "filename": basename})))
                 else:
                     log.info("From %s imported %s" % (pgnfile, i))
-                trans.commit()
+                self.conn.commit()
 
                 if self.append_pgn:
                     # reopen database to write
@@ -419,8 +412,8 @@ class PgnImport():
                 self.chessfile.handle = protoopen(self.chessfile.path)
 
             except SQLAlchemyError as e:
-                trans.rollback()
-                log.info("Importing %s failed! \n%s" % (pgnfile, e))
+                log.error("Importing %s failed! \n%s" % (pgnfile, e))
+                self.conn.rollback()
 
 
 def read_games(handle):
