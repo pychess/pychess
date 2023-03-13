@@ -637,9 +637,10 @@ class SeekChallengeSection():
             return pathToVariant[path]
 
         def comboSetter(combo, variant):
-            if variant not in VARIANT_GAME_TYPES:
-                variant = LOSERSCHESS
-            combo.set_active_iter(model.get_iter(variantToPath[variant]))
+            try:
+                combo.set_active_iter(model.get_iter(variantToPath[variant]))
+            except KeyError:
+                print("Variant %s is not supported" % variant)
 
         return comboGetter, comboSetter
 
