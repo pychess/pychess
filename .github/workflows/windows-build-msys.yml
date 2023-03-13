@@ -26,6 +26,7 @@ jobs:
     - name: Install build dependencies
       uses: msys2/setup-msys2@v2
       with:
+        update: true
         msystem: MINGW64
         install: |
           mingw-w64-x86_64-gtk3
