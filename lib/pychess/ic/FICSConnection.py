@@ -9,7 +9,6 @@ from concurrent.futures import CancelledError
 from gi.repository import GObject
 
 import pychess
-from pychess.compat import create_task
 from pychess.System.Log import log
 
 from pychess import ic
@@ -193,7 +192,7 @@ class FICSConnection(Connection):
                 try:
                     connected_event = asyncio.Event()
                     self.client = ICSTelnet(self.timeseal)
-                    create_task(self.client.start(self.host, port, connected_event))
+                    asyncio.create_task(self.client.start(self.host, port, connected_event))
                     await connected_event.wait()
                 except socket.error as err:
                     log.debug("Failed to open port %d %s" % (port, err),
@@ -317,7 +316,7 @@ class FICSConnection(Connection):
                 while self.isConnected():
                     self.client.run_command("date")
                     await asyncio.sleep(30 * 60)
-            self.keep_alive_task = create_task(keep_alive())
+            self.keep_alive_task = asyncio.create_task(keep_alive())
 
         except CanceledException as err:
             log.info("FICSConnection._connect: %s" % repr(err),

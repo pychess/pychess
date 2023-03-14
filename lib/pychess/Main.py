@@ -16,7 +16,6 @@ from gi.repository import Gio
 from gi.repository import Gtk
 from gi.repository import GLib
 
-from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
 from pychess.Utils.const import HINT, NAME, SPY, NORMALCHESS
@@ -216,7 +215,7 @@ class GladeHandlers:
 
                     # Load the link
                     if typeok and link != '':
-                        create_task(get_internet_game(link))
+                        asyncio.create_task(get_internet_game(link))
                         b = True
 
                 # Database
@@ -314,7 +313,7 @@ class GladeHandlers:
 
     def on_remote_game_activate(self, widget):
         url = getUserTextDialog(mainwindow(), _('Load a remote game'), _('Paste the link to download:'))
-        create_task(get_internet_game(url))
+        asyncio.create_task(get_internet_game(url))
 
     def on_save_game1_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
@@ -569,7 +568,7 @@ class PyChess(Gtk.Application):
         self.addPerspectives()
         self.handleArgs(self.chess_file)
         if self.version_check:
-            create_task(checkversion())
+            asyncio.create_task(checkversion())
 
         self.loaded_cids = {}
         self.saved_cids = {}
@@ -595,7 +594,7 @@ class PyChess(Gtk.Application):
             await asyncio.sleep(10)
 
     def do_activate(self):
-        # create_task(self.print_tasks())
+        # asyncio.create_task(self.print_tasks())
         self.add_window(self.window)
         self.window.show_all()
         gamewidget.getWidgets()["player_rating1"].hide()
@@ -626,7 +625,7 @@ class PyChess(Gtk.Application):
             discoverer.connect_after("all_engines_discovered", on_all_engine_discovered)
 
         dd = DiscovererDialog(discoverer)
-        self.dd_task = create_task(dd.start())
+        self.dd_task = asyncio.create_task(dd.start())
 
         style_ctxt = gamewidget.getWidgets()["main_window"].get_style_context()
         LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])

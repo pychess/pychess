@@ -4,7 +4,6 @@ import sys
 
 from gi.repository import Gtk
 
-from pychess.compat import create_task
 from pychess.Utils.const import FEN_START, NORMALCHESS
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff
@@ -172,7 +171,7 @@ class DialogTests(unittest.TestCase):
             event = asyncio.Event()
             discoverer.connect("all_engines_discovered", on_all_engines_discovered, event)
 
-            create_task(dd.start())
+            asyncio.create_task(dd.start())
 
             await event.wait()
 

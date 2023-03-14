@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import asyncio
 import os
 from io import StringIO
 
 from gi.repository import GLib, Gtk, GObject
 
-from pychess.compat import create_task
 from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     get_infobarmessage_content, get_infobarmessage_content2, TITLES
 from pychess.ic.ICGameModel import ICGameModel
@@ -349,9 +349,9 @@ class FICS(GObject.GObject, Perspective):
 
         perspective = perspective_manager.get_perspective("games")
         if not ficsgame.board.fen:
-            create_task(perspective.generalStart(gamemodel, player0tup, player1tup))
+            asyncio.create_task(perspective.generalStart(gamemodel, player0tup, player1tup))
         else:
-            create_task(perspective.generalStart(gamemodel, player0tup, player1tup, (
+            asyncio.create_task(perspective.generalStart(gamemodel, player0tup, player1tup, (
                 StringIO(ficsgame.board.fen), fen, 0, -1)))
 
     def onGameModelStarted(self, gamemodel, ficsgame):
@@ -379,7 +379,7 @@ class FICS(GObject.GObject, Perspective):
             bplayer.long_name())
 
         perspective = perspective_manager.get_perspective("games")
-        create_task(perspective.generalStart(gamemodel, player0tup, player1tup, (
+        asyncio.create_task(perspective.generalStart(gamemodel, player0tup, player1tup, (
             StringIO(ficsgame.board.pgn), pgn, 0, -1)))
 
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:

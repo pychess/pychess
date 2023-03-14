@@ -2,12 +2,12 @@
     taking care of stuff that is neither very offscreen nor very onscreen
     like bringing up dialogs and """
 
+import asyncio
 import math
 from collections import defaultdict
 
 from gi.repository import Gtk
 
-from pychess.compat import create_task
 from pychess.ic.FICSObjects import make_sensitive_if_available, make_sensitive_if_playing
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.Utils.Offer import Offer
@@ -193,8 +193,8 @@ class GameNanny:
         if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
                 gamemodel.isEngine2EngineGame() or \
                 (isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best):
-            create_task(gamemodel.restart_analyzer(HINT))
-            create_task(gamemodel.restart_analyzer(SPY))
+            asyncio.create_task(gamemodel.restart_analyzer(HINT))
+            asyncio.create_task(gamemodel.restart_analyzer(SPY))
             if not conf.get("hint_mode"):
                 gamemodel.pause_analyzer(HINT)
             if not conf.get("spy_mode"):
@@ -231,8 +231,8 @@ class GameNanny:
 
         # Start analyzers if any
         if not gamemodel.isEngine2EngineGame():
-            create_task(gamemodel.start_analyzer(HINT))
-            create_task(gamemodel.start_analyzer(SPY))
+            asyncio.create_task(gamemodel.start_analyzer(HINT))
+            asyncio.create_task(gamemodel.start_analyzer(SPY))
             if not conf.get("hint_mode"):
                 gamemodel.pause_analyzer(HINT)
             if not conf.get("spy_mode"):

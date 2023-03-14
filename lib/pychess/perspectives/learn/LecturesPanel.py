@@ -3,7 +3,6 @@ from io import StringIO
 
 from gi.repository import Gtk
 
-from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, RUNNING, LECTURE
 from pychess.Utils.LearnModel import LearnModel
@@ -120,7 +119,7 @@ def start_lecture_from(filename, index=None):
     gamemodel.connect("game_started", on_game_started)
 
     perspective = perspective_manager.get_perspective("games")
-    create_task(perspective.generalStart(gamemodel, p0, p1))
+    asyncio.create_task(perspective.generalStart(gamemodel, p0, p1))
 
     def lecture_steps(lecture_file):
         with open(lecture_file, "r") as f:
@@ -290,4 +289,4 @@ def start_lecture_from(filename, index=None):
                 # connection.client.run_command("kibitz That concludes this lecture.")
                 break
 
-    create_task(coro(gamemodel, steps))
+    asyncio.create_task(coro(gamemodel, steps))

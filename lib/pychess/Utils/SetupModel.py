@@ -4,7 +4,6 @@ import asyncio
 
 from gi.repository import GObject
 
-from pychess.compat import create_task
 from pychess.Utils.const import LOCAL, RUNNING
 from pychess.Utils.DecisionSupportAlgorithm import DecisionSupportAlgorithm
 from pychess.Variants.setupposition import SetupBoard
@@ -111,4 +110,4 @@ class SetupModel(GObject.GObject):
                     # print("CLOSE")
                     break
 
-        create_task(coro())
+        asyncio.create_task(coro())

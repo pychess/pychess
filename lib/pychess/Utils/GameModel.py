@@ -8,7 +8,6 @@ from io import StringIO
 
 from gi.repository import GObject
 
-from pychess.compat import create_task
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, PassInterrupt, TurnInterrupt, InvalidMove, GameEnded
 from pychess.System import conf
@@ -867,7 +866,7 @@ class GameModel(GObject.GObject):
 
             self.checkStatus()
 
-        create_task(coro())
+        asyncio.create_task(coro())
 
     def checkStatus(self):
         """ Updates self.status so it fits with what getStatus(boards[-1])

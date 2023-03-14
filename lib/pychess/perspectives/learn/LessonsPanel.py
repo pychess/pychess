@@ -1,6 +1,6 @@
+import asyncio
 import os
 
-from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, WAITING_TO_START, HINT, LESSON
 from pychess.Utils.LearnModel import LearnModel
@@ -87,18 +87,18 @@ def start_lesson_game(gamemodel, filename, chessfile, records, index, rec):
         progress[gamemodel.current_index] = 1
         lessons_solving_progress[gamemodel.source] = progress
         if "FEN" in gamemodel.tags:
-            create_task(gamemodel.restart_analyzer(HINT))
+            asyncio.create_task(gamemodel.restart_analyzer(HINT))
     gamemodel.connect("learn_success", learn_success)
 
     def on_game_started(gamemodel):
         perspective.activate_panel("annotationPanel")
         if "FEN" in gamemodel.tags:
-            create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+            asyncio.create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
     gamemodel.connect("game_started", on_game_started)
 
     gamemodel.status = WAITING_TO_START
     perspective = perspective_manager.get_perspective("games")
-    create_task(perspective.generalStart(gamemodel, p0, p1))
+    asyncio.create_task(perspective.generalStart(gamemodel, p0, p1))
 
 
 # Sidepanel is a class

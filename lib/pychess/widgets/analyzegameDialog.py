@@ -2,7 +2,6 @@ import asyncio
 
 from gi.repository import Gtk
 
-from pychess.compat import create_task
 from pychess.Utils.const import HINT, SPY, BLACK, WHITE
 from pychess.System import conf
 from pychess.System import uistuff
@@ -168,11 +167,11 @@ class AnalyzeGameDialog():
 
                     gamemodel.emit("analysis_finished")
 
-                create_task(analyse_moves())
+                asyncio.create_task(analyse_moves())
                 hide_window(None)
 
                 return True
-            create_task(coro())
+            asyncio.create_task(coro())
 
         self.widgets["analyze_game"].connect("delete-event", hide_window)
         self.widgets["analyze_cancel_button"].connect("clicked", hide_window)

@@ -2,7 +2,6 @@ import asyncio
 
 from gi.repository import Gtk
 
-from pychess.compat import create_task
 from pychess.System import conf
 from pychess.Utils.const import COLUMN_ROW_RESET, GTK_ICON_VIEW_REFRESH
 from pychess.widgets import mainwindow
@@ -61,7 +60,7 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
                     progress_ratio_string, percent, reset_icon = self._compute_progress_info(progress)
                     self.store.append([file_name, title, author, progress_ratio_string, percent, reset_icon])
                     await asyncio.sleep(0)
-            create_task(coro())
+            asyncio.create_task(coro())
 
             self.tv.set_model(self.store)
             self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)

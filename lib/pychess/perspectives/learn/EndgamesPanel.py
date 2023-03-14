@@ -1,9 +1,9 @@
+import asyncio
 import random
 from io import StringIO
 
 from gi.repository import Gtk
 
-from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, chr2Sign, chrU2Sign, FAN_PIECES, HINT, ENDGAME
 from pychess.Utils.LearnModel import LearnModel
@@ -132,16 +132,16 @@ def start_endgame_from(pieces):
           (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), engine_name)
 
     def restart_analyzer(gamemodel):
-        create_task(gamemodel.restart_analyzer(HINT))
+        asyncio.create_task(gamemodel.restart_analyzer(HINT))
     gamemodel.connect("learn_success", restart_analyzer)
 
     def on_game_started(gamemodel):
         perspective.activate_panel("annotationPanel")
-        create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+        asyncio.create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
     gamemodel.connect("game_started", on_game_started)
 
     perspective = perspective_manager.get_perspective("games")
-    create_task(perspective.generalStart(gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
+    asyncio.create_task(perspective.generalStart(gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
 
 
 def create_fen(pieces):
