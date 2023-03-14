@@ -3,6 +3,11 @@
 import os
 import sys
 
+# Check Python version
+if sys.version_info < (3, 7, 0):
+    print('ERROR: PyChess requires Python >= 3.7.0')
+    sys.exit(1)
+
 # Fix environment to let pychess run in place
 if getattr(sys, 'frozen', False):
     this_dir = os.path.dirname(sys.executable)
@@ -41,11 +46,6 @@ if not getattr(sys, 'frozen', False):
         faulthandler.enable()
     except ImportError:
         pass
-
-# Check requirements
-if sys.version_info < (3, 5, 0):
-    print('ERROR: PyChess requires Python >= 3.5.0')
-    sys.exit(1)
 
 try:
     import cairo
