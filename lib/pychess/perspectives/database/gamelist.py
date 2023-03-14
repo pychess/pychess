@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
+
+import asyncio
 from io import StringIO
 
 from gi.repository import Gtk, GObject
 
-from pychess.compat import create_task
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult, \
     UNDOABLE_STATES, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
 from pychess.Players.Human import Human
@@ -210,4 +211,4 @@ class GameList(Gtk.TreeView):
 
         perspective_manager.activate_perspective("games")
         perspective = perspective_manager.get_perspective("games")
-        create_task(perspective.generalStart(self.gamemodel, p0, p1))
+        asyncio.create_task(perspective.generalStart(self.gamemodel, p0, p1))

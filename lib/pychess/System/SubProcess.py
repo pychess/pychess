@@ -8,7 +8,6 @@ import time
 
 from gi.repository import GObject, GLib
 
-from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.Players.ProtocolEngine import TIME_OUT_SECOND
 
@@ -69,7 +68,7 @@ class SubProcess(GObject.GObject):
                     proc.nice(niceness)
                 else:
                     proc.set_nice(niceness)
-            self.read_stdout_task = create_task(self.read_stdout(self.proc.stdout))
+            self.read_stdout_task = asyncio.create_task(self.read_stdout(self.proc.stdout))
             self.write_task = None
         except asyncio.TimeoutError:
             log.warning("TimeoutError", extra={"task": self.defname})
@@ -83,7 +82,7 @@ class SubProcess(GObject.GObject):
             raise
 
     def write(self, line):
-        self.write_task = create_task(self.write_stdin(self.proc.stdin, line))
+        self.write_task = asyncio.create_task(self.write_stdin(self.proc.stdin, line))
 
     async def write_stdin(self, writer, line):
         if self.terminated:

@@ -3,7 +3,6 @@ import os
 
 from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
 
-from pychess.compat import create_task
 from pychess.System import conf, uistuff
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import HINT, OPENING, SPY, BLACK, ENDGAME, DRAW, WHITEWON, WHITE, NORMALCHESS
@@ -355,7 +354,7 @@ class EndgameAdvisor(Advisor):
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
         self.queue = asyncio.Queue()
-        self.egtb_task = create_task(self.start())
+        self.egtb_task = asyncio.create_task(self.start())
 
     class StopNow(Exception):
         pass

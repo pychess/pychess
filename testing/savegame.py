@@ -3,7 +3,6 @@ import asyncio
 import logging
 import unittest
 
-from pychess.compat import create_task
 from pychess.Utils.Move import Move
 from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.GameModel import GameModel
@@ -81,7 +80,7 @@ class DatabaseTests(unittest.TestCase):
 
             gamemodel.connect("players_changed", on_players_changed)
 
-            create_task(self.games_persp.generalStart(gamemodel, player0tup, player1tup))
+            asyncio.create_task(self.games_persp.generalStart(gamemodel, player0tup, player1tup))
 
             # waiting for game end ...
             await event.wait()

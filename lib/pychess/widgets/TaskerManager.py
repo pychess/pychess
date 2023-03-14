@@ -1,3 +1,4 @@
+import asyncio
 import math
 import random
 from os.path import basename
@@ -6,7 +7,6 @@ from urllib.parse import unquote
 
 from gi.repository import Gtk, GObject, Pango
 
-from pychess.compat import create_task
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff, conf
@@ -242,9 +242,9 @@ class NewGameTasker(Gtk.Alignment):
 
         perspective = perspective_manager.get_perspective("games")
         if color == WHITE:
-            create_task(perspective.generalStart(gamemodel, player0tup, player1tup))
+            asyncio.create_task(perspective.generalStart(gamemodel, player0tup, player1tup))
         else:
-            create_task(perspective.generalStart(gamemodel, player1tup, player0tup))
+            asyncio.create_task(perspective.generalStart(gamemodel, player1tup, player0tup))
 
 
 class InternetGameTasker(Gtk.Alignment):

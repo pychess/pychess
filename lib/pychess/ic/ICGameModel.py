@@ -1,7 +1,6 @@
 import asyncio
 from io import StringIO
 
-from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Offer import Offer
@@ -303,7 +302,7 @@ class ICGameModel(GameModel):
             if gameno != self.ficsgame.gameno:
                 return
             self.emit("message_received", name, text)
-        self.kibitz_task = create_task(coro())
+        self.kibitz_task = asyncio.create_task(coro())
 
     def onWhisperMessage(self, cm, name, gameno, text):
         if gameno != self.ficsgame.gameno:

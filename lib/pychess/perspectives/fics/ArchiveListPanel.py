@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
 
+import asyncio
 from io import StringIO
 
 from gi.repository import Gtk
 
-from pychess.compat import create_task
 from pychess.ic.FICSObjects import FICSGame, FICSAdjournedGame, make_sensitive_if_available
 from pychess.ic import get_infobarmessage_content
 from pychess.ic.ICGameModel import ICGameModel
@@ -366,7 +366,7 @@ class Sidepanel(ParrentListSection):
             bplayer.long_name())
 
         perspective = perspective_manager.get_perspective("games")
-        create_task(perspective.generalStart(gamemodel, player0tup, player1tup, (
+        asyncio.create_task(perspective.generalStart(gamemodel, player0tup, player1tup, (
             StringIO(ficsgame.board.pgn), pgn, 0, -1)))
         gamemodel.connect("game_started", self.on_game_start, ficsgame)
 

@@ -1,10 +1,10 @@
+import asyncio
 import shutil
 import os
 import stat
 
 from gi.repository import Gtk
 
-from pychess.compat import create_task
 from pychess.ic import TimeSeal
 from pychess.Savers import pgn
 from pychess.System import conf
@@ -105,6 +105,6 @@ class ExternalsDialog():
                     dest = shutil.move(filename, os.path.join(altpath, TimeSeal.timestamp))
                     os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
                     TimeSeal.timestamp_path = dest
-        create_task(coro())
+        asyncio.create_task(coro())
 
         self.window.emit("delete-event", None)

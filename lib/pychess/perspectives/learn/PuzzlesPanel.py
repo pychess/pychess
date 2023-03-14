@@ -1,6 +1,6 @@
+import asyncio
 import os
 
-from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, \
     WAITING_TO_START, HINT, PRACTICE_GOAL_REACHED, PUZZLE
@@ -118,7 +118,7 @@ def start_puzzle_game(gamemodel, filename, records, index, rec, from_lesson=Fals
 
     def on_game_started(gamemodel, name, color):
         perspective.activate_panel("annotationPanel")
-        create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+        asyncio.create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
         gamemodel.players[1 - color].name = name
         gamemodel.emit("players_changed")
     gamemodel.connect("game_started", on_game_started, opp_name, color)
@@ -142,7 +142,7 @@ def start_puzzle_game(gamemodel, filename, records, index, rec, from_lesson=Fals
     gamemodel.status = WAITING_TO_START
 
     perspective = perspective_manager.get_perspective("games")
-    create_task(perspective.generalStart(gamemodel, p0, p1))
+    asyncio.create_task(perspective.generalStart(gamemodel, p0, p1))
 
 
 # Sidepanel is a class

@@ -5,7 +5,6 @@ from urllib.request import urlopen
 from gi.repository import GObject
 
 
-from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import ARTIFICIAL, CHAT_ACTION
@@ -124,4 +123,4 @@ class Engine(Player):
             future = loop.run_in_executor(None, answer, message)
             await future
 
-        create_task(get_answer(message))
+        asyncio.create_task(get_answer(message))
