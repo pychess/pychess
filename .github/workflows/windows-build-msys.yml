@@ -38,6 +38,7 @@ jobs:
           mingw-w64-x86_64-python-pexpect
           mingw-w64-x86_64-python-psutil
           mingw-w64-x86_64-python-sqlalchemy
+          mingw-w64-x86_64-python-pip
 
     - name: Install websockets from pypi
       run: |
