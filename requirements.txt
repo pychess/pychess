@@ -17,7 +17,7 @@ PyOpenAL==0.7.11a1
 pyparsing==3.0.9
 pytest==7.2.2
 six==1.16.0
-SQLAlchemy==2.0.5.post1
+SQLAlchemy==2.0.6
 tomli==2.0.1
 typing_extensions==4.5.0
 wcwidth==0.2.6
