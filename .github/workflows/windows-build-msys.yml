@@ -39,6 +39,10 @@ jobs:
           mingw-w64-x86_64-python-psutil
           mingw-w64-x86_64-python-sqlalchemy
 
+    - name: Install websockets from pypi
+      run: |
+        pip3 install websockets
+
     - name: Build
       run: |-
         set -x
