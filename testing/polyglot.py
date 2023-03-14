@@ -64,7 +64,10 @@ class PolyglotTestCase(unittest.TestCase):
 
         for fi in (PGN, BIN, SCOUT, SQLITE):
             if os.path.isfile(fi):
-                os.remove(fi)
+                try:
+                    os.remove(fi)
+                except PermissionError:
+                    print("Can't remove %s because someone is using it" % fi)
 
     def testPolyglot_1(self):
         """Testing hash keys agree with Polyglot's"""
