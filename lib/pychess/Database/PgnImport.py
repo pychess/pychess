@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import collections
 import os
 import re
@@ -30,11 +28,11 @@ TAG_REGEX = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*)\"\]")
 GAME, EVENT, SITE, PLAYER, ANNOTATOR, SOURCE, STAT = range(7)
 
 removeDic = {
-    ord(u"'"): None,
-    ord(u","): None,
-    ord(u"."): None,
-    ord(u"-"): None,
-    ord(u" "): None,
+    ord("'"): None,
+    ord(","): None,
+    ord("."): None,
+    ord("-"): None,
+    ord(" "): None,
 }
 
 pgn2Const = {"*": RUNNING,
@@ -115,8 +113,8 @@ class PgnImport():
 
     def ini_names(self, name_table, field):
         if field != GAME and field != STAT:
-            name_dict = dict([(n.name.title().translate(removeDic), n.id)
-                              for n in self.conn.execute(select(name_table))])
+            name_dict = {n.name.title().translate(removeDic): n.id
+                              for n in self.conn.execute(select(name_table))}
 
             if field == EVENT:
                 self.event_dict = name_dict
@@ -348,7 +346,7 @@ class PgnImport():
                             GLib.idle_add(progressbar.set_text, _(
                                 "%(counter)s game headers from %(filename)s imported" % ({"counter": i, "filename": basename})))
                         else:
-                            log.info("From %s imported %s" % (pgnfile, i))
+                            log.info("From {} imported {}".format(pgnfile, i))
 
                 if self.event_data:
                     self.conn.execute(self.ins_event, self.event_data)
@@ -383,14 +381,14 @@ class PgnImport():
                     GLib.idle_add(progressbar.set_text, _(
                         "%(counter)s game headers from %(filename)s imported" % ({"counter": i, "filename": basename})))
                 else:
-                    log.info("From %s imported %s" % (pgnfile, i))
+                    log.info("From {} imported {}".format(pgnfile, i))
                 self.conn.commit()
 
                 if self.append_pgn:
                     # reopen database to write
                     self.db_handle.close()
                     with protosave(self.chessfile.path, self.append_pgn) as self.db_handle:
-                        log.info("Append from %s to %s" % (pgnfile, self.chessfile.path))
+                        log.info("Append from {} to {}".format(pgnfile, self.chessfile.path))
                         handle.seek(0)
                         self.db_handle.writelines(handle)
                         handle.close()
@@ -412,7 +410,7 @@ class PgnImport():
                 self.chessfile.handle = protoopen(self.chessfile.path)
 
             except SQLAlchemyError as e:
-                log.error("Importing %s failed! \n%s" % (pgnfile, e))
+                log.error("Importing {} failed! \n{}".format(pgnfile, e))
                 self.conn.rollback()
 
 

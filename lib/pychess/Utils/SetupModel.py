@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import asyncio
 
 from gi.repository import GObject

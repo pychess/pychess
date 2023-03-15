@@ -120,7 +120,7 @@ class SeekManager(GObject.GObject):
             rated = seek['r'] == 'r'
             minutes = int(seek['t'])
             increment = int(seek['i'])
-            rmin, rmax = [int(r) for r in seek['rr'].split("-")]
+            rmin, rmax = (int(r) for r in seek['rr'].split("-"))
             rating = seek['rt']
             if rating[-1] in (" ", "P", "E"):
                 deviation = DEVIATION[rating[-1]]
@@ -134,7 +134,7 @@ class SeekManager(GObject.GObject):
             elif seek['c'] == "B":
                 color = "black"
         except KeyError as e:
-            log.warning("on_seek_add: KeyError: %s %s" % (repr(e), repr(seek)))
+            log.warning("on_seek_add: KeyError: {} {}".format(repr(e), repr(seek)))
             return
 
         try:

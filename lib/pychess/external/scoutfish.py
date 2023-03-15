@@ -21,12 +21,12 @@ class Scoutfish:
 
     def wait_ready(self):
         self.p.sendline('isready')
-        self.p.expect(u'readyok')
+        self.p.expect('readyok')
 
     def open(self, pgn):
         '''Open a PGN file and create an index if not exsisting'''
         if not os.path.isfile(pgn):
-            raise NameError("File {} does not exsist".format(pgn))
+            raise NameError(f"File {pgn} does not exsist")
         pgn = os.path.normcase(pgn)
         self.pgn = pgn
         self.db = os.path.splitext(pgn)[0] + '.scout'
@@ -57,7 +57,7 @@ class Scoutfish:
 
     def setoption(self, name, value):
         '''Set an option value, like threads number'''
-        cmd = "setoption name {} value {}".format(name, value)
+        cmd = f"setoption name {name} value {value}"
         self.p.sendline(cmd)
         self.wait_ready()
 
@@ -66,7 +66,7 @@ class Scoutfish:
         if not self.db:
             raise NameError("Unknown DB, first open a PGN file")
         j = json.dumps(q)
-        cmd = "scout {} {}".format(self.db, j)
+        cmd = f"scout {self.db} {j}"
         self.p.sendline(cmd)
         self.wait_ready()
         result = json.loads(self.p.before)
@@ -78,7 +78,7 @@ class Scoutfish:
         if not self.db:
             raise NameError("Unknown DB, first open a PGN file")
         j = json.dumps(q)
-        cmd = "scout {} {}".format(self.db, j)
+        cmd = f"scout {self.db} {j}"
         self.p.sendline(cmd)
         self.wait_ready()
         result = self.p.before
@@ -90,7 +90,7 @@ class Scoutfish:
            added to each list item with a 'pgn' key'''
         if not self.pgn:
             raise NameError("Unknown DB, first open a PGN file")
-        with open(self.pgn, "rU") as f:
+        with open(self.pgn) as f:
             for match in matches:
                 f.seek(match['ofs'])
                 game = ''

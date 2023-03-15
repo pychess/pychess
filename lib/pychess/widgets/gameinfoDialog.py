@@ -1,4 +1,3 @@
-
 from gi.repository import Gtk, Gdk
 
 from pychess.Savers.database import parseDateTag

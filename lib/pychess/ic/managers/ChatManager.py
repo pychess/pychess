@@ -178,7 +178,7 @@ class ChatManager(GObject.GObject):
             if rating == 0:
                 obs_str += "%s " % player  # Don't print ratings for guest accounts
             else:
-                obs_str += "%s(%s) " % (player, rating)
+                obs_str += "{}({}) ".format(player, rating)
         self.emit('observers_received', gameno, obs_str)
 
     get_allob_list.BLKCMD = BLKCMD_ALLOBSERVERS
@@ -370,7 +370,7 @@ class ChatManager(GObject.GObject):
 
     def tellPlayer(self, player, message):
         message = self.entityEncode(message)
-        self.connection.client.run_command("tell %s %s" % (player, message))
+        self.connection.client.run_command("tell {} {}".format(player, message))
 
     def tellChannel(self, channel, message):
         message = self.entityEncode(message)
@@ -388,7 +388,7 @@ class ChatManager(GObject.GObject):
 
     def tellGame(self, gameno, message):
         message = self.entityEncode(message)
-        self.connection.client.run_command("xkibitz %s %s" % (gameno, message))
+        self.connection.client.run_command("xkibitz {} {}".format(gameno, message))
 
     def tellOpponent(self, message):
         message = self.entityEncode(message)

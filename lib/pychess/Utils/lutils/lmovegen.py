@@ -76,27 +76,23 @@ def genCastles(board):
     if board.color == WHITE:
         if board.castling & W_OO:
             side = 0 if wildcastle else 1
-            for move in generateOne(WHITE, side, board.fin_kings[WHITE][side],
-                                    board.fin_rooks[WHITE][side]):
-                yield move
+            yield from generateOne(WHITE, side, board.fin_kings[WHITE][side],
+                                    board.fin_rooks[WHITE][side])
 
         if board.castling & W_OOO:
             side = 1 if wildcastle else 0
-            for move in generateOne(WHITE, side, board.fin_kings[WHITE][side],
-                                    board.fin_rooks[WHITE][side]):
-                yield move
+            yield from generateOne(WHITE, side, board.fin_kings[WHITE][side],
+                                    board.fin_rooks[WHITE][side])
     else:
         if board.castling & B_OO:
             side = 0 if wildcastle else 1
-            for move in generateOne(BLACK, side, board.fin_kings[BLACK][side],
-                                    board.fin_rooks[BLACK][side]):
-                yield move
+            yield from generateOne(BLACK, side, board.fin_kings[BLACK][side],
+                                    board.fin_rooks[BLACK][side])
 
         if board.castling & B_OOO:
             side = 1 if wildcastle else 0
-            for move in generateOne(BLACK, side, board.fin_kings[BLACK][side],
-                                    board.fin_rooks[BLACK][side]):
-                yield move
+            yield from generateOne(BLACK, side, board.fin_kings[BLACK][side],
+                                    board.fin_rooks[BLACK][side])
 
 
 def genPieceMoves(board, piece, tcord):
@@ -230,8 +226,7 @@ def gen_sittuyin_promotions(board):
 def genAllMoves(board, drops=True):
     from pychess.Variants import variants
     if drops and board.variant in DROP_VARIANTS and board.variant != SCHESS:
-        for move in genDrops(board):
-            yield move
+        yield from genDrops(board)
 
     # In sittuyin you have to place your pieces before any real move
     if board.variant == SITTUYINCHESS or board.variant == PLACEMENTCHESS:
@@ -487,8 +482,7 @@ def genAllMoves(board, drops=True):
 
     # Sittuyin promotions
     if board.variant == SITTUYINCHESS and pawns and not queens:
-        for move in gen_sittuyin_promotions(board):
-            yield move
+        yield from gen_sittuyin_promotions(board)
 
     # Cambodian extra first moves for king and queen
     if board.variant == CAMBODIANCHESS:
@@ -515,8 +509,7 @@ def genAllMoves(board, drops=True):
 
     # Castling
     if kings:
-        for move in genCastles(board):
-            yield move
+        yield from genCastles(board)
 
 ################################################################################
 #   Generate capturing moves                                                   #

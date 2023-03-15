@@ -1,4 +1,3 @@
-
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
@@ -123,7 +122,7 @@ class PyDockLeaf(TabReceiver):
             if widget_ == widget:
                 break
         else:
-            raise KeyError("No %s in %s" % (widget, self))
+            raise KeyError("No {} in {}".format(widget, self))
         del self.panels[i]
 
         if self.book.get_n_pages() == 0:

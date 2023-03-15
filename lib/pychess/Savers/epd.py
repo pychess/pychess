@@ -59,7 +59,7 @@ def save(handle, model, position=None, flip=False):
         ("rc", rep_count), )
 
     for key, value in opcodes:
-        handle.write(" %s %s;" % (key, value))
+        handle.write(" {} {};".format(key, value))
 
     ############################################################################
     # Resign opcode                                                            #

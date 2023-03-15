@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from pychess.Utils.const import WHITE, WHITEWON, BLACK, BLACKWON, DRAW
 
 
@@ -103,10 +101,10 @@ def get_elo_rating_change_str(model, player, overridden_welo, overridden_belo):
             if model.status == DRAW:
                 d = 1
             else:
-                return "%.0f%%, %.1f / %.1f / %.1f" % (100 * erc["pd"], erc["diff0"], erc["diff1"], erc["diff2"])
+                return "{:.0f}%, {:.1f} / {:.1f} / {:.1f}".format(100 * erc["pd"], erc["diff0"], erc["diff1"], erc["diff2"])
 
     # Result
-    return "%s%.1f" % ("+" if erc["diff%d" % d] > 0 else "", erc["diff%d" % d])
+    return "{}{:.1f}".format("+" if erc["diff%d" % d] > 0 else "", erc["diff%d" % d])
 
 
 def get_elo_rating_change_pgn(model, player):

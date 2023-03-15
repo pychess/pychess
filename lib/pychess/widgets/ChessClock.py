@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from math import pi, cos, sin
 
 import cairo

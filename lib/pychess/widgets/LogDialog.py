@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import time
 import logging
 
@@ -70,7 +68,7 @@ class InformationWindow:
                 t = time.strftime("%H:%M:%S", time.localtime(timestamp))
                 textview.get_buffer().insert_with_tags_by_name(
                     textview.get_buffer().get_end_iter(),
-                    "\n%s\n%s\n" % (t, "-" * 60), str(logging.INFO))
+                    "\n{}\n{}\n".format(t, "-" * 60), str(logging.INFO))
                 cls.tagToTime[tag] = timestamp
 
             if not message.endswith("\n"):

@@ -45,7 +45,7 @@ class ICSStreamReader(asyncio.StreamReader):
                     self._buffer = self._buffer[start:]
                     return i
                 else:
-                    not_find = "read_until:%s , got:'%s'" % (until, self._buffer)
+                    not_find = "read_until:{} , got:'{}'".format(until, self._buffer)
                     log.debug(not_find, extra={"task": (self.name, "raw")})
 
             await self._wait_for_data('read_until')
@@ -204,7 +204,7 @@ class ICSTelnet():
                     self.timestamp_proc = await create
                     log.info("%s started OK" % timestamp_path)
                 except OSError as err:
-                    log.info("Can't start %s OSError: %s %s" % (timestamp_path, err.errno, err.strerror))
+                    log.info("Can't start {} OSError: {} {}".format(timestamp_path, err.errno, err.strerror))
                     self.port = port
                     self.host = host
             else:

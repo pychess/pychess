@@ -87,7 +87,7 @@ class OLVFile(ChessFile):
                 rec["Event"] = line[8:]
 
             elif line.startswith("source-id:"):
-                rec["Event"] = "%s (%s)" % (rec["Event"], line[12:])
+                rec["Event"] = "{} ({})".format(rec["Event"], line[12:])
 
             elif line.startswith("date:"):
                 parts = line[6:].split("-")
@@ -163,7 +163,7 @@ class OLVFile(ChessFile):
                 if in_authors:
                     author = line[line.find("-") + 1:].lstrip()
                     if rec["White"]:
-                        rec["White"] = "%s - %s" % (rec["White"], author)
+                        rec["White"] = "{} - {}".format(rec["White"], author)
                     else:
                         rec["White"] = author
 

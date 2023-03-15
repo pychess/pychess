@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import asyncio
 import os
 from io import StringIO
@@ -581,7 +579,7 @@ class FICS(GObject.GObject, Perspective):
         self.infobar.push_message(message)
 
     def _replace_notification_message(self, obj, prop, rating_type, player):
-        log.debug("%s %s" % (repr(obj), player),
+        log.debug("{} {}".format(repr(obj), player),
                   extra={"task": (self.connection.username,
                                   "_replace_notification_message")})
         for message in self.messages:

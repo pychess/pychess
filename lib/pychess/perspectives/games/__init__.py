@@ -232,7 +232,7 @@ class Games(GObject.GObject, Perspective):
                 output = subprocess.check_output(args, stderr=subprocess.STDOUT)
 
                 # append it to our existing one
-                if output.decode().find(u"Processing...done") > 0:
+                if output.decode().find("Processing...done") > 0:
                     old_scout = os.path.splitext(pgn_path)[0] + '.scout'
                     new_scout = os.path.splitext(pgnfile)[0] + '.scout'
 
@@ -245,7 +245,7 @@ class Games(GObject.GObject, Perspective):
             game.save(pgn_path, pgn, append)
 
             return True
-        except IOError:
+        except OSError:
             return False
 
     def saveGameAs(self, game, position=None, export=False):
@@ -256,7 +256,7 @@ class Games(GObject.GObject, Perspective):
         title = _("Save Game") if not export else _("Export position")
         savedialog.set_title(title)
         while True:
-            filename = "%s-%s" % (game.players[0], game.players[1])
+            filename = "{}-{}".format(game.players[0], game.players[1])
             savedialog.set_current_name(filename.replace(" ", "_"))
 
             res = savedialog.run()
@@ -327,7 +327,7 @@ class Games(GObject.GObject, Perspective):
             try:
                 flip = self.cur_gmwidg().board.view.rotation > 0
                 game.save(uri, saver, append, position, flip)
-            except IOError as e:
+            except OSError as e:
                 d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR)
                 d.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)
                 d.set_title(_("Could not save the file"))
@@ -395,7 +395,7 @@ class Games(GObject.GObject, Perspective):
                                                           Gtk.CellRendererText(),
                                                           text=1))
                 for gmwidg, game in changedPairs:
-                    liststore.append((True, "%s %s %s" % (game.players[0], _("vs."), game.players[1])))
+                    liststore.append((True, "{} {} {}".format(game.players[0], _("vs."), game.players[1])))
 
                 def callback(cell, path):
                     if path:

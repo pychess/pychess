@@ -314,26 +314,26 @@ class AdjournManager(GObject.GObject):
 
     def queryMoves(self, game):
         if isinstance(game, FICSHistoryGame):
-            self.connection.client.run_command("smoves %s %s" % (
+            self.connection.client.run_command("smoves {} {}".format(
                 self.connection.history_owner, game.history_no))
         elif isinstance(game, FICSJournalGame):
-            self.connection.client.run_command("smoves %s %%%s" % (
+            self.connection.client.run_command("smoves {} %{}".format(
                 self.connection.journal_owner, game.journal_no))
         else:
-            self.connection.client.run_command("smoves %s %s" % (
+            self.connection.client.run_command("smoves {} {}".format(
                 self.connection.stored_owner, game.opponent.name))
 
     def examine(self, game):
         game.board = None
         self.connection.archived_examine = game
         if isinstance(game, FICSAdjournedGame):
-            self.connection.client.run_command("examine %s %s" % (
+            self.connection.client.run_command("examine {} {}".format(
                 self.connection.stored_owner, game.opponent.name))
         elif isinstance(game, FICSHistoryGame):
-            self.connection.client.run_command("examine %s %s" % (
+            self.connection.client.run_command("examine {} {}".format(
                 self.connection.history_owner, game.history_no))
         elif isinstance(game, FICSJournalGame):
-            self.connection.client.run_command("examine %s %%%s" % (
+            self.connection.client.run_command("examine {} %{}".format(
                 self.connection.journal_owner, game.journal_no))
 
     def challenge(self, playerName):

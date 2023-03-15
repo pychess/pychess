@@ -1,6 +1,6 @@
 import colorsys
 import sys
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 # from io import BytesIO
 
 import gi
@@ -354,7 +354,7 @@ def keepWindowSize(key,
         if conf.hasKey(key + "_x") and conf.hasKey(key + "_y"):
             x = max(0, conf.get(key + "_x"))
             y = max(0, conf.get(key + "_y"))
-            log.debug("Moving window to x=%s y=%s" % (x, y))
+            log.debug("Moving window to x={} y={}".format(x, y))
             window.move(x, y)
 
         elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
@@ -365,7 +365,7 @@ def keepWindowSize(key,
             else:
                 # Place the window on the upper golden ratio line
                 y_loc = int(monitor_height / 2.618 - height / 2) + monitor_y
-            log.debug("Moving window to x=%s y=%s" % (x_loc, y_loc))
+            log.debug("Moving window to x={} y={}".format(x_loc, y_loc))
             window.move(x_loc, y_loc)
 
     loadPosition(window)

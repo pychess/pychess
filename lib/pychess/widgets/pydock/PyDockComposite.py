@@ -1,4 +1,3 @@
-
 from gi.repository import Gtk, GObject
 
 from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER, reprPos
@@ -23,7 +22,7 @@ class PyDockComposite(Gtk.Alignment):
             component._del()
 
     def __repr__(self):
-        return "composite %s (%s, %s)" % (reprPos[self.position],
+        return "composite {} ({}, {})".format(reprPos[self.position],
                                           repr(self.paned.get_child1()),
                                           repr(self.paned.get_child2()))
 

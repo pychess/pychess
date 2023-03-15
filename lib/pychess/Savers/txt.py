@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from pychess.System import conf
 from pychess.Utils.const import FAN_PIECES, BLACK, WHITE
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 import shutil
 import time
@@ -20,7 +18,7 @@ from pychess.System.prefix import addUserCachePrefix
 def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
     context._query_start_time = time.time()
     log.debug("Start Query:\n%s" % statement, extra={"task": "SQL"})
-    log.debug("Parameters:\n%r" % (parameters,), extra={"task": "SQL"})
+    log.debug("Parameters:\n{!r}".format(parameters), extra={"task": "SQL"})
 
 
 @event.listens_for(Engine, "after_cursor_execute")
@@ -88,7 +86,7 @@ def get_engine(path=None, dialect="sqlite", echo=False):
         # In memory database
         url = "sqlite://"
     elif dialect == "sqlite":
-        url = "%s:///%s" % (dialect, path)
+        url = "{}:///{}".format(dialect, path)
 
     if url in engines and os.path.isfile(path) and os.path.getsize(path) > 0:
         return engines[url]

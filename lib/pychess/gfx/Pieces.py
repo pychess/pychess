@@ -55,7 +55,7 @@ def drawPiece(piece, context, x, y, psize, allwhite=False, allpawns=False, asean
     if asean:
         image.render_cairo(context)
     elif all_in_one:
-        pieceid = '#%s%s' % ('White' if color == 0 else 'Black',
+        pieceid = '#{}{}'.format('White' if color == 0 else 'Black',
                              pnames[sign - 1])
         image.render_cairo_sub(context, id=pieceid)
     else:
@@ -76,7 +76,7 @@ def get_svg_pieces(svgdir):
 
     if all_in_one:
         rsvg_handles = Rsvg.Handle.new_from_file(addDataPrefix(
-            "pieces/%s/%s.svg" % (svgdir, svgdir)))
+            "pieces/{}/{}.svg".format(svgdir, svgdir)))
     else:
         rsvg_handles = [[None] * 9, [None] * 9]
         for c, color in ((WHITE, 'white'), (BLACK, 'black')):
@@ -84,7 +84,7 @@ def get_svg_pieces(svgdir):
                 if p in (HAWK, ELEPHANT) and svgdir != "merida":
                     continue
                 rsvg_handles[c][p] = Rsvg.Handle.new_from_file(addDataPrefix(
-                    "pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[
+                    "pieces/{}/{}{}.svg".format(svgdir, color[0], reprSign[
                         p].lower())))
     return rsvg_handles
 

@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from gi.repository import Gtk, GObject
 
 from pychess.Utils.lutils.LBoard import LBoard

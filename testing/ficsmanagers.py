@@ -311,7 +311,7 @@ class SeekManagerTests(EmittingTestCase):
         player = FICSPlayer('leaderbeans')
         player.ratings[TYPE_BLITZ] = 1637
         player.deviations[TYPE_BLITZ] = DEVIATION_ESTIMATED
-        player.titles |= set((TYPE_COMPUTER, ))
+        player.titles |= {TYPE_COMPUTER}
         expectedResult = FICSSeek(124, player, 3, 0, False, 'black',
                                   GAME_TYPES["blitz"])
         self.runAndAssertEquals('addSeek', lines, (expectedResult, ))
@@ -483,7 +483,7 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_seeks, set((111, 25, 153)))
+        self.assertEqual(self.deleted_seeks, {111, 25, 153})
 
     def test2(self):
         lines = [
@@ -513,7 +513,7 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_seeks, set((135, )))
+        self.assertEqual(self.deleted_seeks, {135})
 
     def test3(self):
         lines = [
@@ -548,8 +548,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_seeks, set((89, 90)))
-        self.assertEqual(self.deleted_offers, set((11, )))
+        self.assertEqual(self.deleted_seeks, {89, 90})
+        self.assertEqual(self.deleted_offers, {11})
 
     def test4(self):
         lines = [
@@ -583,8 +583,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_seeks, set((89, )))
-        self.assertEqual(self.deleted_offers, set((11, )))
+        self.assertEqual(self.deleted_seeks, {89})
+        self.assertEqual(self.deleted_offers, {11})
 
     def test5(self):
         lines = [
@@ -616,8 +616,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_seeks, set((6, )))
-        self.assertEqual(self.deleted_offers, set((39, )))
+        self.assertEqual(self.deleted_seeks, {6})
+        self.assertEqual(self.deleted_offers, {39})
 
     def test6(self):
         lines = [
@@ -649,8 +649,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_seeks, set((93, 71)))
-        self.assertEqual(self.deleted_offers, set((53, )))
+        self.assertEqual(self.deleted_seeks, {93, 71})
+        self.assertEqual(self.deleted_offers, {53})
 
     def test7(self):
         lines = [
@@ -682,7 +682,7 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_seeks, set((145, )))
+        self.assertEqual(self.deleted_seeks, {145})
 
     def test8(self):
         lines = [
@@ -711,7 +711,7 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_seeks, set((179, 3)))
+        self.assertEqual(self.deleted_seeks, {179, 3})
 
     def test9(self):
         lines = [
@@ -742,8 +742,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_offers, set((6, )))
-        self.assertEqual(self.deleted_seeks, set((33, )))
+        self.assertEqual(self.deleted_offers, {6})
+        self.assertEqual(self.deleted_seeks, {33})
 
     def test10(self):
         lines = [
@@ -777,8 +777,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_offers, set((14, 9)))
-        self.assertEqual(self.deleted_seeks, set((68, 105, 89)))
+        self.assertEqual(self.deleted_offers, {14, 9})
+        self.assertEqual(self.deleted_seeks, {68, 105, 89})
 
     def test11(self):
         lines = [
@@ -812,8 +812,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_offers, set((12, )))
-        self.assertEqual(self.deleted_seeks, set((125, 127, 109)))
+        self.assertEqual(self.deleted_offers, {12})
+        self.assertEqual(self.deleted_seeks, {125, 127, 109})
 
     def test12(self):
         lines = [
@@ -844,7 +844,7 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_offers, set((4, )))
+        self.assertEqual(self.deleted_offers, {4})
 
     def test13(self):
         lines = [
@@ -876,8 +876,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game, ))
-        self.assertEqual(self.deleted_offers, set((25, )))
-        self.assertEqual(self.deleted_seeks, set((117, )))
+        self.assertEqual(self.deleted_offers, {25})
+        self.assertEqual(self.deleted_seeks, {117})
 
     def test14(self):
         """ Make sure observe-game-created messages are caught """

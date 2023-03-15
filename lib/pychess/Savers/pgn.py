@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import shutil
 import collections
 import os
@@ -133,10 +131,10 @@ def save(handle, model, position=None, flip=False):
             pval = str(value)
             pval = pval.replace("\\", "\\\\")
             pval = pval.replace("\"", "\\\"")
-            print('[%s "%s"]' % (tag, pval), file=handle)
+            print('[{} "{}"]'.format(tag, pval), file=handle)
         except UnicodeEncodeError:
             pval = bytes(pval, "utf-8").decode(PGN_ENCODING, errors="ignore")
-            print('[%s "%s"]' % (tag, pval), file=handle)
+            print('[{} "{}"]'.format(tag, pval), file=handle)
         processed_tags = processed_tags + [tag]
 
     # Mandatory ordered seven-tag roster
@@ -148,7 +146,7 @@ def save(handle, model, position=None, flip=False):
             y = "%04d" % y if y is not None else "????"
             m = "%02d" % m if m is not None else "??"
             d = "%02d" % d if d is not None else "??"
-            value = "%s.%s.%s" % (y, m, d)
+            value = "{}.{}.{}".format(y, m, d)
         elif value == "":
             value = "?"
         write_tag(tag, value, roster=True)
@@ -277,7 +275,7 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
         if node.prev is None:
             for child in node.children:
                 if isinstance(child, str):
-                    result.append("{%s}%s" % (child, os.linesep))
+                    result.append("{{{}}}{}".format(child, os.linesep))
             node = node.next
             continue
 
@@ -299,7 +297,7 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
                     moves, score, depth = model.scores[node.plyCount]
                     if node.color == BLACK:
                         score = -score
-                    emt_eval += "[%%eval %0.2f/%s]" % (score / 100.0, depth)
+                    emt_eval += "[%eval {:0.2f}/{}]".format(score / 100.0, depth)
                 if emt_eval:
                     result.append("{%s}" % emt_eval)
 
@@ -384,13 +382,13 @@ altpath = getEngineDataPrefix()
 if sys.platform == "win32":
     scoutfish = "scoutfish_x64.exe"
 else:
-    scoutfish = "scoutfish_x%s%s%s" % (cpuinfo['bitness'], MODERN, cpuinfo['binext'])
+    scoutfish = "scoutfish_x{}{}{}".format(cpuinfo['bitness'], MODERN, cpuinfo['binext'])
 scoutfish_path = shutil.which(scoutfish, mode=os.X_OK, path=altpath)
 
 if sys.platform == "win32":
     parser = "parser_x64.exe"
 else:
-    parser = "parser_x%s%s%s" % (cpuinfo['bitness'], MODERN, cpuinfo['binext'])
+    parser = "parser_x{}{}{}".format(cpuinfo['bitness'], MODERN, cpuinfo['binext'])
 chess_db_path = shutil.which(parser, mode=os.X_OK, path=altpath)
 
 
@@ -423,7 +421,7 @@ class PGNFile(ChessFile):
             self.tag_database = TagDatabase(self.engine)
 
             self.games, self.offs_ply = self.get_records(0)
-            log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
+            log.info("{} contains {} game(s)".format(self.path, self.count), extra={"task": "SQL"})
 
     def get_count(self):
         """ Number of games in .pgn database """
@@ -487,7 +485,7 @@ class PGNFile(ChessFile):
                     self.chess_db.make()
             except OSError as err:
                 self.chess_db = None
-                log.warning("Failed to sart chess_db parser. OSError %s %s" % (err.errno, err.strerror))
+                log.warning("Failed to sart chess_db parser. OSError {} {}".format(err.errno, err.strerror))
             except pexpect.TIMEOUT:
                 self.chess_db = None
                 log.warning("chess_db parser failed (pexpect.TIMEOUT)")
@@ -511,7 +509,7 @@ class PGNFile(ChessFile):
                     self.scoutfish.make()
             except OSError as err:
                 self.scoutfish = None
-                log.warning("Failed to sart scoutfish. OSError %s %s" % (err.errno, err.strerror))
+                log.warning("Failed to sart scoutfish. OSError {} {}".format(err.errno, err.strerror))
             except pexpect.TIMEOUT:
                 self.scoutfish = None
                 log.warning("scoutfish failed (pexpect.TIMEOUT)")
@@ -523,7 +521,7 @@ class PGNFile(ChessFile):
         """ Get move-games-win-loss-draw stat of fen position """
         rows = []
         if self.chess_db is not None:
-            move_stat = self.chess_db.find("limit %s skip %s %s" % (1, 0, fen))
+            move_stat = self.chess_db.find("limit {} skip {} {}".format(1, 0, fen))
             for mstat in move_stat["moves"]:
                 rows.append((mstat["move"], int(mstat["games"]), int(mstat["wins"]), int(mstat["losses"]), int(mstat["draws"])))
         return rows
@@ -531,7 +529,7 @@ class PGNFile(ChessFile):
     def has_position(self, fen):
         # ChessDB (prioritary)
         if self.chess_db is not None:
-            ret = self.chess_db.find("limit %s skip %s %s" % (1, 0, fen))
+            ret = self.chess_db.find("limit {} skip {} {}".format(1, 0, fen))
             if len(ret["moves"]) > 0:
                 return TOOL_CHESSDB, True
         # Scoutfish (alternate by approximation)
@@ -626,7 +624,7 @@ class PGNFile(ChessFile):
             create where clause we will use to query header tag .sqlite database
         """
         if self.fen:
-            move_stat = self.chess_db.find("limit %s skip %s %s" % (self.limit, skip, self.fen))
+            move_stat = self.chess_db.find("limit {} skip {} {}".format(self.limit, skip, self.fen))
 
             offsets = []
             for mstat in move_stat["moves"]:
@@ -822,7 +820,7 @@ class PGNFile(ChessFile):
                 except Exception:
                     raise LoadingError(
                         _("Invalid move."),
-                        "%s%s" % (move_count(node, black_periods=True), move))
+                        "{}{}".format(move_count(node, black_periods=True), move))
 
             return board
 

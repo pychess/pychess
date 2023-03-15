@@ -63,7 +63,7 @@ class ICCChatManager(ChatManager):
         ficsplayer = self.connection.players.get(name)
         rating = ficsplayer.getRatingByGameType(GAME_TYPES['standard'])
         if rating:
-            name = "%s(%s)" % (name, rating)
+            name = "{}({})".format(name, rating)
 
         if gameno not in self.observers:
             observers = set()

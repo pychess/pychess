@@ -137,4 +137,4 @@ class Timer:
         end = self.timer()
         self.elapsed_secs = end - self.start
         self.elapsed = self.elapsed_secs * 1000  # millisecs
-        print('---- elapsed time: %f ms - %s' % (self.elapsed, self.text))
+        print('---- elapsed time: {:f} ms - {}'.format(self.elapsed, self.text))

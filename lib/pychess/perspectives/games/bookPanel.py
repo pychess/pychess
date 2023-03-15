@@ -128,7 +128,7 @@ class OpeningAdvisor(Advisor):
                 eco = ""
 #                self.opening_names.append("")
             else:
-                eco = "%s %s%s%s" % (opening[0], opening[1], ', ' if opening[2] != '' else '', opening[2])
+                eco = "{} {}{}{}".format(opening[0], opening[1], ', ' if opening[2] != '' else '', opening[2])
 #                self.opening_names.append("%s %s" % (opening[1], opening[2]))
                 if opening[3] == int(False):
                     eco = '(...) %s' % eco.strip()
@@ -404,7 +404,7 @@ class EndgameAdvisor(Advisor):
                 details = _("Mate in %d") % depth
 
             if m.practice_game or m.lesson_game:
-                m.hint = "%s %s %s" % (toSAN(self.board, move, True), result[0], details)
+                m.hint = "{} {} {}".format(toSAN(self.board, move, True), result[0], details)
                 return
 
             if m.isPlayingICSGame():

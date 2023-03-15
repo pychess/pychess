@@ -93,7 +93,7 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
             solved = progress.count(1)
             percent = 0 if solved == 0 else round((solved * 100.) / len(progress))
             reset_icon = None if solved == 0 else GTK_ICON_VIEW_REFRESH
-            return "%s / %s" % (solved, len(progress)), percent, reset_icon
+            return "{} / {}".format(solved, len(progress)), percent, reset_icon
 
         def _reset_progress_file(self, filename, title):
             progress = solving_progress[filename]

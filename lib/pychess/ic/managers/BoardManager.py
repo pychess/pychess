@@ -41,7 +41,7 @@ dates = r"(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" % \
 # "2010-10-14 20:36 UTC"
 datesFatICS = r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})\s+(UTC)"
 
-moveListHeader1Str = "%s %s vs. %s %s --- (?:%s|%s)" % (
+moveListHeader1Str = "{} {} vs. {} {} --- (?:{}|{})".format(
     names, ratings, names, ratings, dates, datesFatICS)
 moveListHeader1 = re.compile(moveListHeader1Str)
 moveListHeader2Str = r"%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." % \
@@ -481,7 +481,7 @@ class BoardManager(GObject.GObject):
 
             else:
                 # don't start new game in puzzlebot/endgamebot when they just reuse gameno
-                log.debug("emit('boardSetup') with %s %s %s %s" % (gameno, fen, wname, bname),
+                log.debug("emit('boardSetup') with {} {} {} {}".format(gameno, fen, wname, bname),
                           extra={"task": (self.connection.username, "BM.onStyle12")})
                 self.emit("boardSetup", gameno, fen, wname, bname)
                 return
@@ -501,13 +501,13 @@ class BoardManager(GObject.GObject):
                 log.debug("send 'smoves' command",
                           extra={"task": (self.connection.username, "BM.onStyle12")})
                 if isinstance(game, FICSHistoryGame):
-                    self.connection.client.run_command("smoves %s %s" % (
+                    self.connection.client.run_command("smoves {} {}".format(
                         self.connection.history_owner, game.history_no))
                 elif isinstance(game, FICSJournalGame):
-                    self.connection.client.run_command("smoves %s %%%s" % (
+                    self.connection.client.run_command("smoves {} %{}".format(
                         self.connection.journal_owner, game.journal_no))
                 elif isinstance(game, FICSAdjournedGame):
-                    self.connection.client.run_command("smoves %s %s" % (
+                    self.connection.client.run_command("smoves {} {}".format(
                         self.connection.stored_owner, game.opponent.name))
                 self.connection.client.run_command("forward 999")
         else:
@@ -517,7 +517,7 @@ class BoardManager(GObject.GObject):
                     # fics resend latest style12 line again when one player lost on time
                     return
                 if lastmove is None:
-                    log.debug("emit('boardSetup') with %s %s %s %s" % (gameno, fen, wname, bname),
+                    log.debug("emit('boardSetup') with {} {} {} {}".format(gameno, fen, wname, bname),
                               extra={"task": (self.connection.username, "BM.onStyle12")})
                     self.emit("boardSetup", gameno, fen, wname, bname)
                 else:
@@ -527,7 +527,7 @@ class BoardManager(GObject.GObject):
             else:
                 # In some cases (like lost on time) the last move is resent by FICS
                 # but game was already removed from self.connection.games
-                log.debug("Got %s but %s not in connection.games" % (style12, gameno))
+                log.debug("Got {} but {} not in connection.games".format(style12, gameno))
 
     def onExamineGameCreated(self, matchlist):
         style12 = matchlist[-1].groups()[0]
@@ -945,7 +945,7 @@ class BoardManager(GObject.GObject):
             if ply % 2 == 0:
                 pgn += "%d. " % (ply // 2 + 1)
             time = times[ply]
-            pgn += "%s {[%%emt %s]} " % (move, time)
+            pgn += "{} {{[%emt {}]}} ".format(move, time)
         pgn += "*\n"
 
         wplayer = self.connection.players.get(wname)
@@ -1041,7 +1041,7 @@ class BoardManager(GObject.GObject):
 
         if relation == IC_POS_OBSERVING_EXAMINATION:
             pgnHead = [
-                ("Event", "FICS %s %s game" % (rated, game_type.fics_name)),
+                ("Event", "FICS {} {} game".format(rated, game_type.fics_name)),
                 ("Site", "freechess.org"), ("White", wname), ("Black", bname),
                 ("Result", "*"), ("SetUp", "1"), ("FEN", fen)
             ]

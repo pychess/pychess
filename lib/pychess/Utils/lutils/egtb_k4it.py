@@ -47,7 +47,7 @@ class EgtbK4kit:
             url = (URL + fen).replace(" ", "%20")
             try:
                 f = urlopen(url)
-            except IOError as e:
+            except OSError as e:
                 log.warning(
                     "Unable to read endgame tablebase from the Internet: %s" %
                     repr(e))
@@ -109,7 +109,7 @@ class EgtbK4kit:
                         (reprColor[color], fen, repr(data)))
             except (KeyError, ValueError):
                 log.warning(
-                    "Couldn't parse %s data for position %s.\nData was: %s" % (
+                    "Couldn't parse {} data for position {}.\nData was: {}".format(
                         reprColor[color], fen, repr(data)))
                 self.table[(fen, color)] = []  # Don't try again.
 

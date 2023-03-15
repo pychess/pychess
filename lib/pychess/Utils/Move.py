@@ -22,9 +22,9 @@ class Move:
                 self.move))
             self.cord1 = Cord(lmove.TCORD(self.move))
         else:
-            assert cord0 is not None and cord1 is not None, "cord0=%s, cord1=%s, board=%s" % (
+            assert cord0 is not None and cord1 is not None, "cord0={}, cord1={}, board={}".format(
                 cord0, cord1, board)
-            assert board[cord0] is not None, "cord0=%s, cord1=%s, board=%s" % (
+            assert board[cord0] is not None, "cord0={}, cord1={}, board={}".format(
                 cord0, cord1, board)
             self.cord0 = cord0
             self.cord1 = cord1
@@ -114,7 +114,7 @@ class Move:
             self.flag != QUEEN_CASTLE and self.flag != KING_CASTLE
 
     def as_uci(self):
-        move = "%s%s%s%s" % (self.cord0.cx, self.cord0.cy, self.cord1.cx, self.cord1.cy)
+        move = "{}{}{}{}".format(self.cord0.cx, self.cord0.cy, self.cord1.cx, self.cord1.cy)
         if self.flag in PROMOTIONS:
             move += reprSign[lmove.PROMOTE_PIECE(self.flag)].lower()
         return move

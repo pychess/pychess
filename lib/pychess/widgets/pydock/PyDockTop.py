@@ -1,4 +1,3 @@
-
 import os
 from xml.dom import minidom
 from collections import defaultdict

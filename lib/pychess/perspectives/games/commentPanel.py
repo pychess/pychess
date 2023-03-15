@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from gi.repository import Gtk
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
@@ -163,7 +161,7 @@ class Sidepanel:
 
         messages = getMessages("final")
         if messages:
-            return "%s %s" % (reprColor[color], messages[0])
+            return "{} {}".format(reprColor[color], messages[0])
 
         # ---
 
@@ -175,7 +173,7 @@ class Sidepanel:
 
         messages = getMessages("attack")
         for message in messages:
-            strings.append("%s %s" % (reprColor[color], message))
+            strings.append("{} {}".format(reprColor[color], message))
 
         # ----------------------------------------------------------------------
         # Check for prefixes
@@ -198,7 +196,7 @@ class Sidepanel:
                     (reprColor[color], prefix, _("and") + "\n", message))
                 prefix = ""
             else:
-                strings.append("%s %s" % (reprColor[color], message))
+                strings.append("{} {}".format(reprColor[color], message))
 
         # ----------------------------------------------------------------------
         # Simple
@@ -223,7 +221,7 @@ class Sidepanel:
         # There was nothing to apply the prefix to, so we just post it here
         # before the states and tips
         if prefix:
-            strings.append("%s %s" % (reprColor[color], prefix))
+            strings.append("{} {}".format(reprColor[color], prefix))
             prefix = ""
 
         # ----------------------------------------------------------------------

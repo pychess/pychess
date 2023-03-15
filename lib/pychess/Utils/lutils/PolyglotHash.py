@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 import random
 
 from pychess.Utils.const import WHITE, BLACK, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, HAWK, ELEPHANT, KING

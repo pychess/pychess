@@ -1,4 +1,3 @@
-
 from .bitboard import bitPosArray, notBitPosArray, lastBit, firstBit, clearBit, lsb
 from .ldata import moveArray, rays, directions, fromToRay, PIECE_VALUES, PAWN_VALUE
 from pychess.Utils.const import ASEAN_VARIANTS, ASEAN_BBISHOP, ASEAN_WBISHOP, ASEAN_QUEEN, SCHESS, \

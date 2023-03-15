@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 import ast
 
 from gi.repository import GLib, Gdk, Gtk, GObject
@@ -580,17 +579,17 @@ class FilterPanel(Gtk.TreeView):
 
         if w_material or b_material:
             if self.widgets["imbalance"].get_active():
-                material_query["imbalance"] = "%sv%s" % (w_material, b_material)
+                material_query["imbalance"] = "{}v{}".format(w_material, b_material)
 
                 if self.widgets["ignore_material_colors"].get_active():
-                    material_query["imbalance"] = ["%sv%s" % (w_material, b_material),
-                                                   "%sv%s" % (b_material, w_material)]
+                    material_query["imbalance"] = ["{}v{}".format(w_material, b_material),
+                                                   "{}v{}".format(b_material, w_material)]
             else:
-                material_query["material"] = "K%sK%s" % (w_material, b_material)
+                material_query["material"] = "K{}K{}".format(w_material, b_material)
 
                 if self.widgets["ignore_material_colors"].get_active():
-                    material_query["material"] = ["K%sK%s" % (w_material, b_material),
-                                                  "K%sK%s" % (b_material, w_material)]
+                    material_query["material"] = ["K{}K{}".format(w_material, b_material),
+                                                  "K{}K{}".format(b_material, w_material)]
 
         if self.widgets["white_move"].get_text():
             moves = [move.strip() for move in self.widgets["white_move"].get_text().split(",")]

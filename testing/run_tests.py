@@ -40,7 +40,7 @@ modules_to_test = (
 def suite():
     tests = unittest.TestSuite()
     for module in map(__import__, modules_to_test):
-        tests.addTest(unittest.findTestCases(module))
+        tests.addTest(unittest.defaultTestLoader.loadTestsFromModule(module))
     return tests
 
 

@@ -229,7 +229,7 @@ class InfoPanel(Gtk.Notebook, Panel):
 
             # Add those names. If this is not the first namesReceive, we only
             # add the new names
-            noneed = set([name for (color, name, isSeparator) in self.store])
+            noneed = {name for (color, name, isSeparator) in self.store}
             for name in people:
                 if name in noneed:
                     continue

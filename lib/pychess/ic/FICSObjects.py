@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import asyncio
 import datetime
 from gi.repository import GLib, GObject
@@ -48,23 +47,23 @@ def get_player_tooltip_text(player, show_status=True):
     text = "%s" % player.name
     text += "%s" % player.display_titles(long=True)
     if player.blitz:
-        text += "\n%s: %s" % (_("Blitz"), player.blitz)
+        text += "\n{}: {}".format(_("Blitz"), player.blitz)
     if player.standard:
-        text += "\n%s: %s" % (_("Standard"), player.standard)
+        text += "\n{}: {}".format(_("Standard"), player.standard)
     if player.lightning:
-        text += "\n%s: %s" % (_("Lightning"), player.lightning)
+        text += "\n{}: {}".format(_("Lightning"), player.lightning)
     if player.atomic:
-        text += "\n%s: %s" % (_("Atomic"), player.atomic)
+        text += "\n{}: {}".format(_("Atomic"), player.atomic)
     if player.bughouse:
-        text += "\n%s: %s" % (_("Bughouse"), player.bughouse)
+        text += "\n{}: {}".format(_("Bughouse"), player.bughouse)
     if player.crazyhouse:
-        text += "\n%s: %s" % (_("Crazyhouse"), player.crazyhouse)
+        text += "\n{}: {}".format(_("Crazyhouse"), player.crazyhouse)
     if player.losers:
-        text += "\n%s: %s" % (_("Losers"), player.losers)
+        text += "\n{}: {}".format(_("Losers"), player.losers)
     if player.suicide:
-        text += "\n%s: %s" % (_("Suicide"), player.suicide)
+        text += "\n{}: {}".format(_("Suicide"), player.suicide)
     if player.wild:
-        text += "\n%s: %s" % (_("Wild"), player.wild)
+        text += "\n{}: {}".format(_("Wild"), player.wild)
     if show_status:
         text += "\n%s" % player.display_status
     return text
@@ -527,7 +526,7 @@ class FICSMatch(GObject.GObject):
         self.game_type = game_type
 
     def __repr__(self):
-        text = "%s %s" % (self.minutes, self.inc)
+        text = "{} {}".format(self.minutes, self.inc)
         text += " %s" % ("rated" if self.rated else "unrated")
         text += " %s" % self.game_type.display_text
         return text
@@ -560,7 +559,7 @@ def get_soughtmatch_tooltip_text(sought):
     text += "%s" % sought.player.display_titles(long=True)
     if not sought.player.isGuest():
         text += " (%d)" % sought.player_rating
-    text += "\n%s %s" % (sought.display_rated, sought.game_type.display_text)
+    text += "\n{} {}".format(sought.display_rated, sought.game_type.display_text)
     text += "\n" + sought.display_timecontrol
     if sought.color:
         text += "\n" + _("%(player)s plays %(color)s") \
@@ -707,11 +706,11 @@ def get_rating_range_display_text(rmin=0, rmax=9999):
     if rmin > 0:
         text = "%d" % rmin
         if rmax == 9999:
-            text += u"↑"
+            text += "↑"
         else:
             text += "-%d" % rmax
     elif rmax != 9999:
-        text = u"%d↓" % rmax
+        text = "%d↓" % rmax
     else:
         text = None
     return text
@@ -721,7 +720,7 @@ def get_seek_tooltip_text(seek):
     text = get_soughtmatch_tooltip_text(seek)
     rrtext = get_rating_range_display_text(seek.rmin, seek.rmax)
     if rrtext:
-        text += "\n%s: %s" % (_("Opponent Rating"), rrtext)
+        text += "\n{}: {}".format(_("Opponent Rating"), rrtext)
     if not seek.automatic:
         text += "\n%s" % _("Manual Accept")
     return text
@@ -828,7 +827,7 @@ class FICSBoard:
         self.pgn = pgn
 
     def __repr__(self):
-        rep = "wms=%s\nbms=%s\npgn=%s" % (self.wms, self.bms, self.pgn)
+        rep = "wms={}\nbms={}\npgn={}".format(self.wms, self.bms, self.pgn)
         return rep
 
 
@@ -1146,7 +1145,7 @@ class FICSGames(GObject.GObject):
         if not isinstance(value, FICSGame):
             raise TypeError
         if key != value:
-            raise Exception("Not the same: %s %s" % (repr(key), repr(value)))
+            raise Exception("Not the same: {} {}".format(repr(key), repr(value)))
         if hash(value) in self.games:
             raise Exception("%s already exists in %s" %
                             (repr(value), repr(self)))

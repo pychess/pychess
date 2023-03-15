@@ -21,7 +21,7 @@ class BoardTestCase(unittest.TestCase):
         )
 
         self.assertEqual(
-            set([Cord("a1", color="Y"), Cord("h1", color="Y")]),
+            {Cord("a1", color="Y"), Cord("h1", color="Y")},
             set(coordinate_not_protected)
         )
 
@@ -34,7 +34,7 @@ class BoardTestCase(unittest.TestCase):
 
         # the pawn moved to e4 is now not protected
         self.assertEqual(
-            set([Cord("a1", color="Y"), Cord("h1", color="Y"), Cord("e4", color="Y")]),
+            {Cord("a1", color="Y"), Cord("h1", color="Y"), Cord("e4", color="Y")},
             set(coordinate_not_protected)
         )
 
@@ -49,7 +49,7 @@ class BoardTestCase(unittest.TestCase):
         )
 
         self.assertEqual(
-            set([Cord("a1", color="Y"), Cord("h1", color="Y")]),
+            {Cord("a1", color="Y"), Cord("h1", color="Y")},
             set(coordinate_not_protected)
         )
 
@@ -104,20 +104,20 @@ class BoardTestCase(unittest.TestCase):
 
         # Not protected
         self.assertEqual(
-            set([Cord("a1", color="Y"), Cord("h1", color="Y"), Cord("e4", color="R")]),
+            {Cord("a1", color="Y"), Cord("h1", color="Y"), Cord("e4", color="R")},
             set(dsa.calculate_coordinate_in_danger(board, WHITE))
         )
 
         # protected by Queen, so no danger
         self.assertEqual(
-            set([Cord("a8", color="Y"), Cord("h8", color="Y")]),
+            {Cord("a8", color="Y"), Cord("h8", color="Y")},
             set(dsa.calculate_coordinate_in_danger(board, BLACK))
         )
 
         # pawn go forward, no danger
         board = board.move(Move(Cord(E4), Cord(E5), board))
         self.assertEqual(
-            set([Cord("a1", color="Y"), Cord("h1", color="Y"), Cord("e5", color="Y")]),
+            {Cord("a1", color="Y"), Cord("h1", color="Y"), Cord("e5", color="Y")},
             set(dsa.calculate_coordinate_in_danger(board, WHITE))
         )
 
@@ -134,7 +134,7 @@ class BoardTestCase(unittest.TestCase):
             # board_king.printPieces()
 
         self.assertEqual(
-            set([Cord("a8", color="Y"), Cord("h8", color="Y"), Cord("f5", color="Y")]),
+            {Cord("a8", color="Y"), Cord("h8", color="Y"), Cord("f5", color="Y")},
             set(dsa.calculate_coordinate_in_danger(board_king, BLACK))
         )
 

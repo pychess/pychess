@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import asyncio
 import datetime
 import os
@@ -68,7 +66,7 @@ class GladeHandlers:
         self.app = app
 
     def on_window_key_press(self, window, event):
-        log.debug('on_window_key_press: %s %s' % (window.get_title(), event))
+        log.debug('on_window_key_press: {} {}'.format(window.get_title(), event))
 
         # debug leaking memory
         if Gdk.keyval_name(event.keyval) == "F12":
@@ -191,7 +189,7 @@ class GladeHandlers:
 
                     # Read the shortcut
                     filename = splitUri(uri)[1]
-                    with open(filename, 'r') as file:
+                    with open(filename) as file:
                         content = file.read()
                     lines = content.replace("\r", '').split("\n")
 
@@ -574,12 +572,12 @@ class PyChess(Gtk.Application):
         self.saved_cids = {}
         self.terminated_cids = {}
 
-        log.info("PyChess %s %s git %s" % (VERSION_NAME, VERSION, self.git_rev))
+        log.info("PyChess {} {} git {}".format(VERSION_NAME, VERSION, self.git_rev))
         log.info("Command line args: '%s'" % self.chess_file)
         log.info("Platform: %s" % platform.platform())
         log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
         log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
-        log.info("Gtk version: %s.%s.%s" % (Gtk.get_major_version(),
+        log.info("Gtk version: {}.{}.{}".format(Gtk.get_major_version(),
                                             Gtk.get_minor_version(),
                                             Gtk.get_micro_version()))
 
@@ -721,7 +719,7 @@ class PyChess(Gtk.Application):
         if isgit():
             try:
                 self.git_rev = subprocess.check_output(["git", "describe", "--tags"]).decode().strip()
-                self.aboutdialog.set_version('%s Git %s' % (VERSION_NAME, self.git_rev))
+                self.aboutdialog.set_version('{} Git {}'.format(VERSION_NAME, self.git_rev))
             except subprocess.CalledProcessError:
                 pass
         self.aboutdialog.set_comments(self.aboutdialog.get_comments())

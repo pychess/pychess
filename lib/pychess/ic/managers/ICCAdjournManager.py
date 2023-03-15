@@ -1,4 +1,3 @@
-
 import datetime
 
 from gi.repository import GObject
@@ -197,11 +196,11 @@ class ICCAdjournManager(AdjournManager):
     def queryMoves(self, game):
         self.connection.query_game = game
         if isinstance(game, FICSHistoryGame):
-            self.connection.client.run_command("spgn %s %s" % (
+            self.connection.client.run_command("spgn {} {}".format(
                 self.connection.history_owner, game.history_no))
         elif isinstance(game, FICSJournalGame):
-            self.connection.client.run_command("spgn %s %%%s" % (
+            self.connection.client.run_command("spgn {} %{}".format(
                 self.connection.journal_owner, game.journal_no))
         else:
-            self.connection.client.run_command("spgn %s %s" % (
+            self.connection.client.run_command("spgn {} {}".format(
                 self.connection.stored_owner, game.opponent.name))

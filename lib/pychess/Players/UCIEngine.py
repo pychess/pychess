@@ -104,7 +104,7 @@ class UCIEngine(ProtocolEngine):
                 continue
             if isinstance(value, bool):
                 value = str(value).lower()
-            print("setoption name %s value %s" % (option, str(value)),
+            print("setoption name {} value {}".format(option, str(value)),
                   file=self.engine)
 
         print("isready", file=self.engine)
@@ -220,7 +220,7 @@ class UCIEngine(ProtocolEngine):
         asyncio.create_task(coro())
 
     def putMove(self, board1, move, board2):
-        log.debug("putMove: board1=%s move=%s board2=%s self.board=%s" % (
+        log.debug("putMove: board1={} move={} board2={} self.board={}".format(
             board1, move, board2, self.board), extra={"task": self.defname})
         if not self.readyMoves:
             return
@@ -237,7 +237,7 @@ class UCIEngine(ProtocolEngine):
         asyncio.create_task(coro())
 
     async def makeMove(self, board1, move, board2):
-        log.debug("makeMove: move=%s self.pondermove=%s board1=%s board2=%s self.board=%s" % (
+        log.debug("makeMove: move={} self.pondermove={} board1={} board2={} self.board={}".format(
             move, self.pondermove, board1, board2, self.board), extra={"task": self.defname})
         assert self.readyMoves
 
@@ -286,7 +286,7 @@ class UCIEngine(ProtocolEngine):
             self.board = self.gameBoard.switchColor()
 
     def setOptionInitialBoard(self, model):
-        log.debug("setOptionInitialBoard: self=%s, model=%s" % (
+        log.debug("setOptionInitialBoard: self={}, model={}".format(
             self, model), extra={"task": self.defname})
         self._recordMoveList(model)
 
@@ -361,7 +361,7 @@ class UCIEngine(ProtocolEngine):
         return
 
     def hurry(self):
-        log.debug("hurry: self.waitingForMove=%s self.readyForStop=%s" % (
+        log.debug("hurry: self.waitingForMove={} self.readyForStop={}".format(
             self.waitingForMove, self.readyForStop), extra={"task": self.defname})
         # sending this more than once per move will crash most engines
         # so we need to send only the first one, and then ignore every "hurry" request
@@ -371,10 +371,10 @@ class UCIEngine(ProtocolEngine):
             self.readyForStop = False
 
     def playerUndoMoves(self, moves, gamemodel):
-        log.debug("playerUndoMoves: moves=%s \
-                  gamemodel.ply=%s \
-                  gamemodel.boards[-1]=%s \
-                  self.board=%s" % (moves, gamemodel.ply,
+        log.debug("playerUndoMoves: moves={} \
+                  gamemodel.ply={} \
+                  gamemodel.boards[-1]={} \
+                  self.board={}".format(moves, gamemodel.ply,
                                     gamemodel.boards[-1],
                                     self.board), extra={"task": self.defname})
 
@@ -393,10 +393,10 @@ class UCIEngine(ProtocolEngine):
         if self.analyzing_paused:
             return
 
-        log.debug("spectatorUndoMoves: moves=%s \
-                  gamemodel.ply=%s \
-                  gamemodel.boards[-1]=%s \
-                  self.board=%s" % (moves, gamemodel.ply, gamemodel.boards[-1],
+        log.debug("spectatorUndoMoves: moves={} \
+                  gamemodel.ply={} \
+                  gamemodel.boards[-1]={} \
+                  self.board={}".format(moves, gamemodel.ply, gamemodel.boards[-1],
                                     self.board), extra={"task": self.defname})
 
         self._recordMoveList(gamemodel)
@@ -438,7 +438,7 @@ class UCIEngine(ProtocolEngine):
         print("ucinewgame", file=self.engine)
 
     def _searchNow(self, ponderhit=False):
-        log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s" % (
+        log.debug("_searchNow: self.needBestmove={} ponderhit={} self.board={}".format(
             self.needBestmove, ponderhit, self.board), extra={"task": self.defname})
 
         commands = []
@@ -603,8 +603,8 @@ class UCIEngine(ProtocolEngine):
                     if not validate(self.board, move):
                         # This is critical. To avoid game stalls, we need to resign on
                         # behalf of the engine.
-                        log.error("__parseLine: move=%s didn't validate, putting 'del' \
-                                  in returnQueue. self.board=%s" % (
+                        log.error("__parseLine: move={} didn't validate, putting 'del' \
+                                  in returnQueue. self.board={}".format(
                             repr(move), self.board), extra={"task": self.defname})
                         self.invalid_move = movestr
                         self.end(WHITEWON if self.board.color == BLACK else
@@ -612,7 +612,7 @@ class UCIEngine(ProtocolEngine):
                         continue
 
                     self._recordMove(self.board.move(move), move, self.board)
-                    log.debug("__parseLine: applied move=%s to self.board=%s" % (
+                    log.debug("__parseLine: applied move={} to self.board={}".format(
                         move, self.board), extra={"task": self.defname})
 
                     if self.ponderOn:
@@ -633,7 +633,7 @@ class UCIEngine(ProtocolEngine):
                                     self._startPonder()
 
                     self.queue.put_nowait(move)
-                    log.debug("__parseLine: put move=%s into self.queue=%s" % (
+                    log.debug("__parseLine: put move={} into self.queue={}".format(
                         move, self.queue), extra={"task": self.defname})
                     continue
 

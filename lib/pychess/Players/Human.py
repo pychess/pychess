@@ -139,12 +139,12 @@ class Human(Player):
             else:
                 if player.color != self.color:
                     return
-        log.debug("Human.emit_action: self.name=%s, action=%s" % (self.name, action))
+        log.debug("Human.emit_action: self.name={}, action={}".format(self.name, action))
         self.emit("offer", Offer(action, param=param))
 
     # Send the player move updates
     async def makeMove(self, board1, move, board2):
-        log.debug("Human.makeMove: move=%s, board1=%s board2=%s" % (
+        log.debug("Human.makeMove: move={}, board1={} board2={}".format(
             move, board1, board2))
         if self.board.view.premove_piece and self.board.view.premove0 and \
                 self.board.view.premove1 and \
@@ -154,7 +154,7 @@ class Human(Player):
                              self.board.view.premove1,
                              board1,
                              promotion=self.board.view.premove_promotion)):
-                log.debug("Human.makeMove: Setting move to premove %s %s" % (
+                log.debug("Human.makeMove: Setting move to premove {} {}".format(
                     self.board.view.premove0, self.board.view.premove1))
                 self.board.emit_move_signal(
                     self.board.view.premove0,
@@ -246,7 +246,7 @@ class Human(Player):
     # Offer handling
 
     def offer(self, offer):
-        log.debug("Human.offer: self=%s %s" % (self, offer))
+        log.debug("Human.offer: self={} {}".format(self, offer))
         assert offer.type in OFFER_MESSAGES
 
         if self.gamemodel.players[1 - self.color].__type__ is LOCAL:
@@ -280,7 +280,7 @@ class Human(Player):
         self.gmwidg.showMessage(message)
 
     def offerDeclined(self, offer):
-        log.debug("Human.offerDeclined: self=%s %s" % (self, offer))
+        log.debug("Human.offerDeclined: self={} {}".format(self, offer))
         assert offer.type in ACTION_NAMES
         heading = _("%s was declined by your opponent") % ACTION_NAMES[
             offer.type]
@@ -301,7 +301,7 @@ class Human(Player):
         self.gmwidg.replaceMessages(message)
 
     def offerWithdrawn(self, offer):
-        log.debug("Human.offerWithdrawn: self=%s %s" % (self, offer))
+        log.debug("Human.offerWithdrawn: self={} {}".format(self, offer))
         assert offer.type in ACTION_NAMES
         heading = _("%s was withdrawn by your opponent") % ACTION_NAMES[
             offer.type]

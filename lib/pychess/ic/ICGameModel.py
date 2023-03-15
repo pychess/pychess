@@ -57,7 +57,7 @@ class ICGameModel(GameModel):
         rated = "rated" if ficsgame.rated else "unrated"
         # This is in the format that ficsgames.org writes these PGN headers
         ics = "ICC" if self.connection.ICC else "FICS"
-        self.tags["Event"] = "%s %s %s game" % (ics, rated, ficsgame.game_type.fics_name)
+        self.tags["Event"] = "{} {} {} game".format(ics, rated, ficsgame.game_type.fics_name)
         self.tags["Site"] = "chessclub.com" if self.connection.ICC else "freechess.org"
 
     def __repr__(self):
@@ -134,7 +134,7 @@ class ICGameModel(GameModel):
             self.undoMoves(ply)
 
     def onBoardSetup(self, bm, gameno, fen, wname, bname):
-        log.debug("ICGameModel.onBoardSetup: %s %s %s %s %s" % (bm, gameno, fen, wname, bname))
+        log.debug("ICGameModel.onBoardSetup: {} {} {} {} {}".format(bm, gameno, fen, wname, bname))
         if gameno != self.ficsgame.gameno or len(self.players) != 2 or self.disconnected:
             return
 

@@ -1,6 +1,3 @@
-# -*- coding: UTF-8 -*-
-
-
 import unittest
 
 from pychess.Utils.logic import validate
@@ -163,7 +160,7 @@ class SittuyinTestCase(unittest.TestCase):
         moves = set()
         for move in genCaptures(board.board):
             moves.add(toAN(board.board, move))
-        self.assertEqual(moves, set(("d5c6",)))
+        self.assertEqual(moves, {"d5c6"})
 
     def test_genCheckEvasions(self):
         """Testing validate move in Sittuyin variant"""
@@ -173,7 +170,7 @@ class SittuyinTestCase(unittest.TestCase):
         moves = set()
         for move in genCheckEvasions(board.board):
             moves.add(toAN(board.board, move))
-        self.assertEqual(moves, set(("d5c6", "d5d6", "d5e6=F")))
+        self.assertEqual(moves, {"d5c6", "d5d6", "d5e6=F"})
 
     def test_genAllMoves(self):
         """Testing validate move in Sittuyin variant"""
@@ -184,7 +181,7 @@ class SittuyinTestCase(unittest.TestCase):
         for move in genAllMoves(board.board):
             moves.add(toAN(board.board, move))
         # pseudo legal moves
-        m = set(("f6e7", "f6f7", "f6g7", "f6e6", "f6g6", "f6e5", "f6f5", "f6g5", "d5c6", "d5d6", "d5e6=F", "d5c4=F"))
+        m = {"f6e7", "f6f7", "f6g7", "f6e6", "f6g6", "f6e5", "f6f5", "f6g5", "d5c6", "d5d6", "d5e6=F", "d5c4=F"}
         self.assertEqual(moves, m)
 
 

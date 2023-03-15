@@ -1,4 +1,3 @@
-
 import asyncio
 
 from gi.repository import GObject
@@ -158,7 +157,7 @@ class ICCBoardManager(BoardManager):
                     player.ratings[game_type.rating_type] = rating
                     player.emit("ratings_changed", game_type.rating_type, player)
             except IndexError:
-                log.debug("!!! game_type.rating_type %s is out of range in player.ratings %s" % (game_type.rating_type, player.ratings))
+                log.debug("!!! game_type.rating_type {} is out of range in player.ratings {}".format(game_type.rating_type, player.ratings))
 
         wms = bms = int(wmin) * 60 * 1000 + int(winc) * 1000
         # TODO: maybe use DG_POSITION_BEGIN2 and DG_PAST_MOVE ?
@@ -386,7 +385,7 @@ class ICCBoardManager(BoardManager):
                 return
 
             pgnHead = [
-                ("Event", "ICC %s %s game" % (game.display_rated.lower(), game.game_type.fics_name)),
+                ("Event", "ICC {} {} game".format(game.display_rated.lower(), game.game_type.fics_name)),
                 ("Site", "chessclub.com"),
                 ("White", game.wplayer.name),
                 ("Black", game.bplayer.name),
@@ -408,7 +407,7 @@ class ICCBoardManager(BoardManager):
                 gameno_, san_move, alg_move, time, clock = send_moves.split()
                 if ply % 2 == 0:
                     pgn += "%d. " % (ply // 2 + 1)
-                pgn += "%s {[%%emt %s]} " % (san_move, time)
+                pgn += "{} {{[%emt {}]}} ".format(san_move, time)
                 ply += 1
             pgn += "*\n"
             del self.queued_send_moves[gameno]

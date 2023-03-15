@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 import re
 
 from sqlalchemy import select, func, and_, or_
@@ -230,7 +229,7 @@ class TagDatabase:
                 y = "%04d" % y if y is not None else "????"
                 m = "%02d" % m if m is not None else "??"
                 d = "%02d" % d if d is not None else "??"
-                date_to = "%s.%s.%s" % (y, m, d)
+                date_to = "{}.{}.{}".format(y, m, d)
 
                 tags.append(game.c.date <= date_to)
 

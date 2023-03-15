@@ -108,7 +108,7 @@ class Engine(Player):
                     "https://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
                     urlencode({"message": message,
                                "botcust2": "x"}).encode("utf-8")).read().decode('utf-8')
-            except IOError as err:
+            except OSError as err:
                 log.warning("Couldn't answer message from online bot: '%s'" %
                             err,
                             extra={"task": self.defname})

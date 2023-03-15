@@ -1,4 +1,3 @@
-
 # The purpose of this module, is to give a certain position a score.
 # The greater the score, the better the position
 

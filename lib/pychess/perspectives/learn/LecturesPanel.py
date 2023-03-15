@@ -122,9 +122,8 @@ def start_lecture_from(filename, index=None):
     asyncio.create_task(perspective.generalStart(gamemodel, p0, p1))
 
     def lecture_steps(lecture_file):
-        with open(lecture_file, "r") as f:
-            for line in f:
-                yield line
+        with open(lecture_file) as f:
+            yield from f
         return
 
     lecture_file = addDataPrefix("learn/lectures/%s" % filename)
@@ -271,7 +270,7 @@ def start_lecture_from(filename, index=None):
                             castl = "-"
                         if not ep:
                             ep = "-"
-                        fen = "%s %s %s %s 0 1" % (pieces, color, castl, ep)
+                        fen = "{} {} {} {} 0 1".format(pieces, color, castl, ep)
 
                         curplayer = gamemodel.curplayer
                         gamemodel.status = RUNNING

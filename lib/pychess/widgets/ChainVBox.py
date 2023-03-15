@@ -152,7 +152,7 @@ class ChainLine(Gtk.Alignment):
 
     def __str__(self):
         allocation = self.get_allocation()
-        chain_str = "ChainLine(%s, %s, %s, %s" % (allocation.x, allocation.y,
+        chain_str = "ChainLine({}, {}, {}, {}".format(allocation.x, allocation.y,
                                                   allocation.width, allocation.height)
         chain_str += (self.position == CHAIN_TOP and ", CHAIN_TOP" or ", CHAIN_BOTTOM")
         return chain_str + ")"

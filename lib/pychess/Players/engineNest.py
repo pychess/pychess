@@ -62,7 +62,7 @@ class EngineDiscoverer(GObject.GObject):
                 "engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s\n%s"
                 % (self.jsonpath, err))
             os.rename(self.jsonpath, self.jsonpath + ".bak")
-        except IOError as err:
+        except OSError as err:
             log.info("engineNest: Couldn\'t open engines.json, creating a new.\n%s" % err)
 
         # Try to detect engines shipping .eng files on Linux (suggested by HGM on talkchess.com forum)
@@ -267,7 +267,7 @@ class EngineDiscoverer(GObject.GObject):
         try:
             with open(self.jsonpath, "w") as file_handle:
                 json.dump(self.engines, file_handle, indent=1, sort_keys=True)
-        except IOError as err:
+        except OSError as err:
             log.error("Saving engines.json raised exception: %s" % ", ".join(str(a) for a in err.args))
 
     def pre_discover(self):
@@ -637,7 +637,7 @@ async def init_engine(analyzer_type, gamemodel, force_engine=None):
 
         if gamemodel.variant.variant in discoverer.getEngineVariants(engine):
             analyzer = await discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
-            log.debug("%s analyzer: %s" % (analyzer_type, repr(analyzer)))
+            log.debug("{} analyzer: {}".format(analyzer_type, repr(analyzer)))
 
     return analyzer
 

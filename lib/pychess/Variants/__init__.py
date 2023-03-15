@@ -1,4 +1,3 @@
-
 from pychess.Utils.const import NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, \
     RANDOMCHESS, ASYMMETRICRANDOMCHESS, UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, THEBANCHESS, \
     BUGHOUSECHESS, PAWNSPASSEDCHESS, ATOMICCHESS, CRAZYHOUSECHESS, LOSERSCHESS, SUICIDECHESS, \
@@ -87,7 +86,7 @@ variants = {NORMALCHESS: NormalBoard,
             LIGHTBRIGADECHESS: LightbrigadeBoard,
             }
 
-name2variant = dict([(v.cecp_name.capitalize(), v) for v in variants.values()])
+name2variant = {v.cecp_name.capitalize(): v for v in variants.values()}
 
 # FICS pgn export names
 name2variant["Wild/0"] = WildcastleBoard

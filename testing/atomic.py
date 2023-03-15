@@ -1,6 +1,3 @@
-# -*- coding: UTF-8 -*-
-
-
 import unittest
 
 from pychess.Utils.const import BLACKWON, DRAW, WHITEWON, ATOMICCHESS, WON_KINGEXPLODE, WON_MATE, \

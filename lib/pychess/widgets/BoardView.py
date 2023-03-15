@@ -1,6 +1,3 @@
-# -*- coding: UTF-8 -*-
-
-
 from math import floor, ceil, pi
 from time import time
 from io import StringIO
@@ -109,7 +106,7 @@ def rect(rectangle):
         rectangle(list) : contains screen locations
         returns a Gdk.Rectangle
     """
-    x_size, y_size = [int(floor(v)) for v in rectangle[:2]]
+    x_size, y_size = (int(floor(v)) for v in rectangle[:2])
     width = int(ceil(rectangle[2]))
     if len(rectangle) == 4:
         height = int(ceil(rectangle[3]))

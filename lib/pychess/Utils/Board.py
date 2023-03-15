@@ -1,4 +1,3 @@
-
 from .lutils.bitboard import iterBits
 from .lutils.LBoard import LBoard
 from .lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE
@@ -313,7 +312,7 @@ class Board:
 
         flag = FLAG(move.move)
         if flag != DROP:
-            assert self[move.cord0], "%s %s" % (move, self.asFen())
+            assert self[move.cord0], "{} {}".format(move, self.asFen())
 
         newBoard = self.clone(lboard=lboard)
         if lboard is None:

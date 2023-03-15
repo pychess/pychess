@@ -93,7 +93,7 @@ class GameWidget(GObject.GObject):
 
         if self.gamemodel.display_text:
             if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno"):
-                self.game_info_label.set_text("%s [%s]" % (
+                self.game_info_label.set_text("{} [{}]".format(
                     self.display_text, self.gamemodel.ficsgame.gameno))
             else:
                 self.game_info_label.set_text(self.display_text)
@@ -778,14 +778,14 @@ class GameWidget(GObject.GObject):
         if view.circles:
             csl = []
             for circle in view.circles:
-                csl.append("%s%s" % (circle.color, repr(circle)))
+                csl.append("{}{}".format(circle.color, repr(circle)))
             shown_board.board.children = ["[%%csl %s]" % ",".join(csl)] + shown_board.board.children
             self.gamemodel.needsSave = True
 
         if view.arrows:
             cal = []
             for arrow in view.arrows:
-                cal.append("%s%s%s" % (arrow[0].color, repr(arrow[0]), repr(arrow[1])))
+                cal.append("{}{}{}".format(arrow[0].color, repr(arrow[0]), repr(arrow[1])))
             shown_board.board.children = ["[%%cal %s]" % ",".join(cal)] + shown_board.board.children
             self.gamemodel.needsSave = True
 

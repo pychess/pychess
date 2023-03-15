@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import time
 from threading import Thread
 from pychess.System import fident

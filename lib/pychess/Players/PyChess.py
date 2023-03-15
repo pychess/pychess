@@ -140,7 +140,7 @@ class PyChess:
                     if self.post:
                         pv1 = " ".join(listToSan(self.board, mvs))
                         time_cs = int(100 * (time() - starttime))
-                        self.print("%s %s %s %s %s" % (
+                        self.print("{} {} {} {} {}".format(
                             depth, self.scr, time_cs, lsearch.nodes, pv1))
                 else:
                     # We were interrupted
@@ -199,7 +199,7 @@ class PyChess:
 
             pv1 = " ".join(listToSan(board, mvs))
             time_cs = int(100 * (time() - start))
-            self.print("%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv1))
+            self.print("{} {} {} {} {}".format(depth, scr, time_cs, lsearch.nodes, pv1))
 
             lsearch.nodes = 0
 

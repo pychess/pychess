@@ -38,11 +38,11 @@ class Perspective:
                 names = [f[:-4].split("/")[-1] for f in myzip.namelist() if f.endswith(postfix) and "/%s/" % name in f]
             self.sidePanels = [importer.load_module(name) for name in names]
         else:
-            path = "%s/%s" % (os.path.dirname(__file__), name)
+            path = "{}/{}".format(os.path.dirname(__file__), name)
             ext = ".pyc" if getattr(sys, 'frozen', False) and MSYS2 else ".py"
             postfix = "Panel%s" % ext
             files = [f[:-len(ext)] for f in os.listdir(path) if f.endswith(postfix)]
-            self.sidePanels = [importlib.import_module("pychess.perspectives.%s.%s" % (name, f)) for f in files]
+            self.sidePanels = [importlib.import_module("pychess.perspectives.{}.{}".format(name, f)) for f in files]
 
         for panel in self.sidePanels:
             close_button = Gtk.Button()
@@ -124,7 +124,7 @@ class Perspective:
                     stringio = StringIO()
                     traceback.print_exc(file=stringio)
                     error = stringio.getvalue()
-                    log.error("Dock loading error: %s\n%s" % (e, error))
+                    log.error("Dock loading error: {}\n{}".format(e, error))
                     msg_dia = Gtk.MessageDialog(mainwindow(),
                                                 type=Gtk.MessageType.ERROR,
                                                 buttons=Gtk.ButtonsType.CLOSE)

@@ -29,7 +29,7 @@ def join(items):
     if len(items) == 1:
         return items[0]
     else:
-        s = "%s %s %s" % (items[-2], _("and"), items[-1])
+        s = "{} {} {}".format(items[-2], _("and"), items[-1])
         if len(items) > 2:
             s = ", ".join(items[:-2] + [s])
         return s

@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import unittest
 
 from pychess.Utils.const import LIGHTBRIGADECHESS

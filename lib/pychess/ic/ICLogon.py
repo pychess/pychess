@@ -1,4 +1,3 @@
-
 import asyncio
 import re
 import socket
@@ -107,9 +106,9 @@ class ICLogon:
     def user_name_get_value(self, entry):
         names = self.get_user_names()
         if self.as_guest.get_active():
-            text = "%s|%s" % (names[0], entry.get_text())
+            text = "{}|{}".format(names[0], entry.get_text())
         else:
-            text = "%s|%s" % (entry.get_text(), names[1])
+            text = "{}|{}".format(entry.get_text(), names[1])
         return text
 
     def user_name_set_value(self, entry, value):

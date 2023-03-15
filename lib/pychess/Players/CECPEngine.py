@@ -1,4 +1,3 @@
-
 import asyncio
 import itertools
 import re
@@ -314,7 +313,7 @@ class CECPEngine(ProtocolEngine):
             @param board2: The board before the last move was made
             @return: The move the engine decided to make
         """
-        log.debug("makeMove: move=%s self.movenext=%s board1=%s board2=%s self.board=%s" % (
+        log.debug("makeMove: move={} self.movenext={} board1={} board2={} self.board={}".format(
             move, self.movenext, board1, board2, self.board), extra={"task": self.defname})
         assert self.readyMoves
 
@@ -401,7 +400,7 @@ class CECPEngine(ProtocolEngine):
 
         if variant in variants.values() and not variant.standard_rules:
             assert variant.cecp_name in self.features["variants"], \
-                "%s doesn't support %s variant" % (self, variant.cecp_name)
+                "{} doesn't support {} variant".format(self, variant.cecp_name)
             self.optionQueue.append("variant %s" % variant.cecp_name)
 
     #    Strength system                               #
@@ -478,7 +477,7 @@ class CECPEngine(ProtocolEngine):
         elif key.lower() == "ponder":
             self.__setPonder(value == 1)
         else:
-            self.optionQueue.append("option %s=%s" % (key, value))
+            self.optionQueue.append("option {}={}".format(key, value))
 
     # Interacting with the player
 
@@ -505,7 +504,7 @@ class CECPEngine(ProtocolEngine):
         return
 
     def hurry(self):
-        log.debug("hurry: self.waitingForMove=%s self.readyForMoveNowCommand=%s" % (
+        log.debug("hurry: self.waitingForMove={} self.readyForMoveNowCommand={}".format(
             self.waitingForMove, self.readyForMoveNowCommand), extra={"task": self.defname})
         if self.waitingForMove and self.readyForMoveNowCommand:
             self.__tellEngineToMoveNow()
@@ -515,7 +514,7 @@ class CECPEngine(ProtocolEngine):
         if self.analyzing_paused:
             return
 
-        log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s" % (
+        log.debug("spectatorUndoMoves: moves={} gamemodel.ply={} gamemodel.boards[-1]={} self.board={}".format(
             moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task": self.defname})
 
         for i in range(moves):
@@ -680,7 +679,7 @@ class CECPEngine(ProtocolEngine):
 
                 # Illegal Move
                 if parts[0].lower().find("illegal") >= 0:
-                    log.warning("__parseLine: illegal move: line=\"%s\", board=%s" % (
+                    log.warning("__parseLine: illegal move: line=\"{}\", board={}".format(
                         line.strip(), self.board), extra={"task": self.defname})
                     if parts[-2] == "sd" and parts[-1].isdigit():
                         print("depth", parts[-1], file=self.engine)

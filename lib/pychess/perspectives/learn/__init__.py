@@ -227,18 +227,18 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
     def get_count(self, filename):
         subdir = "puzzles" if self.progress_file.endswith("puzzles.json") else "lessons"
         if filename.lower().endswith(".pgn"):
-            chessfile = PGNFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename))))
+            chessfile = PGNFile(protoopen(addDataPrefix("learn/{}/{}".format(subdir, filename))))
             chessfile.limit = 1000
             chessfile.init_tag_database()
         elif filename.lower().endswith(".olv"):
-            chessfile = OLVFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename)), encoding="utf-8"))
+            chessfile = OLVFile(protoopen(addDataPrefix("learn/{}/{}".format(subdir, filename)), encoding="utf-8"))
         chessfile.close()
         count = chessfile.count
         return count
 
     def __getitem__(self, key):
         if os.path.isfile(self.progress_file):
-            with open(self.progress_file, "r") as f:
+            with open(self.progress_file) as f:
                 self.data = json.load(f)
             if key not in self.data:
                 self.__setitem__(key, [0] * self.get_count(key))
@@ -257,7 +257,7 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
 
     def read_all(self):
         if os.path.isfile(self.progress_file):
-            with open(self.progress_file, "r") as f:
+            with open(self.progress_file) as f:
                 self.data = json.load(f)
                 return self.data
         else:

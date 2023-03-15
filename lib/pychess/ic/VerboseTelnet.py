@@ -211,7 +211,7 @@ class TelnetLines:
                 while UNIT_END not in line:
                     if line.startswith(DTGR_START):
                         code, data = line[2:-2].split(" ", 1)
-                        log.debug("%s %s" % (code, data), extra={"task": (self.telnet.name, "datagram")})
+                        log.debug("{} {}".format(code, data), extra={"task": (self.telnet.name, "datagram")})
                         lines.append(TelnetLine(data, int(code), DG))
                     else:
                         if line.endswith(UNIT_END):
@@ -272,7 +272,7 @@ class PredictionsTelnet:
         self.reply_cmd_dict = reply_cmd_dict
         self.replay_dg_dict = replay_dg_dict
         self.replay_cn_dict = replay_cn_dict
-        self.show_reply = set([])
+        self.show_reply = set()
         self.lines = TelnetLines(telnet, self.show_reply)
         self.__command_id = 1
 
@@ -330,13 +330,13 @@ class PredictionsTelnet:
         if self.lines.block_mode:
             # TODO: reuse id after command reply handled
             self.__command_id += 1
-            text = "%s %s" % (self.__command_id, text)
+            text = "{} {}".format(self.__command_id, text)
             if show_reply:
                 self.show_reply.add(self.__command_id)
             self.telnet.write(text)
         elif self.lines.datagram_mode:
             if show_reply:
-                text = "`%s`%s" % (MY_ICC_PREFIX, text)
+                text = "`{}`{}".format(MY_ICC_PREFIX, text)
             self.telnet.write("%s" % text)
         else:
             self.telnet.write("%s" % text)

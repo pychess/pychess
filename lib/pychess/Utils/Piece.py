@@ -24,7 +24,7 @@ class Piece:
     sign = property(_get_sign, _set_sign)
 
     def __repr__(self):
-        represen = "<%s %s" % (reprColor[self.color], reprPiece[self.piece])
+        represen = "<{} {}".format(reprColor[self.color], reprPiece[self.piece])
         if self.opacity != 1.0:
             represen += " Op:%0.1f" % self.opacity
         if self.x is not None or self.y is not None:

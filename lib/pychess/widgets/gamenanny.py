@@ -34,7 +34,7 @@ class GameNanny:
 
     def nurseGame(self, gmwidg, gamemodel):
         """ Call this function when gmwidget is just created """
-        log.debug("nurseGame: %s %s" % (gmwidg, gamemodel))
+        log.debug("nurseGame: {} {}".format(gmwidg, gamemodel))
         self.gmwidg_cids[gmwidg] = [
             gmwidg.connect("closed", self.on_gmwidg_closed),
             gmwidg.connect("title_changed", self.on_gmwidg_title_changed),

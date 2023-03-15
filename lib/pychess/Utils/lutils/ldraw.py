@@ -1,4 +1,3 @@
-
 from .ldata import BLACK_SQUARES
 from pychess.Utils.const import ASEAN_VARIANTS, WHITE, BLACK, KNIGHT, BISHOP, ROOK, QUEEN, PAWN
 
@@ -9,17 +8,17 @@ def testFifty(board):
     return False
 
 
-drawSet = set(((0, 0, 0, 0, 0, 0, 0, 0),  # KK
+drawSet = {(0, 0, 0, 0, 0, 0, 0, 0),  # KK
                (0, 1, 0, 0, 0, 0, 0, 0),  # KBK
                (1, 0, 0, 0, 0, 0, 0, 0),  # KNK
                (0, 0, 0, 0, 0, 1, 0, 0),  # KKB
                (0, 0, 0, 0, 1, 0, 0, 0),  # KNK
                (1, 0, 0, 0, 0, 1, 0, 0),  # KNKB
                (0, 1, 0, 0, 1, 0, 0, 0),  # KBKN
-               ))
+               }
 
 # Contains not 100% sure ones
-drawSet2 = set(((2, 0, 0, 0, 0, 0, 0, 0),  # KNNK
+drawSet2 = {(2, 0, 0, 0, 0, 0, 0, 0),  # KNNK
                 (0, 0, 0, 0, 2, 0, 0, 0),  # KKNN
                 (2, 0, 0, 0, 1, 0, 0, 0),  # KNNKN
                 (1, 0, 0, 0, 2, 0, 0, 0),  # KNKNN
@@ -27,7 +26,7 @@ drawSet2 = set(((2, 0, 0, 0, 0, 0, 0, 0),  # KNNK
                 (0, 1, 0, 0, 2, 0, 0, 0),  # KBKNN
                 (2, 0, 0, 0, 0, 0, 1, 0),  # KNNKR
                 (0, 0, 1, 0, 2, 0, 0, 0)   # KRKNN
-                ))
+                }
 
 
 def testMaterial(board):

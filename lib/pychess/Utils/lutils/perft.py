@@ -1,4 +1,3 @@
-
 from time import time
 
 from pychess.Utils.lutils.lmovegen import genAllMoves

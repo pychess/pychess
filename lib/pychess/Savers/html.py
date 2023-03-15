@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from pychess.System import conf
 from pychess.Utils.const import FAN_PIECES, BLACK, WHITE
 
@@ -15,90 +13,90 @@ FONT_SIZE = SIZE - 4
 #    font-family: "ChessMedium";
 
 style = """
-.chessboard {
-    width: %spx;
-    height: %spx;
+.chessboard {{
+    width: {}px;
+    height: {}px;
     font-family: "DejaVu Serif", "DejaVu", serif;
-    line-height: %spx;
-}
-.black {
+    line-height: {}px;
+}}
+.black {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     background-color: #999;
-    font-size:%spx;
+    font-size:{}px;
     text-align:center;
     display: table-cell;
     vertical-align:middle;
-}
-.white {
+}}
+.white {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     background-color: #fff;
-    font-size:%spx;
+    font-size:{}px;
     text-align:center;
     display: table-cell;
     vertical-align:middle;
-}
-.fill-top {
+}}
+.fill-top {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     color: #ffff;
     display: table-cell;
-}
-.top-corner {
+}}
+.top-corner {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     background-color: #333;
     display: table-cell;
-}
-.top {
+}}
+.top {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     background-color: #333;
     display: table-cell;
-}
-.fill-side {
+}}
+.fill-side {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     color: #ffff;
     display: table-cell;
-}
-.side {
+}}
+.side {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     color: #ffff;
     background-color: #333;
-    font-size: %spx;
+    font-size: {}px;
     text-align:center;
     display: table-cell;
     vertical-align:middle;
-}
-.bottom-corner {
+}}
+.bottom-corner {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     background-color: #333;
     display: table-cell;
-}
-.bottom {
+}}
+.bottom {{
     float: left;
-    width: %spx;
-    height: %spx;
+    width: {}px;
+    height: {}px;
     color: #ffff;
     background-color: #333;
-    font-size: %spx;
-    line-height: %spx;
+    font-size: {}px;
+    line-height: {}px;
     text-align: center;
     display: table-cell;
-}
-""" % (
+}}
+""".format(
     SIZE * 10, SIZE * 10, SIZE,  # chessboard
     SIZE, SIZE, FONT_SIZE,  # black
     SIZE, SIZE, FONT_SIZE,  # white
@@ -151,7 +149,7 @@ def save(file, model, position=None, flip=False):
                     piece_fan = FAN_PIECES[BLACK][piece.piece]
                 else:
                     piece_fan = FAN_PIECES[WHITE][piece.piece]
-                board += "<div class='%s'>%s</div>" % (color, piece_fan)
+                board += "<div class='{}'>{}</div>".format(color, piece_fan)
             else:
                 board += "<div class='%s'></div>" % color
         if show_cords:

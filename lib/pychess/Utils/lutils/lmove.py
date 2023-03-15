@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from .ldata import bitPosArray, fileBits, rankBits, moveArray
 from .bitboard import firstBit, iterBits
 from .validator import validateMove
@@ -210,9 +208,9 @@ def toSAN(board, move, localRepr=False):
         kcastle = (fpiece == KING and fcord - tcord == -2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord > 0)
         qcastle = (fpiece == KING and fcord - tcord == 2) or (flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord < 0)
         if kcastle:
-            return "O-O/%s%s%s" % (gate_piece, reprCord[fcord], check_or_mate())
+            return "O-O/{}{}{}".format(gate_piece, reprCord[fcord], check_or_mate())
         elif qcastle:
-            return "O-O-O/%s%s%s" % (gate_piece, reprCord[fcord], check_or_mate())
+            return "O-O-O/{}{}{}".format(gate_piece, reprCord[fcord], check_or_mate())
 
     part0 = ""
     part1 = ""
@@ -230,7 +228,7 @@ def toSAN(board, move, localRepr=False):
     part1 = reprCord[tcord]
 
     if flag == DROP:
-        return "%s@%s%s" % (part0, part1, check_or_mate())
+        return "{}@{}{}".format(part0, part1, check_or_mate())
 
     if fpiece != PAWN or (board.variant == SITTUYINCHESS and flag in PROMOTIONS):
         xs = []
@@ -285,7 +283,7 @@ def toSAN(board, move, localRepr=False):
     if flag in GATINGS:
         notat += "/" + reprSign[GATE_PIECE(flag)]
 
-    return "%s%s" % (notat, check_or_mate())
+    return "{}{}".format(notat, check_or_mate())
 
 ################################################################################
 # parseSan                                                                     #
@@ -613,9 +611,9 @@ def toAN(board, move, short=False, castleNotation=CASTLE_SAN):
 
     if flag == DROP:
         if board.variant == SITTUYINCHESS:
-            s = "%s@%s" % (reprSignSittuyin[fcord], reprCord[tcord])
+            s = "{}@{}".format(reprSignSittuyin[fcord], reprCord[tcord])
         else:
-            s = "%s@%s" % (reprSign[fcord], reprCord[tcord])
+            s = "{}@{}".format(reprSign[fcord], reprCord[tcord])
     else:
         s = reprCord[fcord] + reprCord[tcord]
 

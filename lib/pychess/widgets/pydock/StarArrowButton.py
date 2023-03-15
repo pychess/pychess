@@ -1,4 +1,3 @@
-
 from math import ceil as float_ceil, pi
 import cairo
 

@@ -121,13 +121,13 @@ class UserInfoSection():
             llabel = Gtk.Label()
             llabel.props.xalign = 0
             link = "http://ficsgames.org/cgi-bin/search.cgi?player=%s" % finger.getName()
-            llabel.set_markup('<a href="%s">%s</a>' % (link, link))
+            llabel.set_markup('<a href="{}">{}</a>'.format(link, link))
             table.attach(llabel, 1, cols, row, row + 1)
             row += 1
 
         if finger.getCreated():
             table.attach(label(_("Spent") + ":"), 0, 1, row, row + 1)
-            string = "%s %s" % (finger.getTotalTimeOnline(), _("online in total"))
+            string = "{} {}".format(finger.getTotalTimeOnline(), _("online in total"))
             table.attach(label(string), 1, cols, row, row + 1)
             row += 1
 
@@ -145,7 +145,7 @@ class UserInfoSection():
                 self.ping_label.props.xalign = 0
 
             def callback(pinger, pingtime):
-                log.debug("'%s' '%s'" % (str(self.pinger), str(pingtime)),
+                log.debug("'{}' '{}'".format(str(self.pinger), str(pingtime)),
                           extra={"task": (self.connection.username,
                                           "UIS.oF.callback")})
                 if isinstance(pingtime, str):
@@ -199,7 +199,7 @@ class UserInfoSection():
                         "able to play as many of the types of matches offered as " +
                         "a registered user. To register an account, go to ")
 
-            label0.set_markup('%s <a href="%s">%s</a>.' % (txt, reg, reg))
+            label0.set_markup('{} <a href="{}">{}</a>.'.format(txt, reg, reg))
             vbox.add(label0)
 
         if self.dock.get_children():

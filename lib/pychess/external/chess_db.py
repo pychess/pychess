@@ -20,12 +20,12 @@ class Parser:
 
     def wait_ready(self):
         self.p.sendline('isready')
-        self.p.expect(u'readyok')
+        self.p.expect('readyok')
 
     def open(self, pgn, full=True):
         '''Open a PGN file and create an index if not exsisting'''
         if not os.path.isfile(pgn):
-            raise NameError("File {} does not exsist".format(pgn))
+            raise NameError(f"File {pgn} does not exsist")
         pgn = os.path.normcase(pgn)
         self.pgn = pgn
         self.db = os.path.splitext(pgn)[0] + '.bin'
@@ -60,7 +60,7 @@ class Parser:
         '''Find all games with positions equal to fen'''
         if not self.db:
             raise NameError("Unknown DB, first open a PGN file")
-        cmd = "find {} limit {} skip {} {}".format(self.db, limit, skip, fen)
+        cmd = f"find {self.db} limit {limit} skip {skip} {fen}"
         self.p.sendline(cmd)
         self.wait_ready()
         result = json.loads(self.p.before)
@@ -72,7 +72,7 @@ class Parser:
         if not self.pgn:
             raise NameError("Unknown DB, first open a PGN file")
         pgn = []
-        with open(self.pgn, "r") as f:
+        with open(self.pgn) as f:
             for ofs in list:
                 f.seek(ofs)
                 game = ''

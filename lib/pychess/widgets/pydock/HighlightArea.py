@@ -1,4 +1,3 @@
-
 import cairo
 
 from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER

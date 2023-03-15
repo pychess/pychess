@@ -218,7 +218,7 @@ class GameModel(GObject.GObject):
         if len(self.moves) > 0:
             string += ", move=%s" % self.moves[-1]
         string += ", variant=%s" % self.variant.name.encode('utf-8')
-        string += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
+        string += ", status={}, reason={}".format(str(self.status), str(self.reason))
         string += ", players=%s" % str(self.players)
         string += ", tags=%s" % str(self.tags)
         if len(self.boards) > 0:
@@ -425,7 +425,7 @@ class GameModel(GObject.GObject):
     def _plyToIndex(self, ply):
         index = ply - self.lowply
         if index < 0:
-            raise IndexError("%s < %s\n" % (ply, self.lowply))
+            raise IndexError("{} < {}\n".format(ply, self.lowply))
         return index
 
     def getBoardAtPly(self, ply, variation=0):
@@ -545,7 +545,7 @@ class GameModel(GObject.GObject):
 
         elif offer.type in OFFERS:
             if offer not in self.offers:
-                log.debug("GameModel.offerReceived: doing %s.offer(%s)" % (
+                log.debug("GameModel.offerReceived: doing {}.offer({})".format(
                     repr(opPlayer), offer))
                 self.offers[offer] = player
                 opPlayer.offer(offer)
@@ -556,7 +556,7 @@ class GameModel(GObject.GObject):
                     del self.offers[offer_]
 
     def withdrawReceived(self, player, offer):
-        log.debug("GameModel.withdrawReceived: withdrawer=%s %s" % (
+        log.debug("GameModel.withdrawReceived: withdrawer={} {}".format(
             repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
@@ -570,7 +570,7 @@ class GameModel(GObject.GObject):
             player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
 
     def declineReceived(self, player, offer):
-        log.debug("GameModel.declineReceived: decliner=%s %s" % (
+        log.debug("GameModel.declineReceived: decliner={} {}".format(
                   repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
@@ -585,7 +585,7 @@ class GameModel(GObject.GObject):
             player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
 
     def acceptReceived(self, player, offer):
-        log.debug("GameModel.acceptReceived: accepter=%s %s" % (
+        log.debug("GameModel.acceptReceived: accepter={} {}".format(
                   repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
@@ -752,20 +752,20 @@ class GameModel(GObject.GObject):
                 curPlayer = self.players[self.curColor]
 
                 if self.timed:
-                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % (
+                    log.debug("GameModel.run: id={}, players={}, self.ply={}: updating {}'s time".format(
                         id(self), str(self.players), str(self.ply), str(curPlayer)))
                     curPlayer.updateTime(
                         self.timemodel.getPlayerTime(self.curColor),
                         self.timemodel.getPlayerTime(1 - self.curColor))
                 try:
-                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()" % (
+                    log.debug("GameModel.run: id={}, players={}, self.ply={}: calling {}.makeMove()".format(
                         id(self), str(self.players), self.ply, str(curPlayer)))
 
                     move = None
                     # if the current player is a bot
                     if curPlayer.__type__ == ARTIFICIAL and book_depth_max > 0 and self.ply <= book_depth_max:
                         move = self.get_book_move()
-                        log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from book" % (
+                        log.debug("GameModel.run: id={}, players={}, self.ply={}: got move={} from book".format(
                             id(self), str(self.players), self.ply, move))
                         if move is not None:
                             curPlayer.set_board(self.boards[-1].move(move))
@@ -776,7 +776,7 @@ class GameModel(GObject.GObject):
                             move = await curPlayer.makeMove(self.boards[-1], self.moves[-1], self.boards[-2])
                         else:
                             move = await curPlayer.makeMove(self.boards[-1], None, None)
-                        log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % (
+                        log.debug("GameModel.run: id={}, players={}, self.ply={}: got move={} from {}".format(
                             id(self), str(self.players), self.ply, move, str(curPlayer)))
                 except PlayerIsDead as e:
                     if self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -804,11 +804,11 @@ class GameModel(GObject.GObject):
                         self.end(WHITEWON, WON_ADJUDICATION)
                     break
                 except PassInterrupt:
-                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: PassInterrupt" % (
+                    log.debug("GameModel.run: id={}, players={}, self.ply={}: PassInterrupt".format(
                         id(self), str(self.players), self.ply))
                     continue
                 except TurnInterrupt:
-                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: TurnInterrupt" % (
+                    log.debug("GameModel.run: id={}, players={}, self.ply={}: TurnInterrupt".format(
                         id(self), str(self.players), self.ply))
                     self.curColor = self.boards[-1].color
                     continue
@@ -817,7 +817,7 @@ class GameModel(GObject.GObject):
                     break
 
                 assert isinstance(move, Move), "%s" % repr(move)
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s" % (
+                log.debug("GameModel.run: id={}, players={}, self.ply={}: applying move={}".format(
                     id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
                 newBoard = self.boards[-1].move(move)
@@ -1020,7 +1020,7 @@ class GameModel(GObject.GObject):
             # "fix" the takeback request rather than cause AssertionError or IndexError
             moves = 1
 
-        log.debug("GameModel.undoMoves: players=%s, self.ply=%s, moves=%s, board=%s" % (
+        log.debug("GameModel.undoMoves: players={}, self.ply={}, moves={}, board={}".format(
                   repr(self.players), self.ply, moves, self.boards[-1]))
         self.emit("moves_undoing", moves)
         self.needsSave = True

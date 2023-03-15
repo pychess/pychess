@@ -154,9 +154,9 @@ class InternetGameInterface:
             e = urlparse(link)
             if e.netloc == '':
                 if e.path.startswith('/'):
-                    link = '%s://%s%s' % (base.scheme, base.netloc, e.path)
+                    link = '{}://{}{}'.format(base.scheme, base.netloc, e.path)
                 else:
-                    link = '%s://%s%s/%s' % (base.scheme, base.netloc, '/'.join(base.path.split('/')[:-1]), e.path)
+                    link = '{}://{}{}/{}'.format(base.scheme, base.netloc, '/'.join(base.path.split('/')[:-1]), e.path)
             links[i] = link
         return list(dict.fromkeys(links))       # Without duplicate entries
 
@@ -243,7 +243,7 @@ class InternetGameInterface:
         pgn = ''
         for e in game:
             if e[:1] != '_' and game[e] not in [None, '']:
-                pgn += '[%s "%s"]\n' % (e, game[e])
+                pgn += '[{} "{}"]\n'.format(e, game[e])
         if pgn == '':
             pgn = '[Annotator "PyChess %s"]\n' % VERSION
         pgn += "\n"
@@ -384,7 +384,7 @@ class InternetGameLichess(InternetGameInterface):
         return False
 
     def query_api(self, path):
-        response = urlopen(Request('https://lichess.%s%s' % (self.url_tld, path), headers={'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/vnd.lichess.v4+json'}))
+        response = urlopen(Request('https://lichess.{}{}'.format(self.url_tld, path), headers={'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/vnd.lichess.v4+json'}))
         bourne = self.read_data(response)
         return self.json_loads(bourne)
 
@@ -399,7 +399,7 @@ class InternetGameLichess(InternetGameInterface):
             api = self.query_api('/import/master/%s/white' % self.id)
             game = self.json_field(api, 'game')
             if 'winner' in game:
-                url = 'https://lichess.%s/game/export/%s?literate=1' % (self.url_tld, self.id)
+                url = 'https://lichess.{}/game/export/{}?literate=1'.format(self.url_tld, self.id)
                 return self.download(url)
             else:
                 if not self.allow_extra and game['rated']:
@@ -407,7 +407,7 @@ class InternetGameLichess(InternetGameInterface):
 
             # Rebuild the PGN file
             game = {}
-            game['_url'] = 'https://lichess.%s%s' % (self.url_tld, self.json_field(api, 'url/round'))
+            game['_url'] = 'https://lichess.{}{}'.format(self.url_tld, self.json_field(api, 'url/round'))
             game['Variant'] = self.json_field(api, 'game/variant/name')
             game['FEN'] = self.json_field(api, 'game/initialFen')
             game['SetUp'] = '1'
@@ -429,7 +429,7 @@ class InternetGameLichess(InternetGameInterface):
 
         # Logic for the studies
         elif self.url_type == TYPE_STUDY:
-            url = 'https://lichess.%s/study/%s.pgn' % (self.url_tld, self.id)
+            url = 'https://lichess.{}/study/{}.pgn'.format(self.url_tld, self.id)
             return self.download(url, userAgent=True)
 
         # Logic for the puzzles
@@ -438,7 +438,7 @@ class InternetGameLichess(InternetGameInterface):
             # chessgame = self.query_api('/training/%s/load' % self.id)
 
             # Fetch the puzzle
-            url = 'https://lichess.%s/training/%s' % (self.url_tld, self.id)
+            url = 'https://lichess.{}/training/{}'.format(self.url_tld, self.id)
             page = self.download(url)
             if page is None:
                 return None
@@ -471,7 +471,7 @@ class InternetGameLichess(InternetGameInterface):
             if puzzle == '':
                 return None
             game = {}
-            game['_url'] = 'https://lichess.%s/%s#%s' % (self.url_tld, self.json_field(puzzle, 'gameId'), self.json_field(puzzle, 'initialPly'))
+            game['_url'] = 'https://lichess.{}/{}#{}'.format(self.url_tld, self.json_field(puzzle, 'gameId'), self.json_field(puzzle, 'initialPly'))
             game['Site'] = 'lichess.%s' % self.url_tld
             rating = self.json_field(puzzle, 'rating')
             game['Event'] = 'Puzzle %d, rated %s' % (self.json_field(puzzle, 'id'), rating)
@@ -693,7 +693,7 @@ class InternetGameChesstempo(InternetGameInterface):
             game['Result'] = '*'
             game['FEN'] = self.json_field(puzzle, 'tacticInfo/startPosition')
             game['SetUp'] = '1'
-            game['_moves'] = '{%s} %s' % (self.json_field(puzzle, 'tacticInfo/prevmove'), self.json_field(puzzle, 'tacticInfo/moves'))
+            game['_moves'] = '{{{}}} {}'.format(self.json_field(puzzle, 'tacticInfo/prevmove'), self.json_field(puzzle, 'tacticInfo/moves'))
             self.data = self.rebuild_pgn(game)
 
 
@@ -865,7 +865,7 @@ class InternetGame365chess(InternetGameInterface):
                     if -1 not in [pos1, pos2]:
                         v = line[pos1 + 1:pos2]
                         if tag == 'Date':
-                            v = '%s.%s.%s' % (v[-4:], v[:2], v[3:5])  # mm/dd/yyyy --> yyyy.mm.dd
+                            v = '{}.{}.{}'.format(v[-4:], v[:2], v[3:5])  # mm/dd/yyyy --> yyyy.mm.dd
                         game[tag] = v
 
             # Players
@@ -1100,7 +1100,7 @@ class InternetGameChessOrg(InternetGameInterface):
                 data = await ws.recv()
                 if data == 'o':  # Open
                     # Client: I am XXX, please open the game YYY
-                    await ws.send('["%s %s"]' % (name, self.id))
+                    await ws.send('["{} {}"]'.format(name, self.id))
                     data = await ws.recv()
 
                     # Server: some data
@@ -1153,7 +1153,7 @@ class InternetGameChessOrg(InternetGameInterface):
         time = self.json_field(chessgame, 'timeLimitSecs')
         inc = self.json_field(chessgame, 'timeBonusSecs')
         if '' not in [time, inc]:
-            game['TimeControl'] = '%s+%s' % (time, inc)
+            game['TimeControl'] = '{}+{}'.format(time, inc)
         resultTable = [(0, '*', 'Game started'),                 # ALIVE
                        (1, '1-0', 'White checkmated'),           # WHITE_MATE
                        (2, '0-1', 'Black checkmated'),           # BLACK_MATE
@@ -1444,9 +1444,9 @@ class InternetGameChessCom(InternetGameInterface):
         if posFrom > 75:
             sDrop = pieces[posFrom - 79].upper() + '@'
         else:
-            sFrom = map[posFrom % 8] + str((posFrom // 8 + 1))
-        sTo = map[posTo % 8] + str((posTo // 8 + 1))
-        return '%s%s%s%s' % (sDrop, sFrom, sTo, sPromo)
+            sFrom = map[posFrom % 8] + str(posFrom // 8 + 1)
+        sTo = map[posTo % 8] + str(posTo // 8 + 1)
+        return '{}{}{}{}'.format(sDrop, sFrom, sTo, sPromo)
 
     def download_game(self):
         # Check
@@ -1455,7 +1455,7 @@ class InternetGameChessCom(InternetGameInterface):
 
         # Positions
         if self.url_type == TYPE_FEN:
-            return '[Site "chess.com"]\n[White "%s"]\n[Black "%s"]\n[SetUp "1"]\n[FEN "%s"]\n\n*' % (_('White'), _('Black'), self.id)
+            return '[Site "chess.com"]\n[White "{}"]\n[Black "{}"]\n[SetUp "1"]\n[FEN "{}"]\n\n*'.format(_('White'), _('Black'), self.id)
 
         # Puzzles
         elif self.url_type == 'puzzles':
@@ -1508,7 +1508,7 @@ class InternetGameChessCom(InternetGameInterface):
                 if refid not in [None, 0, '']:
                     game['_url'] = 'https://www.chess.com/daily/game/%d' % refid
             rating = self.json_field(puzzle, 'rating')
-            game['Event'] = 'Puzzle %s, rated %s' % (str(self.json_field(puzzle, 'id')), rating)
+            game['Event'] = 'Puzzle {}, rated {}'.format(str(self.json_field(puzzle, 'id')), rating)
             game['White'] = _('White')
             game['Black'] = _('Black')
             game['Result'] = '*'
@@ -1534,7 +1534,7 @@ class InternetGameChessCom(InternetGameInterface):
                     return None
             else:
                 # Fetch the page
-                url = 'https://www.chess.com/%s/game/%s' % (self.url_type, self.id)
+                url = 'https://www.chess.com/{}/game/{}'.format(self.url_type, self.id)
                 page = self.download(url, userAgent=True)
                 if page is None:
                     return None
@@ -2037,7 +2037,7 @@ class InternetGameChessking(InternetGameInterface):
         id = self.id
         while len(id) < 9:
             id = '0%s' % id
-        url = 'https://c1.chessking.com/pgn/%s/%s/%s/%s%s.pgn' % (self.url_type, id[:3], id[3:6], self.url_type, id)
+        url = 'https://c1.chessking.com/pgn/{}/{}/{}/{}{}.pgn'.format(self.url_type, id[:3], id[3:6], self.url_type, id)
         return self.download(url)
 
 
@@ -2074,7 +2074,7 @@ class InternetGameIdeachess(InternetGameInterface):
 
         # Fetch the puzzle
         api = 'http://www.ideachess.com/com/ajax2'
-        data = {'message': '{"action":100,"data":{"problemNumber":%s,"kind":"%s"}}' % (self.id, self.url_type)}
+        data = {'message': '{{"action":100,"data":{{"problemNumber":{},"kind":"{}"}}}}'.format(self.id, self.url_type)}
         bourne = self.send_xhr(api, data, userAgent=True)
         chessgame = self.json_loads(bourne)
         if self.json_field(chessgame, 'action') != 200:

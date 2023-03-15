@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 """ :Description: This module facilitates configurable object that the end user can
     customise such as which chess setor board colours to use or the ability to turn on/off
     various sidepanel facilities such as hints, comments engine analysis etc. It also allows
@@ -509,7 +507,7 @@ class PanelTab:
         for panel in sidePanels:
             checked = True if not xmlOK else panel.__name__ in saved_panels
             panel_icon = get_pixbuf(panel.__icon__, 32)
-            text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
+            text = "<b>{}</b>\n{}".format(panel.__title__, panel.__desc__)
             store.append((checked, panel_icon, text, panel))
 
         self.tv = widgets["panels_treeview"]
@@ -742,7 +740,7 @@ class ThemeTab:
         store = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
 
         for theme in self.themes:
-            pngfile = "%s/%s.png" % (addDataPrefix("pieces"), theme)
+            pngfile = "{}/{}.png".format(addDataPrefix("pieces"), theme)
 
             if isfile(pngfile):
                 pixbuf = get_pixbuf(pngfile)

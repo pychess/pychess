@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL

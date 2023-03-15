@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import asyncio
 import os
 import os.path
@@ -917,13 +915,13 @@ class EnterNotationExtension(_GameInitializationMode):
                 player0 = player0combo.get_active()
                 if player0 == 0 and '[White "' not in text:
                     name = '[White "%s"]' % conf.get("firstName")
-                    text = "%s\n%s" % (name, text)
+                    text = "{}\n{}".format(name, text)
 
                 player1combo = cls.widgets["blackPlayerCombobox"]
                 player1 = player1combo.get_active()
                 if player1 == 0 and '[Black "' not in text:
                     name = '[Black "%s"]' % conf.get("secondName")
-                    text = "%s\n%s" % (name, text)
+                    text = "{}\n{}".format(name, text)
 
                 loadType = pgn
 

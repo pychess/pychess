@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import re
 from math import floor
 
@@ -377,7 +375,7 @@ class Sidepanel:
                                       ("$5", _("Interesting move")),
                                       ("$6", _("Suspicious move")),
                                       ("$7", _("Forced move"))):
-                    menuitem = Gtk.MenuItem("%s %s" % (nag2symbol(nag), menutext))
+                    menuitem = Gtk.MenuItem("{} {}".format(nag2symbol(nag), menutext))
                     menuitem.connect('activate', self.menu_move_attribute,
                                      board, nag)
                     symbol_menu1.append(menuitem)
@@ -400,7 +398,7 @@ class Sidepanel:
                                       ("$44", _("Compensation")),
                                       ("$132", _("Counterplay")),
                                       ("$138", _("Time pressure"))):
-                    menuitem = Gtk.MenuItem("%s %s" % (nag2symbol(nag), menutext))
+                    menuitem = Gtk.MenuItem("{} {}".format(nag2symbol(nag), menutext))
                     menuitem.connect('activate', self.menu_position_attribute,
                                      board, nag)
                     symbol_menu2.append(menuitem)
@@ -633,7 +631,7 @@ class Sidepanel:
         vlevel = min(level + 1, len(self.tag_vari_depth) - 1)
         self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-depth-%d" % vlevel)
 
-        self.textbuffer.insert_with_tags_by_name(iter, u" ✖ ", "remove-variation")
+        self.textbuffer.insert_with_tags_by_name(iter, " ✖ ", "remove-variation")
         # chr = iter.get_char()
 
         # somehow iter.begins_tag() doesn't work, so we use get_char() instead
@@ -1316,5 +1314,5 @@ class Sidepanel:
             movestr = toSAN(board.prev, move, True)
         nagsymbols = "".join([nag2symbol(nag) for nag in board.nags])
         # To prevent wrap castling we will use hyphen bullet (U+2043)
-        return "%s%s%s" % (move_count(board), movestr.replace(
-            '-', u'⁃'), nagsymbols)
+        return "{}{}{}".format(move_count(board), movestr.replace(
+            '-', '⁃'), nagsymbols)

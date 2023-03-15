@@ -78,7 +78,7 @@ class Sidepanel():
             else:
                 for piece in pieces:
                     if piece not in ("kqrbnp"):
-                        print("Invalid piece %s in %s" % (piece, pieces))
+                        print("Invalid piece {} in {}".format(piece, pieces))
                         continue
 
                 pos = pieces.rfind("k")

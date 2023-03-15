@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import unittest
 
 from pychess.Utils.const import SCHESS, A1, C1, E1, H1, G1, F3, BLACK, WHITE, ROOK, HAWK, ELEPHANT, \

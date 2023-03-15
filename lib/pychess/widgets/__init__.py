@@ -77,7 +77,7 @@ def insert_formatted(text_view, iter, text, tag=None):
                     if endpos != -1:
                         part = part[:endpos]
                 part0 = "http://web.archive.org/%s" % part if part.startswith("http://www.endgame.nl") else part
-                parts[i] = '<a href="%s">%s</a>' % (part0, part)
+                parts[i] = '<a href="{}">{}</a>'.format(part0, part)
                 position = i
                 break
         insert("%s " % " ".join(parts[:position]))

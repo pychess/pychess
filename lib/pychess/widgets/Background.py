@@ -18,7 +18,7 @@ def hexcol(color):
     """ Description : Takes a colour tuple(rgb) and returns a hex based string #rrggbb
         Returns : (str)
     """
-    return "#%02X%02X%02X" % (int(color.red * 255), int(color.green * 255),
+    return "#{:02X}{:02X}{:02X}".format(int(color.red * 255), int(color.green * 255),
                               int(color.blue * 255))
 
 

@@ -1,4 +1,3 @@
-
 import os
 from struct import Struct
 from collections import namedtuple

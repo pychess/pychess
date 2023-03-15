@@ -194,7 +194,7 @@ class FICSConnection(Connection):
                     self.client = ICSTelnet(self.timeseal)
                     asyncio.create_task(self.client.start(self.host, port, connected_event))
                     await connected_event.wait()
-                except socket.error as err:
+                except OSError as err:
                     log.debug("Failed to open port %d %s" % (port, err),
                               extra={"task": (self.host, "raw")})
                     if i + 1 == len(self.ports):

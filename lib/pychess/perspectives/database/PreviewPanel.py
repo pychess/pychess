@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from gi.repository import Gtk
 
 from pychess.Utils.const import EMPTY, FEN_EMPTY, FEN_START

@@ -1,6 +1,3 @@
-# -*- coding: UTF-8 -*-
-
-
 from gi.repository import Gtk, Gdk, GObject
 
 from pychess.System import conf
