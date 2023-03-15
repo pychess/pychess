@@ -8,8 +8,10 @@ permissions:
   contents: read
 
 on:
-- pull_request
-- push
+  pull_request:
+  push:
+  schedule:
+    - cron: '0 2 * * 5'  # Every Friday at 2am
 
 jobs:
   run-tests:
