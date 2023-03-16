@@ -11,7 +11,7 @@ from pychess.Utils.lutils.ldata import MATE_VALUE, MAXPLY
 # depth       search depth
 # score       search score
 # move        best move (or cutoff move)
-entryType = Struct('=I B B H h H')
+entryType = Struct("=I B B H h H")
 
 
 class TranspositionTable:
@@ -35,15 +35,16 @@ class TranspositionTable:
         self.butterfly = [0] * (64 * 64)
 
     def newSearch(self):
-        self.search_id = (self.search_id + 1) & 0xff
+        self.search_id = (self.search_id + 1) & 0xFF
         # TODO: consider clearing butterfly table
 
     def probe(self, board, depth, alpha, beta):
         baseIndex = (board.hash % self.buckets) * 4
-        key = (board.hash // self.buckets) & 0xffffffff
+        key = (board.hash // self.buckets) & 0xFFFFFFFF
         for i in range(baseIndex, baseIndex + 4):
             tkey, search_id, hashf, tdepth, score, move = entryType.unpack_from(
-                self.data, i * entryType.size)
+                self.data, i * entryType.size
+            )
             if tkey == key:
                 # Mate score bounds are guaranteed to be accurate at any depth.
                 if tdepth < depth and abs(score) < MATE_VALUE - MAXPLY:
@@ -57,23 +58,35 @@ class TranspositionTable:
 
     def record(self, board, move, score, hashf, depth):
         baseIndex = (board.hash % self.buckets) * 4
-        key = (board.hash // self.buckets) & 0xffffffff
+        key = (board.hash // self.buckets) & 0xFFFFFFFF
         # We always overwrite *something*: an empty slot, this position's last entry, or else the least relevant.
         staleIndex = baseIndex
-        staleRelevance = 0xffff
+        staleRelevance = 0xFFFF
         for i in range(baseIndex, baseIndex + 4):
             tkey, search_id, thashf, tdepth, tscore, tmove = entryType.unpack_from(
-                self.data, i * entryType.size)
+                self.data, i * entryType.size
+            )
             if tkey == 0 or tkey == key:
                 staleIndex = i
                 break
-            relevance = (0x8000 if search_id != self.search_id and thashf == hashfEXACT else 0) + \
-                        (0x4000 if ((self.search_id - search_id) & 0xff) > 1 else 0) + tdepth
+            relevance = (
+                (0x8000 if search_id != self.search_id and thashf == hashfEXACT else 0)
+                + (0x4000 if ((self.search_id - search_id) & 0xFF) > 1 else 0)
+                + tdepth
+            )
             if relevance < staleRelevance:
                 staleIndex = i
                 staleRelevance = relevance
-        entryType.pack_into(self.data, staleIndex * entryType.size, key,
-                            self.search_id, hashf, depth, score, move)
+        entryType.pack_into(
+            self.data,
+            staleIndex * entryType.size,
+            key,
+            self.search_id,
+            hashf,
+            depth,
+            score,
+            move,
+        )
 
     def addKiller(self, ply, move):
         if self.killer1[ply] == -1:
@@ -100,7 +113,7 @@ class TranspositionTable:
         return self.hashmove[ply] == move
 
     def addButterfly(self, move, depth):
-        self.butterfly[move & 0xfff] += 1 << depth
+        self.butterfly[move & 0xFFF] += 1 << depth
 
     def getButterfly(self, move):
-        return self.butterfly[move & 0xfff]
+        return self.butterfly[move & 0xFFF]

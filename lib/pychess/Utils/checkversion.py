@@ -28,8 +28,9 @@ async def checkversion():
             new_version = json.loads(f.read())["name"]
 
     def notify(new_version):
-        msg_dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
-                                       buttons=Gtk.ButtonsType.OK)
+        msg_dialog = Gtk.MessageDialog(
+            mainwindow(), type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK
+        )
 
         msg = _("<b>New version %s is available!</b>" % new_version)
         msg_dialog.set_markup(msg)

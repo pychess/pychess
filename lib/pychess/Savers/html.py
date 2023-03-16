@@ -97,24 +97,43 @@ style = """
     display: table-cell;
 }}
 """.format(
-    SIZE * 10, SIZE * 10, SIZE,  # chessboard
-    SIZE, SIZE, FONT_SIZE,  # black
-    SIZE, SIZE, FONT_SIZE,  # white
-    FILL, BORDER_SIZE,  # fill-top
-    BORDER_SIZE, BORDER_SIZE,  # top-corner
-    SIZE, BORDER_SIZE,  # top
-    FILL, SIZE,  # fill-side
-    BORDER_SIZE, SIZE, BORDER_SIZE,  # side
-    BORDER_SIZE, BORDER_SIZE,  # bottom-corner
-    SIZE, BORDER_SIZE, BORDER_SIZE, BORDER_SIZE  # bottom
+    SIZE * 10,
+    SIZE * 10,
+    SIZE,  # chessboard
+    SIZE,
+    SIZE,
+    FONT_SIZE,  # black
+    SIZE,
+    SIZE,
+    FONT_SIZE,  # white
+    FILL,
+    BORDER_SIZE,  # fill-top
+    BORDER_SIZE,
+    BORDER_SIZE,  # top-corner
+    SIZE,
+    BORDER_SIZE,  # top
+    FILL,
+    SIZE,  # fill-side
+    BORDER_SIZE,
+    SIZE,
+    BORDER_SIZE,  # side
+    BORDER_SIZE,
+    BORDER_SIZE,  # bottom-corner
+    SIZE,
+    BORDER_SIZE,
+    BORDER_SIZE,
+    BORDER_SIZE,  # bottom
 )
 
 
 def save(file, model, position=None, flip=False):
     """Export the current position into a .html file using html+css"""
 
-    print("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>", file=file)
-#    print('<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/chess" type="text/css"/>', file=file)
+    print(
+        "<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>",
+        file=file,
+    )
+    #    print('<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/chess" type="text/css"/>', file=file)
     print("<style type='text/css'>%s" % style, file=file)
     print("</style></head><body><div class='chessboard'>", file=file)
 
@@ -174,6 +193,7 @@ def save(file, model, position=None, flip=False):
 
 if __name__ == "__main__":
     from pychess.Utils.GameModel import GameModel
+
     model = GameModel()
     with open("/home/tamas/board.html", "w") as fi:
         save(fi, model, position=0, flip=True)

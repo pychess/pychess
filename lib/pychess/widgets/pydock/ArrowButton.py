@@ -8,12 +8,12 @@ from .__init__ import NORTH, EAST, SOUTH, WEST
 
 
 class ArrowButton(OverlayWindow):
-    """ Leafs will connect to the drag-drop signal """
+    """Leafs will connect to the drag-drop signal"""
 
     __gsignals__ = {
-        'dropped': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'hovered': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'left': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "dropped": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "hovered": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "left": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
     def __init__(self, parent, svgPath, position):
@@ -22,10 +22,14 @@ class ArrowButton(OverlayWindow):
         self.svgPath = svgPath
 
         # targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
-        targets = [Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB",
-                                       Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
-        self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
-                           targets, Gdk.DragAction.MOVE)
+        targets = [
+            Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xBADBEEF)
+        ]
+        self.drag_dest_set(
+            Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
+            targets,
+            Gdk.DragAction.MOVE,
+        )
         self.drag_dest_set_track_motion(True)
         self.myparent.button_cids[self] += [
             self.connect("drag-motion", self.__onDragMotion),
@@ -51,13 +55,19 @@ class ArrowButton(OverlayWindow):
             self.digAHole(self.svgPath, width, height)
 
         if self.myposition == NORTH:
-            x_loc, y_loc = parentAlloc.width / 2. - width / 2., 0
+            x_loc, y_loc = parentAlloc.width / 2.0 - width / 2.0, 0
         elif self.myposition == EAST:
-            x_loc, y_loc = parentAlloc.width - width, parentAlloc.height / 2. - height / 2.
+            x_loc, y_loc = (
+                parentAlloc.width - width,
+                parentAlloc.height / 2.0 - height / 2.0,
+            )
         elif self.myposition == SOUTH:
-            x_loc, y_loc = parentAlloc.width / 2. - width / 2., parentAlloc.height - height
+            x_loc, y_loc = (
+                parentAlloc.width / 2.0 - width / 2.0,
+                parentAlloc.height - height,
+            )
         elif self.myposition == WEST:
-            x_loc, y_loc = 0, parentAlloc.height / 2. - height / 2.
+            x_loc, y_loc = 0, parentAlloc.height / 2.0 - height / 2.0
 
         x_loc, y_loc = self.translateCoords(int(x_loc), int(y_loc))
         if (x_loc, y_loc) != self.get_position():

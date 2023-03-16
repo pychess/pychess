@@ -2,33 +2,33 @@ import subprocess
 import os.path
 
 
-class Command():
+class Command:
     def __init__(self, command, inputstr):
         self.command = command
         self.inputstr = inputstr
 
     def run(self, timeout=None):
-        """ Run a command then return: (status, output, error). """
+        """Run a command then return: (status, output, error)."""
         status = None
         output = ""
         error = ""
         try:
-            process = subprocess.Popen(self.command,
-                                       universal_newlines=True,
-                                       stdin=subprocess.PIPE,
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE,
-                                       bufsize=0,
-                                       cwd=os.path.dirname(self.command[0]))
+            process = subprocess.Popen(
+                self.command,
+                universal_newlines=True,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                bufsize=0,
+                cwd=os.path.dirname(self.command[0]),
+            )
         except OSError:
             return status, output, error
         except ValueError:
             return status, output, error
 
         try:
-            output, error = process.communicate(
-                input=self.inputstr,
-                timeout=timeout)
+            output, error = process.communicate(input=self.inputstr, timeout=timeout)
         except subprocess.TimeoutExpired:
             process.kill()
             output, error = process.communicate()

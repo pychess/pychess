@@ -1,6 +1,7 @@
 from gi.repository import Gtk
 
 from pychess.Utils.IconLoader import get_pixbuf, load_icon
+
 # from pychess.widgets.WebKitBrowser import open_link
 
 main_window = None
@@ -19,7 +20,7 @@ def createImage(pixbuf):
 
 
 def createAlignment(top, right, bottom, left):
-    align = Gtk.Alignment.new(.5, .5, 1, 1)
+    align = Gtk.Alignment.new(0.5, 0.5, 1, 1)
     align.set_property("top-padding", top)
     align.set_property("right-padding", right)
     align.set_property("bottom-padding", bottom)
@@ -76,7 +77,11 @@ def insert_formatted(text_view, iter, text, tag=None):
                     endpos = part.find('"')
                     if endpos != -1:
                         part = part[:endpos]
-                part0 = "http://web.archive.org/%s" % part if part.startswith("http://www.endgame.nl") else part
+                part0 = (
+                    "http://web.archive.org/%s" % part
+                    if part.startswith("http://www.endgame.nl")
+                    else part
+                )
                 parts[i] = '<a href="{}">{}</a>'.format(part0, part)
                 position = i
                 break
@@ -87,6 +92,6 @@ def insert_formatted(text_view, iter, text, tag=None):
         label.show()
         anchor = tb.create_child_anchor(iter)
         text_view.add_child_at_anchor(label, anchor)
-        insert(" %s" % " ".join(parts[position + 1:]))
+        insert(" %s" % " ".join(parts[position + 1 :]))
     else:
         insert(text)

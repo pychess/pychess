@@ -30,19 +30,28 @@ class Perspective:
         self.docks = {}
         self.main_notebook = None
 
-        if getattr(sys, 'frozen', False) and not MSYS2:
+        if getattr(sys, "frozen", False) and not MSYS2:
             zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
-            importer = zipimport.zipimporter(zip_path + "/pychess/perspectives/%s" % name)
+            importer = zipimport.zipimporter(
+                zip_path + "/pychess/perspectives/%s" % name
+            )
             postfix = "Panel.pyc"
-            with zipfile.ZipFile(zip_path, 'r') as myzip:
-                names = [f[:-4].split("/")[-1] for f in myzip.namelist() if f.endswith(postfix) and "/%s/" % name in f]
+            with zipfile.ZipFile(zip_path, "r") as myzip:
+                names = [
+                    f[:-4].split("/")[-1]
+                    for f in myzip.namelist()
+                    if f.endswith(postfix) and "/%s/" % name in f
+                ]
             self.sidePanels = [importer.load_module(name) for name in names]
         else:
             path = "{}/{}".format(os.path.dirname(__file__), name)
-            ext = ".pyc" if getattr(sys, 'frozen', False) and MSYS2 else ".py"
+            ext = ".pyc" if getattr(sys, "frozen", False) and MSYS2 else ".py"
             postfix = "Panel%s" % ext
-            files = [f[:-len(ext)] for f in os.listdir(path) if f.endswith(postfix)]
-            self.sidePanels = [importlib.import_module("pychess.perspectives.{}.{}".format(name, f)) for f in files]
+            files = [f[: -len(ext)] for f in os.listdir(path) if f.endswith(postfix)]
+            self.sidePanels = [
+                importlib.import_module("pychess.perspectives.{}.{}".format(name, f))
+                for f in files
+            ]
 
         for panel in self.sidePanels:
             close_button = Gtk.Button()
@@ -60,15 +69,17 @@ class Perspective:
             self.menuitems.append(menu_item)
             panel.menu_item = menu_item
 
-            box = dock_panel_tab(panel.__title__, panel.__desc__, panel.__icon__, close_button)
+            box = dock_panel_tab(
+                panel.__title__, panel.__desc__, panel.__icon__, close_button
+            )
             self.docks[panel_name(panel.__name__)] = [box, None, menu_item]
 
     def on_clicked(self, button, panel):
-        """ Toggle show/hide side panel menu item in View menu """
+        """Toggle show/hide side panel menu item in View menu"""
         panel.menu_item.set_active(not panel.menu_item.get_active())
 
     def on_toggled(self, menu_item, panel):
-        """ Show/Hide side panel """
+        """Show/Hide side panel"""
         try:
             leaf = self.notebooks[panel_name(panel.__name__)].get_parent().get_parent()
         except AttributeError:
@@ -82,7 +93,14 @@ class Perspective:
 
         active = menu_item.get_active()
         name = panel_name(panel.__name__)
-        shown = sum([1 for panel in self.sidePanels if panel_name(panel.__name__) in names and self.notebooks[panel_name(panel.__name__)].is_visible()])
+        shown = sum(
+            [
+                1
+                for panel in self.sidePanels
+                if panel_name(panel.__name__) in names
+                and self.notebooks[panel_name(panel.__name__)].is_visible()
+            ]
+        )
 
         if active:
             self.notebooks[name].show()
@@ -98,7 +116,12 @@ class Perspective:
             if shown == 1:
                 # If this is the last one, adjust Gtk.Paned divider handle
                 pos = parent.get_position()
-                leaf.position = pos if pos != parent.props.min_position and pos != parent.props.max_position else 0
+                leaf.position = (
+                    pos
+                    if pos != parent.props.min_position
+                    and pos != parent.props.max_position
+                    else 0
+                )
                 if leaf == parent.get_child1():
                     parent.set_position(parent.props.min_position)
                 else:
@@ -120,19 +143,30 @@ class Perspective:
                 self.dock.loadFromXML(self.dockLocation, self.docks)
             except Exception as e:
                 # We don't send error message when error caused by no more existing SwitcherPanel
-                if e.args[0] != "SwitcherPanel" and "unittest" not in sys.modules.keys():
+                if (
+                    e.args[0] != "SwitcherPanel"
+                    and "unittest" not in sys.modules.keys()
+                ):
                     stringio = StringIO()
                     traceback.print_exc(file=stringio)
                     error = stringio.getvalue()
                     log.error("Dock loading error: {}\n{}".format(e, error))
-                    msg_dia = Gtk.MessageDialog(mainwindow(),
-                                                type=Gtk.MessageType.ERROR,
-                                                buttons=Gtk.ButtonsType.CLOSE)
-                    msg_dia.set_markup(_(
-                        "<b><big>PyChess was unable to load your panel settings</big></b>"))
-                    msg_dia.format_secondary_text(_(
-                        "Your panel settings have been reset. If this problem repeats, \
-                        you should report it to the developers"))
+                    msg_dia = Gtk.MessageDialog(
+                        mainwindow(),
+                        type=Gtk.MessageType.ERROR,
+                        buttons=Gtk.ButtonsType.CLOSE,
+                    )
+                    msg_dia.set_markup(
+                        _(
+                            "<b><big>PyChess was unable to load your panel settings</big></b>"
+                        )
+                    )
+                    msg_dia.format_secondary_text(
+                        _(
+                            "Your panel settings have been reset. If this problem repeats, \
+                        you should report it to the developers"
+                        )
+                    )
                     msg_dia.run()
                     msg_dia.hide()
                 os.remove(self.dockLocation)
@@ -195,7 +229,9 @@ class PerspectiveManager:
         box.pack_start(button, True, True, 0)
         button.connect("toggled", self.on_persp_toggled)
 
-        index = self.widgets["perspectives_notebook"].append_page(perspective.widget, None)
+        index = self.widgets["perspectives_notebook"].append_page(
+            perspective.widget, None
+        )
         self.perspectives[perspective.name] = (perspective, button, index)
 
     def activate_perspective(self, name):

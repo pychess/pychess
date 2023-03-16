@@ -8,7 +8,7 @@
 import asyncio
 import os
 from os import listdir
-from os.path import isdir, isfile, splitext
+from os.path import isdir, isfile
 
 import sys
 from xml.dom import minidom
@@ -21,7 +21,15 @@ from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils import book
-from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT, COUNT_OF_SOUNDS
+from pychess.Utils.const import (
+    HINT,
+    SPY,
+    SOUND_MUTE,
+    SOUND_BEEP,
+    SOUND_URI,
+    SOUND_SELECT,
+    COUNT_OF_SOUNDS,
+)
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
 from pychess.widgets import mainwindow
@@ -49,8 +57,7 @@ def run(widgets):
 
 
 def initialize(widgets):
-    """ :Description: Initialises the various tabs for each section of configurable artifacts
-    """
+    """:Description: Initialises the various tabs for each section of configurable artifacts"""
     global general_tab
     general_tab = GeneralTab(widgets)
 
@@ -83,18 +90,27 @@ def initialize(widgets):
     widgets["preferences_dialog"].connect("delete-event", delete_event)
     widgets["preferences_dialog"].connect(
         "key-press-event",
-        lambda w, e: w.event(Gdk.Event(Gdk.EventType.DELETE)) if e.keyval == Gdk.KEY_Escape else None)
+        lambda w, e: w.event(Gdk.Event(Gdk.EventType.DELETE))
+        if e.keyval == Gdk.KEY_Escape
+        else None,
+    )
+
 
 # General initing
 
 
 class GeneralTab:
     def __init__(self, widgets):
-
         # Give to uistuff.keeper
         for key in conf.DEFAULTS["General"]:
             # widgets having special getter/setter
-            if key in ("ana_combobox", "inv_ana_combobox", "pieceTheme", "board_style", "board_frame"):
+            if key in (
+                "ana_combobox",
+                "inv_ana_combobox",
+                "pieceTheme",
+                "board_style",
+                "board_frame",
+            ):
                 continue
 
             try:
@@ -104,6 +120,7 @@ class GeneralTab:
                 print("GeneralTab AttributeError", key, conf.DEFAULTS["General"][key])
             except TypeError:
                 print("GeneralTab TypeError", key, conf.DEFAULTS["General"][key])
+
 
 # Hint initing
 
@@ -128,13 +145,13 @@ def anal_combo_set_value(combobox, value, show_arrow_check, analyzer_type):
         combobox.set_active(index)
 
     from pychess.widgets.gamewidget import widgets
+
     perspective = perspective_manager.get_perspective("games")
     for gmwidg in perspective.gamewidgets:
         spectators = gmwidg.gamemodel.spectators
-        md5 = engine.get('md5')
+        md5 = engine.get("md5")
 
-        if analyzer_type in spectators and \
-                spectators[analyzer_type].md5 != md5:
+        if analyzer_type in spectators and spectators[analyzer_type].md5 != md5:
             gmwidg.gamemodel.remove_analyzer(analyzer_type)
             asyncio.create_task(gmwidg.gamemodel.start_analyzer(analyzer_type))
             if not widgets[show_arrow_check].get_active():
@@ -150,11 +167,17 @@ class HintTab:
         conf.set("opening_file_entry", path)
 
         book_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select book file"), mainwindow(), Gtk.FileChooserAction.OPEN,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-             Gtk.ResponseType.OK))
-        book_chooser_button = Gtk.FileChooserButton.new_with_dialog(
-            book_chooser_dialog)
+            _("Select book file"),
+            mainwindow(),
+            Gtk.FileChooserAction.OPEN,
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OPEN,
+                Gtk.ResponseType.OK,
+            ),
+        )
+        book_chooser_button = Gtk.FileChooserButton.new_with_dialog(book_chooser_dialog)
 
         filter = Gtk.FileFilter()
         filter.set_name(_("Opening books"))
@@ -179,8 +202,7 @@ class HintTab:
         def on_opening_check_toggled(check):
             self.widgets["opening_hbox"].set_sensitive(check.get_active())
 
-        self.widgets["opening_check"].connect_after("toggled",
-                                                    on_opening_check_toggled)
+        self.widgets["opening_check"].connect_after("toggled", on_opening_check_toggled)
 
         uistuff.keep(self.widgets["book_depth_max"], "book_depth_max")
         uistuff.keep(self.widgets["book_check_exact_match"], "book_exact_match")
@@ -190,12 +212,17 @@ class HintTab:
         conf.set("egtb_path", egtb_path)
 
         egtb_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select Gaviota TB path"), mainwindow(),
+            _("Select Gaviota TB path"),
+            mainwindow(),
             Gtk.FileChooserAction.SELECT_FOLDER,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-             Gtk.ResponseType.OK))
-        egtb_chooser_button = Gtk.FileChooserButton.new_with_dialog(
-            egtb_chooser_dialog)
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OPEN,
+                Gtk.ResponseType.OK,
+            ),
+        )
+        egtb_chooser_button = Gtk.FileChooserButton.new_with_dialog(egtb_chooser_dialog)
         egtb_chooser_button.set_current_folder(egtb_path)
 
         self.widgets["egtbChooserDock"].add(egtb_chooser_button)
@@ -211,11 +238,11 @@ class HintTab:
         def on_endgame_check_toggled(check):
             self.widgets["endgame_hbox"].set_sensitive(check.get_active())
 
-        self.widgets["endgame_check"].connect_after("toggled",
-                                                    on_endgame_check_toggled)
+        self.widgets["endgame_check"].connect_after("toggled", on_endgame_check_toggled)
 
         # Analyzing engines
         from pychess.widgets import newGameDialog
+
         data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
         uistuff.createCombo(widgets["ana_combobox"], data, name="ana_combobox")
         uistuff.createCombo(widgets["inv_ana_combobox"], data, name="inv_ana_combobox")
@@ -225,8 +252,7 @@ class HintTab:
             uistuff.updateCombo(widgets["ana_combobox"], data)
             uistuff.updateCombo(widgets["inv_ana_combobox"], data)
 
-        discoverer.connect_after("all_engines_discovered",
-                                 update_analyzers_store)
+        discoverer.connect_after("all_engines_discovered", update_analyzers_store)
         update_analyzers_store(discoverer)
 
         # Save, load and make analyze combos active
@@ -237,6 +263,7 @@ class HintTab:
         def on_analyzer_check_toggled(check):
             self.widgets["analyzers_vbox"].set_sensitive(check.get_active())
             from pychess.widgets.gamewidget import widgets
+
             perspective = perspective_manager.get_perspective("games")
             if len(perspective.gamewidgets) != 0:
                 if check.get_active():
@@ -248,8 +275,12 @@ class HintTab:
                     for gmwidg in perspective.gamewidgets:
                         gmwidg.gamemodel.remove_analyzer(HINT)
 
-        self.widgets["analyzers_vbox"].set_sensitive(widgets["analyzer_check"].get_active())
-        self.widgets["analyzer_check"].connect_after("toggled", on_analyzer_check_toggled)
+        self.widgets["analyzers_vbox"].set_sensitive(
+            widgets["analyzer_check"].get_active()
+        )
+        self.widgets["analyzer_check"].connect_after(
+            "toggled", on_analyzer_check_toggled
+        )
 
         def on_invanalyzer_check_toggled(check):
             self.widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
@@ -264,18 +295,31 @@ class HintTab:
                     for gmwidg in perspective.gamewidgets:
                         gmwidg.gamemodel.remove_analyzer(SPY)
 
-        self.widgets["inv_analyzers_vbox"].set_sensitive(widgets["inv_analyzer_check"].get_active())
-        self.widgets["inv_analyzer_check"].connect_after("toggled", on_invanalyzer_check_toggled)
+        self.widgets["inv_analyzers_vbox"].set_sensitive(
+            widgets["inv_analyzer_check"].get_active()
+        )
+        self.widgets["inv_analyzer_check"].connect_after(
+            "toggled", on_invanalyzer_check_toggled
+        )
 
         # Give widgets to keeper
 
         uistuff.keep(
-            self.widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
-            lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode", HINT))
-        uistuff.keep(
-            self.widgets["inv_ana_combobox"], "inv_ana_combobox",
+            self.widgets["ana_combobox"],
+            "ana_combobox",
             anal_combo_get_value,
-            lambda combobox, value: anal_combo_set_value(combobox, value, "spy_mode", SPY))
+            lambda combobox, value: anal_combo_set_value(
+                combobox, value, "hint_mode", HINT
+            ),
+        )
+        uistuff.keep(
+            self.widgets["inv_ana_combobox"],
+            "inv_ana_combobox",
+            anal_combo_get_value,
+            lambda combobox, value: anal_combo_set_value(
+                combobox, value, "spy_mode", SPY
+            ),
+        )
 
         uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin")
         uistuff.keep(self.widgets["infinite_analysis"], "infinite_analysis")
@@ -293,50 +337,64 @@ for i in range(COUNT_OF_SOUNDS):
         conf.set("soundcombo%d" % i, SOUND_URI)
 
 if not conf.hasKey("sounduri0"):
-    conf.set("sounduri0",
-             "file:" + pathname2url(addDataPrefix("sounds/move1.%s" % EXT)))
+    conf.set(
+        "sounduri0", "file:" + pathname2url(addDataPrefix("sounds/move1.%s" % EXT))
+    )
 if not conf.hasKey("sounduri1"):
-    conf.set("sounduri1",
-             "file:" + pathname2url(addDataPrefix("sounds/check1.%s" % EXT)))
+    conf.set(
+        "sounduri1", "file:" + pathname2url(addDataPrefix("sounds/check1.%s" % EXT))
+    )
 if not conf.hasKey("sounduri2"):
-    conf.set("sounduri2",
-             "file:" + pathname2url(addDataPrefix("sounds/capture1.%s" % EXT)))
+    conf.set(
+        "sounduri2", "file:" + pathname2url(addDataPrefix("sounds/capture1.%s" % EXT))
+    )
 if not conf.hasKey("sounduri3"):
-    conf.set("sounduri3",
-             "file:" + pathname2url(addDataPrefix("sounds/start1.%s" % EXT)))
+    conf.set(
+        "sounduri3", "file:" + pathname2url(addDataPrefix("sounds/start1.%s" % EXT))
+    )
 if not conf.hasKey("sounduri4"):
-    conf.set("sounduri4",
-             "file:" + pathname2url(addDataPrefix("sounds/win1.%s" % EXT)))
+    conf.set("sounduri4", "file:" + pathname2url(addDataPrefix("sounds/win1.%s" % EXT)))
 if not conf.hasKey("sounduri5"):
-    conf.set("sounduri5",
-             "file:" + pathname2url(addDataPrefix("sounds/lose1.%s" % EXT)))
+    conf.set(
+        "sounduri5", "file:" + pathname2url(addDataPrefix("sounds/lose1.%s" % EXT))
+    )
 if not conf.hasKey("sounduri6"):
-    conf.set("sounduri6",
-             "file:" + pathname2url(addDataPrefix("sounds/draw1.%s" % EXT)))
+    conf.set(
+        "sounduri6", "file:" + pathname2url(addDataPrefix("sounds/draw1.%s" % EXT))
+    )
 if not conf.hasKey("sounduri7"):
-    conf.set("sounduri7",
-             "file:" + pathname2url(addDataPrefix("sounds/obs_mov.%s" % EXT)))
+    conf.set(
+        "sounduri7", "file:" + pathname2url(addDataPrefix("sounds/obs_mov.%s" % EXT))
+    )
 if not conf.hasKey("sounduri8"):
-    conf.set("sounduri8",
-             "file:" + pathname2url(addDataPrefix("sounds/obs_end.%s" % EXT)))
+    conf.set(
+        "sounduri8", "file:" + pathname2url(addDataPrefix("sounds/obs_end.%s" % EXT))
+    )
 if not conf.hasKey("sounduri9"):
-    conf.set("sounduri9",
-             "file:" + pathname2url(addDataPrefix("sounds/alarm.%s" % EXT)))
+    conf.set(
+        "sounduri9", "file:" + pathname2url(addDataPrefix("sounds/alarm.%s" % EXT))
+    )
 if not conf.hasKey("sounduri10"):
-    conf.set("sounduri10",
-             "file:" + pathname2url(addDataPrefix("sounds/invalid.%s" % EXT)))
+    conf.set(
+        "sounduri10", "file:" + pathname2url(addDataPrefix("sounds/invalid.%s" % EXT))
+    )
 if not conf.hasKey("sounduri11"):
-    conf.set("sounduri11",
-             "file:" + pathname2url(addDataPrefix("sounds/success.%s" % EXT)))
+    conf.set(
+        "sounduri11", "file:" + pathname2url(addDataPrefix("sounds/success.%s" % EXT))
+    )
 if not conf.hasKey("sounduri12"):
-    conf.set("sounduri12",
-             "file:" + pathname2url(addDataPrefix("sounds/choice.%s" % EXT)))
+    conf.set(
+        "sounduri12", "file:" + pathname2url(addDataPrefix("sounds/choice.%s" % EXT))
+    )
 
 
 class SoundTab:
-
-    SOUND_DIRS = (addDataPrefix("sounds"), "/usr/share/sounds",
-                  "/usr/local/share/sounds", os.path.expanduser("~"))
+    SOUND_DIRS = (
+        addDataPrefix("sounds"),
+        "/usr/share/sounds",
+        "/usr/local/share/sounds",
+        os.path.expanduser("~"),
+    )
 
     actionToKeyNo = {
         "aPlayerMoves": 0,
@@ -390,13 +448,19 @@ class SoundTab:
             cls.getPlayer().play(uri)
 
     def __init__(self, widgets):
-
         # Init open dialog
 
         opendialog = Gtk.FileChooserDialog(
-            _("Open Sound File"), mainwindow(), Gtk.FileChooserAction.OPEN,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-             Gtk.ResponseType.ACCEPT))
+            _("Open Sound File"),
+            mainwindow(),
+            Gtk.FileChooserAction.OPEN,
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OPEN,
+                Gtk.ResponseType.ACCEPT,
+            ),
+        )
 
         for dir in self.SOUND_DIRS:
             if os.path.isdir(dir):
@@ -411,9 +475,11 @@ class SoundTab:
 
         # Get combo icons
 
-        icons = ((_("No sound"), "audio-volume-muted", "audio-volume-muted"),
-                 (_("Beep"), "stock_bell", "audio-x-generic"),
-                 (_("Select sound file..."), "gtk-open", "document-open"))
+        icons = (
+            (_("No sound"), "audio-volume-muted", "audio-volume-muted"),
+            (_("Beep"), "stock_bell", "audio-x-generic"),
+            (_("Select sound file..."), "gtk-open", "document-open"),
+        )
 
         items = []
         for level, stock, altstock in icons:
@@ -435,7 +501,7 @@ class SoundTab:
                     if len(model) == 3:
                         model.append([audioIco, label])
                     else:
-                        model.set(model.get_iter((3, )), 1, label)
+                        model.set(model.get_iter((3,)), 1, label)
                     combobox.set_active(3)
                 else:
                     combobox.set_active(conf.get("soundcombo%d" % index))
@@ -455,8 +521,9 @@ class SoundTab:
                 model.append([audioIco, unquote(os.path.split(uri)[1])])
 
         for i in range(COUNT_OF_SOUNDS):
-            if conf.get("soundcombo%d" % i) == SOUND_URI and \
-                    not os.path.isfile(url2pathname(conf.get("sounduri%d" % i)[5:])):
+            if conf.get("soundcombo%d" % i) == SOUND_URI and not os.path.isfile(
+                url2pathname(conf.get("sounduri%d" % i)[5:])
+            ):
                 conf.set("soundcombo%d" % i, SOUND_MUTE)
             uistuff.keep(widgets["sound%dcombo" % i], "soundcombo%d" % i)
 
@@ -484,6 +551,7 @@ class SoundTab:
         if not self.getPlayer().ready:
             widgets["useSounds"].set_sensitive(False)
             widgets["useSounds"].set_active(False)
+
 
 # Panel initing
 
@@ -513,34 +581,30 @@ class PanelTab:
         self.tv = widgets["panels_treeview"]
         self.tv.set_model(store)
 
-        self.widgets['panel_about_button'].connect('clicked', self.panel_about)
-        self.widgets['panel_enable_button'].connect('toggled',
-                                                    self.panel_toggled)
-        self.tv.get_selection().connect('changed', self.selection_changed)
+        self.widgets["panel_about_button"].connect("clicked", self.panel_about)
+        self.widgets["panel_enable_button"].connect("toggled", self.panel_toggled)
+        self.tv.get_selection().connect("changed", self.selection_changed)
 
         pixbuf = Gtk.CellRendererPixbuf()
         pixbuf.props.yalign = 0
         pixbuf.props.ypad = 3
         pixbuf.props.xpad = 3
-        self.tv.append_column(Gtk.TreeViewColumn("Icon",
-                                                 pixbuf,
-                                                 pixbuf=1,
-                                                 sensitive=0))
+        self.tv.append_column(Gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1, sensitive=0))
 
         uistuff.appendAutowrapColumn(self.tv, "Name", markup=2, sensitive=0)
 
-        widgets['preferences_notebook'].connect("switch-page", self.__on_switch_page)
+        widgets["preferences_notebook"].connect("switch-page", self.__on_switch_page)
         widgets["preferences_dialog"].connect("show", self.__on_show_window)
         widgets["preferences_dialog"].connect("hide", self.__on_hide_window)
 
     def selection_changed(self, treeselection):
         store, iter = self.tv.get_selection().get_selected()
-        self.widgets['panel_enable_button'].set_sensitive(bool(iter))
-        self.widgets['panel_about_button'].set_sensitive(bool(iter))
+        self.widgets["panel_enable_button"].set_sensitive(bool(iter))
+        self.widgets["panel_about_button"].set_sensitive(bool(iter))
 
         if iter:
             active = self.tv.get_model().get(iter, 0)[0]
-            self.widgets['panel_enable_button'].set_active(active)
+            self.widgets["panel_enable_button"].set_active(active)
 
     def panel_about(self, button):
         store, iter = self.tv.get_selection().get_selected()
@@ -548,11 +612,13 @@ class PanelTab:
         path = store.get_path(iter)
         panel = store[path][3]
 
-        d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
-                              buttons=Gtk.ButtonsType.CLOSE)
+        d = Gtk.MessageDialog(
+            mainwindow(), type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.CLOSE
+        )
         d.set_markup("<big><b>%s</b></big>" % panel.__title__)
-        text = panel.__about__ if hasattr(
-            panel, '__about__') else _('Undescribed panel')
+        text = (
+            panel.__about__ if hasattr(panel, "__about__") else _("Undescribed panel")
+        )
         d.format_secondary_text(text)
         d.run()
         d.hide()
@@ -580,7 +646,9 @@ class PanelTab:
             panel.menu_item.show()
         else:
             try:
-                persp.notebooks[name].get_parent().get_parent().undock(persp.notebooks[name])
+                persp.notebooks[name].get_parent().get_parent().undock(
+                    persp.notebooks[name]
+                )
                 panel.menu_item.hide()
             except AttributeError:
                 # A new panel appeared in the panels directory
@@ -589,22 +657,24 @@ class PanelTab:
 
     def showit(self):
         from pychess.widgets.gamewidget import showDesignGW
+
         showDesignGW()
 
     def hideit(self):
         from pychess.widgets.gamewidget import hideDesignGW
+
         hideDesignGW()
 
     def __on_switch_page(self, notebook, page, page_num):
-        if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
+        if notebook.get_nth_page(page_num) == self.widgets["sidepanels"]:
             self.showit()
         else:
             self.hideit()
 
     def __on_show_window(self, widget):
-        notebook = self.widgets['preferences_notebook']
+        notebook = self.widgets["preferences_notebook"]
         page_num = notebook.get_current_page()
-        if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
+        if notebook.get_nth_page(page_num) == self.widgets["sidepanels"]:
             self.showit()
 
     def __on_hide_window(self, widget):
@@ -615,14 +685,19 @@ class PanelTab:
 
 board_items = [(None, "colors only")]
 boards_path = addDataPrefix("boards")
-board_items += [(get_pixbuf(os.path.join(boards_path, b), 24), b[:-6]) for b in listdir(boards_path) if b.endswith("_d.png")]
+board_items += [
+    (get_pixbuf(os.path.join(boards_path, b), 24), b[:-6])
+    for b in listdir(boards_path)
+    if b.endswith("_d.png")
+]
 board_items.append((None, "transparent"))
 
 
 class ThemeTab:
-    """ :Description: Allows the setting of various user specific chess
-        sets and board colours
+    """:Description: Allows the setting of various user specific chess
+    sets and board colours
     """
+
     def __init__(self, widgets):
         self.widgets = widgets
 
@@ -636,6 +711,7 @@ class ThemeTab:
 
         def select_font(button):
             conf.set("movetextFont", button.get_font_name())
+
         font_button.connect("font-set", select_font)
 
         # Background image
@@ -643,11 +719,19 @@ class ThemeTab:
         conf.set("welcome_image", path)
 
         image_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select background image file"), mainwindow(), Gtk.FileChooserAction.OPEN,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-             Gtk.ResponseType.OK))
+            _("Select background image file"),
+            mainwindow(),
+            Gtk.FileChooserAction.OPEN,
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OPEN,
+                Gtk.ResponseType.OK,
+            ),
+        )
         image_chooser_button = Gtk.FileChooserButton.new_with_dialog(
-            image_chooser_dialog)
+            image_chooser_dialog
+        )
 
         filter = Gtk.FileFilter()
         filter.set_name(_("Images"))
@@ -666,6 +750,7 @@ class ThemeTab:
             if new_image:
                 conf.set("welcome_image", new_image)
                 from pychess.widgets.TaskerManager import tasker
+
                 newTheme(tasker, background=new_image)
                 tasker.queue_draw()
             else:
@@ -695,26 +780,23 @@ class ThemeTab:
         # Board Colours
 
         def onColourSetLight(_):
-            """ :Description: Sets the light squares of the chess board
-                to the value selected in the colour picker
+            """:Description: Sets the light squares of the chess board
+            to the value selected in the colour picker
             """
-            conf.set('lightcolour',
-                     widgets['light_cbtn'].get_color().to_string())
+            conf.set("lightcolour", widgets["light_cbtn"].get_color().to_string())
 
         widgets["light_cbtn"].connect_after("color-set", onColourSetLight)
 
         def onColourSetDark(_):
-            """ :Description: Sets the dark squares of the chess board
-                to the value selected in the colour picker
+            """:Description: Sets the dark squares of the chess board
+            to the value selected in the colour picker
             """
-            conf.set('darkcolour',
-                     widgets['dark_cbtn'].get_color().to_string())
+            conf.set("darkcolour", widgets["dark_cbtn"].get_color().to_string())
 
         widgets["dark_cbtn"].connect_after("color-set", onColourSetDark)
 
         def onResetColourClicked(_):
-            """ :Description: Resets the chess board squares to factory default
-            """
+            """:Description: Resets the chess board squares to factory default"""
             conf.set("lightcolour", conf.DEFAULTS["General"]["lightcolour"])
             conf.set("darkcolour", conf.DEFAULTS["General"]["darkcolour"])
 
@@ -731,8 +813,8 @@ class ThemeTab:
         self.darkcolour.parse(conf.get("darkcolour"))
 
         # Set the color swatches in preference to stored values
-        widgets['light_cbtn'].set_rgba(self.lightcolour)
-        widgets['dark_cbtn'].set_rgba(self.darkcolour)
+        widgets["light_cbtn"].set_rgba(self.lightcolour)
+        widgets["dark_cbtn"].set_rgba(self.darkcolour)
 
         # Chess Sets
 
@@ -748,7 +830,8 @@ class ThemeTab:
             else:
                 print(
                     "WARNING: No piece theme preview icons found. Please run \
-                    create_theme_preview.sh !")
+                    create_theme_preview.sh !"
+                )
                 break
 
         self.icon_view = widgets["pieceTheme"]
@@ -762,11 +845,11 @@ class ThemeTab:
                     display-behaviour-for-a-gtkiconview-between-different
             """
             crt.handler_block(crt_notify)
-            crt.set_property('width', 40)
+            crt.set_property("width", 40)
             crt.handler_unblock(crt_notify)
 
         crt = self.icon_view.get_cells()[0]
-        crt_notify = crt.connect('notify', keepSize)
+        crt_notify = crt.connect("notify", keepSize)
 
         def _getActive(iconview):
             model = iconview.get_model()
@@ -787,40 +870,46 @@ class ThemeTab:
                 index = self.themes.index(value)
             except ValueError:
                 index = 0
-            iconview.select_path(Gtk.TreePath(index, ))
+            iconview.select_path(
+                Gtk.TreePath(
+                    index,
+                )
+            )
 
         uistuff.keep(widgets["pieceTheme"], "pieceTheme", _getActive, _setActive)
 
     def discoverThemes(self):
-        """ :Description: Finds all the different chess sets that are present
-            in the pieces directory
+        """:Description: Finds all the different chess sets that are present
+        in the pieces directory
 
-            :return: (a List) of themes
+        :return: (a List) of themes
         """
         themes = []
 
         pieces = addDataPrefix("pieces")
-        themes += [d.capitalize()
-                   for d in listdir(pieces)
-                   if isdir(os.path.join(pieces, d))]
+        themes += [
+            d.capitalize() for d in listdir(pieces) if isdir(os.path.join(pieces, d))
+        ]
 
         themes.sort()
 
         return themes
 
+
 # Save initing
 
 
 class SaveTab:
-    """ :Description: Allows the user to configure the structure of saved
-        game files name along with various game attributes such as elapse time
-        between moves and analysis engin evalutations
+    """:Description: Allows the user to configure the structure of saved
+    game files name along with various game attributes such as elapse time
+    between moves and analysis engin evalutations
     """
+
     def __init__(self, widgets):
         # Init 'auto save" checkbutton
         def checkCallBack(_):
-            """ :Description: Sets the various option based on user interaction with the
-                checkboxes in the gui
+            """:Description: Sets the various option based on user interaction with the
+            checkboxes in the gui
             """
 
             checkbox = widgets["autoSave"]
@@ -834,22 +923,29 @@ class SaveTab:
         conf.set("autoSavePath", self.auto_save_path)
 
         auto_save_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select auto save path"), mainwindow(),
+            _("Select auto save path"),
+            mainwindow(),
             Gtk.FileChooserAction.SELECT_FOLDER,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-             Gtk.ResponseType.OK))
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OPEN,
+                Gtk.ResponseType.OK,
+            ),
+        )
         auto_save_chooser_button = Gtk.FileChooserButton.new_with_dialog(
-            auto_save_chooser_dialog)
+            auto_save_chooser_dialog
+        )
         auto_save_chooser_button.set_current_folder(self.auto_save_path)
 
         widgets["savePathChooserDock"].add(auto_save_chooser_button)
         auto_save_chooser_button.show()
 
         def selectAutoSave(_):
-            """ :Description: Sets the auto save path for stored games if it
-                has changed since last time
+            """:Description: Sets the auto save path for stored games if it
+            has changed since last time
 
-                :signal: Activated on receiving the 'current-folder-changed' signal
+            :signal: Activated on receiving the 'current-folder-changed' signal
             """
             new_directory = auto_save_chooser_dialog.get_filename()
             if new_directory != self.auto_save_path:

@@ -26,4 +26,5 @@ def get_pixbuf(path, size=None):
         return GdkPixbuf.Pixbuf.new_from_stream(file.read(None), None)
     else:
         return GdkPixbuf.Pixbuf.new_from_stream_at_scale(
-            file.read(None), size, size, True, None)
+            file.read(None), size, size, True, None
+        )

@@ -22,9 +22,11 @@ class PyDockComposite(Gtk.Alignment):
             component._del()
 
     def __repr__(self):
-        return "composite {} ({}, {})".format(reprPos[self.position],
-                                          repr(self.paned.get_child1()),
-                                          repr(self.paned.get_child2()))
+        return "composite {} ({}, {})".format(
+            reprPos[self.position],
+            repr(self.paned.get_child1()),
+            repr(self.paned.get_child2()),
+        )
 
     def dock(self, widget, position, title, id):
         assert position != CENTER, "POSITION_CENTER only makes sense for leaves"
@@ -32,6 +34,7 @@ class PyDockComposite(Gtk.Alignment):
         while not isinstance(parent, PyDockComposite):
             parent = parent.get_parent()
         from .PyDockLeaf import PyDockLeaf
+
         leaf = PyDockLeaf(widget, title, id, self.perspective)
         new = PyDockComposite(position, self.perspective)
         parent.changeComponent(self, new)
@@ -85,14 +88,14 @@ class PyDockComposite(Gtk.Alignment):
                 elif self.position == EAST:
                     pos = 0.618033989 * allocation.width
 
-                widget.set_position(int(pos + .5))
+                widget.set_position(int(pos + 0.5))
                 widget.disconnect(conid)
 
         if not preserve_dimensions:
             conid = self.paned.connect("size-allocate", cb)
 
     def getPosition(self):
-        """ Returns NORTH or SOUTH if the children are packed vertically.
-            Returns WEST or EAST if the children are packed horizontally.
-            Returns CENTER if there is only one child """
+        """Returns NORTH or SOUTH if the children are packed vertically.
+        Returns WEST or EAST if the children are packed horizontally.
+        Returns CENTER if there is only one child"""
         return self.position

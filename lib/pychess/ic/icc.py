@@ -12,13 +12,13 @@ at login time.
 
 MY_ICC_PREFIX = "#"
 
-UNIT_START = chr(25) + '['
-UNIT_END = chr(25) + ']'
-B_UNIT_END = b'\x19]'
+UNIT_START = chr(25) + "["
+UNIT_END = chr(25) + "]"
+B_UNIT_END = b"\x19]"
 
-DTGR_START = chr(25) + '('
-DTGR_END = chr(25) + ')'
-B_DTGR_END = b'\x19)'
+DTGR_START = chr(25) + "("
+DTGR_END = chr(25) + ")"
+B_DTGR_END = b"\x19)"
 
 DG_WHO_AM_I = 0
 DG_PLAYER_ARRIVED = 1

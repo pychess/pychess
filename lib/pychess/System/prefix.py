@@ -11,14 +11,20 @@ import sys
 ################################################################################
 
 # Test if we are installed on the system, frozen or are being run from tar/svn
-if getattr(sys, 'frozen', False):
+if getattr(sys, "frozen", False):
     _prefix = os.path.join(os.path.dirname(sys.executable), "share", "pychess")
     _installed = True
 else:
     home_local = os.path.expanduser("~") + "/.local"
     if sys.prefix in __file__:
-        for sub in ("share", "games", "share/games", "local/share",
-                    "local/games", "local/share/games"):
+        for sub in (
+            "share",
+            "games",
+            "share/games",
+            "local/share",
+            "local/games",
+            "local/share/games",
+        ):
             _prefix = os.path.join(sys.prefix, sub, "pychess")
             if os.path.isdir(os.path.join(_prefix, "pieces")):
                 _installed = True
@@ -32,8 +38,7 @@ else:
         else:
             raise Exception("can't find the pychess data directory")
     else:
-        _prefix = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), "../../.."))
+        _prefix = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
         _installed = False
 
 
@@ -48,14 +53,16 @@ def getDataPrefix():
 def isInstalled():
     return _installed
 
+
 ################################################################################
 # Locate files in user space                                                   #
 ################################################################################
 
 
 def __get_user_dir(xdg_env_var, fallback_dir_path):
-    return os.environ.get(xdg_env_var, os.path.join(
-        os.path.expanduser("~"), fallback_dir_path))
+    return os.environ.get(
+        xdg_env_var, os.path.join(os.path.expanduser("~"), fallback_dir_path)
+    )
 
 
 def get_user_data_dir():
@@ -105,7 +112,11 @@ def addUserCachePrefix(subpath):
     return os.path.join(getUserCachePrefix(), subpath)
 
 
-for directory in (getUserDataPrefix(), getEngineDataPrefix(),
-                  getUserConfigPrefix(), getUserCachePrefix()):
+for directory in (
+    getUserDataPrefix(),
+    getEngineDataPrefix(),
+    getUserConfigPrefix(),
+    getUserCachePrefix(),
+):
     if not os.path.isdir(directory):
         os.makedirs(directory, mode=0o700)

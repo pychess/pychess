@@ -2,7 +2,7 @@ from gi.repository import Gtk, WebKit
 
 
 def open_link(label, url):
-    """ Gtk.Label() can use this like label.connect("activate-link", open_link) """
+    """Gtk.Label() can use this like label.connect("activate-link", open_link)"""
     WebKitBrowser(url)
     return True
 
@@ -10,6 +10,7 @@ def open_link(label, url):
 class WebKitBrowser:
     def __init__(self, url):
         from pychess.System.uistuff import keepWindowSize
+
         self.window = Gtk.Window()
         keepWindowSize("webkitbrowser", self.window, (800, 600))
 

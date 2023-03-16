@@ -6,24 +6,83 @@ from gi.repository import GObject
 from pychess.System.Log import log
 from pychess.Savers.pgn import msToClockTimeTag
 
-from pychess.Utils.const import WHITEWON, WON_RESIGN, WON_DISCONNECTION, WON_CALLFLAG, \
-    BLACKWON, WON_MATE, WON_ADJUDICATION, WON_KINGEXPLODE, WON_NOMATERIAL, UNKNOWN_REASON, \
-    DRAW, DRAW_REPETITION, DRAW_BLACKINSUFFICIENTANDWHITETIME, DRAW_WHITEINSUFFICIENTANDBLACKTIME, \
-    DRAW_INSUFFICIENT, DRAW_CALLFLAG, DRAW_AGREE, DRAW_STALEMATE, DRAW_50MOVES, DRAW_LENGTH, \
-    DRAW_ADJUDICATION, ADJOURNED, ADJOURNED_COURTESY_WHITE, ADJOURNED_COURTESY_BLACK, \
-    ADJOURNED_COURTESY, ADJOURNED_AGREEMENT, ADJOURNED_LOST_CONNECTION_WHITE, \
-    ADJOURNED_LOST_CONNECTION_BLACK, ADJOURNED_LOST_CONNECTION, ADJOURNED_SERVER_SHUTDOWN, \
-    ABORTED, ABORTED_AGREEMENT, ABORTED_DISCONNECTION, ABORTED_EARLY, ABORTED_SERVER_SHUTDOWN, \
-    ABORTED_ADJUDICATION, ABORTED_COURTESY, UNKNOWN_STATE, BLACK, WHITE, reprFile, \
-    FISCHERRANDOMCHESS, CRAZYHOUSECHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, ATOMICCHESS, \
-    LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, reprResult
+from pychess.Utils.const import (
+    WHITEWON,
+    WON_RESIGN,
+    WON_DISCONNECTION,
+    WON_CALLFLAG,
+    BLACKWON,
+    WON_MATE,
+    WON_ADJUDICATION,
+    WON_KINGEXPLODE,
+    WON_NOMATERIAL,
+    UNKNOWN_REASON,
+    DRAW,
+    DRAW_REPETITION,
+    DRAW_BLACKINSUFFICIENTANDWHITETIME,
+    DRAW_WHITEINSUFFICIENTANDBLACKTIME,
+    DRAW_INSUFFICIENT,
+    DRAW_CALLFLAG,
+    DRAW_AGREE,
+    DRAW_STALEMATE,
+    DRAW_50MOVES,
+    DRAW_LENGTH,
+    DRAW_ADJUDICATION,
+    ADJOURNED,
+    ADJOURNED_COURTESY_WHITE,
+    ADJOURNED_COURTESY_BLACK,
+    ADJOURNED_COURTESY,
+    ADJOURNED_AGREEMENT,
+    ADJOURNED_LOST_CONNECTION_WHITE,
+    ADJOURNED_LOST_CONNECTION_BLACK,
+    ADJOURNED_LOST_CONNECTION,
+    ADJOURNED_SERVER_SHUTDOWN,
+    ABORTED,
+    ABORTED_AGREEMENT,
+    ABORTED_DISCONNECTION,
+    ABORTED_EARLY,
+    ABORTED_SERVER_SHUTDOWN,
+    ABORTED_ADJUDICATION,
+    ABORTED_COURTESY,
+    UNKNOWN_STATE,
+    BLACK,
+    WHITE,
+    reprFile,
+    FISCHERRANDOMCHESS,
+    CRAZYHOUSECHESS,
+    WILDCASTLECHESS,
+    WILDCASTLESHUFFLECHESS,
+    ATOMICCHESS,
+    LOSERSCHESS,
+    SUICIDECHESS,
+    GIVEAWAYCHESS,
+    reprResult,
+)
 
-from pychess.ic import IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, GAME_TYPES, IC_STATUS_PLAYING, \
-    BLKCMD_SEEK, BLKCMD_OBSERVE, BLKCMD_MATCH, TYPE_WILD, BLKCMD_SMOVES, BLKCMD_UNOBSERVE, BLKCMD_MOVES, \
-    BLKCMD_FLAG, parseRating
+from pychess.ic import (
+    IC_POS_OBSERVING_EXAMINATION,
+    IC_POS_EXAMINATING,
+    GAME_TYPES,
+    IC_STATUS_PLAYING,
+    BLKCMD_SEEK,
+    BLKCMD_OBSERVE,
+    BLKCMD_MATCH,
+    TYPE_WILD,
+    BLKCMD_SMOVES,
+    BLKCMD_UNOBSERVE,
+    BLKCMD_MOVES,
+    BLKCMD_FLAG,
+    parseRating,
+)
 
-from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSHistoryGame, \
-    FICSAdjournedGame, FICSJournalGame, FICSPlayer
+from pychess.ic.FICSObjects import (
+    FICSGame,
+    FICSBoard,
+    FICSHistoryGame,
+    FICSAdjournedGame,
+    FICSJournalGame,
+    FICSPlayer,
+)
 
 names = r"(\w+)"
 titles = r"((?:\((?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
@@ -31,38 +90,61 @@ ratedexp = "(rated|unrated)"
 ratings = r"\(\s*([0-9\ \-\+]{1,4}[P E]?|UNR)\)"
 
 weekdays = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
-          "Nov", "Dec"]
+months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]
 
 # "Thu Oct 14, 20:36 PDT 2010"
-dates = r"(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" % \
-    ("|".join(weekdays), "|".join(months))
+dates = r"(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" % (
+    "|".join(weekdays),
+    "|".join(months),
+)
 
 # "2010-10-14 20:36 UTC"
 datesFatICS = r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})\s+(UTC)"
 
 moveListHeader1Str = "{} {} vs. {} {} --- (?:{}|{})".format(
-    names, ratings, names, ratings, dates, datesFatICS)
+    names, ratings, names, ratings, dates, datesFatICS
+)
 moveListHeader1 = re.compile(moveListHeader1Str)
-moveListHeader2Str = r"%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\." % \
-    ratedexp
+moveListHeader2Str = (
+    r"%s ([^ ]+) match, initial time: (\d+) minutes, increment: (\d+) seconds\."
+    % ratedexp
+)
 moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
 sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
 movetime = r"\((\d:)?(\d{1,2}):(\d\d)(?:\.(\d{1,3}))?\)"
-moveListMoves = re.compile(r"\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" %
-                           (sanmove, movetime, sanmove, movetime))
+moveListMoves = re.compile(
+    r"\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?"
+    % (sanmove, movetime, sanmove, movetime)
+)
 
 creating0 = re.compile(
-    r"Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?" %
-    (names, ratings, names, ratings, ratedexp))
+    r"Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+    % (names, ratings, names, ratings, ratedexp)
+)
 creating1 = re.compile(
-    r"{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\." %
-    (names, names, ratedexp))
+    r"{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+    % (names, names, ratedexp)
+)
 pr = re.compile(r"<pr> ([\d ]+)")
 sr = re.compile(r"<sr> ([\d ]+)")
 
-fileToEpcord = (("a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"),
-                ("a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"))
+fileToEpcord = (
+    ("a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"),
+    ("a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"),
+)
 
 
 def parse_reason(result, reason, wname=None):
@@ -173,34 +255,37 @@ def parse_reason(result, reason, wname=None):
 
 
 class BoardManager(GObject.GObject):
-
     __gsignals__ = {
-        'playGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'obsGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'exGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'exGameReset': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'gameUndoing': (GObject.SignalFlags.RUN_FIRST, None, (int, int)),
-        'archiveGamePreview': (GObject.SignalFlags.RUN_FIRST, None,
-                               (object, )),
-        'boardSetup': (GObject.SignalFlags.RUN_FIRST, None,
-                       (int, str, str, str)),
-        'timesUpdate': (GObject.SignalFlags.RUN_FIRST, None,
-                        (int, int, int,)),
-        'obsGameEnded': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'curGameEnded': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'obsGameUnobserved': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'madeExamined': (GObject.SignalFlags.RUN_FIRST, None, (int, )),
-        'madeUnExamined': (GObject.SignalFlags.RUN_FIRST, None, (int, )),
-        'gamePaused': (GObject.SignalFlags.RUN_FIRST, None, (int, bool)),
-        'tooManySeeks': (GObject.SignalFlags.RUN_FIRST, None, ()),
-        'nonoWhileExamine': (GObject.SignalFlags.RUN_FIRST, None, ()),
-        'matchDeclined': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'player_on_censor': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'player_on_noplay': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'player_lagged': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'opp_not_out_of_time': (GObject.SignalFlags.RUN_FIRST, None, ()),
-        'req_not_fit_formula': (GObject.SignalFlags.RUN_FIRST, None,
-                                (object, str)),
+        "playGameCreated": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "obsGameCreated": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "exGameCreated": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "exGameReset": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "gameUndoing": (GObject.SignalFlags.RUN_FIRST, None, (int, int)),
+        "archiveGamePreview": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "boardSetup": (GObject.SignalFlags.RUN_FIRST, None, (int, str, str, str)),
+        "timesUpdate": (
+            GObject.SignalFlags.RUN_FIRST,
+            None,
+            (
+                int,
+                int,
+                int,
+            ),
+        ),
+        "obsGameEnded": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "curGameEnded": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "obsGameUnobserved": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "madeExamined": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "madeUnExamined": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "gamePaused": (GObject.SignalFlags.RUN_FIRST, None, (int, bool)),
+        "tooManySeeks": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "nonoWhileExamine": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "matchDeclined": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "player_on_censor": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "player_on_noplay": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "player_lagged": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "opp_not_out_of_time": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "req_not_fit_formula": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
     }
 
     castleSigns = {}
@@ -210,50 +295,66 @@ class BoardManager(GObject.GObject):
         GObject.GObject.__init__(self)
         self.connection = connection
         self.connection.expect_line(self.onStyle12, "<12> (.+)")
-        self.connection.expect_line(self.onWasPrivate,
-                                    r"Sorry, game (\d+) is a private game\.")
-        self.connection.expect_line(self.tooManySeeks,
-                                    "You can only have 3 active seeks.")
+        self.connection.expect_line(
+            self.onWasPrivate, r"Sorry, game (\d+) is a private game\."
+        )
+        self.connection.expect_line(
+            self.tooManySeeks, "You can only have 3 active seeks."
+        )
         self.connection.expect_line(
             self.nonoWhileExamine,
-            "(?:You cannot challenge while you are examining a game.)|" +
-            "(?:You are already examining a game.)")
-        self.connection.expect_line(self.matchDeclined,
-                                    "%s declines the match offer." % names)
-        self.connection.expect_line(self.player_on_censor,
-                                    "%s is censoring you." % names)
-        self.connection.expect_line(self.player_on_noplay,
-                                    "You are on %s's noplay list." % names)
+            "(?:You cannot challenge while you are examining a game.)|"
+            + "(?:You are already examining a game.)",
+        )
         self.connection.expect_line(
-            self.player_lagged,
-            r"Game (\d+): %s has lagged for (\d+) seconds\." % names)
+            self.matchDeclined, "%s declines the match offer." % names
+        )
+        self.connection.expect_line(
+            self.player_on_censor, "%s is censoring you." % names
+        )
+        self.connection.expect_line(
+            self.player_on_noplay, "You are on %s's noplay list." % names
+        )
+        self.connection.expect_line(
+            self.player_lagged, r"Game (\d+): %s has lagged for (\d+) seconds\." % names
+        )
         self.connection.expect_line(
             self.opp_not_out_of_time,
-            r"Opponent is not out of time, wait for server autoflag\.")
+            r"Opponent is not out of time, wait for server autoflag\.",
+        )
 
         self.connection.expect_n_lines(
             self.req_not_fit_formula,
             "Match request does not fit formula for %s:" % names,
-            "%s's formula: (.+)" % names)
+            "%s's formula: (.+)" % names,
+        )
 
         self.connection.expect_line(
             self.on_game_remove,
-            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
+            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$",
+        )
 
         if self.connection.USCN:
             self.connection.expect_n_lines(
                 self.onPlayGameCreated,
                 r"Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-                % (names, ratings, names, ratings, ratedexp), "",
+                % (names, ratings, names, ratings, ratedexp),
+                "",
                 r"{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-                % (names, names, ratedexp), "", "<12> (.+)")
+                % (names, names, ratedexp),
+                "",
+                "<12> (.+)",
+            )
         else:
             self.connection.expect_n_lines(
                 self.onPlayGameCreated,
                 r"Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
                 % (names, ratings, names, ratings, ratedexp),
                 r"{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-                % (names, names, ratedexp), "", "<12> (.+)")
+                % (names, names, ratedexp),
+                "",
+                "<12> (.+)",
+            )
 
         # TODO: Trying to precisely match every type of possible response FICS
         # will throw at us for "Your seek matches..." or "Your seek qualifies
@@ -266,47 +367,66 @@ class BoardManager(GObject.GObject):
         self.connection.expect_fromto(
             self.onMatchingSeekOrGetGame,
             r"Your seek (?:matches one already posted by %s|qualifies for %s's getgame)\."
-            % (names, names), "(?:<12>|<sn>) (.+)")
+            % (names, names),
+            "(?:<12>|<sn>) (.+)",
+        )
         self.connection.expect_fromto(
             self.onInterceptedChallenge,
-            r"Your challenge intercepts %s's challenge\." % names, "<12> (.+)")
+            r"Your challenge intercepts %s's challenge\." % names,
+            "<12> (.+)",
+        )
 
         if self.connection.USCN:
-            self.connection.expect_n_lines(self.onObserveGameCreated,
-                                           r"You are now observing game \d+\.",
-                                           '', "<12> (.+)")
+            self.connection.expect_n_lines(
+                self.onObserveGameCreated,
+                r"You are now observing game \d+\.",
+                "",
+                "<12> (.+)",
+            )
         else:
             self.connection.expect_n_lines(
-                self.onObserveGameCreated, r"You are now observing game \d+\.",
-                r"Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)" %
-                (names, ratings, names, ratings, ratedexp), '', "<12> (.+)")
+                self.onObserveGameCreated,
+                r"You are now observing game \d+\.",
+                r"Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)"
+                % (names, ratings, names, ratings, ratedexp),
+                "",
+                "<12> (.+)",
+            )
 
-        self.connection.expect_fromto(self.onObserveGameMovesReceived,
-                                      r"Movelist for game (\d+):",
-                                      r"{Still in progress} \*")
+        self.connection.expect_fromto(
+            self.onObserveGameMovesReceived,
+            r"Movelist for game (\d+):",
+            r"{Still in progress} \*",
+        )
 
         self.connection.expect_fromto(
             self.onArchiveGameSMovesReceived,
             moveListHeader1Str,
             #                                       "\s*{((?:Game courtesyadjourned by (Black|White))|(?:Still in progress)|(?:Game adjourned by mutual agreement)|(?:(White|Black) lost connection; game adjourned)|(?:Game adjourned by ((?:server shutdown)|(?:adjudication)|(?:simul holder))))} \*")
-            r"\s*{.*(?:([Gg]ame.*adjourned.\s*)|(?:Still in progress)|(?:Neither.*)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*")
+            r"\s*{.*(?:([Gg]ame.*adjourned.\s*)|(?:Still in progress)|(?:Neither.*)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*",
+        )
 
         self.connection.expect_line(
-            self.onGamePause, r"Game (\d+): Game clock (paused|resumed)\.")
+            self.onGamePause, r"Game (\d+): Game clock (paused|resumed)\."
+        )
         self.connection.expect_line(
-            self.onUnobserveGame,
-            r"Removing game (\d+) from observation list\.")
+            self.onUnobserveGame, r"Removing game (\d+) from observation list\."
+        )
 
         self.connection.expect_line(
-            self.made_examined,
-            r"%s has made you an examiner of game (\d+)\." % names)
+            self.made_examined, r"%s has made you an examiner of game (\d+)\." % names
+        )
 
-        self.connection.expect_line(self.made_unexamined,
-                                    r"You are no longer examining game (\d+)\.")
+        self.connection.expect_line(
+            self.made_unexamined, r"You are no longer examining game (\d+)\."
+        )
 
         self.connection.expect_n_lines(
-            self.onExamineGameCreated, r"Starting a game in examine \(scratch\) mode\.",
-            '', "<12> (.+)")
+            self.onExamineGameCreated,
+            r"Starting a game in examine \(scratch\) mode\.",
+            "",
+            "<12> (.+)",
+        )
 
         self.queuedEmits = {}
         self.gamemodelStartedEvents = {}
@@ -405,7 +525,19 @@ class BoardManager(GObject.GObject):
         # Standard chess numbering
         fen += fields[25]
 
-        return gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen
+        return (
+            gameno,
+            relation,
+            curcol,
+            ply,
+            wname,
+            bname,
+            wms,
+            bms,
+            gain,
+            lastmove,
+            fen,
+        )
 
     def onStyle12(self, match):
         style12 = match.groups()[0]
@@ -424,15 +556,30 @@ class BoardManager(GObject.GObject):
             castleSigns = self.castleSigns[gameno]
         else:
             castleSigns = ("k", "q")
-        gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-            self.parseStyle12(style12, castleSigns)
+        (
+            gameno,
+            relation,
+            curcol,
+            ply,
+            wname,
+            bname,
+            wms,
+            bms,
+            gain,
+            lastmove,
+            fen,
+        ) = self.parseStyle12(style12, castleSigns)
 
         # examine starts with a <12> line only
         if lastmove is None and relation == IC_POS_EXAMINATING:
             pgnHead = [
-                ("Event", "FICS examined game"), ("Site", "freechess.org"),
-                ("White", wname), ("Black", bname), ("Result", "*"),
-                ("SetUp", "1"), ("FEN", fen)
+                ("Event", "FICS examined game"),
+                ("Site", "freechess.org"),
+                ("White", wname),
+                ("Black", bname),
+                ("Result", "*"),
+                ("SetUp", "1"),
+                ("FEN", fen),
             ]
             pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
             wplayer = self.connection.players.get(wname)
@@ -446,23 +593,27 @@ class BoardManager(GObject.GObject):
                     game.gameno = int(gameno)
                     game.relation = relation
                     # game.game_type = GAME_TYPES["examined"]
-                    log.debug("Start examine an existing game by %s" % style12,
-                              extra={"task": (self.connection.username, "BM.onStyle12")})
+                    log.debug(
+                        "Start examine an existing game by %s" % style12,
+                        extra={"task": (self.connection.username, "BM.onStyle12")},
+                    )
                 else:
                     # examine from console or got mexamine in observed game
                     no_smoves = True
-                    game = FICSGame(wplayer,
-                                    bplayer,
-                                    gameno=int(gameno),
-                                    game_type=GAME_TYPES["examined"],
-                                    minutes=0,
-                                    inc=0,
-                                    board=FICSBoard(0,
-                                                    0,
-                                                    pgn=pgn),
-                                    relation=relation)
-                    log.debug("Start new examine game by %s" % style12,
-                              extra={"task": (self.connection.username, "BM.onStyle12")})
+                    game = FICSGame(
+                        wplayer,
+                        bplayer,
+                        gameno=int(gameno),
+                        game_type=GAME_TYPES["examined"],
+                        minutes=0,
+                        inc=0,
+                        board=FICSBoard(0, 0, pgn=pgn),
+                        relation=relation,
+                    )
+                    log.debug(
+                        "Start new examine game by %s" % style12,
+                        extra={"task": (self.connection.username, "BM.onStyle12")},
+                    )
 
                 game = self.connection.games.get(game)
                 self.connection.examined_game = game
@@ -481,8 +632,12 @@ class BoardManager(GObject.GObject):
 
             else:
                 # don't start new game in puzzlebot/endgamebot when they just reuse gameno
-                log.debug("emit('boardSetup') with {} {} {} {}".format(gameno, fen, wname, bname),
-                          extra={"task": (self.connection.username, "BM.onStyle12")})
+                log.debug(
+                    "emit('boardSetup') with {} {} {} {}".format(
+                        gameno, fen, wname, bname
+                    ),
+                    extra={"task": (self.connection.username, "BM.onStyle12")},
+                )
                 self.emit("boardSetup", gameno, fen, wname, bname)
                 return
 
@@ -493,22 +648,35 @@ class BoardManager(GObject.GObject):
             # start a new game now or after smoves
             self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
             if no_smoves:
-                log.debug("emit('exGameCreated')",
-                          extra={"task": (self.connection.username, "BM.onStyle12")})
+                log.debug(
+                    "emit('exGameCreated')",
+                    extra={"task": (self.connection.username, "BM.onStyle12")},
+                )
                 self.emit("exGameCreated", game)
                 self.gamemodelStartedEvents[game.gameno].wait()
             else:
-                log.debug("send 'smoves' command",
-                          extra={"task": (self.connection.username, "BM.onStyle12")})
+                log.debug(
+                    "send 'smoves' command",
+                    extra={"task": (self.connection.username, "BM.onStyle12")},
+                )
                 if isinstance(game, FICSHistoryGame):
-                    self.connection.client.run_command("smoves {} {}".format(
-                        self.connection.history_owner, game.history_no))
+                    self.connection.client.run_command(
+                        "smoves {} {}".format(
+                            self.connection.history_owner, game.history_no
+                        )
+                    )
                 elif isinstance(game, FICSJournalGame):
-                    self.connection.client.run_command("smoves {} %{}".format(
-                        self.connection.journal_owner, game.journal_no))
+                    self.connection.client.run_command(
+                        "smoves {} %{}".format(
+                            self.connection.journal_owner, game.journal_no
+                        )
+                    )
                 elif isinstance(game, FICSAdjournedGame):
-                    self.connection.client.run_command("smoves {} {}".format(
-                        self.connection.stored_owner, game.opponent.name))
+                    self.connection.client.run_command(
+                        "smoves {} {}".format(
+                            self.connection.stored_owner, game.opponent.name
+                        )
+                    )
                 self.connection.client.run_command("forward 999")
         else:
             if gameno in self.connection.games.games_by_gameno:
@@ -517,17 +685,27 @@ class BoardManager(GObject.GObject):
                     # fics resend latest style12 line again when one player lost on time
                     return
                 if lastmove is None:
-                    log.debug("emit('boardSetup') with {} {} {} {}".format(gameno, fen, wname, bname),
-                              extra={"task": (self.connection.username, "BM.onStyle12")})
+                    log.debug(
+                        "emit('boardSetup') with {} {} {} {}".format(
+                            gameno, fen, wname, bname
+                        ),
+                        extra={"task": (self.connection.username, "BM.onStyle12")},
+                    )
                     self.emit("boardSetup", gameno, fen, wname, bname)
                 else:
-                    log.debug("put move %s into game.move_queue" % lastmove,
-                              extra={"task": (self.connection.username, "BM.onStyle12")})
-                    game.move_queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
+                    log.debug(
+                        "put move %s into game.move_queue" % lastmove,
+                        extra={"task": (self.connection.username, "BM.onStyle12")},
+                    )
+                    game.move_queue.put_nowait(
+                        (gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
+                    )
             else:
                 # In some cases (like lost on time) the last move is resent by FICS
                 # but game was already removed from self.connection.games
-                log.debug("Got {} but {} not in connection.games".format(style12, gameno))
+                log.debug(
+                    "Got {} but {} not in connection.games".format(style12, gameno)
+                )
 
     def onExamineGameCreated(self, matchlist):
         style12 = matchlist[-1].groups()[0]
@@ -535,30 +713,47 @@ class BoardManager(GObject.GObject):
 
         castleSigns = self.generateCastleSigns(style12, GAME_TYPES["examined"])
         self.castleSigns[gameno] = castleSigns
-        gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-            self.parseStyle12(style12, castleSigns)
+        (
+            gameno,
+            relation,
+            curcol,
+            ply,
+            wname,
+            bname,
+            wms,
+            bms,
+            gain,
+            lastmove,
+            fen,
+        ) = self.parseStyle12(style12, castleSigns)
 
         pgnHead = [
-            ("Event", "FICS examined game"), ("Site", "freechess.org"),
-            ("White", wname), ("Black", bname), ("Result", "*"),
-            ("SetUp", "1"), ("FEN", fen)
+            ("Event", "FICS examined game"),
+            ("Site", "freechess.org"),
+            ("White", wname),
+            ("Black", bname),
+            ("Result", "*"),
+            ("SetUp", "1"),
+            ("FEN", fen),
         ]
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
         wplayer = self.connection.players.get(wname)
         bplayer = self.connection.players.get(bname)
 
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=int(gameno),
-                        game_type=GAME_TYPES["examined"],
-                        minutes=0,
-                        inc=0,
-                        board=FICSBoard(0,
-                                        0,
-                                        pgn=pgn),
-                        relation=relation)
-        log.debug("Starting a game in examine (scratch) mode.",
-                  extra={"task": (self.connection.username, "BM.onExamineGameCreated")})
+        game = FICSGame(
+            wplayer,
+            bplayer,
+            gameno=int(gameno),
+            game_type=GAME_TYPES["examined"],
+            minutes=0,
+            inc=0,
+            board=FICSBoard(0, 0, pgn=pgn),
+            relation=relation,
+        )
+        log.debug(
+            "Starting a game in examine (scratch) mode.",
+            extra={"task": (self.connection.username, "BM.onExamineGameCreated")},
+        )
         self.connection.examined_game = game
         game = self.connection.games.get(game)
 
@@ -568,8 +763,10 @@ class BoardManager(GObject.GObject):
 
         # start a new game now
         self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
-        log.debug("emit('exGameCreated')",
-                  extra={"task": (self.connection.username, "BM.onExamineGameCreated")})
+        log.debug(
+            "emit('exGameCreated')",
+            extra={"task": (self.connection.username, "BM.onExamineGameCreated")},
+        )
         self.emit("exGameCreated", game)
         self.gamemodelStartedEvents[game.gameno].wait()
 
@@ -599,7 +796,7 @@ class BoardManager(GObject.GObject):
     nonoWhileExamine.BLKCMD = BLKCMD_SEEK
 
     def matchDeclined(self, match):
-        decliner, = match.groups()
+        (decliner,) = match.groups()
         decliner = self.connection.players.get(decliner)
         self.emit("matchDeclined", decliner)
 
@@ -615,11 +812,13 @@ class BoardManager(GObject.GObject):
 
     def onPlayGameCreated(self, matchlist):
         log.debug(
-            "'%s' '%s' '%s'" %
-            (matchlist[0].string, matchlist[1].string, matchlist[-1].string),
-            extra={"task": (self.connection.username, "BM.onPlayGameCreated")})
+            "'%s' '%s' '%s'"
+            % (matchlist[0].string, matchlist[1].string, matchlist[-1].string),
+            extra={"task": (self.connection.username, "BM.onPlayGameCreated")},
+        )
         wname, wrating, bname, brating, rated, match_type, minutes, inc = matchlist[
-            0].groups()
+            0
+        ].groups()
         item = 2 if self.connection.USCN else 1
         gameno, wname, bname, rated, match_type = matchlist[item].groups()
         gameno = int(gameno)
@@ -638,19 +837,30 @@ class BoardManager(GObject.GObject):
         style12 = matchlist[-1].groups()[0]
         castleSigns = self.generateCastleSigns(style12, game_type)
         self.castleSigns[gameno] = castleSigns
-        gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-            self.parseStyle12(style12, castleSigns)
+        (
+            gameno,
+            relation,
+            curcol,
+            ply,
+            wname,
+            bname,
+            wms,
+            bms,
+            gain,
+            lastmove,
+            fen,
+        ) = self.parseStyle12(style12, castleSigns)
 
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=gameno,
-                        rated=rated,
-                        game_type=game_type,
-                        minutes=int(minutes),
-                        inc=int(inc),
-                        board=FICSBoard(wms,
-                                        bms,
-                                        fen=fen))
+        game = FICSGame(
+            wplayer,
+            bplayer,
+            gameno=gameno,
+            rated=rated,
+            game_type=game_type,
+            minutes=int(minutes),
+            inc=int(inc),
+            board=FICSBoard(wms, bms, fen=fen),
+        )
 
         game = self.connection.games.get(game)
 
@@ -672,8 +882,13 @@ class BoardManager(GObject.GObject):
                     self.connection.glm.on_seek_remove(sr.match(line))
                 elif line.startswith("<pr>"):
                     self.connection.om.onOfferRemove(pr.match(line))
-            self.onPlayGameCreated((creating0.match(matchlist[
-                -4]), creating1.match(matchlist[-3]), matchlist[-1]))
+            self.onPlayGameCreated(
+                (
+                    creating0.match(matchlist[-4]),
+                    creating1.match(matchlist[-3]),
+                    matchlist[-1],
+                )
+            )
         else:
             self.connection.glm.on_seek_add(matchlist[-1])
 
@@ -787,8 +1002,11 @@ class BoardManager(GObject.GObject):
         if in_progress:
             gameno = int(matchlist[index].groups()[0])
             index += 2
-        header1 = matchlist[index] if isinstance(matchlist[index], str) \
+        header1 = (
+            matchlist[index]
+            if isinstance(matchlist[index], str)
             else matchlist[index].group()
+        )
 
         matches = moveListHeader1.match(header1).groups()
         wname, wrating, bname, brating = matches[:4]
@@ -800,8 +1018,9 @@ class BoardManager(GObject.GObject):
 
         wrating = parseRating(wrating)
         brating = parseRating(brating)
-        rated, game_type, minutes, increment = \
-            moveListHeader2.match(matchlist[index + 1]).groups()
+        rated, game_type, minutes, increment = moveListHeader2.match(
+            matchlist[index + 1]
+        ).groups()
         minutes = int(minutes)
         increment = int(increment)
         game_type = GAME_TYPES[game_type]
@@ -828,15 +1047,28 @@ class BoardManager(GObject.GObject):
         if matchlist[index].startswith("<12>"):
             style12 = matchlist[index][5:]
             castleSigns = self.generateCastleSigns(style12, game_type)
-            gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, \
-                fen = self.parseStyle12(style12, castleSigns)
+            (
+                gameno,
+                relation,
+                curcol,
+                ply,
+                wname,
+                bname,
+                wms,
+                bms,
+                gain,
+                lastmove,
+                fen,
+            ) = self.parseStyle12(style12, castleSigns)
             initialfen = fen
             movesstart = index + 4
         else:
             if game_type.rating_type == TYPE_WILD:
                 # we need a style12 start position to correctly parse a wild/* board
-                log.error("BoardManager.parseGame: no style12 for %s board." %
-                          game_type.fics_name)
+                log.error(
+                    "BoardManager.parseGame: no style12 for %s board."
+                    % game_type.fics_name
+                )
                 return None
             castleSigns = ("k", "q")
             initialfen = None
@@ -851,44 +1083,81 @@ class BoardManager(GObject.GObject):
 
         for line in matchlist[movesstart:-1]:
             if not moveListMoves.match(line):
-                log.error("BoardManager.parseGame: unmatched line: \"%s\"" %
-                          repr(line))
-                raise Exception("BoardManager.parseGame: unmatched line: \"%s\"" % repr(line))
-            moveno, wmove, whour, wmin, wsec, wmsec, bmove, bhour, bmin, bsec, bmsec = \
-                moveListMoves.match(line).groups()
+                log.error('BoardManager.parseGame: unmatched line: "%s"' % repr(line))
+                raise Exception(
+                    'BoardManager.parseGame: unmatched line: "%s"' % repr(line)
+                )
+            (
+                moveno,
+                wmove,
+                whour,
+                wmin,
+                wsec,
+                wmsec,
+                bmove,
+                bhour,
+                bmin,
+                bsec,
+                bmsec,
+            ) = moveListMoves.match(line).groups()
             whour = 0 if whour is None else int(whour[0])
             bhour = 0 if bhour is None else int(bhour[0])
             ply = int(moveno) * 2 - 2
             if wmove:
                 moves[ply] = wmove
-                wms -= (int(whour) * 60 * 60 * 1000) + (
-                    int(wmin) * 60 * 1000) + (int(wsec) * 1000)
+                wms -= (
+                    (int(whour) * 60 * 60 * 1000)
+                    + (int(wmin) * 60 * 1000)
+                    + (int(wsec) * 1000)
+                )
                 if wmsec is not None:
                     wms -= int(wmsec)
                 else:
                     wmsec = 0
                 if increment > 0:
-                    wms += (increment * 1000)
-                times[ply] = "%01d:%02d:%02d.%03d" % (int(whour), int(wmin),
-                                                      int(wsec), int(wmsec))
+                    wms += increment * 1000
+                times[ply] = "%01d:%02d:%02d.%03d" % (
+                    int(whour),
+                    int(wmin),
+                    int(wsec),
+                    int(wmsec),
+                )
             if bmove:
                 moves[ply + 1] = bmove
-                bms -= (int(bhour) * 60 * 60 * 1000) + (
-                    int(bmin) * 60 * 1000) + (int(bsec) * 1000)
+                bms -= (
+                    (int(bhour) * 60 * 60 * 1000)
+                    + (int(bmin) * 60 * 1000)
+                    + (int(bsec) * 1000)
+                )
                 if bmsec is not None:
                     bms -= int(bmsec)
                 else:
                     bmsec = 0
                 if increment > 0:
-                    bms += (increment * 1000)
+                    bms += increment * 1000
                 times[ply + 1] = "%01d:%02d:%02d.%03d" % (
-                    int(bhour), int(bmin), int(bsec), int(bmsec))
+                    int(bhour),
+                    int(bmin),
+                    int(bsec),
+                    int(bmsec),
+                )
 
         if in_progress and gameno in self.queuedStyle12s:
             # Apply queued board updates
             for style12 in self.queuedStyle12s[gameno]:
-                gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                    self.parseStyle12(style12, castleSigns)
+                (
+                    gameno,
+                    relation,
+                    curcol,
+                    ply,
+                    wname,
+                    bname,
+                    wms,
+                    bms,
+                    gain,
+                    lastmove,
+                    fen,
+                ) = self.parseStyle12(style12, castleSigns)
                 if lastmove is None:
                     continue
                 moves[ply - 1] = lastmove
@@ -899,8 +1168,7 @@ class BoardManager(GObject.GObject):
             del self.queuedStyle12s[gameno]
 
         pgnHead = [
-            ("Event", "FICS %s %s game" %
-             (rated.lower(), game_type.fics_name)),
+            ("Event", "FICS %s %s game" % (rated.lower(), game_type.fics_name)),
             ("Site", "freechess.org"),
             ("White", wname),
             ("Black", bname),
@@ -927,8 +1195,7 @@ class BoardManager(GObject.GObject):
             # "Event" header.
         elif game_type.variant_type == CRAZYHOUSECHESS:
             pgnHead += [("Variant", "Crazyhouse")]
-        elif game_type.variant_type in (WILDCASTLECHESS,
-                                        WILDCASTLESHUFFLECHESS):
+        elif game_type.variant_type in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
             pgnHead += [("Variant", "Wildcastle")]
         elif game_type.variant_type == ATOMICCHESS:
             pgnHead += [("Variant", "Atomic")]
@@ -954,16 +1221,16 @@ class BoardManager(GObject.GObject):
             if player.ratings[game_type.rating_type] != rating:
                 player.ratings[game_type.rating_type] = rating
                 player.emit("ratings_changed", game_type.rating_type, player)
-        game = gameclass(wplayer,
-                         bplayer,
-                         game_type=game_type,
-                         result=result,
-                         rated=(rated.lower() == "rated"),
-                         minutes=minutes,
-                         inc=increment,
-                         board=FICSBoard(wms,
-                                         bms,
-                                         pgn=pgn))
+        game = gameclass(
+            wplayer,
+            bplayer,
+            game_type=game_type,
+            result=result,
+            rated=(rated.lower() == "rated"),
+            minutes=minutes,
+            inc=increment,
+            board=FICSBoard(wms, bms, pgn=pgn),
+        )
 
         if in_progress:
             game.gameno = gameno
@@ -977,10 +1244,7 @@ class BoardManager(GObject.GObject):
 
     def on_game_remove(self, match):
         gameno, wname, bname, comment, result = match.groups()
-        result, reason = parse_reason(
-            reprResult.index(result),
-            comment,
-            wname=wname)
+        result, reason = parse_reason(reprResult.index(result), comment, wname=wname)
 
         try:
             wplayer = self.connection.players.get(wname)
@@ -999,11 +1263,9 @@ class BoardManager(GObject.GObject):
             print("%s not in self.connections.players - creating" % bname)
             bplayer = FICSPlayer(bname)
 
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=int(gameno),
-                        result=result,
-                        reason=reason)
+        game = FICSGame(
+            wplayer, bplayer, gameno=int(gameno), result=result, reason=reason
+        )
         if wplayer.game is not None:
             game.rated = wplayer.game.rated
         game = self.connection.games.get(game, emit=False)
@@ -1014,16 +1276,26 @@ class BoardManager(GObject.GObject):
         bplayer.game = None
 
     def onObserveGameCreated(self, matchlist):
-        log.debug("'%s'" % (matchlist[1].string),
-                  extra={"task": (self.connection.username,
-                                  "BM.onObserveGameCreated")})
+        log.debug(
+            "'%s'" % (matchlist[1].string),
+            extra={"task": (self.connection.username, "BM.onObserveGameCreated")},
+        )
         if self.connection.USCN:
             # TODO? is this ok?
             game_type = GAME_TYPES["blitz"]
             castleSigns = ("k", "q")
         else:
-            gameno, wname, wrating, bname, brating, rated, gametype, minutes, inc = matchlist[
-                1].groups()
+            (
+                gameno,
+                wname,
+                wrating,
+                bname,
+                brating,
+                rated,
+                gametype,
+                minutes,
+                inc,
+            ) = matchlist[1].groups()
             wrating = parseRating(wrating)
             brating = parseRating(brating)
             game_type = GAME_TYPES[gametype]
@@ -1031,8 +1303,19 @@ class BoardManager(GObject.GObject):
         style12 = matchlist[-1].groups()[0]
 
         castleSigns = self.generateCastleSigns(style12, game_type)
-        gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-            self.parseStyle12(style12, castleSigns)
+        (
+            gameno,
+            relation,
+            curcol,
+            ply,
+            wname,
+            bname,
+            wms,
+            bms,
+            gain,
+            lastmove,
+            fen,
+        ) = self.parseStyle12(style12, castleSigns)
         gameno = int(gameno)
         self.castleSigns[gameno] = castleSigns
 
@@ -1042,29 +1325,38 @@ class BoardManager(GObject.GObject):
         if relation == IC_POS_OBSERVING_EXAMINATION:
             pgnHead = [
                 ("Event", "FICS {} {} game".format(rated, game_type.fics_name)),
-                ("Site", "freechess.org"), ("White", wname), ("Black", bname),
-                ("Result", "*"), ("SetUp", "1"), ("FEN", fen)
+                ("Site", "freechess.org"),
+                ("White", wname),
+                ("Black", bname),
+                ("Result", "*"),
+                ("SetUp", "1"),
+                ("FEN", fen),
             ]
             pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
-            game = FICSGame(wplayer,
-                            bplayer,
-                            gameno=gameno,
-                            rated=rated == "rated",
-                            game_type=game_type,
-                            minutes=int(minutes),
-                            inc=int(inc),
-                            board=FICSBoard(wms,
-                                            bms,
-                                            pgn=pgn),
-                            relation=relation)
+            game = FICSGame(
+                wplayer,
+                bplayer,
+                gameno=gameno,
+                rated=rated == "rated",
+                game_type=game_type,
+                minutes=int(minutes),
+                inc=int(inc),
+                board=FICSBoard(wms, bms, pgn=pgn),
+                relation=relation,
+            )
             game = self.connection.games.get(game)
 
             # when puzzlebot reuses same gameno for starting next puzzle
             # sometimes no unexamine sent by server, so we have to set None to
             # self.connection.examined_game to guide self.onStyle12() a bit...
-            if self.connection.examined_game is not None and \
-                    self.connection.examined_game.gameno == gameno:
-                log.debug("BM.onObserveGameCreated: exGameReset emitted; self.connection.examined_game = %s" % gameno)
+            if (
+                self.connection.examined_game is not None
+                and self.connection.examined_game.gameno == gameno
+            ):
+                log.debug(
+                    "BM.onObserveGameCreated: exGameReset emitted; self.connection.examined_game = %s"
+                    % gameno
+                )
                 self.emit("exGameReset", self.connection.examined_game)
                 self.connection.examined_game = None
 
@@ -1077,24 +1369,26 @@ class BoardManager(GObject.GObject):
             self.emit("obsGameCreated", game)
             self.gamemodelStartedEvents[game.gameno].wait()
         else:
-            game = FICSGame(wplayer,
-                            bplayer,
-                            gameno=gameno,
-                            rated=rated == "rated",
-                            game_type=game_type,
-                            minutes=int(minutes),
-                            inc=int(inc),
-                            relation=relation)
+            game = FICSGame(
+                wplayer,
+                bplayer,
+                gameno=gameno,
+                rated=rated == "rated",
+                game_type=game_type,
+                minutes=int(minutes),
+                inc=int(inc),
+                relation=relation,
+            )
             game = self.connection.games.get(game, emit=False)
 
             if not game.supported:
-                log.warning("Trying to follow an unsupported type game %s" %
-                            game.game_type)
+                log.warning(
+                    "Trying to follow an unsupported type game %s" % game.game_type
+                )
                 return
 
             if game.gameno in self.gamemodelStartedEvents:
-                log.warning("%s already in gamemodelstartedevents" %
-                            game.gameno)
+                log.warning("%s already in gamemodelstartedevents" % game.gameno)
                 return
 
             self.gamesImObserving[game] = wms, bms
@@ -1108,9 +1402,10 @@ class BoardManager(GObject.GObject):
     onObserveGameCreated.BLKCMD = BLKCMD_OBSERVE
 
     def onObserveGameMovesReceived(self, matchlist):
-        log.debug("'%s'" % (matchlist[0].string),
-                  extra={"task": (self.connection.username,
-                                  "BM.onObserveGameMovesReceived")})
+        log.debug(
+            "'%s'" % (matchlist[0].string),
+            extra={"task": (self.connection.username, "BM.onObserveGameMovesReceived")},
+        )
         game = self.parseGame(matchlist, FICSGame, in_progress=True)
         if game.gameno not in self.gamemodelStartedEvents:
             return
@@ -1132,19 +1427,20 @@ class BoardManager(GObject.GObject):
     onObserveGameMovesReceived.BLKCMD = BLKCMD_MOVES
 
     def onArchiveGameSMovesReceived(self, matchlist):
-        log.debug("'%s'" % (matchlist[0].string),
-                  extra={"task": (self.connection.username,
-                                  "BM.onArchiveGameSMovesReceived")})
-        klass = FICSAdjournedGame if "adjourn" in matchlist[-1].group(
-        ) else FICSHistoryGame
+        log.debug(
+            "'%s'" % (matchlist[0].string),
+            extra={
+                "task": (self.connection.username, "BM.onArchiveGameSMovesReceived")
+            },
+        )
+        klass = (
+            FICSAdjournedGame if "adjourn" in matchlist[-1].group() else FICSHistoryGame
+        )
         if self.connection.examined_game is not None:
             gameno = self.connection.examined_game.gameno
         else:
             gameno = None
-        game = self.parseGame(matchlist,
-                              klass,
-                              in_progress=False,
-                              gameno=gameno)
+        game = self.parseGame(matchlist, klass, in_progress=False, gameno=gameno)
         if game.gameno not in self.gamemodelStartedEvents:
             self.emit("archiveGamePreview", game)
             return
@@ -1173,7 +1469,8 @@ class BoardManager(GObject.GObject):
             if game.gameno in self.queuedEmits:
                 log.debug("BM.onGameEnd: %s: queuedEmits" % game)
                 self.queuedEmits[game.gameno].append(
-                    lambda: self.emit("obsGameEnded", game))
+                    lambda: self.emit("obsGameEnded", game)
+                )
             else:
                 if game.gameno in self.gamemodelStartedEvents:
                     self.gamemodelStartedEvents[game.gameno].wait()
@@ -1185,7 +1482,8 @@ class BoardManager(GObject.GObject):
         gameno = int(gameno)
         if gameno in self.queuedEmits:
             self.queuedEmits[gameno].append(
-                lambda: self.emit("gamePaused", gameno, state == "paused"))
+                lambda: self.emit("gamePaused", gameno, state == "paused")
+            )
         else:
             if gameno in self.gamemodelStartedEvents:
                 self.gamemodelStartedEvents[gameno].wait()
@@ -1222,21 +1520,21 @@ class BoardManager(GObject.GObject):
     req_not_fit_formula.BLKCMD = BLKCMD_MATCH
 
     def player_on_censor(self, match):
-        player, = match.groups()
+        (player,) = match.groups()
         player = self.connection.players.get(player)
         self.emit("player_on_censor", player)
 
     player_on_censor.BLKCMD = BLKCMD_MATCH
 
     def player_on_noplay(self, match):
-        player, = match.groups()
+        (player,) = match.groups()
         player = self.connection.players.get(player)
         self.emit("player_on_noplay", player)
 
     player_on_noplay.BLKCMD = BLKCMD_MATCH
 
     def made_examined(self, match):
-        """ Changing from observer to examiner """
+        """Changing from observer to examiner"""
         player, gameno = match.groups()
         gameno = int(gameno)
         try:
@@ -1246,11 +1544,11 @@ class BoardManager(GObject.GObject):
         self.emit("madeExamined", gameno)
 
     def made_unexamined(self, match):
-        """ You are no longer examine game """
+        """You are no longer examine game"""
         log.debug("BM.made_unexamined(): exGameReset emitted")
         self.emit("exGameReset", self.connection.examined_game)
         self.connection.examined_game = None
-        gameno, = match.groups()
+        (gameno,) = match.groups()
         gameno = int(gameno)
         try:
             self.connection.games.get_game_by_gameno(gameno)
@@ -1302,13 +1600,20 @@ class BoardManager(GObject.GObject):
 
 if __name__ == "__main__":
     from pychess.ic.FICSConnection import Connection
+
     con = Connection("", "", True, "", "")
     bm = BoardManager(con)
 
-    print(bm._BoardManager__parseStyle12(
-        "rkbrnqnb pppppppp -------- -------- -------- -------- PPPPPPPP RKBRNQNB W -1 1 1 1 1 0 161 GuestNPFS GuestMZZK -1 2 12 39 39 120 120 1 none (0:00) none 1 0 0",
-        ("d", "a")))
+    print(
+        bm._BoardManager__parseStyle12(
+            "rkbrnqnb pppppppp -------- -------- -------- -------- PPPPPPPP RKBRNQNB W -1 1 1 1 1 0 161 GuestNPFS GuestMZZK -1 2 12 39 39 120 120 1 none (0:00) none 1 0 0",
+            ("d", "a"),
+        )
+    )
 
-    print(bm._BoardManager__parseStyle12(
-        "rnbqkbnr pppp-ppp -------- ----p--- ----PP-- -------- PPPP--PP RNBQKBNR B 5 1 1 1 1 0 241 GuestGFFC GuestNXMP -4 2 12 39 39 120000 120000 1 none (0:00.000) none 0 0 0",
-        ("k", "q")))
+    print(
+        bm._BoardManager__parseStyle12(
+            "rnbqkbnr pppp-ppp -------- ----p--- ----PP-- -------- PPPP--PP RNBQKBNR B 5 1 1 1 1 0 241 GuestGFFC GuestNXMP -4 2 12 39 39 120000 120000 1 none (0:00.000) none 0 0 0",
+            ("k", "q"),
+        )
+    )

@@ -51,11 +51,12 @@ upkeys = list(map(Gdk.keyval_from_name, ("Up", "KP_Up")))
 downkeys = list(map(Gdk.keyval_from_name, ("Down", "KP_Down")))
 homekeys = list(map(Gdk.keyval_from_name, ("Home", "KP_Home")))
 endkeys = list(map(Gdk.keyval_from_name, ("End", "KP_End")))
-functionkeys = [Gdk.keyval_from_name(k)
-                for k in ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9",
-                          "F10", "F11")]
+functionkeys = [
+    Gdk.keyval_from_name(k)
+    for k in ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11")
+]
 
-TARGET_TYPE_URI_LIST = 0xbadbeef
+TARGET_TYPE_URI_LIST = 0xBADBEEF
 DRAG_ACTION = Gdk.DragAction.COPY
 DRAG_RESTRICT = Gtk.TargetFlags.OTHER_APP
 DND_LIST = [Gtk.TargetEntry.new("text/uri-list", DRAG_RESTRICT, TARGET_TYPE_URI_LIST)]
@@ -66,11 +67,12 @@ class GladeHandlers:
         self.app = app
 
     def on_window_key_press(self, window, event):
-        log.debug('on_window_key_press: {} {}'.format(window.get_title(), event))
+        log.debug("on_window_key_press: {} {}".format(window.get_title(), event))
 
         # debug leaking memory
         if Gdk.keyval_name(event.keyval) == "F12":
             from pychess.System.debug import print_obj_referrers, print_muppy_sumary
+
             if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
                 print_muppy_sumary()
             else:
@@ -89,29 +91,31 @@ class GladeHandlers:
                 if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
                     child = persp.getheadbook().get_nth_page(page_num)
                     if event.keyval == Gdk.KEY_Page_Up:
-                        persp.getheadbook().reorder_child(child, (
-                            page_num - 1) % pagecount)
+                        persp.getheadbook().reorder_child(
+                            child, (page_num - 1) % pagecount
+                        )
                         return True
                     elif event.keyval == Gdk.KEY_Page_Down:
-                        persp.getheadbook().reorder_child(child, (
-                            page_num + 1) % pagecount)
+                        persp.getheadbook().reorder_child(
+                            child, (page_num + 1) % pagecount
+                        )
                         return True
                 # Change selected
                 else:
                     if event.keyval == Gdk.KEY_Page_Up:
-                        persp.getheadbook().set_current_page(
-                            (page_num - 1) % pagecount)
+                        persp.getheadbook().set_current_page((page_num - 1) % pagecount)
                         return True
                     elif event.keyval == Gdk.KEY_Page_Down:
-                        persp.getheadbook().set_current_page(
-                            (page_num + 1) % pagecount)
+                        persp.getheadbook().set_current_page((page_num + 1) % pagecount)
                         return True
 
         gmwidg = persp.cur_gmwidg()
         if gmwidg is not None:
             # Let default handler work if typing inside entry widgets
             current_focused_widget = gamewidget.getWidgets()["main_window"].get_focus()
-            if current_focused_widget is not None and isinstance(current_focused_widget, Gtk.Entry):
+            if current_focused_widget is not None and isinstance(
+                current_focused_widget, Gtk.Entry
+            ):
                 return False
 
             # Prevent moving in game while lesson not finished
@@ -142,10 +146,12 @@ class GladeHandlers:
                 gmwidg.board.view.showLast()
                 return True
 
-            if (not event.get_state() & Gdk.ModifierType.CONTROL_MASK) and \
-                    (not event.get_state() & Gdk.ModifierType.MOD1_MASK) and \
-                    (event.keyval != Gdk.KEY_Escape) and \
-                    (event.keyval not in functionkeys):
+            if (
+                (not event.get_state() & Gdk.ModifierType.CONTROL_MASK)
+                and (not event.get_state() & Gdk.ModifierType.MOD1_MASK)
+                and (event.keyval != Gdk.KEY_Escape)
+                and (event.keyval not in functionkeys)
+            ):
                 # Enter moves with keyboard
                 board_control = gmwidg.board
                 keyname = Gdk.keyval_name(event.keyval)
@@ -162,7 +168,9 @@ class GladeHandlers:
 
     # Drag 'n' Drop
 
-    def on_drag_received(self, widget, context, x, y, selection, target_type, timestamp):
+    def on_drag_received(
+        self, widget, context, x, y, selection, target_type, timestamp
+    ):
         if target_type == TARGET_TYPE_URI_LIST:
             NOTPROC, PARTIAL, FULL = range(3)
             status = NOTPROC
@@ -172,47 +180,47 @@ class GladeHandlers:
                 b = False
 
                 # Chess position
-                if fext == '.fen':
+                if fext == ".fen":
                     b = newGameDialog.loadFileAndRun(uri)
 
                 # Shortcut
-                elif fext in ['.url', '.desktop']:
+                elif fext in [".url", ".desktop"]:
                     # Preconf
-                    if fext == '.url':
-                        sectname = 'InternetShortcut'
+                    if fext == ".url":
+                        sectname = "InternetShortcut"
                         typeok = True
-                    elif fext == '.desktop':
-                        sectname = 'Desktop Entry'
+                    elif fext == ".desktop":
+                        sectname = "Desktop Entry"
                         typeok = False
                     else:
-                        assert(False)
+                        assert False
 
                     # Read the shortcut
                     filename = splitUri(uri)[1]
                     with open(filename) as file:
                         content = file.read()
-                    lines = content.replace("\r", '').split("\n")
+                    lines = content.replace("\r", "").split("\n")
 
                     # Extract the link
                     section = False
-                    link = ''
+                    link = ""
                     for item in lines:
                         # Header
-                        if item.startswith('['):
+                        if item.startswith("["):
                             if section:
                                 break
-                            section = item.startswith('[%s]' % sectname)
+                            section = item.startswith("[%s]" % sectname)
                         if not section:
                             continue
 
                         # Item
-                        if item.startswith('URL='):
+                        if item.startswith("URL="):
                             link = item[4:]
-                        if item.startswith('Type=Link') and fext == '.desktop':
+                        if item.startswith("Type=Link") and fext == ".desktop":
                             typeok = True
 
                     # Load the link
-                    if typeok and link != '':
+                    if typeok and link != "":
                         asyncio.create_task(get_internet_game(link))
                         b = True
 
@@ -231,15 +239,20 @@ class GladeHandlers:
                         status = PARTIAL
 
             # Feedback about the load
-            msg = ''
+            msg = ""
             if status == NOTPROC:
-                msg = _('All the links failed to fetch a relevant chess content.')
+                msg = _("All the links failed to fetch a relevant chess content.")
                 msgtype = Gtk.MessageType.ERROR
             elif status == PARTIAL:
-                msg = _('Some links were invalid.')
+                msg = _("Some links were invalid.")
                 msgtype = Gtk.MessageType.WARNING
-            if msg != '':
-                dlg = Gtk.MessageDialog(mainwindow(), type=msgtype, buttons=Gtk.ButtonsType.OK, message_format=msg)
+            if msg != "":
+                dlg = Gtk.MessageDialog(
+                    mainwindow(),
+                    type=msgtype,
+                    buttons=Gtk.ButtonsType.OK,
+                    message_format=msg,
+                )
                 dlg.run()
                 dlg.destroy()
 
@@ -273,7 +286,7 @@ class GladeHandlers:
         text = clipboard.wait_for_text()
         if text is not None:
             text = text.strip()
-            if text != '':
+            if text != "":
                 try:
                     pgn = PGNFile(StringIO(text))
                     pgn.loadToModel(None)
@@ -282,8 +295,10 @@ class GladeHandlers:
                 except Exception:
                     pass
         if not ok:
-            dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
-            dialog.set_markup(_('The clipboard contains no relevant chess data.'))
+            dialog = Gtk.MessageDialog(
+                mainwindow(), type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK
+            )
+            dialog.set_markup(_("The clipboard contains no relevant chess data."))
             dialog.run()
             dialog.destroy()
 
@@ -310,7 +325,9 @@ class GladeHandlers:
                     perspective.open_chessfile(filename)
 
     def on_remote_game_activate(self, widget):
-        url = getUserTextDialog(mainwindow(), _('Load a remote game'), _('Paste the link to download:'))
+        url = getUserTextDialog(
+            mainwindow(), _("Load a remote game"), _("Paste the link to download:")
+        )
         asyncio.create_task(get_internet_game(url))
 
     def on_save_game1_activate(self, widget):
@@ -366,7 +383,9 @@ class GladeHandlers:
                 perspective.closeAllGames(perspective.gamewidgets)
                 return True
         if perspective.closeAllGames(perspective.gamewidgets) in (
-                Gtk.ResponseType.OK, Gtk.ResponseType.YES):
+            Gtk.ResponseType.OK,
+            Gtk.ResponseType.YES,
+        ):
             ICLogon.stop()
             self.app.loop.stop()
             self.app.quit()
@@ -402,11 +421,15 @@ class GladeHandlers:
     def on_about1_activate(self, widget):
         about_dialog = gamewidget.getWidgets()["aboutdialog1"]
         response = about_dialog.run()
-        if response == Gtk.ResponseType.DELETE_EVENT or response == Gtk.ResponseType.CANCEL:
+        if (
+            response == Gtk.ResponseType.DELETE_EVENT
+            or response == Gtk.ResponseType.CANCEL
+        ):
             gamewidget.getWidgets()["aboutdialog1"].hide()
 
     def on_log_viewer1_activate(self, widget):
         from pychess.widgets import LogDialog
+
         if widget.get_active():
             LogDialog.show()
         else:
@@ -532,10 +555,20 @@ class GladeHandlers:
 
 
 class PyChess(Gtk.Application):
-    def __init__(self, log_viewer, purge_recent, chess_file, ics_host, ics_port, loop, splash, version_check):
-        Gtk.Application.__init__(self,
-                                 application_id="org.pychess",
-                                 flags=Gio.ApplicationFlags.NON_UNIQUE)
+    def __init__(
+        self,
+        log_viewer,
+        purge_recent,
+        chess_file,
+        ics_host,
+        ics_port,
+        loop,
+        splash,
+        version_check,
+    ):
+        Gtk.Application.__init__(
+            self, application_id="org.pychess", flags=Gio.ApplicationFlags.NON_UNIQUE
+        )
         self.loop = loop
 
         if ics_host:
@@ -577,9 +610,13 @@ class PyChess(Gtk.Application):
         log.info("Platform: %s" % platform.platform())
         log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
         log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
-        log.info("Gtk version: {}.{}.{}".format(Gtk.get_major_version(),
-                                            Gtk.get_minor_version(),
-                                            Gtk.get_micro_version()))
+        log.info(
+            "Gtk version: {}.{}.{}".format(
+                Gtk.get_major_version(),
+                Gtk.get_minor_version(),
+                Gtk.get_micro_version(),
+            )
+        )
 
     async def print_tasks(self):
         while True:
@@ -638,9 +675,15 @@ class PyChess(Gtk.Application):
         # Bring playing window to the front
         gamewidget.getWidgets()["main_window"].present()
 
-        self.loaded_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect("game_loaded", self.update_recent)
-        self.saved_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect("game_saved", self.update_recent)
-        self.terminated_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect("game_terminated", self.on_terminated)
+        self.loaded_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect(
+            "game_loaded", self.update_recent
+        )
+        self.saved_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect(
+            "game_saved", self.update_recent
+        )
+        self.terminated_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect(
+            "game_terminated", self.on_terminated
+        )
 
         log.debug("GladeHandlers.on_gmwidg_created: returning")
 
@@ -688,28 +731,36 @@ class PyChess(Gtk.Application):
         uistuff.keep(widgets["auto_call_flag"], "autoCallFlag")
 
         # Show main window and init d'n'd
-        widgets["main_window"].set_title('%s - PyChess' % _('Welcome'))
-        widgets["main_window"].connect("delete-event", self.glade_handlers.on_quit1_activate)
-        widgets["main_window"].connect("key-press-event", self.glade_handlers.on_window_key_press)
+        widgets["main_window"].set_title("%s - PyChess" % _("Welcome"))
+        widgets["main_window"].connect(
+            "delete-event", self.glade_handlers.on_quit1_activate
+        )
+        widgets["main_window"].connect(
+            "key-press-event", self.glade_handlers.on_window_key_press
+        )
 
-        uistuff.keepWindowSize("main", widgets["main_window"], None, uistuff.POSITION_GOLDEN)
+        uistuff.keepWindowSize(
+            "main", widgets["main_window"], None, uistuff.POSITION_GOLDEN
+        )
 
         # To get drag in the whole window, we add it to the menu and the
         # background. If it can be gotten to work, the drag_dest_set_proxy
         # method is very interesting.
         widgets["menubar1"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
         widgets["box2"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
-        widgets["perspectives_notebook"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
+        widgets["perspectives_notebook"].drag_dest_set(
+            Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION
+        )
 
         # Init 'minor' dialogs
 
         # Log dialog
         if log_viewer:
             from pychess.widgets import LogDialog
-            LogDialog.add_destroy_notify(
-                lambda: widgets["log_viewer1"].set_active(0))
+
+            LogDialog.add_destroy_notify(lambda: widgets["log_viewer1"].set_active(0))
         else:
-            widgets["log_viewer1"].set_property('sensitive', False)
+            widgets["log_viewer1"].set_property("sensitive", False)
 
         # About dialog
         self.aboutdialog = widgets["aboutdialog1"]
@@ -718,8 +769,14 @@ class PyChess(Gtk.Application):
         self.aboutdialog.set_version(VERSION_NAME + " " + VERSION)
         if isgit():
             try:
-                self.git_rev = subprocess.check_output(["git", "describe", "--tags"]).decode().strip()
-                self.aboutdialog.set_version('{} Git {}'.format(VERSION_NAME, self.git_rev))
+                self.git_rev = (
+                    subprocess.check_output(["git", "describe", "--tags"])
+                    .decode()
+                    .strip()
+                )
+                self.aboutdialog.set_version(
+                    "{} Git {}".format(VERSION_NAME, self.git_rev)
+                )
             except subprocess.CalledProcessError:
                 pass
         self.aboutdialog.set_comments(self.aboutdialog.get_comments())

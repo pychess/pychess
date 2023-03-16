@@ -8,8 +8,7 @@ from pychess.System.Log import log
 from pychess.widgets import mainwindow
 
 
-class UserInfoSection():
-
+class UserInfoSection:
     def __init__(self, widgets, connection, host, lounge):
         self.widgets = widgets
         self.connection = connection
@@ -24,10 +23,12 @@ class UserInfoSection():
         self.connection.fm.finger(self.connection.getUsername())
         self.connection.bm.connect(
             "curGameEnded",
-            lambda *args: self.connection.fm.finger(self.connection.getUsername()))
+            lambda *args: self.connection.fm.finger(self.connection.getUsername()),
+        )
 
-        self.widgets["usernameLabel"].set_markup("<b>%s</b>" %
-                                                 self.connection.getUsername())
+        self.widgets["usernameLabel"].set_markup(
+            "<b>%s</b>" % self.connection.getUsername()
+        )
 
     def _del(self):
         if self.pinger is not None:
@@ -54,8 +55,9 @@ class UserInfoSection():
         def label(value, xalign=0, is_error=False):
             if is_error:
                 label = Gtk.Label()
-                label.set_markup('<span size="larger" foreground="red">' +
-                                 value + "</span>")
+                label.set_markup(
+                    '<span size="larger" foreground="red">' + value + "</span>"
+                )
             else:
                 label = Gtk.Label(label=value)
             label.props.xalign = xalign
@@ -68,37 +70,56 @@ class UserInfoSection():
             if my_finger:
                 headers = (_("Rating"), _("Win"), _("Draw"), _("Loss"))
             else:
-                headers = (_("Rating"), _("Need") if self.connection.ICC else "RD", _("Win"), _("Draw"), _("Loss"), _("Best"))
+                headers = (
+                    _("Rating"),
+                    _("Need") if self.connection.ICC else "RD",
+                    _("Win"),
+                    _("Draw"),
+                    _("Loss"),
+                    _("Best"),
+                )
             for i, item in enumerate(headers):
                 table.attach(label(item, xalign=1), i + 1, i + 2, 0, 1)
             row += 1
             for rating_type, rating in finger.getRatings().items():
                 col = 0
-                ratinglabel = label(GAME_TYPES_BY_RATING_TYPE[
-                                    rating_type].display_text + ":")
+                ratinglabel = label(
+                    GAME_TYPES_BY_RATING_TYPE[rating_type].display_text + ":"
+                )
                 table.attach(ratinglabel, col, col + 1, row, row + 1)
                 col += 1
                 if rating_type is TYPE_WILD:
-                    ratinglabel.set_tooltip_text(_(
-                        "On FICS, your \"Wild\" rating encompasses all of the \
-                        following variants at all time controls:\n") +
-                        ", ".join([gt.display_text for gt in WildGameType.instances()]))
+                    ratinglabel.set_tooltip_text(
+                        _(
+                            'On FICS, your "Wild" rating encompasses all of the \
+                        following variants at all time controls:\n'
+                        )
+                        + ", ".join(
+                            [gt.display_text for gt in WildGameType.instances()]
+                        )
+                    )
                 table.attach(label(rating[ELO], xalign=1), col, col + 1, row, row + 1)
                 col += 1
                 if not my_finger:
-                    table.attach(label(rating[DEVIATION], xalign=1), col, col + 1, row, row + 1)
+                    table.attach(
+                        label(rating[DEVIATION], xalign=1), col, col + 1, row, row + 1
+                    )
                     col += 1
                 table.attach(label(rating[WINS], xalign=1), col, col + 1, row, row + 1)
                 col += 1
                 table.attach(label(rating[DRAWS], xalign=1), col, col + 1, row, row + 1)
                 col += 1
-                table.attach(label(rating[LOSSES], xalign=1), col, col + 1, row, row + 1)
+                table.attach(
+                    label(rating[LOSSES], xalign=1), col, col + 1, row, row + 1
+                )
                 col += 1
                 if not my_finger and len(rating) > BESTELO:
                     best = rating[BESTELO] if int(rating[BESTELO]) > 0 else ""
                     table.attach(label(best, xalign=1), col, col + 1, row, row + 1)
                     col += 1
-                    table.attach(label(rating[BESTTIME], xalign=1), col, col + 1, row, row + 1)
+                    table.attach(
+                        label(rating[BESTTIME], xalign=1), col, col + 1, row, row + 1
+                    )
                     col += 1
                 row += 1
 
@@ -120,7 +141,9 @@ class UserInfoSection():
             table.attach(label(_("Games") + ":"), 0, 1, row, row + 1)
             llabel = Gtk.Label()
             llabel.props.xalign = 0
-            link = "http://ficsgames.org/cgi-bin/search.cgi?player=%s" % finger.getName()
+            link = (
+                "http://ficsgames.org/cgi-bin/search.cgi?player=%s" % finger.getName()
+            )
             llabel.set_markup('<a href="{}">{}</a>'.format(link, link))
             table.attach(llabel, 1, cols, row, row + 1)
             row += 1
@@ -145,9 +168,10 @@ class UserInfoSection():
                 self.ping_label.props.xalign = 0
 
             def callback(pinger, pingtime):
-                log.debug("'{}' '{}'".format(str(self.pinger), str(pingtime)),
-                          extra={"task": (self.connection.username,
-                                          "UIS.oF.callback")})
+                log.debug(
+                    "'{}' '{}'".format(str(self.pinger), str(pingtime)),
+                    extra={"task": (self.connection.username, "UIS.oF.callback")},
+                )
                 if isinstance(pingtime, str):
                     self.ping_label.set_text(pingtime)
                 elif pingtime == -1:
@@ -165,8 +189,9 @@ class UserInfoSection():
 
         if not my_finger:
             if self.lounge.finger_sent:
-                dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
-                                           buttons=Gtk.ButtonsType.OK)
+                dialog = Gtk.MessageDialog(
+                    mainwindow(), type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK
+                )
                 dialog.set_title(_("Finger"))
                 dialog.set_markup("<b>%s</b>" % finger.getName())
                 table.show_all()
@@ -185,19 +210,23 @@ class UserInfoSection():
             label0.props.width_request = 300
             if self.connection.ICC:
                 reg = "https://store.chessclub.com/customer/account/create/"
-                txt = _("You are currently logged in as a guest but " +
-                        "there is a completely free trial for 30 days, " +
-                        "and beyond that, there is no charge and " +
-                        "the account would remain active with the ability to play games. " +
-                        "(With some restrictions. For example, no premium videos, " +
-                        "some limitations in channels, and so on.) " +
-                        "To register an account, go to ")
+                txt = _(
+                    "You are currently logged in as a guest but "
+                    + "there is a completely free trial for 30 days, "
+                    + "and beyond that, there is no charge and "
+                    + "the account would remain active with the ability to play games. "
+                    + "(With some restrictions. For example, no premium videos, "
+                    + "some limitations in channels, and so on.) "
+                    + "To register an account, go to "
+                )
             else:
                 reg = "http://www.freechess.org/Register/index.html"
-                txt = _("You are currently logged in as a guest. " +
-                        "A guest can't play rated games and therefore isn't " +
-                        "able to play as many of the types of matches offered as " +
-                        "a registered user. To register an account, go to ")
+                txt = _(
+                    "You are currently logged in as a guest. "
+                    + "A guest can't play rated games and therefore isn't "
+                    + "able to play as many of the types of matches offered as "
+                    + "a registered user. To register an account, go to "
+                )
 
             label0.set_markup('{} <a href="{}">{}</a>.'.format(txt, reg, reg))
             vbox.add(label0)

@@ -2,10 +2,17 @@ from gi.repository import Gtk
 
 
 def getUserTextDialog(parent, title, description):
-    dialog = Gtk.Dialog(title, parent,
-                        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                         Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+    dialog = Gtk.Dialog(
+        title,
+        parent,
+        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+        (
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OK,
+            Gtk.ResponseType.ACCEPT,
+        ),
+    )
     dialog.set_resizable(False)
     dialog.set_size_request(400, -1)
 
@@ -22,7 +29,7 @@ def getUserTextDialog(parent, title, description):
 
     dialog.get_content_area().pack_start(hbx, True, True, 5)
     dialog.show_all()
-    if (dialog.run() == Gtk.ResponseType.ACCEPT):
+    if dialog.run() == Gtk.ResponseType.ACCEPT:
         result = textedit.get_text()
     else:
         result = None

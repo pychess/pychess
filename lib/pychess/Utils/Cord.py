@@ -11,10 +11,10 @@ class CordFormatException(Exception):
 
 class Cord:
     def __init__(self, var1, var2=None, color=None):
-        """ Inits a new highlevel cord object.
-            The cord B3 can be inited in the folowing ways:
-            Cord(17), Cord("b3"), Cord(1,2), Cord("b",3)
-            color can be one of "R", "G", "B", "Y"
+        """Inits a new highlevel cord object.
+        The cord B3 can be inited in the folowing ways:
+        Cord(17), Cord("b3"), Cord(1,2), Cord("b",3)
+        color can be one of "R", "G", "B", "Y"
         """
         self.color = color
         if var2 is None:
@@ -53,14 +53,14 @@ class Cord:
 
     def intToChar(self, x):
         # assert 0 <= x <= 7
-        return chr(x + ord('a'))
+        return chr(x + ord("a"))
 
     def charToInt(self, char):
         ord_char = ord(char)
-        if ord('A') <= ord_char <= ord('H'):
-            ord_char -= ord('A')
-        elif ord('a') <= ord_char <= ord('h'):
-            ord_char -= ord('a')
+        if ord("A") <= ord_char <= ord("H"):
+            ord_char -= ord("A")
+        elif ord("a") <= ord_char <= ord("h"):
+            ord_char -= ord("a")
         else:
             raise CordFormatException("x < 0 || x > 7 (%s, %d)" % (char, ord_char))
         return ord_char

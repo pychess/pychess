@@ -9,7 +9,7 @@ PGN_ENCODING = "latin_1"
 
 def splitUri(uri):
     uri = unquote(uri)  # escape special chars
-    uri = uri.strip('\r\n\x00')  # remove \r\n and NULL
+    uri = uri.strip("\r\n\x00")  # remove \r\n and NULL
     if sys.platform == "win32":
         return uri.split(":///")
     else:
@@ -17,7 +17,7 @@ def splitUri(uri):
 
 
 def protoopen(uri, encoding=PGN_ENCODING):
-    """ Function for opening many things """
+    """Function for opening many things"""
     splitted = splitUri(uri)
 
     if splitted[0] == "file":
@@ -25,7 +25,9 @@ def protoopen(uri, encoding=PGN_ENCODING):
 
     try:
         handle = open(unquote(uri), encoding=encoding, newline="")
-        handle.pgn_encoding = "utf-8" if os.path.basename(uri).startswith("lichess_") else encoding
+        handle.pgn_encoding = (
+            "utf-8" if os.path.basename(uri).startswith("lichess_") else encoding
+        )
         return handle
     except OSError:
         pass
@@ -39,7 +41,7 @@ def protoopen(uri, encoding=PGN_ENCODING):
 
 
 def protosave(uri, append=False):
-    """ Function for saving many things """
+    """Function for saving many things"""
 
     splitted = splitUri(uri)
 
@@ -56,7 +58,7 @@ def protosave(uri, append=False):
 
 
 def isWriteable(uri):
-    """ Returns true if protoopen can open a write pipe to the uri """
+    """Returns true if protoopen can open a write pipe to the uri"""
 
     splitted = splitUri(uri)
 

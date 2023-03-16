@@ -16,8 +16,7 @@ class BitboardTestCase(unittest.TestCase):
             for length in range(64):
                 if length:
                     positions = random.sample(range(64), length)
-                    board = reduce(operator.or_, (1 << (63 - i)
-                                                  for i in positions))
+                    board = reduce(operator.or_, (1 << (63 - i) for i in positions))
                     self.positionSets.append((positions, board))
                 else:
                     self.positionSets.append(([], 0))
@@ -53,5 +52,5 @@ class BitboardTestCase(unittest.TestCase):
             self.assertEqual(positions, itered)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

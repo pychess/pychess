@@ -14,10 +14,32 @@ from sqlalchemy import String
 from pychess.external.scoutfish import Scoutfish
 from pychess.external.chess_db import Parser
 
-from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
-    WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE, \
-    ABORTED_REASONS, ADJOURNED_REASONS, ADJUDICATION_REASONS, WON_ADJUDICATION, DEATH_REASONS, CALLFLAG_REASONS, \
-    RUNNING, TOOL_NONE, TOOL_CHESSDB, TOOL_SCOUTFISH
+from pychess.Utils.const import (
+    WHITE,
+    BLACK,
+    reprResult,
+    FEN_START,
+    FEN_EMPTY,
+    WON_RESIGN,
+    DRAW,
+    BLACKWON,
+    WHITEWON,
+    NORMALCHESS,
+    DRAW_AGREE,
+    FIRST_PAGE,
+    PREV_PAGE,
+    NEXT_PAGE,
+    ABORTED_REASONS,
+    ADJOURNED_REASONS,
+    ADJUDICATION_REASONS,
+    WON_ADJUDICATION,
+    DEATH_REASONS,
+    CALLFLAG_REASONS,
+    RUNNING,
+    TOOL_NONE,
+    TOOL_CHESSDB,
+    TOOL_SCOUTFISH,
+)
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import PGN_ENCODING
@@ -35,7 +57,13 @@ from pychess.Savers.database import col2label, TagDatabase, parseDateTag
 from pychess.System.cpu import get_cpu
 from pychess.Database import model as dbmodel
 from pychess.Database.PgnImport import TAG_REGEX, pgn2Const, PgnImport
-from pychess.Database.model import game, create_indexes, drop_indexes, metadata, ini_schema_version
+from pychess.Database.model import (
+    game,
+    create_indexes,
+    drop_indexes,
+    metadata,
+    ini_schema_version,
+)
 
 __label__ = _("Chess Game")
 __ending__ = "pgn"
@@ -43,11 +71,20 @@ __append__ = True
 
 
 # token categories
-COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
-    VARIATION_START, VARIATION_END, \
-    RESULT, FULL_MOVE, MOVE, MOVE_COMMENT = range(1, 10)
+(
+    COMMENT_REST,
+    COMMENT_BRACE,
+    COMMENT_NAG,
+    VARIATION_START,
+    VARIATION_END,
+    RESULT,
+    FULL_MOVE,
+    MOVE,
+    MOVE_COMMENT,
+) = range(1, 10)
 
-pattern = re.compile(r"""
+pattern = re.compile(
+    r"""
     (\;.*?[\n\r])        # comment, rest of line style
     |(\{.*?\})           # comment, between {}
     |(\$[0-9]+)          # comment, Numeric Annotation Glyph
@@ -63,9 +100,13 @@ pattern = re.compile(r"""
     |\-\-)               # non standard '--' is used for null move inside variations
     ([\?!]{1,2})*
     )    # move (full, count, move with ?!, ?!)
-    """, re.VERBOSE | re.DOTALL)
+    """,
+    re.VERBOSE | re.DOTALL,
+)
 
-move_eval_re = re.compile(r"\[%eval\s+([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]")
+move_eval_re = re.compile(
+    r"\[%eval\s+([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]"
+)
 move_time_re = re.compile(r"\[%emt\s+(\d:)?(\d{1,2}:)?(\d{1,4})(?:\.(\d{1,3}))?\]")
 
 # Chessbase style circles/arrows {[%csl Ra3][%cal Gc2c3,Rc3d4]}
@@ -84,8 +125,9 @@ def msToClockTimeTag(ms):
     msec = ms % 1000
     sec = ((ms - msec) % (1000 * 60)) / 1000
     minute = ((ms - sec * 1000 - msec) % (1000 * 60 * 60)) / (1000 * 60)
-    hour = ((ms - minute * 1000 * 60 - sec * 1000 - msec) %
-            (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    hour = ((ms - minute * 1000 * 60 - sec * 1000 - msec) % (1000 * 60 * 60 * 24)) / (
+        1000 * 60 * 60
+    )
     return "%01d:%02d:%02d.%03d" % (hour, minute, sec, msec)
 
 
@@ -97,8 +139,12 @@ def parseClockTimeTag(tag):
     match = re.match(r"(\d{1,2}):(\d\d):(\d\d).(\d{1,3})", tag)
     if match:
         hour, minute, sec, msec = match.groups()
-        return int(msec) + int(sec) * 1000 + int(minute) * 60 * 1000 + int(
-            hour) * 60 * 60 * 1000
+        return (
+            int(msec)
+            + int(sec) * 1000
+            + int(minute) * 60 * 1000
+            + int(hour) * 60 * 60 * 1000
+        )
 
 
 def parseTimeControlTag(tag):
@@ -120,7 +166,7 @@ def parseTimeControlTag(tag):
 
 
 def save(handle, model, position=None, flip=False):
-    """ Saves the game from GameModel to .pgn """
+    """Saves the game from GameModel to .pgn"""
     processed_tags = []
 
     def write_tag(tag, value, roster=False):
@@ -130,7 +176,7 @@ def save(handle, model, position=None, flip=False):
         try:
             pval = str(value)
             pval = pval.replace("\\", "\\\\")
-            pval = pval.replace("\"", "\\\"")
+            pval = pval.replace('"', '\\"')
             print('[{} "{}"]'.format(tag, pval), file=handle)
         except UnicodeEncodeError:
             pval = bytes(pval, "utf-8").decode(PGN_ENCODING, errors="ignore")
@@ -186,13 +232,23 @@ def save(handle, model, position=None, flip=False):
         welo = model.tags["WhiteElo"]
         belo = model.tags["BlackElo"]
         if welo != "" and belo != "":
-            write_tag("WhiteRatingDiff", get_elo_rating_change_pgn(model, WHITE))  # Unofficial
-            write_tag("BlackRatingDiff", get_elo_rating_change_pgn(model, BLACK))  # Unofficial
+            write_tag(
+                "WhiteRatingDiff", get_elo_rating_change_pgn(model, WHITE)
+            )  # Unofficial
+            write_tag(
+                "BlackRatingDiff", get_elo_rating_change_pgn(model, BLACK)
+            )  # Unofficial
 
     # Time
     if model.timed:
-        write_tag('WhiteClock', msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)))
-        write_tag('BlackClock', msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)))
+        write_tag(
+            "WhiteClock",
+            msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)),
+        )
+        write_tag(
+            "BlackClock",
+            msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)),
+        )
 
     # Write all the unprocessed tags
     for tag in model.tags:
@@ -222,10 +278,25 @@ def save(handle, model, position=None, flip=False):
             # Space between each term
             last = text_buffer[-1:] if len(text_buffer) > 0 else ""
             crlf = last in ["\r", "\n"]
-            if not crlf and last != " " and last != "\t" and last != "(" and not text.startswith("\r") and not text.startswith("\n") and text != ")" and len(text_buffer) > 0:
+            if (
+                not crlf
+                and last != " "
+                and last != "\t"
+                and last != "("
+                and not text.startswith("\r")
+                and not text.startswith("\n")
+                and text != ")"
+                and len(text_buffer) > 0
+            ):
                 text_buffer += " "
             # New line for a new main move
-            if len(text_buffer) == 0 or (indented and depth == 0 and last != "\r" and last != "\n" and re.match(r"^[0-9]+\.", text) is not None):
+            if len(text_buffer) == 0 or (
+                indented
+                and depth == 0
+                and last != "\r"
+                and last != "\n"
+                and re.match(r"^[0-9]+\.", text) is not None
+            ):
                 text_buffer += os.linesep
                 crlf = True
             # Alignment
@@ -240,7 +311,7 @@ def save(handle, model, position=None, flip=False):
                 depth -= 1
     else:
         # Add new line to separate tag section and movetext
-        print('', file=handle)
+        print("", file=handle)
         text_buffer = textwrap.fill(" ".join(result), width=80)
 
     # Final
@@ -251,7 +322,7 @@ def save(handle, model, position=None, flip=False):
         text_buffer = bytes(text_buffer, "utf-8").decode(PGN_ENCODING, errors="ignore")
         print(text_buffer, status, file=handle)
     # Add new line to separate next game
-    print('', file=handle)
+    print("", file=handle)
 
     output = handle.getvalue() if isinstance(handle, StringIO) else ""
     handle.close()
@@ -260,12 +331,12 @@ def save(handle, model, position=None, flip=False):
 
 def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
     """Prepares a game data for .pgn storage.
-       Recursively walks the node tree to collect moves and comments
-       into a resulting movetext string.
+    Recursively walks the node tree to collect moves and comments
+    into a resulting movetext string.
 
-       Arguments:
-       node - list (a tree of lboards created by the pgn parser)
-       result - str (movetext strings)"""
+    Arguments:
+    node - list (a tree of lboards created by the pgn parser)
+    result - str (movetext strings)"""
 
     while True:
         if node is None:
@@ -279,9 +350,9 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
             node = node.next
             continue
 
-        movecount = move_count(node,
-                               black_periods=(save_emt or save_eval) and
-                               "TimeControl" in model.tags)
+        movecount = move_count(
+            node, black_periods=(save_emt or save_eval) and "TimeControl" in model.tags
+        )
         if movecount is not None:
             if movecount:
                 result.append(movecount)
@@ -291,7 +362,8 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
                 emt_eval = ""
                 if "TimeControl" in model.tags and save_emt:
                     elapsed = model.timemodel.getElapsedMoveTime(
-                        node.plyCount - model.lowply)
+                        node.plyCount - model.lowply
+                    )
                     emt_eval = "[%%emt %s]" % formatTime(elapsed, clk2pgn=True)
                 if node.plyCount in model.scores and save_eval:
                     moves, score, depth = model.scores[node.plyCount]
@@ -314,23 +386,13 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
                 # variations
                 if node.fen_was_applied:
                     result.append("(")
-                    walk(child[0],
-                         result,
-                         model,
-                         save_emt,
-                         save_eval,
-                         vari=True)
+                    walk(child[0], result, model, save_emt, save_eval, vari=True)
                     result.append(")")
                     # variation after last played move is not valid pgn
                     # but we will save it as in comment
                 else:
                     result.append("{%s:" % _("Analyzer's primary variation"))
-                    walk(child[0],
-                         result,
-                         model,
-                         save_emt,
-                         save_eval,
-                         vari=True)
+                    walk(child[0], result, model, save_emt, save_eval, vari=True)
                     result.append("}")
 
         if node.next:
@@ -347,8 +409,7 @@ def move_count(node, black_periods=False):
             mvcount = "%d." % (ply // 2 + 1)
         # initial game move, or initial variation move
         # it can be the same position as the main line! this is the reason using id()
-        elif node.prev.prev is None or id(node) != id(
-                node.prev.next) or black_periods:
+        elif node.prev.prev is None or id(node) != id(node.prev.next) or black_periods:
             mvcount = "%d..." % (ply // 2)
         elif node.prev.children:
             # move after real(not [%foo bar]) comment
@@ -375,20 +436,22 @@ def load(handle, progressbar=None):
 
 
 cpuinfo = get_cpu()
-MODERN = "-modern" if cpuinfo['popcnt'] else ""
+MODERN = "-modern" if cpuinfo["popcnt"] else ""
 
 altpath = getEngineDataPrefix()
 
 if sys.platform == "win32":
     scoutfish = "scoutfish_x64.exe"
 else:
-    scoutfish = "scoutfish_x{}{}{}".format(cpuinfo['bitness'], MODERN, cpuinfo['binext'])
+    scoutfish = "scoutfish_x{}{}{}".format(
+        cpuinfo["bitness"], MODERN, cpuinfo["binext"]
+    )
 scoutfish_path = shutil.which(scoutfish, mode=os.X_OK, path=altpath)
 
 if sys.platform == "win32":
     parser = "parser_x64.exe"
 else:
-    parser = "parser_x{}{}{}".format(cpuinfo['bitness'], MODERN, cpuinfo['binext'])
+    parser = "parser_x{}{}{}".format(cpuinfo["bitness"], MODERN, cpuinfo["binext"])
 chess_db_path = shutil.which(parser, mode=os.X_OK, path=altpath)
 
 
@@ -400,7 +463,9 @@ class PGNFile(ChessFile):
         self.pgn_is_string = isinstance(handle, StringIO)
 
         if self.pgn_is_string:
-            self.games = [self.load_game_tags(), ]
+            self.games = [
+                self.load_game_tags(),
+            ]
         else:
             self.skip = 0
             self.limit = 100
@@ -416,24 +481,29 @@ class PGNFile(ChessFile):
             self.scoutfish = None
             self.chess_db = None
 
-            self.sqlite_path = os.path.splitext(self.path)[0] + '.sqlite'
+            self.sqlite_path = os.path.splitext(self.path)[0] + ".sqlite"
             self.engine = dbmodel.get_engine(self.sqlite_path)
             self.tag_database = TagDatabase(self.engine)
 
             self.games, self.offs_ply = self.get_records(0)
-            log.info("{} contains {} game(s)".format(self.path, self.count), extra={"task": "SQL"})
+            log.info(
+                "{} contains {} game(s)".format(self.path, self.count),
+                extra={"task": "SQL"},
+            )
 
     def get_count(self):
-        """ Number of games in .pgn database """
+        """Number of games in .pgn database"""
         if self.pgn_is_string:
             return len(self.games)
         else:
             return self.tag_database.count
+
     count = property(get_count)
 
     def get_size(self):
-        """ Size of .pgn file in bytes """
+        """Size of .pgn file in bytes"""
         return os.path.getsize(self.path)
+
     size = property(get_size)
 
     def close(self):
@@ -441,11 +511,15 @@ class PGNFile(ChessFile):
         ChessFile.close(self)
 
     def init_tag_database(self, importer=None):
-        """ Create/open .sqlite database of game header tags """
+        """Create/open .sqlite database of game header tags"""
         # Import .pgn header tags to .sqlite database
 
         sqlite_path = self.path.replace(".pgn", ".sqlite")
-        if os.path.isfile(self.path) and os.path.isfile(sqlite_path) and getmtime(self.path) > getmtime(sqlite_path):
+        if (
+            os.path.isfile(self.path)
+            and os.path.isfile(sqlite_path)
+            and getmtime(self.path) > getmtime(sqlite_path)
+        ):
             metadata.drop_all(self.engine)
             metadata.create_all(self.engine)
             ini_schema_version(self.engine)
@@ -456,6 +530,7 @@ class PGNFile(ChessFile):
                 drop_indexes(self.engine)
             if self.progressbar is not None:
                 from gi.repository import GLib
+
                 GLib.idle_add(self.progressbar.set_text, _("Importing game headers..."))
             if importer is None:
                 importer = PgnImport(self)
@@ -467,17 +542,20 @@ class PGNFile(ChessFile):
         return importer
 
     def init_chess_db(self):
-        """ Create/open polyglot .bin file with extra win/loss/draw stats
-            using chess_db parser from https://github.com/mcostalba/chess_db
+        """Create/open polyglot .bin file with extra win/loss/draw stats
+        using chess_db parser from https://github.com/mcostalba/chess_db
         """
         if chess_db_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
                     from gi.repository import GLib
-                    GLib.idle_add(self.progressbar.set_text, _("Creating .bin index file..."))
-                self.chess_db = Parser(engine=(chess_db_path, ))
+
+                    GLib.idle_add(
+                        self.progressbar.set_text, _("Creating .bin index file...")
+                    )
+                self.chess_db = Parser(engine=(chess_db_path,))
                 self.chess_db.open(self.path)
-                bin_path = os.path.splitext(self.path)[0] + '.bin'
+                bin_path = os.path.splitext(self.path)[0] + ".bin"
                 if not os.path.isfile(bin_path):
                     log.debug("No valid games found in %s" % self.path)
                     self.chess_db = None
@@ -485,7 +563,11 @@ class PGNFile(ChessFile):
                     self.chess_db.make()
             except OSError as err:
                 self.chess_db = None
-                log.warning("Failed to sart chess_db parser. OSError {} {}".format(err.errno, err.strerror))
+                log.warning(
+                    "Failed to sart chess_db parser. OSError {} {}".format(
+                        err.errno, err.strerror
+                    )
+                )
             except pexpect.TIMEOUT:
                 self.chess_db = None
                 log.warning("chess_db parser failed (pexpect.TIMEOUT)")
@@ -494,22 +576,29 @@ class PGNFile(ChessFile):
                 log.warning("chess_db parser failed (pexpect.EOF)")
 
     def init_scoutfish(self):
-        """ Create/open .scout database index file to help querying
-            using scoutfish from https://github.com/mcostalba/scoutfish
+        """Create/open .scout database index file to help querying
+        using scoutfish from https://github.com/mcostalba/scoutfish
         """
         if scoutfish_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
                     from gi.repository import GLib
-                    GLib.idle_add(self.progressbar.set_text, _("Creating .scout index file..."))
-                self.scoutfish = Scoutfish(engine=(scoutfish_path, ))
+
+                    GLib.idle_add(
+                        self.progressbar.set_text, _("Creating .scout index file...")
+                    )
+                self.scoutfish = Scoutfish(engine=(scoutfish_path,))
                 self.scoutfish.open(self.path)
-                scout_path = os.path.splitext(self.path)[0] + '.scout'
+                scout_path = os.path.splitext(self.path)[0] + ".scout"
                 if getmtime(self.path) > getmtime(scout_path):
                     self.scoutfish.make()
             except OSError as err:
                 self.scoutfish = None
-                log.warning("Failed to sart scoutfish. OSError {} {}".format(err.errno, err.strerror))
+                log.warning(
+                    "Failed to sart scoutfish. OSError {} {}".format(
+                        err.errno, err.strerror
+                    )
+                )
             except pexpect.TIMEOUT:
                 self.scoutfish = None
                 log.warning("scoutfish failed (pexpect.TIMEOUT)")
@@ -518,12 +607,20 @@ class PGNFile(ChessFile):
                 log.warning("scoutfish failed (pexpect.EOF)")
 
     def get_book_moves(self, fen):
-        """ Get move-games-win-loss-draw stat of fen position """
+        """Get move-games-win-loss-draw stat of fen position"""
         rows = []
         if self.chess_db is not None:
             move_stat = self.chess_db.find("limit {} skip {} {}".format(1, 0, fen))
             for mstat in move_stat["moves"]:
-                rows.append((mstat["move"], int(mstat["games"]), int(mstat["wins"]), int(mstat["losses"]), int(mstat["draws"])))
+                rows.append(
+                    (
+                        mstat["move"],
+                        int(mstat["games"]),
+                        int(mstat["wins"]),
+                        int(mstat["losses"]),
+                        int(mstat["draws"]),
+                    )
+                )
         return rows
 
     def has_position(self, fen):
@@ -546,22 +643,22 @@ class PGNFile(ChessFile):
         self.tag_database.build_order_by(self.order_col, self.is_desc)
 
     def reset_last_seen(self):
-        col_max = "ZZZ" if isinstance(self.order_col.type, String) else 2 ** 32
+        col_max = "ZZZ" if isinstance(self.order_col.type, String) else 2**32
         col_min = "" if isinstance(self.order_col.type, String) else -1
         if self.is_desc:
-            self.last_seen = [(col_max, 2 ** 32)]
+            self.last_seen = [(col_max, 2**32)]
         else:
             self.last_seen = [(col_min, -1)]
 
     def set_tag_filter(self, query):
-        """ Set (now prefixing) text and
-            create where clause we will use to query header tag .sqlite database
+        """Set (now prefixing) text and
+        create where clause we will use to query header tag .sqlite database
         """
         self.tag_query = query
         self.tag_database.build_where_tags(self.tag_query)
 
     def set_fen_filter(self, fen):
-        """ Set fen string we will use to get game offsets from .bin database """
+        """Set fen string we will use to get game offsets from .bin database"""
         if self.chess_db is not None and fen is not None and fen != FEN_START:
             self.fen = fen
         else:
@@ -569,7 +666,7 @@ class PGNFile(ChessFile):
             self.tag_database.build_where_offs8(None)
 
     def set_scout_filter(self, query):
-        """ Set json string we will use to get game offsets from  .scout database """
+        """Set json string we will use to get game offsets from  .scout database"""
         if self.scoutfish is not None and query:
             self.scout_query = query
         else:
@@ -578,8 +675,8 @@ class PGNFile(ChessFile):
             self.offs_ply = {}
 
     def get_offs(self, skip, filtered_offs_list=None):
-        """ Get offsets from .scout database and
-            create where clause we will use to query header tag .sqlite database
+        """Get offsets from .scout database and
+        create where clause we will use to query header tag .sqlite database
         """
         if self.scout_query:
             limit = (10000 if self.tag_query else self.limit) + 1
@@ -615,16 +712,18 @@ class PGNFile(ChessFile):
                     i += 1
 
             if len(offsets) > self.limit:
-                self.tag_database.build_where_offs(offsets[:self.limit])
+                self.tag_database.build_where_offs(offsets[: self.limit])
             else:
                 self.tag_database.build_where_offs(offsets)
 
     def get_offs8(self, skip, filtered_offs_list=None):
-        """ Get offsets from .bin database and
-            create where clause we will use to query header tag .sqlite database
+        """Get offsets from .bin database and
+        create where clause we will use to query header tag .sqlite database
         """
         if self.fen:
-            move_stat = self.chess_db.find("limit {} skip {} {}".format(self.limit, skip, self.fen))
+            move_stat = self.chess_db.find(
+                "limit {} skip {} {}".format(self.limit, skip, self.fen)
+            )
 
             offsets = []
             for mstat in move_stat["moves"]:
@@ -635,12 +734,12 @@ class PGNFile(ChessFile):
                     offsets += offs
 
             if len(offsets) > self.limit:
-                self.tag_database.build_where_offs8(sorted(offsets)[:self.limit])
+                self.tag_database.build_where_offs8(sorted(offsets)[: self.limit])
             else:
                 self.tag_database.build_where_offs8(sorted(offsets))
 
     def get_records(self, direction=FIRST_PAGE):
-        """ Get game header tag records from .sqlite database in paginated way """
+        """Get game header tag records from .sqlite database in paginated way"""
         if direction == FIRST_PAGE:
             self.skip = 0
             self.reset_last_seen()
@@ -661,7 +760,9 @@ class PGNFile(ChessFile):
 
         filtered_offs_list = None
         if self.tag_query and (self.fen or self.scout_query):
-            filtered_offs_list = self.tag_database.get_offsets_for_tags(self.last_seen[-1])
+            filtered_offs_list = self.tag_database.get_offsets_for_tags(
+                self.last_seen[-1]
+            )
 
         if self.fen:
             self.get_offs8(self.skip, filtered_offs_list=filtered_offs_list)
@@ -675,24 +776,26 @@ class PGNFile(ChessFile):
         records = self.tag_database.get_records(self.last_seen[-1], self.limit)
 
         if records:
-            self.last_seen.append((records[-1][col2label[self.order_col]], records[-1]["Offset"]))
+            self.last_seen.append(
+                (records[-1][col2label[self.order_col]], records[-1]["Offset"])
+            )
             return records, self.offs_ply
         else:
             return [], {}
 
     def load_game_tags(self):
-        """ Reads header tags from pgn if pgn is a one game only StringIO object """
+        """Reads header tags from pgn if pgn is a one game only StringIO object"""
 
         header = collections.defaultdict(str)
         header["Id"] = 0
         header["Offset"] = 0
         for line in self.handle.readlines():
             line = line.strip()
-            if line.startswith('[') and line.endswith(']'):
+            if line.startswith("[") and line.endswith("]"):
                 tag_match = TAG_REGEX.match(line)
                 if tag_match:
                     value = tag_match.group(2)
-                    value = value.replace("\\\"", "\"")
+                    value = value.replace('\\"', '"')
                     value = value.replace("\\\\", "\\")
                     header[tag_match.group(1)] = value
             else:
@@ -700,7 +803,7 @@ class PGNFile(ChessFile):
         return header
 
     def loadToModel(self, rec, position=-1, model=None):
-        """ Parse game text and load game record header tags to a GameModel object """
+        """Parse game text and load game record header tags to a GameModel object"""
 
         if model is None:
             model = GameModel()
@@ -713,7 +816,7 @@ class PGNFile(ChessFile):
             model.tags[tag] = rec[tag]
 
         # Load other tags
-        for tag in ('WhiteElo', 'BlackElo', 'ECO', 'TimeControl', 'Annotator'):
+        for tag in ("WhiteElo", "BlackElo", "ECO", "TimeControl", "Annotator"):
             model.tags[tag] = rec[tag]
 
         if self.pgn_is_string:
@@ -724,15 +827,15 @@ class PGNFile(ChessFile):
             model.info = self.tag_database.get_info(rec)
             extra_tags = self.tag_database.get_exta_tags(rec)
             for et in extra_tags:
-                model.tags[et['tag_name']] = et['tag_value']
+                model.tags[et["tag_name"]] = et["tag_value"]
 
         if self.pgn_is_string:
             variant = rec["Variant"].capitalize()
         else:
             variant = self.get_variant(rec)
 
-        if model.tags['TimeControl']:
-            tc = parseTimeControlTag(model.tags['TimeControl'])
+        if model.tags["TimeControl"]:
+            tc = parseTimeControlTag(model.tags["TimeControl"])
             if tc is not None:
                 secs, gain, moves = tc
                 model.timed = True
@@ -740,7 +843,7 @@ class PGNFile(ChessFile):
                 model.timemodel.gain = gain
                 model.timemodel.minutes = secs / 60
                 model.timemodel.moves = moves
-                for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
+                for tag, color in (("WhiteClock", WHITE), ("BlackClock", BLACK)):
                     if tag in model.tags:
                         try:
                             millisec = parseClockTimeTag(model.tags[tag])
@@ -749,12 +852,13 @@ class PGNFile(ChessFile):
                             # [WhiteClock "0:00:15.867"]
                             # [BlackClock "23:59:58.820"]
                             start_sec = (
-                                millisec - 24 * 60 * 60 * 1000
-                            ) / 1000. if millisec > 23 * 60 * 60 * 1000 else millisec / 1000.
+                                (millisec - 24 * 60 * 60 * 1000) / 1000.0
+                                if millisec > 23 * 60 * 60 * 1000
+                                else millisec / 1000.0
+                            )
                             model.timemodel.intervals[color][0] = start_sec
                         except ValueError:
-                            raise LoadingError(
-                                "Error parsing '%s'" % tag)
+                            raise LoadingError("Error parsing '%s'" % tag)
         fenstr = rec["FEN"]
 
         if variant:
@@ -786,7 +890,8 @@ class PGNFile(ChessFile):
                 board.applyFen(FEN_EMPTY)
                 raise LoadingError(
                     _("The game can't be loaded, because of an error parsing FEN"),
-                    err.args[0])
+                    err.args[0],
+                )
         else:
             board.applyFen(FEN_START)
 
@@ -820,7 +925,8 @@ class PGNFile(ChessFile):
                 except Exception:
                     raise LoadingError(
                         _("Invalid move."),
-                        "{}{}".format(move_count(node, black_periods=True), move))
+                        "{}{}".format(move_count(node, black_periods=True), move),
+                    )
 
             return board
 
@@ -877,13 +983,18 @@ class PGNFile(ChessFile):
                             if match:
                                 movecount, color = divmod(ply + 1, 2)
                                 hour, minute, sec, msec = match.groups()
-                                prev = model.timemodel.intervals[color][
-                                    movecount - 1]
+                                prev = model.timemodel.intervals[color][movecount - 1]
                                 hour = 0 if hour is None else int(hour[:-1])
                                 minute = 0 if minute is None else int(minute[:-1])
                                 msec = 0 if msec is None else int(msec)
-                                msec += int(sec) * 1000 + int(minute) * 60 * 1000 + int(hour) * 60 * 60 * 1000
-                                model.timemodel.intervals[color][movecount] = prev - msec / 1000. + gain
+                                msec += (
+                                    int(sec) * 1000
+                                    + int(minute) * 60 * 1000
+                                    + int(hour) * 60 * 60 * 1000
+                                )
+                                model.timemodel.intervals[color][movecount] = (
+                                    prev - msec / 1000.0 + gain
+                                )
 
                         if self.has_eval:
                             match = move_eval_re.search(child)
@@ -891,15 +1002,13 @@ class PGNFile(ChessFile):
                                 sign, num, fraction, depth = match.groups()
                                 sign = 1 if sign is None or sign == "+" else -1
                                 num = int(num)
-                                fraction = 0 if fraction is None else int(
-                                    fraction)
+                                fraction = 0 if fraction is None else int(fraction)
                                 value = sign * (num * 100 + fraction)
                                 depth = "" if depth is None else depth
                                 if board.color == BLACK:
                                     value = -value
                                 model.scores[ply] = ("", value, depth)
-            log.debug("pgn.loadToModel: intervals %s" %
-                      model.timemodel.intervals)
+            log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)
 
         # Find the physical status of the game
         model.status, model.reason = getStatus(model.boards[-1])
@@ -935,11 +1044,11 @@ class PGNFile(ChessFile):
     def parse_movetext(self, string, board, position, variation=False):
         """Recursive parses a movelist part of one game.
 
-           Arguments:
-           srting - str (movelist)
-           board - lboard (initial position)
-           position - int (maximum ply to parse)
-           variation- boolean (True if the string is a variation)"""
+        Arguments:
+        srting - str (movelist)
+        board - lboard (initial position)
+        position - int (maximum ply to parse)
+        variation- boolean (True if the string is a variation)"""
 
         boards = []
         boards_append = boards.append
@@ -959,7 +1068,7 @@ class PGNFile(ChessFile):
         for m in re.finditer(pattern, string):
             group, text = m.lastindex, m.group(m.lastindex)
             if parenthesis > 0:
-                v_string += ' ' + text
+                v_string += " " + text
 
             if group == VARIATION_END:
                 parenthesis -= 1
@@ -970,7 +1079,10 @@ class PGNFile(ChessFile):
                         return boards  # , status
 
                     v_last_board.children.append(
-                        self.parse_movetext(v_string[:-1], last_board.prev, position, variation=True))
+                        self.parse_movetext(
+                            v_string[:-1], last_board.prev, position, variation=True
+                        )
+                    )
                     v_string = ""
                     continue
 
@@ -998,9 +1110,8 @@ class PGNFile(ChessFile):
                         else:
                             moveno = "%d..." % (ply // 2 + 1)
                         errstr1 = _(
-                            "The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
-                                'moveno': moveno,
-                                'notation': notation}
+                            "The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'."
+                        ) % {"moveno": moveno, "notation": notation}
                         errstr2 = _("The move failed because %s.") % reason
                         self.error = LoadingError(errstr1, errstr2)
                         break
@@ -1010,10 +1121,10 @@ class PGNFile(ChessFile):
                             moveno = "%d." % (ply // 2 + 1)
                         else:
                             moveno = "%d..." % (ply // 2 + 1)
-                        errstr1 = _(
-                            "Error parsing move %(moveno)s %(mstr)s") % {
-                                "moveno": moveno,
-                                "mstr": mstr}
+                        errstr1 = _("Error parsing move %(moveno)s %(mstr)s") % {
+                            "moveno": moveno,
+                            "mstr": mstr,
+                        }
                         self.error = LoadingError(errstr1, "")
                         break
 
@@ -1021,8 +1132,7 @@ class PGNFile(ChessFile):
                     new_board.applyMove(lmove)
 
                     if m.group(MOVE_COMMENT):
-                        new_board.nags.append(symbol2nag(m.group(
-                            MOVE_COMMENT)))
+                        new_board.nags.append(symbol2nag(m.group(MOVE_COMMENT)))
 
                     new_board.prev = last_board
 
@@ -1039,13 +1149,13 @@ class PGNFile(ChessFile):
                     last_board.children.append(text[1:])
 
                 elif group == COMMENT_BRACE:
-                    comm = text.replace('{\r\n', '{').replace('\r\n}', '}')
+                    comm = text.replace("{\r\n", "{").replace("\r\n}", "}")
                     # Preserve new lines of lichess study comments
                     if self.path is not None and "lichess_study_" in self.path:
                         comment = comm[1:-1]
                     else:
                         comm = comm[1:-1].splitlines()
-                        comment = ' '.join([line.strip() for line in comm])
+                        comment = " ".join([line.strip() for line in comm])
                     if variation and last_board == board:
                         # initial variation comment
                         boards[0].children.append(comment)

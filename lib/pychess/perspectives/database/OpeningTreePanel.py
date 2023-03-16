@@ -126,7 +126,7 @@ class OpeningTreePanel(Gtk.TreeView):
         self.clear_tree()
         for move, count, white_won, blackwon, draw in result:
             lmove = parseAN(self.board, move)
-            perf = 0 if not count else round((white_won * 100. + draw * 50.) / count)
+            perf = 0 if not count else round((white_won * 100.0 + draw * 50.0) / count)
             self.liststore.append([lmove, toSAN(self.board, lmove), count, perf])
 
     def clear_tree(self):

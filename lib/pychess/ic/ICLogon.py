@@ -11,7 +11,11 @@ from gi.repository import GObject
 
 from pychess.System import uistuff, conf
 from pychess.widgets import mainwindow
-from pychess.ic.FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
+from pychess.ic.FICSConnection import (
+    FICSMainConnection,
+    FICSHelperConnection,
+    LogOnException,
+)
 from pychess.perspectives import perspective_manager
 
 host = None
@@ -37,7 +41,6 @@ def stop():
 
 
 class AutoLogoutException(Exception):
-
     pass
 
 
@@ -51,12 +54,14 @@ class ICLogon:
         self.canceled = False
         self.cids = defaultdict(list)
         self.widgets = uistuff.GladeWidgets("fics_logon.glade")
-        uistuff.keepWindowSize("fics_logon",
-                               self.widgets["fics_logon"],
-                               defaultPosition=uistuff.POSITION_GOLDEN)
+        uistuff.keepWindowSize(
+            "fics_logon",
+            self.widgets["fics_logon"],
+            defaultPosition=uistuff.POSITION_GOLDEN,
+        )
         self.widgets["fics_logon"].connect(
-            'key-press-event',
-            lambda w, e: e.keyval == Gdk.KEY_Escape and w.hide())
+            "key-press-event", lambda w, e: e.keyval == Gdk.KEY_Escape and w.hide()
+        )
 
         self.ics = "FICS"
         self.as_guest = self.widgets["logOnAsGuest"]
@@ -64,15 +69,20 @@ class ICLogon:
         self.widgets["logOnAsGuest"].connect("toggled", self.on_logOnAsGuest_toggled)
 
         def on_username_changed(widget):
-            conf.set("usernameEntry", self.user_name_get_value(widget), section=self.ics)
+            conf.set(
+                "usernameEntry", self.user_name_get_value(widget), section=self.ics
+            )
+
         self.widgets["nameEntry"].connect("changed", on_username_changed)
 
         def on_password_changed(widget):
             conf.set("passwordEntry", widget.get_text(), section=self.ics)
+
         self.widgets["passEntry"].connect("changed", on_password_changed)
 
         def on_host_changed(widget):
             conf.set("hostEntry", self.host_get_value(widget), section=self.ics)
+
         self.widgets["hostEntry"].connect("changed", on_host_changed)
 
         self.widgets["timesealCheck"].connect("toggled", self.on_timeseal_toggled)
@@ -81,8 +91,7 @@ class ICLogon:
         self.infobar.set_message_type(Gtk.MessageType.WARNING)
         # self.widgets["messagePanelHBox"].pack_start(self.infobar,
         #    expand=False, fill=False)
-        self.widgets["messagePanelHBox"].pack_start(self.infobar, False, False,
-                                                    0)
+        self.widgets["messagePanelHBox"].pack_start(self.infobar, False, False, 0)
         self.widgets["cancelButton"].connect("clicked", self.onCancel, True)
         self.widgets["stopButton"].connect("clicked", self.onCancel, False)
         self.widgets["createNewButton"].connect("clicked", self.onCreateNew)
@@ -91,8 +100,7 @@ class ICLogon:
         self.widgets["progressbar"].set_show_text(True)
 
     def get_user_names(self, value=None):
-        """ Split and return usernameEntry config item into registered and guest username
-        """
+        """Split and return usernameEntry config item into registered and guest username"""
         if value is not None:
             names = value.split("|")
         else:
@@ -133,7 +141,9 @@ class ICLogon:
 
     def on_logOnAsGuest_toggled(self, widget):
         names = self.get_user_names()
-        self.widgets["nameEntry"].set_text(names[1] if widget.get_active() else names[0])
+        self.widgets["nameEntry"].set_text(
+            names[1] if widget.get_active() else names[0]
+        )
         if self.ics == "ICC":
             self.widgets["nameLabel"].set_sensitive(not widget.get_active())
             self.widgets["nameEntry"].set_sensitive(not widget.get_active())
@@ -153,12 +163,22 @@ class ICLogon:
             model = combo.get_model()
             self.ics = model[tree_iter][0]
             # print("Selected: %s" % self.ics)
-            self.widgets["logOnAsGuest"].set_active(conf.get("asGuestCheck", section=self.ics))
+            self.widgets["logOnAsGuest"].set_active(
+                conf.get("asGuestCheck", section=self.ics)
+            )
             self.on_logOnAsGuest_toggled(self.widgets["logOnAsGuest"])
-            self.user_name_set_value(self.widgets["nameEntry"], conf.get("usernameEntry", section=self.ics))
-            self.password_set_value(self.widgets["passEntry"], conf.get("passwordEntry", section=self.ics))
-            self.host_set_value(self.widgets["hostEntry"], conf.get("hostEntry", section=self.ics))
-            self.widgets["timesealCheck"].set_active(conf.get("timesealCheck", section=self.ics))
+            self.user_name_set_value(
+                self.widgets["nameEntry"], conf.get("usernameEntry", section=self.ics)
+            )
+            self.password_set_value(
+                self.widgets["passEntry"], conf.get("passwordEntry", section=self.ics)
+            )
+            self.host_set_value(
+                self.widgets["hostEntry"], conf.get("hostEntry", section=self.ics)
+            )
+            self.widgets["timesealCheck"].set_active(
+                conf.get("timesealCheck", section=self.ics)
+            )
             self.on_timeseal_toggled(self.widgets["timesealCheck"])
 
     def _disconnect(self):
@@ -234,14 +254,14 @@ class ICLogon:
         elif isinstance(error, socket.error):
             title = _("Connection Error")
             text = ", ".join(map(str, error.args))
-        elif isinstance(error, socket.gaierror) or \
-                isinstance(error, socket.herror):
+        elif isinstance(error, socket.gaierror) or isinstance(error, socket.herror):
             title = _("Address Error")
             text = ", ".join(map(str, error.args))
         elif isinstance(error, AutoLogoutException):
             title = _("Auto-logout")
             text = _(
-                "You have been logged out because you were idle more than 60 minutes")
+                "You have been logged out because you were idle more than 60 minutes"
+            )
         else:
             title = str(error.__class__)
 
@@ -291,7 +311,7 @@ class ICLogon:
             password = self.widgets["passEntry"].get_text()
 
         if port:
-            ports = (port, )
+            ports = (port,)
         else:
             ports = self.widgets["portsEntry"].get_text()
             ports = list(map(int, re.findall(r"\d+", ports)))
@@ -304,18 +324,30 @@ class ICLogon:
         timeseal = self.widgets["timesealCheck"].get_active()
 
         self.showConnecting()
-        self.host = host if host is not None else alternate_host if alternate_host else "freechess.org"
-        self.connection = FICSMainConnection(self.host, ports, timeseal, username, password)
-        for signal, callback in (("connected", self.onConnected),
-                                 ("error", self.onConnectionError),
-                                 ("connectingMsg", self.showMessage)):
+        self.host = (
+            host
+            if host is not None
+            else alternate_host
+            if alternate_host
+            else "freechess.org"
+        )
+        self.connection = FICSMainConnection(
+            self.host, ports, timeseal, username, password
+        )
+        for signal, callback in (
+            ("connected", self.onConnected),
+            ("error", self.onConnectionError),
+            ("connectingMsg", self.showMessage),
+        ):
             self.cids[self.connection].append(self.connection.connect(signal, callback))
         self.main_connected_event = asyncio.Event()
         self.connection_task = asyncio.create_task(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
         if self.host not in ("localhost", "127.0.0.1", "chessclub.com"):
-            self.helperconn = FICSHelperConnection(self.connection, self.host, ports, timeseal)
+            self.helperconn = FICSHelperConnection(
+                self.connection, self.host, ports, timeseal
+            )
             self.helperconn.connect("error", self.onHelperConnectionError)
 
             async def coro():
@@ -326,8 +358,11 @@ class ICLogon:
 
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:
-            dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION,
-                                       buttons=Gtk.ButtonsType.YES_NO)
+            dialog = Gtk.MessageDialog(
+                mainwindow(),
+                type=Gtk.MessageType.QUESTION,
+                buttons=Gtk.ButtonsType.YES_NO,
+            )
             dialog.set_markup(_("Guest logins disabled by FICS server"))
             text = "PyChess can maintain users status and games list only if it changes\n\
             'open', 'gin' and 'availinfo' user variables.\n\
@@ -345,6 +380,7 @@ class ICLogon:
             async def coro():
                 await self.main_connected_event.wait()
                 self.connection.start_helper_manager(set_user_vars)
+
             asyncio.create_task(coro())
 
     def onConnected(self, connection):
@@ -356,10 +392,12 @@ class ICLogon:
         self.lounge.open_lounge(connection, self.helperconn, self.host)
         self.hide()
         self.lounge.show()
-        self.lounge.connect("logout",
-                            lambda iclounge: self.onLogout(connection))
-        self.cids[self.lounge].append(self.lounge.connect(
-            "autoLogout", lambda lounge: self.onAutologout(connection)))
+        self.lounge.connect("logout", lambda iclounge: self.onLogout(connection))
+        self.cids[self.lounge].append(
+            self.lounge.connect(
+                "autoLogout", lambda lounge: self.onAutologout(connection)
+            )
+        )
 
         self.showNormal()
         self.widgets["messagePanel"].hide()

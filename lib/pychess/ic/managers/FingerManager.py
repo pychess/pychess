@@ -3,8 +3,14 @@ from time import time
 
 from gi.repository import GObject
 
-from pychess.ic import IC_STATUS_OFFLINE, IC_STATUS_ACTIVE, IC_STATUS_PLAYING, IC_STATUS_BUSY, \
-    GAME_TYPES_BY_FICS_NAME, BLKCMD_FINGER
+from pychess.ic import (
+    IC_STATUS_OFFLINE,
+    IC_STATUS_ACTIVE,
+    IC_STATUS_PLAYING,
+    IC_STATUS_BUSY,
+    GAME_TYPES_BY_FICS_NAME,
+    BLKCMD_FINGER,
+)
 from pychess.Utils.const import WHITE, BLACK
 from pychess.System.Log import log
 
@@ -17,8 +23,7 @@ titles = r"((?:\(%s\))+)?" % titleslist
 names = r"(\w+)%s" % titles
 mf = r"(?:([mf]{1,2})\s?)?"
 # FIXME: Needs support for day, hour, min, sec
-times = "[, ]*".join(r"(?:(\d+) %s)?" % s
-                     for s in ("days", "hrs", "mins", "secs"))
+times = "[, ]*".join(r"(?:(\d+) %s)?" % s for s in ("days", "hrs", "mins", "secs"))
 
 # "73 days, 5 hrs, 55 mins"
 # ('73', '5', '55', None)
@@ -50,87 +55,87 @@ class FingerObject:
         self.__ratings = {}
 
     def getName(self):
-        """ Returns the name of the user, without any title sufixes """
+        """Returns the name of the user, without any title sufixes"""
         return self.__name
 
     def getStatus(self):
-        """ Returns the current user-status as a STATUS constant """
+        """Returns the current user-status as a STATUS constant"""
         return self.__status
 
     def getUpTime(self):
-        """ Returns the when the user logged on
-            Not set when status == STATUS_OFFLINE """
+        """Returns the when the user logged on
+        Not set when status == STATUS_OFFLINE"""
         return self.__upTime + time() - self.__fingerTime
 
     def getIdleTime(self):
-        """ Returns the when the last time the user did something active
-            Not set when status == STATUS_OFFLINE """
+        """Returns the when the last time the user did something active
+        Not set when status == STATUS_OFFLINE"""
         return self.__idleTime + time() - self.__fingerTime
 
     def getBusyMessage(self):
-        """ Returns the userset idle message
-            This is set when status == STATUS_BUSY or sometimes when status ==
-            STATUS_PLAYING """
+        """Returns the userset idle message
+        This is set when status == STATUS_BUSY or sometimes when status ==
+        STATUS_PLAYING"""
         return self.__busyMessage
 
     def getLastSeen(self):
-        """ Returns when the user logged off
-            This is only set when status == STATUS_OFFLINE
-            This is not set, if the user has never logged on """
+        """Returns when the user logged off
+        This is only set when status == STATUS_OFFLINE
+        This is not set, if the user has never logged on"""
         return self.__lastSeen
 
     def getTotalTimeOnline(self):
-        """ Returns how many seconds the user has been on FICS since the account
-            was created.
-            This is not set, if the user has never logged on """
+        """Returns how many seconds the user has been on FICS since the account
+        was created.
+        This is not set, if the user has never logged on"""
         return self.__totalTimeOnline
 
     def getCreated(self):
-        """ Returns when the account was created """
+        """Returns when the account was created"""
         return self.__created
 
     def getEmail(self):
-        """ Returns the email adress of the user.
-            This will probably only be set for the logged in user """
+        """Returns the email adress of the user.
+        This will probably only be set for the logged in user"""
         return self.__email
 
     def getSanctions(self):
-        """ Returns any sanctions the user has against them. This is usually
-            an empty string """
+        """Returns any sanctions the user has against them. This is usually
+        an empty string"""
         return self.__sanctions
 
     def getAdminLevel(self):
-        """ Returns the admin level as a string
-            Only set for admins. """
+        """Returns the admin level as a string
+        Only set for admins."""
         return self.__adminLevel
 
     def getTimeseal(self):
-        """ Returns True if the user is using timeseal for fics connection """
+        """Returns True if the user is using timeseal for fics connection"""
         return self.__timeseal
 
     def getNotes(self):
-        """ Returns a list of the ten finger notes """
+        """Returns a list of the ten finger notes"""
         return self.__notes
 
     def getGameno(self):
-        """ Returns the gameno of the game in which user is currently playing
-            This is only set when status == STATUS_PLAYING """
+        """Returns the gameno of the game in which user is currently playing
+        This is only set when status == STATUS_PLAYING"""
         return self.__gameno
 
     def getColor(self):
-        """ If status == STATUS_PLAYING getColor returns the color witch the
-            player has got in the game.
-            Otherwise always WHITE is returned """
+        """If status == STATUS_PLAYING getColor returns the color witch the
+        player has got in the game.
+        Otherwise always WHITE is returned"""
         return self.__color
 
     def getOpponent(self):
-        """ Returns the opponent of the user in his current game
-            This is only set when status == STATUS_PLAYING """
+        """Returns the opponent of the user in his current game
+        This is only set when status == STATUS_PLAYING"""
         return self.__opponent
 
     def getSilence(self):
-        """ Return True if the user is playing in silence
-            This is only set when status == STATUS_PLAYING """
+        """Return True if the user is playing in silence
+        This is only set when status == STATUS_PLAYING"""
         return self.__silence
 
     def getRatings(self):
@@ -152,27 +157,27 @@ class FingerObject:
         self.__status = value
 
     def setUpTime(self, value):
-        """ Use relative seconds """
+        """Use relative seconds"""
         self.__upTime = value
 
     def setIdleTime(self, value):
-        """ Use relative seconds """
+        """Use relative seconds"""
         self.__idleTime = value
 
     def setBusyMessage(self, value):
-        """ Use relative seconds """
+        """Use relative seconds"""
         self.__busyMessage = value
 
     def setLastSeen(self, value):
-        """ Use relative seconds """
+        """Use relative seconds"""
         self.__lastSeen = value
 
     def setTotalTimeOnline(self, value):
-        """ Use relative seconds """
+        """Use relative seconds"""
         self.__totalTimeOnline = value
 
     def setCreated(self, value):
-        """ Use relative seconds """
+        """Use relative seconds"""
         self.__created = value
 
     def setEmail(self, value):
@@ -210,10 +215,9 @@ class FingerObject:
 
 
 class FingerManager(GObject.GObject):
-
     __gsignals__ = {
-        'fingeringFinished': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'ratingAdjusted': (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        "fingeringFinished": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "ratingAdjusted": (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
     }
 
     def __init__(self, connection):
@@ -226,19 +230,24 @@ class FingerManager(GObject.GObject):
             "On for: (?P<uptime>.+?) +Idle: (?P<idletime>.+)",
             r"%s is in (?P<silence>silence) mode\." % names,
             r"\(playing game (?P<gameno>\d+): (?P<p1>\S+?)%s vs. (?P<p2>\S+?)%s\)"
-            % (titles, titles), r"\(%s (?P<busymessage>.+?)\)" % names,
+            % (titles, titles),
+            r"\(%s (?P<busymessage>.+?)\)" % names,
             r"%s has not played any rated games\." % names,
             "rating +RD +win +loss +draw +total +best",
             "(?P<gametype>%s) +(?P<ratings>.+)" % types,
-            "Email *: (?P<email>.+)", "Sanctions *: (?P<sanctions>.+)",
+            "Email *: (?P<email>.+)",
+            "Sanctions *: (?P<sanctions>.+)",
             "Total time online: (?P<tto>.+)",
             r"% of life online:  [\d\.]+  \(since (?P<created>.+?)\)",
             r"Timeseal [ \d] : (?P<timeseal>Off|On)",
             "Admin Level: (?P<adminlevel>.+)",
-            r"(?P<noteno>\d+): *(?P<note>.*)", "$")
+            r"(?P<noteno>\d+): *(?P<note>.*)",
+            "$",
+        )
 
-        self.connection.expect_fromplus(self.onFinger, "Finger of %s:" % names,
-                                        "$|".join(fingerLines))
+        self.connection.expect_fromplus(
+            self.onFinger, "Finger of %s:" % names, "$|".join(fingerLines)
+        )
 
         self.connection.client.run_command("iset nowrap 1")
 
@@ -287,8 +296,7 @@ class FingerManager(GObject.GObject):
             elif groupdict["gameno"] is not None:
                 finger.setStatus(IC_STATUS_PLAYING)
                 finger.setGameno(groupdict["gameno"])
-                if groupdict["p1"].lower() == self.connection.getUsername(
-                ).lower():
+                if groupdict["p1"].lower() == self.connection.getUsername().lower():
                     finger.setColor(WHITE)
                     finger.setOpponent(groupdict["p2"])
                 else:
@@ -335,5 +343,5 @@ class FingerManager(GObject.GObject):
         self.connection.client.run_command("set %d %s" % (note, message))
 
     def setBusyMessage(self, message):
-        """ Like set busy is really busy right now. """
+        """Like set busy is really busy right now."""
         self.connection.client.run_command("set busy %s" % message)

@@ -26,7 +26,7 @@ LESSONS = []
 for elem in sorted(os.listdir(path=addDataPrefix("learn/lessons/"))):
     if elem.startswith("lichess_study") and elem.endswith(".pgn"):
         title = elem.replace("beta-lichess-practice-", "")
-        title = title[14:title.find("_by_")].replace("-", " ").capitalize()
+        title = title[14 : title.find("_by_")].replace("-", " ").capitalize()
         LESSONS.append((elem, title, "lichess.org"))
     elif elem.endswith(".pgn"):
         LESSONS.append((elem, elem.replace("-", " ").capitalize(), "pychess.org"))
@@ -66,7 +66,9 @@ def start_lesson_game(gamemodel, filename, chessfile, records, index, rec):
 
     # Lichess doesn't export some study data to .pgn like
     # Orientation, Analysis mode, Chapter pinned comment, move hint comments, general fail comment
-    if filename.startswith("lichess_study_beta-lichess-practice-checkmating-with-a-knight-and-bishop"):
+    if filename.startswith(
+        "lichess_study_beta-lichess-practice-checkmating-with-a-knight-and-bishop"
+    ):
         if index in (4, 6, 8, 9):
             gamemodel.tags["Orientation"] = "White"
             print(index, '[Orientation "White"]')
@@ -88,12 +90,16 @@ def start_lesson_game(gamemodel, filename, chessfile, records, index, rec):
         lessons_solving_progress[gamemodel.source] = progress
         if "FEN" in gamemodel.tags:
             asyncio.create_task(gamemodel.restart_analyzer(HINT))
+
     gamemodel.connect("learn_success", learn_success)
 
     def on_game_started(gamemodel):
         perspective.activate_panel("annotationPanel")
         if "FEN" in gamemodel.tags:
-            asyncio.create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+            asyncio.create_task(
+                gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn())
+            )
+
     gamemodel.connect("game_started", on_game_started)
 
     gamemodel.status = WAITING_TO_START

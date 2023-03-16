@@ -48,7 +48,8 @@ class DiscovererDialog:
         # Show the window
         # =======================================================================
         self.widgets["discovererDialog"].set_position(
-            Gtk.WindowPosition.CENTER_ON_PARENT)
+            Gtk.WindowPosition.CENTER_ON_PARENT
+        )
         self.widgets["discovererDialog"].show_all()
         self.throbber.start()
 
@@ -69,7 +70,9 @@ class DiscovererDialog:
             if self.finished:
                 return
 
-            _discoverer, binname, _xmlenginevalue = await wait_signal(self.discoverer, "engine_discovered")
+            _discoverer, binname, _xmlenginevalue = await wait_signal(
+                self.discoverer, "engine_discovered"
+            )
 
             if binname in self.nameToBar:
                 bar = self.nameToBar[binname]

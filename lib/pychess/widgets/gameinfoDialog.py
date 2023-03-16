@@ -2,7 +2,15 @@ from gi.repository import Gtk, Gdk
 
 from pychess.Savers.database import parseDateTag
 from pychess.Database.PgnImport import dedicated_tags
-from pychess.Utils.const import BLACK, WHITE, DRAW, WHITEWON, BLACKWON, RUNNING, reprResult
+from pychess.Utils.const import (
+    BLACK,
+    WHITE,
+    DRAW,
+    WHITEWON,
+    BLACKWON,
+    RUNNING,
+    reprResult,
+)
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
 
@@ -43,7 +51,11 @@ def run(widgets):
     tags_store.clear()
     tlist = []
     for tag in gamemodel.tags:
-        if tag not in dedicated_tags and isinstance(gamemodel.tags[tag], str) and gamemodel.tags[tag]:
+        if (
+            tag not in dedicated_tags
+            and isinstance(gamemodel.tags[tag], str)
+            and gamemodel.tags[tag]
+        ):
             tlist.append(tag)
     tlist.sort()
     for tag in tlist:
@@ -128,7 +140,12 @@ def initialize(widgets):
 
     result_combo = widgets["result_combo"]
     result_store = Gtk.ListStore(int, str)
-    for result in ((WHITEWON, "1-0"), (BLACKWON, "0-1"), (DRAW, "1/2-1/2"), (RUNNING, "*")):
+    for result in (
+        (WHITEWON, "1-0"),
+        (BLACKWON, "0-1"),
+        (DRAW, "1/2-1/2"),
+        (RUNNING, "*"),
+    ):
         result_store.append(result)
     result_combo.set_model(result_store)
     result_combo.set_id_column(1)
@@ -137,8 +154,12 @@ def initialize(widgets):
     result_combo.add_attribute(renderer_text, "text", 1)
 
     # Events on the UI
-    widgets["whiteelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
-    widgets["blackelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
+    widgets["whiteelo_entry"].connect(
+        "changed", lambda p: refresh_elo_rating_change(widgets)
+    )
+    widgets["blackelo_entry"].connect(
+        "changed", lambda p: refresh_elo_rating_change(widgets)
+    )
     widgets["date_button"].connect("clicked", on_pick_date, widgets["date_entry"])
     widgets["tag_add_button"].connect("clicked", on_add_tag)
     widgets["tag_delete_button"].connect("clicked", on_delete_tag)
@@ -147,8 +168,8 @@ def initialize(widgets):
     widgets["game_info_ok_button"].connect("clicked", accept_new_properties)
 
 
-red = Gdk.RGBA(.643, 0, 0, 1)
-green = Gdk.RGBA(.306, .604, .024, 1)
+red = Gdk.RGBA(0.643, 0, 0, 1)
+green = Gdk.RGBA(0.306, 0.604, 0.024, 1)
 black = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)
 
 
@@ -157,7 +178,9 @@ def refresh_elo_rating_change(widgets):
     gamemodel = persp.cur_gmwidg().gamemodel
 
     site = gamemodel.tags["Site"]
-    if site is not None and ("lichess.org" in site or "chessclub.com" in site or "freechess.org" in site):
+    if site is not None and (
+        "lichess.org" in site or "chessclub.com" in site or "freechess.org" in site
+    ):
         # TODO : lichess takes 3 parameters per player
         widgets["w_elo_change"].set_text("")
         widgets["b_elo_change"].set_text("")
@@ -169,14 +192,18 @@ def refresh_elo_rating_change(widgets):
     wchange = get_elo_rating_change_str(gamemodel, WHITE, welo, belo)
     widgets["w_elo_change"].set_text(wchange)
     if wchange.startswith("+") or wchange.startswith("-"):
-        widgets["w_elo_change"].override_color(Gtk.StateFlags.NORMAL, red if wchange.startswith("-") else green)
+        widgets["w_elo_change"].override_color(
+            Gtk.StateFlags.NORMAL, red if wchange.startswith("-") else green
+        )
     else:
         widgets["w_elo_change"].override_color(Gtk.StateFlags.NORMAL, black)
 
     bchange = get_elo_rating_change_str(gamemodel, BLACK, welo, belo)
     widgets["b_elo_change"].set_text(bchange)
     if bchange.startswith("+") or bchange.startswith("-"):
-        widgets["b_elo_change"].override_color(Gtk.StateFlags.NORMAL, red if bchange.startswith("-") else green)
+        widgets["b_elo_change"].override_color(
+            Gtk.StateFlags.NORMAL, red if bchange.startswith("-") else green
+        )
     else:
         widgets["b_elo_change"].override_color(Gtk.StateFlags.NORMAL, black)
 
@@ -196,10 +223,17 @@ def on_pick_date(button, date_entry):
     calendar.select_day(day)
 
     # Show the dialog
-    dialog = Gtk.Dialog(_("Pick a date"),
-                        None,
-                        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+    dialog = Gtk.Dialog(
+        _("Pick a date"),
+        None,
+        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+        (
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OK,
+            Gtk.ResponseType.ACCEPT,
+        ),
+    )
 
     sw = Gtk.ScrolledWindow()
     sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)

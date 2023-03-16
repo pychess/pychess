@@ -17,7 +17,7 @@ TAG_FILTER, MATERIAL_FILTER, PATTERN_FILTER, NONE, RULE, SEQUENCE, STREAK = rang
 
 
 def formatted(q):
-    """ Simplified textual representation of query """
+    """Simplified textual representation of query"""
     q = "%s" % q
     return q[1:-1].replace("'", "")
 
@@ -48,8 +48,12 @@ class FilterPanel(Gtk.TreeView):
         self.widgets["variant"].add_attribute(renderer_text, "text", 0)
 
         # Connect date_from and date_to to corresponding calendars
-        self.widgets["date_from_button"].connect("clicked", on_pick_date, self.widgets["date_from"])
-        self.widgets["date_to_button"].connect("clicked", on_pick_date, self.widgets["date_to"])
+        self.widgets["date_from_button"].connect(
+            "clicked", on_pick_date, self.widgets["date_from"]
+        )
+        self.widgets["date_to_button"].connect(
+            "clicked", on_pick_date, self.widgets["date_to"]
+        )
 
         # Add piece widgets to dialog *_dock containers on material tab
         self.dialog = self.widgets["filter_dialog"]
@@ -58,6 +62,7 @@ class FilterPanel(Gtk.TreeView):
         def hide(widget, event):
             widget.hide()
             return True
+
         self.dialog.connect("delete-event", hide)
 
         for piece in "qrbnp":
@@ -131,14 +136,22 @@ class FilterPanel(Gtk.TreeView):
         addSeqButton = Gtk.ToolButton()
         addSeqButton.set_label(_("Seq"))
         addSeqButton.set_is_important(True)
-        addSeqButton.set_tooltip_text(_("Create new sequence where listed conditions may be satisfied at different times in a game"))
+        addSeqButton.set_tooltip_text(
+            _(
+                "Create new sequence where listed conditions may be satisfied at different times in a game"
+            )
+        )
         addSeqButton.connect("clicked", self.on_add_sequence_clicked)
         toolbar.insert(addSeqButton, -1)
 
         addStreakButton = Gtk.ToolButton()
         addStreakButton.set_label(_("Str"))
         addStreakButton.set_is_important(True)
-        addStreakButton.set_tooltip_text(_("Create new streak sequence where listed conditions have to be satisfied in consecutive (half)moves"))
+        addStreakButton.set_tooltip_text(
+            _(
+                "Create new streak sequence where listed conditions have to be satisfied in consecutive (half)moves"
+            )
+        )
         addStreakButton.connect("clicked", self.on_add_streak_clicked)
         toolbar.insert(addStreakButton, -1)
 
@@ -221,18 +234,35 @@ class FilterPanel(Gtk.TreeView):
 
         def on_response(dialog, response):
             if response == Gtk.ResponseType.OK:
-                tag_query, material_query, pattern_query = self.get_queries_from_widgets()
+                (
+                    tag_query,
+                    material_query,
+                    pattern_query,
+                ) = self.get_queries_from_widgets()
 
                 if tag_query:
-                    it = self.treestore.append(treeiter, [formatted(tag_query), tag_query, TAG_FILTER, RULE])
+                    it = self.treestore.append(
+                        treeiter, [formatted(tag_query), tag_query, TAG_FILTER, RULE]
+                    )
                     self.get_selection().select_iter(it)
 
                 if material_query:
-                    it = self.treestore.append(treeiter, [formatted(material_query), material_query, MATERIAL_FILTER, RULE])
+                    it = self.treestore.append(
+                        treeiter,
+                        [
+                            formatted(material_query),
+                            material_query,
+                            MATERIAL_FILTER,
+                            RULE,
+                        ],
+                    )
                     self.get_selection().select_iter(it)
 
                 if pattern_query:
-                    it = self.treestore.append(treeiter, [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE])
+                    it = self.treestore.append(
+                        treeiter,
+                        [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE],
+                    )
                     self.get_selection().select_iter(it)
 
                 self.expand_all()
@@ -283,16 +313,35 @@ class FilterPanel(Gtk.TreeView):
 
         def on_response(dialog, response):
             if response == Gtk.ResponseType.OK:
-                tag_query, material_query, pattern_query = self.get_queries_from_widgets()
+                (
+                    tag_query,
+                    material_query,
+                    pattern_query,
+                ) = self.get_queries_from_widgets()
 
                 if tag_query and query_type == TAG_FILTER:
-                    self.treestore[treeiter] = [formatted(tag_query), tag_query, TAG_FILTER, RULE]
+                    self.treestore[treeiter] = [
+                        formatted(tag_query),
+                        tag_query,
+                        TAG_FILTER,
+                        RULE,
+                    ]
 
                 if material_query and query_type == MATERIAL_FILTER:
-                    self.treestore[treeiter] = [formatted(material_query), material_query, MATERIAL_FILTER, RULE]
+                    self.treestore[treeiter] = [
+                        formatted(material_query),
+                        material_query,
+                        MATERIAL_FILTER,
+                        RULE,
+                    ]
 
                 if pattern_query and query_type == PATTERN_FILTER:
-                    self.treestore[treeiter] = [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE]
+                    self.treestore[treeiter] = [
+                        formatted(pattern_query),
+                        pattern_query,
+                        PATTERN_FILTER,
+                        RULE,
+                    ]
 
                 self.update_filters()
 
@@ -393,7 +442,7 @@ class FilterPanel(Gtk.TreeView):
             self.persp.gamelist.load_games()
 
     def ini_widgets_from_query(self, query):
-        """ Set filter dialog widget values based on query dict key-value pairs """
+        """Set filter dialog widget values based on query dict key-value pairs"""
 
         rule = "variant"
         if rule in query:
@@ -404,7 +453,17 @@ class FilterPanel(Gtk.TreeView):
                     break
             self.widgets["variant"].set_active(index)
 
-        for rule in ("white", "black", "event", "site", "date_from", "date_to", "eco_from", "eco_to", "annotator"):
+        for rule in (
+            "white",
+            "black",
+            "event",
+            "site",
+            "date_from",
+            "date_to",
+            "eco_from",
+            "eco_to",
+            "annotator",
+        ):
             if rule in query:
                 self.widgets[rule].set_text(query[rule])
             else:
@@ -534,7 +593,7 @@ class FilterPanel(Gtk.TreeView):
         textbuffer.set_text("")
 
     def get_queries_from_widgets(self):
-        """ Build tag and scout query dict from filter dialog widget names and values """
+        """Build tag and scout query dict from filter dialog widget names and values"""
 
         tag_query = {}
         material_query = {}
@@ -546,7 +605,17 @@ class FilterPanel(Gtk.TreeView):
             variant_code = model[tree_iter][1]
             tag_query["variant"] = variant_code
 
-        for rule in ("white", "black", "event", "site", "date_from", "date_to", "eco_from", "eco_to", "annotator"):
+        for rule in (
+            "white",
+            "black",
+            "event",
+            "site",
+            "date_from",
+            "date_to",
+            "eco_from",
+            "eco_to",
+            "annotator",
+        ):
             if self.widgets[rule].get_text():
                 tag_query[rule] = self.widgets[rule].get_text()
 
@@ -568,11 +637,15 @@ class FilterPanel(Gtk.TreeView):
 
         w_material = []
         for piece in "qrbnp":
-            w_material.append(piece.upper() * self.widgets["w%s" % piece].get_value_as_int())
+            w_material.append(
+                piece.upper() * self.widgets["w%s" % piece].get_value_as_int()
+            )
 
         b_material = []
         for piece in "qrbnp":
-            b_material.append(piece.upper() * self.widgets["b%s" % piece].get_value_as_int())
+            b_material.append(
+                piece.upper() * self.widgets["b%s" % piece].get_value_as_int()
+            )
 
         w_material = "".join(w_material)
         b_material = "".join(b_material)
@@ -582,21 +655,31 @@ class FilterPanel(Gtk.TreeView):
                 material_query["imbalance"] = "{}v{}".format(w_material, b_material)
 
                 if self.widgets["ignore_material_colors"].get_active():
-                    material_query["imbalance"] = ["{}v{}".format(w_material, b_material),
-                                                   "{}v{}".format(b_material, w_material)]
+                    material_query["imbalance"] = [
+                        "{}v{}".format(w_material, b_material),
+                        "{}v{}".format(b_material, w_material),
+                    ]
             else:
                 material_query["material"] = "K{}K{}".format(w_material, b_material)
 
                 if self.widgets["ignore_material_colors"].get_active():
-                    material_query["material"] = ["K{}K{}".format(w_material, b_material),
-                                                  "K{}K{}".format(b_material, w_material)]
+                    material_query["material"] = [
+                        "K{}K{}".format(w_material, b_material),
+                        "K{}K{}".format(b_material, w_material),
+                    ]
 
         if self.widgets["white_move"].get_text():
-            moves = [move.strip() for move in self.widgets["white_move"].get_text().split(",")]
+            moves = [
+                move.strip()
+                for move in self.widgets["white_move"].get_text().split(",")
+            ]
             material_query["white-move"] = moves
 
         if self.widgets["black_move"].get_text():
-            moves = [move.strip() for move in self.widgets["black_move"].get_text().split(",")]
+            moves = [
+                move.strip()
+                for move in self.widgets["black_move"].get_text().split(",")
+            ]
             material_query["black-move"] = moves
 
         moved = ""

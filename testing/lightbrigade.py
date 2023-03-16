@@ -48,5 +48,5 @@ class SchessTestCase(unittest.TestCase):
         self.assertNotIn("a2a1=K", moves)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

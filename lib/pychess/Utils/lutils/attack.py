@@ -1,7 +1,25 @@
 from .bitboard import bitPosArray, notBitPosArray, lastBit, firstBit, clearBit, lsb
 from .ldata import moveArray, rays, directions, fromToRay, PIECE_VALUES, PAWN_VALUE
-from pychess.Utils.const import ASEAN_VARIANTS, ASEAN_BBISHOP, ASEAN_WBISHOP, ASEAN_QUEEN, SCHESS, \
-    BLACK, WHITE, PAWN, BPAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, ENPASSANT, ATOMICCHESS, HAWK, ELEPHANT
+from pychess.Utils.const import (
+    ASEAN_VARIANTS,
+    ASEAN_BBISHOP,
+    ASEAN_WBISHOP,
+    ASEAN_QUEEN,
+    SCHESS,
+    BLACK,
+    WHITE,
+    PAWN,
+    BPAWN,
+    KNIGHT,
+    BISHOP,
+    ROOK,
+    QUEEN,
+    KING,
+    ENPASSANT,
+    ATOMICCHESS,
+    HAWK,
+    ELEPHANT,
+)
 
 #
 # Caveat: Many functions in this module has very similar code. If you fix a
@@ -11,7 +29,7 @@ from pychess.Utils.const import ASEAN_VARIANTS, ASEAN_BBISHOP, ASEAN_WBISHOP, AS
 
 
 def isAttacked(board, cord, color, ischecked=False):
-    """ To determine if cord is attacked by any pieces from color. """
+    """To determine if cord is attacked by any pieces from color."""
 
     _moveArray = moveArray
     pboards = board.boards[color]
@@ -25,15 +43,15 @@ def isAttacked(board, cord, color, ischecked=False):
 
     # Bishops & Queens
     if board.variant in ASEAN_VARIANTS:
-        bishopMoves = _moveArray[ASEAN_BBISHOP if color == WHITE else
-                                 ASEAN_WBISHOP]
+        bishopMoves = _moveArray[ASEAN_BBISHOP if color == WHITE else ASEAN_WBISHOP]
         if pboards[BISHOP] & bishopMoves[cord]:
             return True
         if pboards[QUEEN] & _moveArray[ASEAN_QUEEN][cord]:
             return True
     else:
-        bitboard = (pboards[BISHOP] | pboards[HAWK] |
-                    pboards[QUEEN]) & _moveArray[BISHOP][cord]
+        bitboard = (pboards[BISHOP] | pboards[HAWK] | pboards[QUEEN]) & _moveArray[
+            BISHOP
+        ][cord]
         if bitboard:
             others = ~bitboard & blocker
             # inlined iterBits()
@@ -49,7 +67,9 @@ def isAttacked(board, cord, color, ischecked=False):
     if board.variant in ASEAN_VARIANTS:
         bitboard = pboards[ROOK] & _moveArray[ROOK][cord]
     else:
-        bitboard = (pboards[ROOK] | pboards[QUEEN] | pboards[ELEPHANT]) & _moveArray[ROOK][cord]
+        bitboard = (pboards[ROOK] | pboards[QUEEN] | pboards[ELEPHANT]) & _moveArray[
+            ROOK
+        ][cord]
     if bitboard:
         others = ~bitboard & blocker
         # inlined iterBits()
@@ -98,9 +118,10 @@ def propagateRayFollowingMovement(board, cord, bitboard):
 
 
 def piecesAttackingCord(board, cord, color):
-    """ return the type of piece attacking Cord
+    """return the type of piece attacking Cord
     does not support variant yet
-    The type of args are LBoard, Cord as flat number (cord argument of class Cord, BLACK or WHITE from const file """
+    The type of args are LBoard, Cord as flat number (cord argument of class Cord, BLACK or WHITE from const file
+    """
 
     _moveArray = moveArray
     pieces = board.boards[color]
@@ -146,7 +167,7 @@ def piecesAttackingCord(board, cord, color):
 
 
 def getAttacks(board, cord, color):
-    """ To create a bitboard of pieces of color, which attacks cord
+    """To create a bitboard of pieces of color, which attacks cord
     The type of args are LBoard, ,BLACK or WHITE from const file
     """
 
@@ -167,13 +188,14 @@ def getAttacks(board, cord, color):
 
     # Bishops and Queens
     if board.variant in ASEAN_VARIANTS:
-        bishopMoves = _moveArray[ASEAN_BBISHOP if color == WHITE else
-                                 ASEAN_WBISHOP]
+        bishopMoves = _moveArray[ASEAN_BBISHOP if color == WHITE else ASEAN_WBISHOP]
         bits |= pieces[BISHOP] & bishopMoves[cord]
 
         bits |= pieces[QUEEN] & _moveArray[ASEAN_QUEEN][cord]
     else:
-        bitboard = (pieces[BISHOP] | pieces[QUEEN] | pieces[HAWK]) & _moveArray[BISHOP][cord]
+        bitboard = (pieces[BISHOP] | pieces[QUEEN] | pieces[HAWK]) & _moveArray[BISHOP][
+            cord
+        ]
         # inlined iterBits()
         # check whether or not there is a piece blocking the path in diagonal
         while bitboard:
@@ -188,7 +210,9 @@ def getAttacks(board, cord, color):
     if board.variant in ASEAN_VARIANTS:
         bitboard = pieces[ROOK] & _moveArray[ROOK][cord]
     else:
-        bitboard = (pieces[ROOK] | pieces[QUEEN] | pieces[ELEPHANT]) & _moveArray[ROOK][cord]
+        bitboard = (pieces[ROOK] | pieces[QUEEN] | pieces[ELEPHANT]) & _moveArray[ROOK][
+            cord
+        ]
     # inlined iterBits()
 
     # check whether or not there is a piece blocking the path in straight line
@@ -233,32 +257,37 @@ def pinnedOnKing(board, cord, color):
     if board.variant in ASEAN_VARIANTS:
         pass
     else:
-        if dir <= 3 and bitPosArray[cord1] & \
-                (board.boards[opcolor][QUEEN] | board.boards[opcolor][BISHOP] | board.boards[opcolor][HAWK]):
+        if dir <= 3 and bitPosArray[cord1] & (
+            board.boards[opcolor][QUEEN]
+            | board.boards[opcolor][BISHOP]
+            | board.boards[opcolor][HAWK]
+        ):
             return True
 
-#  Rank / file
+    #  Rank / file
     if board.variant in ASEAN_VARIANTS:
-        if dir >= 4 and bitPosArray[cord1] & \
-                board.boards[opcolor][ROOK]:
+        if dir >= 4 and bitPosArray[cord1] & board.boards[opcolor][ROOK]:
             return True
     else:
-        if dir >= 4 and bitPosArray[cord1] & \
-                (board.boards[opcolor][QUEEN] | board.boards[opcolor][ROOK] | board.boards[opcolor][ELEPHANT]):
+        if dir >= 4 and bitPosArray[cord1] & (
+            board.boards[opcolor][QUEEN]
+            | board.boards[opcolor][ROOK]
+            | board.boards[opcolor][ELEPHANT]
+        ):
             return True
 
     return False
 
 
 def staticExchangeEvaluate(board, moveOrTcord, color=None):
-    """ The GnuChess Static Exchange Evaluator (or SEE for short).
+    """The GnuChess Static Exchange Evaluator (or SEE for short).
     First determine the target square.  Create a bitboard of all squares
     attacking the target square for both sides.  Using these 2 bitboards,
     we take turn making captures from smallest piece to largest piece.
     When a sliding piece makes a capture, we check behind it to see if
     another attacker piece has been exposed.  If so, add this to the bitboard
     as well.  When performing the "captures", we stop if one side is ahead
-    and doesn't need to capture, a form of pseudo-minimaxing. """
+    and doesn't need to capture, a form of pseudo-minimaxing."""
 
     #
     # Notice: If you use the tcord version, the color is the color attacked, and
@@ -285,10 +314,10 @@ def staticExchangeEvaluate(board, moveOrTcord, color=None):
         theirs = getAttacks(board, tcord, opcolor)
 
         if xray[board.arBoard[fcord]]:
-            ours, theirs = addXrayPiece(board, tcord, fcord, color, ours,
-                                        theirs)
+            ours, theirs = addXrayPiece(board, tcord, fcord, color, ours, theirs)
 
         from pychess.Variants import variants
+
         PROMOTIONS = variants[board.variant].PROMOTIONS
         if flag in PROMOTIONS:
             swaplist = [PIECE_VALUES[flag - 3] - PAWN_VALUE]
@@ -318,8 +347,7 @@ def staticExchangeEvaluate(board, moveOrTcord, color=None):
                 cord = firstBit(r)
                 theirs = clearBit(theirs, cord)
                 if xray[piece]:
-                    ours, theirs = addXrayPiece(board, tcord, cord, color,
-                                                ours, theirs)
+                    ours, theirs = addXrayPiece(board, tcord, cord, color, ours, theirs)
                 swaplist.append(swaplist[-1] + lastval)
                 lastval = PIECE_VALUES[piece]
                 break
@@ -333,8 +361,7 @@ def staticExchangeEvaluate(board, moveOrTcord, color=None):
                 cord = firstBit(r)
                 ours = clearBit(ours, cord)
                 if xray[piece]:
-                    ours, theirs = addXrayPiece(board, tcord, cord, color,
-                                                ours, theirs)
+                    ours, theirs = addXrayPiece(board, tcord, cord, color, ours, theirs)
                 swaplist.append(swaplist[-1] + lastval)
                 lastval = -PIECE_VALUES[piece]
                 break
@@ -357,10 +384,10 @@ xray = (False, True, False, True, True, True, False, True, True)
 
 
 def addXrayPiece(board, tcord, fcord, color, ours, theirs):
-    """ This is used by swapOff.
+    """This is used by swapOff.
     The purpose of this routine is to find a piece which attack through
     another piece (e.g. two rooks, Q+B, B+P, etc.) Color is the side attacking
-    the square where the swapping is to be done. """
+    the square where the swapping is to be done."""
 
     dir = directions[tcord][fcord]
     a = rays[fcord][dir] & board.blocker
@@ -377,11 +404,11 @@ def addXrayPiece(board, tcord, fcord, color, ours, theirs):
         cond = piece == ROOK and dir > 3
     else:
         cond = piece == (
-            QUEEN or
-            (piece == ROOK and dir > 3) or
-            (piece == ELEPHANT and dir > 3) or
-            (piece == BISHOP and dir < 4) or
-            (piece == HAWK and dir < 4)
+            QUEEN
+            or (piece == ROOK and dir > 3)
+            or (piece == ELEPHANT and dir > 3)
+            or (piece == BISHOP and dir < 4)
+            or (piece == HAWK and dir < 4)
         )
     if cond:
         bit = bitPosArray[ncord]
@@ -394,9 +421,9 @@ def addXrayPiece(board, tcord, fcord, color, ours, theirs):
 
 
 def defends(board, fcord, tcord):
-    """ Could fcord attack tcord if the piece on tcord wasn't on the team of
-        fcord?
-        Doesn't test check. """
+    """Could fcord attack tcord if the piece on tcord wasn't on the team of
+    fcord?
+    Doesn't test check."""
 
     # Work on a board copy, as we are going to change some stuff
     board = board.clone()
@@ -426,6 +453,7 @@ def defends(board, fcord, tcord):
     board.setColor(color)
     from .lmovegen import newMove
     from .validator import validateMove
+
     islegal = validateMove(board, newMove(fcord, tcord))
     board.setColor(backupColor)
 

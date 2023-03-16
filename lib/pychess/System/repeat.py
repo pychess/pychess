@@ -4,7 +4,7 @@ from pychess.System import fident
 
 
 def repeat(func, *args, **kwargs):
-    """ Repeats a function in a new thread until it returns False """
+    """Repeats a function in a new thread until it returns False"""
 
     def run():
         while func(*args, **kwargs):

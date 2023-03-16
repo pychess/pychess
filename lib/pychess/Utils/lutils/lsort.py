@@ -3,7 +3,14 @@ import sys
 from .attack import staticExchangeEvaluate
 from .ldata import PIECE_VALUES, ASEAN_PIECE_VALUES, PAWN_VALUE, MATE_VALUE
 from .lmove import GATE_PIECE
-from pychess.Utils.const import DROP, EMPTY, ASEAN_VARIANTS, PROMOTIONS, ATOMICCHESS, GATINGS
+from pychess.Utils.const import (
+    DROP,
+    EMPTY,
+    ASEAN_VARIANTS,
+    PROMOTIONS,
+    ATOMICCHESS,
+    GATINGS,
+)
 from pychess.Utils.eval import pos as position_values
 from pychess.Variants.atomic import kingExplode
 
@@ -25,17 +32,18 @@ def getCaptureValue(board, move):
 def sortCaptures(board, moves):
     def sort_captures_func(move):
         return getCaptureValue(board, move)
+
     moves.sort(key=sort_captures_func, reverse=True)
     return moves
 
 
 def getMoveValue(board, table, depth, move):
-    """ Sort criteria is as follows.
-        1.  The move from the hash table
-        2.  Captures as above.
-        3.  Killers.
-        4.  History.
-        5.  Moves to the centre. """
+    """Sort criteria is as follows.
+    1.  The move from the hash table
+    2.  Captures as above.
+    3.  Killers.
+    4.  History.
+    5.  Moves to the centre."""
 
     # As we only return directly from transposition table if hashf == hashfEXACT
     # There could be a non  hashfEXACT very promising move for us to test
@@ -86,8 +94,10 @@ def getMoveValue(board, table, depth, move):
         score = 0
     else:
         try:
-            score = position_values[fpiece][board.color][tcord] - \
-                position_values[fpiece][board.color][fcord]
+            score = (
+                position_values[fpiece][board.color][tcord]
+                - position_values[fpiece][board.color][fcord]
+            )
             # print("NOT EMPTY fpiece", fpiece, fcord, tcord)
             # print(board)
         except KeyError:
@@ -104,5 +114,6 @@ def getMoveValue(board, table, depth, move):
 def sortMoves(board, table, ply, hashmove, moves):
     def sort_moves_func(move):
         return getMoveValue(board, table, ply, hashmove, move)
+
     moves.sort(key=sort_moves_func, reverse=True)
     return moves

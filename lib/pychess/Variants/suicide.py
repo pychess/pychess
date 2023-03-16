@@ -1,7 +1,14 @@
 """ Suicide Variation"""
 
-from pychess.Utils.const import SUICIDECHESS, VARIANTS_OTHER_NONSTANDARD, KING_PROMOTION, \
-    QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION
+from pychess.Utils.const import (
+    SUICIDECHESS,
+    VARIANTS_OTHER_NONSTANDARD,
+    KING_PROMOTION,
+    QUEEN_PROMOTION,
+    ROOK_PROMOTION,
+    BISHOP_PROMOTION,
+    KNIGHT_PROMOTION,
+)
 from pychess.Utils.Board import Board
 
 SUICIDESTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"
@@ -9,21 +16,28 @@ SUICIDESTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"
 
 class SuicideBoard(Board):
     """:Description: This is the FICS version of Losing chess used on FICS as suicide chess.
-        You must capture if you can, and the object is to lose all your pieces or to have no moves left.
-        But in Suicide, the king is just like any other piece.
-        It can move into check and be captured, and you can even promote pawns to kings.
+    You must capture if you can, and the object is to lose all your pieces or to have no moves left.
+    But in Suicide, the king is just like any other piece.
+    It can move into check and be captured, and you can even promote pawns to kings.
     """
+
     variant = SUICIDECHESS
     __desc__ = _(
-        "FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html")
+        "FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html"
+    )
     name = _("Suicide")
     cecp_name = "suicide"
     need_initial_board = True
     standard_rules = False
     variant_group = VARIANTS_OTHER_NONSTANDARD
 
-    PROMOTIONS = (KING_PROMOTION, QUEEN_PROMOTION, ROOK_PROMOTION,
-                  BISHOP_PROMOTION, KNIGHT_PROMOTION)
+    PROMOTIONS = (
+        KING_PROMOTION,
+        QUEEN_PROMOTION,
+        ROOK_PROMOTION,
+        BISHOP_PROMOTION,
+        KNIGHT_PROMOTION,
+    )
 
     def __init__(self, setup=False, lboard=None):
         if setup is True:
@@ -36,7 +50,7 @@ def pieceCount(board, color):
     return bin(board.friends[color]).count("1")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from pychess.Utils.Move import Move
     from pychess.Utils.lutils.lmove import parseAN
     from pychess.Utils.lutils.lmovegen import genCaptures

@@ -1,7 +1,13 @@
 # Atomic Chess
 
-from pychess.Utils.const import VARIANTS_OTHER_NONSTANDARD, KING, ATOMICCHESS, ENPASSANT, \
-    B8, E1
+from pychess.Utils.const import (
+    VARIANTS_OTHER_NONSTANDARD,
+    KING,
+    ATOMICCHESS,
+    ENPASSANT,
+    B8,
+    E1,
+)
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move
@@ -11,8 +17,7 @@ from pychess.Utils.lutils.ldata import moveArray
 
 class AtomicBoard(Board):
     variant = ATOMICCHESS
-    __desc__ = _(
-        "FICS atomic: http://www.freechess.org/Help/HelpFiles/atomic.html")
+    __desc__ = _("FICS atomic: http://www.freechess.org/Help/HelpFiles/atomic.html")
     name = _("Atomic")
     cecp_name = "atomic"
     need_initial_board = False
@@ -49,7 +54,7 @@ def kingExplode(board, move, color):
     return False
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     FEN = "rnbqkbnr/ppp1pppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"
     atomic_board = AtomicBoard(FEN)
     print(atomic_board.board.__repr__())
@@ -60,6 +65,7 @@ if __name__ == '__main__':
         print(acord, apiece, acolor)
 
     from pychess.Utils.lutils.lmove import parseAN
+
     atomic_board = atomic_board.move(Move(parseAN(atomic_board.board, "d8d2")))
     print(atomic_board.board.__repr__())
     print(atomic_board.board.pieceCount)

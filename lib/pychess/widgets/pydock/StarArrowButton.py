@@ -20,15 +20,13 @@ PADDING_Y = 0.4  # Amount of button height
 
 
 class StarArrowButton(OverlayWindow):
-
     __gsignals__ = {
-        'dropped': (GObject.SignalFlags.RUN_FIRST, None, (int, object)),
-        'hovered': (GObject.SignalFlags.RUN_FIRST, None, (int, object)),
-        'left': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "dropped": (GObject.SignalFlags.RUN_FIRST, None, (int, object)),
+        "hovered": (GObject.SignalFlags.RUN_FIRST, None, (int, object)),
+        "left": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
-    def __init__(self, parent, northSvg, eastSvg, southSvg, westSvg, centerSvg,
-                 bgSvg):
+    def __init__(self, parent, northSvg, eastSvg, southSvg, westSvg, centerSvg, bgSvg):
         OverlayWindow.__init__(self, parent)
 
         self.svgs = (northSvg, eastSvg, southSvg, westSvg, centerSvg)
@@ -37,10 +35,14 @@ class StarArrowButton(OverlayWindow):
         self.currentHovered = -1
 
         # targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
-        targets = [Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB",
-                                       Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
-        self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
-                           targets, Gdk.DragAction.MOVE)
+        targets = [
+            Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xBADBEEF)
+        ]
+        self.drag_dest_set(
+            Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
+            targets,
+            Gdk.DragAction.MOVE,
+        )
         self.drag_dest_set_track_motion(True)
         self.myparent.button_cids += [
             self.connect("drag-motion", self.__onDragMotion),
@@ -56,13 +58,17 @@ class StarArrowButton(OverlayWindow):
     def _calcSize(self):
         parentAlloc = self.myparent.get_allocation()
 
-        if self.myparentAlloc is None or \
-                parentAlloc.width != self.myparentAlloc.width or \
-                parentAlloc.height != self.myparentAlloc.height:
-
+        if (
+            self.myparentAlloc is None
+            or parentAlloc.width != self.myparentAlloc.width
+            or parentAlloc.height != self.myparentAlloc.height
+        ):
             starWidth, starHeight = self.getSizeOfSvg(self.bgSvg)
-            scale = min(1, parentAlloc.width / float(starWidth),
-                        parentAlloc.height / float(starHeight))
+            scale = min(
+                1,
+                parentAlloc.width / float(starWidth),
+                parentAlloc.height / float(starHeight),
+            )
             self.size = list(map(int, (starWidth * scale, starHeight * scale)))
             self.resize(self.size[0], self.size[1])
 
@@ -76,8 +82,9 @@ class StarArrowButton(OverlayWindow):
 
         if self.myparent.get_window():
             x_loc, y_loc = self.translateCoords(
-                int(parentAlloc.width / 2. - self.size[0] / 2.),
-                int(parentAlloc.height / 2. - self.size[1] / 2.))
+                int(parentAlloc.width / 2.0 - self.size[0] / 2.0),
+                int(parentAlloc.height / 2.0 - self.size[1] / 2.0),
+            )
             if (x_loc, y_loc) != self.get_position():
                 self.move(x_loc, y_loc)
 
@@ -89,8 +96,7 @@ class StarArrowButton(OverlayWindow):
 
         context = self.get_window().cairo_create()
         self.paintTransparent(context)
-        surface = self.getSurfaceFromSvg(self.bgSvg, self.size[0],
-                                         self.size[1])
+        surface = self.getSurfaceFromSvg(self.bgSvg, self.size[0], self.size[1])
         context.set_source_surface(surface, 0, 0)
         context.paint()
 
@@ -98,8 +104,9 @@ class StarArrowButton(OverlayWindow):
             rect = self.__getButtonRectangle(position)
 
             context = self.get_window().cairo_create()
-            surface = self.getSurfaceFromSvg(self.svgs[position], rect.width,
-                                             rect.height)
+            surface = self.getSurfaceFromSvg(
+                self.svgs[position], rect.width, rect.height
+            )
             context.set_source_surface(surface, rect.x, rect.y)
             context.paint()
 
@@ -110,24 +117,34 @@ class StarArrowButton(OverlayWindow):
         buttonWidth = buttonWidth * self.size[0] / float(starWidth)
         buttonHeight = buttonHeight * self.size[1] / float(starHeight)
         dx_loc, dy_loc = DX_DY[position]
-        x_loc = ceil(dx_loc * (1 + PADDING_X) * buttonWidth - buttonWidth / 2. +
-                     self.size[0] / 2.)
-        y_loc = ceil(dy_loc * (1 + PADDING_Y) * buttonHeight - buttonHeight / 2. +
-                     self.size[1] / 2.)
+        x_loc = ceil(
+            dx_loc * (1 + PADDING_X) * buttonWidth
+            - buttonWidth / 2.0
+            + self.size[0] / 2.0
+        )
+        y_loc = ceil(
+            dy_loc * (1 + PADDING_Y) * buttonHeight
+            - buttonHeight / 2.0
+            + self.size[1] / 2.0
+        )
 
         rect = Gdk.Rectangle()
-        rect.x, rect.y, rect.width, rect.height = (x_loc, y_loc, ceil(buttonWidth),
-                                                   ceil(buttonHeight))
+        rect.x, rect.y, rect.width, rect.height = (
+            x_loc,
+            y_loc,
+            ceil(buttonWidth),
+            ceil(buttonHeight),
+        )
         return rect
 
     def __getButtonAtPoint(self, x, y):
         for position in range(POSITIONS_COUNT):
-
             rect = Gdk.Rectangle()
             rect.x, rect.y, rect.width, rect.height = (x, y, 1, 1)
 
             inside, dest = Gdk.rectangle_intersect(
-                self.__getButtonRectangle(position), rect)
+                self.__getButtonRectangle(position), rect
+            )
             if inside:
                 return position
         return -1
@@ -137,8 +154,7 @@ class StarArrowButton(OverlayWindow):
         if self.currentHovered != position:
             self.currentHovered = position
             if position > -1:
-                self.emit("hovered", position,
-                          Gtk.drag_get_source_widget(context))
+                self.emit("hovered", position, Gtk.drag_get_source_widget(context))
             else:
                 self.emit("left")
 
@@ -164,12 +180,14 @@ if __name__ == "__main__":
     w = Gtk.Window()
     w.connect("delete-event", Gtk.main_quit)
     sab = StarArrowButton(
-        w, "/home/thomas/Programmering/workspace/pychess/glade/dock_top.svg",
+        w,
+        "/home/thomas/Programmering/workspace/pychess/glade/dock_top.svg",
         "/home/thomas/Programmering/workspace/pychess/glade/dock_right.svg",
         "/home/thomas/Programmering/workspace/pychess/glade/dock_bottom.svg",
         "/home/thomas/Programmering/workspace/pychess/glade/dock_left.svg",
         "/home/thomas/Programmering/workspace/pychess/glade/dock_center.svg",
-        "/home/thomas/Programmering/workspace/pychess/glade/dock_star.svg")
+        "/home/thomas/Programmering/workspace/pychess/glade/dock_star.svg",
+    )
 
     def on_expose(widget, event):
         cairo_win = widget.window.cairo_create()
@@ -179,6 +197,7 @@ if __name__ == "__main__":
         cairo_win.set_source_rgba(1.0, 0.0, 0.0, 1.0)
         cairo_win.set_operator(cairo.OPERATOR_OVER)
         cairo_win.fill()
+
     # w.connect("e)
     w.show_all()
     sab.show_all()

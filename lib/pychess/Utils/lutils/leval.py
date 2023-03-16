@@ -1,17 +1,78 @@
 # The purpose of this module, is to give a certain position a score.
 # The greater the score, the better the position
 
-from pychess.Utils.const import WHITE, BLACK, LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS,\
-    ASEAN_VARIANTS, ATOMICCHESS, CRAZYHOUSECHESS, RACINGKINGSCHESS, THREECHECKCHESS,\
-    BPAWN, BISHOP, KNIGHT, QUEEN, KING, PAWN, ROOK, \
-    CAS_FLAGS, H7, B6, A7, H2, G3, A2, B3, G6, D1, G8, B8, G1, B1
+from pychess.Utils.const import (
+    WHITE,
+    BLACK,
+    LOSERSCHESS,
+    SUICIDECHESS,
+    GIVEAWAYCHESS,
+    ASEAN_VARIANTS,
+    ATOMICCHESS,
+    CRAZYHOUSECHESS,
+    RACINGKINGSCHESS,
+    THREECHECKCHESS,
+    BPAWN,
+    BISHOP,
+    KNIGHT,
+    QUEEN,
+    KING,
+    PAWN,
+    ROOK,
+    CAS_FLAGS,
+    H7,
+    B6,
+    A7,
+    H2,
+    G3,
+    A2,
+    B3,
+    G6,
+    D1,
+    G8,
+    B8,
+    G1,
+    B1,
+)
 from .bitboard import iterBits, firstBit, lsb
-from .ldata import fileBits, bitPosArray, PIECE_VALUES, FILE, RANK, PAWN_VALUE,\
-    WHITE_SQUARES, BLACK_SQUARES, ASEAN_PIECE_VALUES, ATOMIC_PIECE_VALUES, CRAZY_PIECE_VALUES,\
-    kwingpawns1, kwingpawns2, qwingpawns1, qwingpawns2, frontWall, endingKing,\
-    brank7, brank8, distance, isolaniMask, d2e2, passedScores, squarePawnMask,\
-    moveArray, brank67, lbox, stonewall, isolani_normal, isolani_weaker,\
-    passedPawnMask, fromToRay, pawnScoreBoard, sdistance, taxicab, racingKing
+from .ldata import (
+    fileBits,
+    bitPosArray,
+    PIECE_VALUES,
+    FILE,
+    RANK,
+    PAWN_VALUE,
+    WHITE_SQUARES,
+    BLACK_SQUARES,
+    ASEAN_PIECE_VALUES,
+    ATOMIC_PIECE_VALUES,
+    CRAZY_PIECE_VALUES,
+    kwingpawns1,
+    kwingpawns2,
+    qwingpawns1,
+    qwingpawns2,
+    frontWall,
+    endingKing,
+    brank7,
+    brank8,
+    distance,
+    isolaniMask,
+    d2e2,
+    passedScores,
+    squarePawnMask,
+    moveArray,
+    brank67,
+    lbox,
+    stonewall,
+    isolani_normal,
+    isolani_weaker,
+    passedPawnMask,
+    fromToRay,
+    pawnScoreBoard,
+    sdistance,
+    taxicab,
+    racingKing,
+)
 from .lsort import staticExchangeEvaluate
 from .lmovegen import newMove
 from pychess.Variants.threecheck import checkCount
@@ -26,8 +87,8 @@ CHECK_BONUS = (0, 100, 500, 2000)
 
 
 def evaluateComplete(board, color):
-    """ A detailed evaluation function, taking into account
-        several positional factors """
+    """A detailed evaluation function, taking into account
+    several positional factors"""
 
     s, phase = evalMaterial(board, color)
     if board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS):
@@ -37,13 +98,10 @@ def evaluateComplete(board, color):
     if board.variant == RACINGKINGSCHESS or board.variant == THREECHECKCHESS:
         return s
 
-    s += evalBishops(board, color, phase) - evalBishops(board, 1 - color,
-                                                        phase)
+    s += evalBishops(board, color, phase) - evalBishops(board, 1 - color, phase)
     s += evalRooks(board, color, phase) - evalRooks(board, 1 - color, phase)
-    s += evalDoubleQR7(board, color, phase) - evalDoubleQR7(board, 1 - color,
-                                                            phase)
-    s += evalKingTropism(board, color, phase) - evalKingTropism(board, 1 -
-                                                                color, phase)
+    s += evalDoubleQR7(board, color, phase) - evalDoubleQR7(board, 1 - color, phase)
+    s += evalKingTropism(board, color, phase) - evalKingTropism(board, 1 - color, phase)
     if board.variant in ASEAN_VARIANTS:
         return s
     s += evalDev(board, color, phase) - evalDev(board, 1 - color, phase)
@@ -51,14 +109,15 @@ def evaluateComplete(board, color):
         return s
     pawnScore, passed, weaked = cacheablePawnInfo(board, phase)
     s += pawnScore if color == WHITE else -pawnScore
-    s += evalPawnStructure(board, color, phase, passed,
-                           weaked) - evalPawnStructure(board, 1 - color, phase,
-                                                       passed, weaked)
+    s += evalPawnStructure(board, color, phase, passed, weaked) - evalPawnStructure(
+        board, 1 - color, phase, passed, weaked
+    )
 
     s += evalTrappedBishops(board, color)
     s += randomval
 
     return s
+
 
 ################################################################################
 # evalMaterial                                                                 #
@@ -76,14 +135,10 @@ def evalMaterial(board, color):
     material = [0, 0]
     if board.variant == CRAZYHOUSECHESS:
         for piece in range(PAWN, KING):
-            material[WHITE] += CRAZY_PIECE_VALUES[piece] * pieceCount[WHITE][
-                piece]
-            material[BLACK] += CRAZY_PIECE_VALUES[piece] * pieceCount[BLACK][
-                piece]
-            material[WHITE] += CRAZY_PIECE_VALUES[piece] * board.holding[
-                WHITE][piece]
-            material[BLACK] += CRAZY_PIECE_VALUES[piece] * board.holding[
-                BLACK][piece]
+            material[WHITE] += CRAZY_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
+            material[BLACK] += CRAZY_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
+            material[WHITE] += CRAZY_PIECE_VALUES[piece] * board.holding[WHITE][piece]
+            material[BLACK] += CRAZY_PIECE_VALUES[piece] * board.holding[BLACK][piece]
     elif board.variant == LOSERSCHESS:
         for piece in range(PAWN, KING):
             material[WHITE] += pieceCount[WHITE][piece]
@@ -94,16 +149,12 @@ def evalMaterial(board, color):
             material[BLACK] += pieceCount[BLACK][piece]
     elif board.variant == ATOMICCHESS:
         for piece in range(PAWN, KING + 1):
-            material[WHITE] += ATOMIC_PIECE_VALUES[piece] * pieceCount[WHITE][
-                piece]
-            material[BLACK] += ATOMIC_PIECE_VALUES[piece] * pieceCount[BLACK][
-                piece]
+            material[WHITE] += ATOMIC_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
+            material[BLACK] += ATOMIC_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
     elif board.variant in ASEAN_VARIANTS:
         for piece in range(PAWN, KING + 1):
-            material[WHITE] += ASEAN_PIECE_VALUES[piece] * pieceCount[WHITE][
-                piece]
-            material[BLACK] += ASEAN_PIECE_VALUES[piece] * pieceCount[BLACK][
-                piece]
+            material[WHITE] += ASEAN_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
+            material[BLACK] += ASEAN_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
     else:
         for piece in range(PAWN, KING):
             material[WHITE] += PIECE_VALUES[piece] * pieceCount[WHITE][piece]
@@ -132,7 +183,9 @@ def evalMaterial(board, color):
 
     pawns = pieceCount[leading][PAWN]
     matDiff = material[leading] - material[1 - leading]
-    val = min(2400, matDiff) + (matDiff * (12000 - matTotal) * pawns) // (6400 * (pawns + 1))
+    val = min(2400, matDiff) + (matDiff * (12000 - matTotal) * pawns) // (
+        6400 * (pawns + 1)
+    )
 
     if leading == color:
         return val, phase
@@ -151,29 +204,40 @@ queenTropism = [[0] * 64 for i in range(64)]
 
 for pcord in range(64):
     for kcord in range(pcord + 1, 64):
-        pawnTropism[pcord][kcord] = pawnTropism[kcord][pcord] = \
-            (14 - taxicab[pcord][kcord])**2 * 10 / 169
-        knightTropism[pcord][kcord] = knightTropism[kcord][pcord] = \
-            (6 - distance[KNIGHT][pcord][kcord])**2 * 2
-        bishopTropism[pcord][kcord] = bishopTropism[kcord][pcord] = \
-            (14 - distance[BISHOP][pcord][kcord] * sdistance[pcord][kcord])**2 * 30 // 169
-        rookTropism[pcord][kcord] = rookTropism[kcord][pcord] = \
-            (14 - distance[ROOK][pcord][kcord] * sdistance[pcord][kcord])**2 * 40 // 169
-        queenTropism[pcord][kcord] = queenTropism[kcord][pcord] = \
-            (14 - distance[QUEEN][pcord][kcord] * sdistance[pcord][kcord])**2 * 50 // 169
+        pawnTropism[pcord][kcord] = pawnTropism[kcord][pcord] = (
+            (14 - taxicab[pcord][kcord]) ** 2 * 10 / 169
+        )
+        knightTropism[pcord][kcord] = knightTropism[kcord][pcord] = (
+            6 - distance[KNIGHT][pcord][kcord]
+        ) ** 2 * 2
+        bishopTropism[pcord][kcord] = bishopTropism[kcord][pcord] = (
+            (14 - distance[BISHOP][pcord][kcord] * sdistance[pcord][kcord]) ** 2
+            * 30
+            // 169
+        )
+        rookTropism[pcord][kcord] = rookTropism[kcord][pcord] = (
+            (14 - distance[ROOK][pcord][kcord] * sdistance[pcord][kcord]) ** 2
+            * 40
+            // 169
+        )
+        queenTropism[pcord][kcord] = queenTropism[kcord][pcord] = (
+            (14 - distance[QUEEN][pcord][kcord] * sdistance[pcord][kcord]) ** 2
+            * 50
+            // 169
+        )
 
 tropisms = {
     PAWN: pawnTropism,
     KNIGHT: knightTropism,
     BISHOP: bishopTropism,
     ROOK: rookTropism,
-    QUEEN: queenTropism
+    QUEEN: queenTropism,
 }
 
 
 def evalKingTropism(board, color, phase):
-    """ All other things being equal, having your Knights, Queens and Rooks
-        close to the opponent's king is a good thing """
+    """All other things being equal, having your Knights, Queens and Rooks
+    close to the opponent's king is a good thing"""
     _tropisms = tropisms
     _lsb = lsb
     opcolor = 1 - color
@@ -203,10 +267,9 @@ def evalKingTropism(board, color, phase):
 # score       score from white's point of view
 # passed      bitboard of passed pawns
 # weaked      bitboard of weak pawns
-pawnEntryType = Struct('=H h Q Q')
+pawnEntryType = Struct("=H h Q Q")
 PAWN_HASH_SIZE = 16384
-PAWN_PHASE_KEY = (0x343d, 0x055d, 0x3d3c, 0x1a1c, 0x28aa, 0x19ee, 0x1538,
-                  0x2a99)
+PAWN_PHASE_KEY = (0x343D, 0x055D, 0x3D3C, 0x1A1C, 0x28AA, 0x19EE, 0x1538, 0x2A99)
 pawntable = create_string_buffer(PAWN_HASH_SIZE * pawnEntryType.size)
 
 
@@ -216,18 +279,20 @@ def clearPawnTable():
 
 def probePawns(board, phase):
     index = (board.pawnhash % PAWN_HASH_SIZE) ^ PAWN_PHASE_KEY[phase - 1]
-    key, score, passed, weaked = pawnEntryType.unpack_from(pawntable, index *
-                                                           pawnEntryType.size)
-    if key == (board.pawnhash >> 14) & 0xffff:
+    key, score, passed, weaked = pawnEntryType.unpack_from(
+        pawntable, index * pawnEntryType.size
+    )
+    if key == (board.pawnhash >> 14) & 0xFFFF:
         return score, passed, weaked
     return None
 
 
 def recordPawns(board, phase, score, passed, weaked):
     index = (board.pawnhash % PAWN_HASH_SIZE) ^ PAWN_PHASE_KEY[phase - 1]
-    key = (board.pawnhash >> 14) & 0xffff
-    pawnEntryType.pack_into(pawntable, index * pawnEntryType.size, key, score,
-                            passed, weaked)
+    key = (board.pawnhash >> 14) & 0xFFFF
+    pawnEntryType.pack_into(
+        pawntable, index * pawnEntryType.size, key, score, passed, weaked
+    )
 
 
 def cacheablePawnInfo(board, phase):
@@ -251,8 +316,9 @@ def cacheablePawnInfo(board, phase):
 
             # Passed pawns
             if not oppawns & passedPawnMask[color][cord]:
-                if (color == WHITE and not fromToRay[cord][cord | 56] & pawns) or\
-                   (color == BLACK and not fromToRay[cord][cord & 7] & pawns):
+                if (color == WHITE and not fromToRay[cord][cord | 56] & pawns) or (
+                    color == BLACK and not fromToRay[cord][cord & 7] & pawns
+                ):
                     passed |= bitPosArray[cord]
                     score += (passedScores[color][cord >> 3] * phase) // 12
 
@@ -267,8 +333,10 @@ def cacheablePawnInfo(board, phase):
             ptype = color == WHITE and PAWN or BPAWN
             opptype = color == BLACK and PAWN or BPAWN
 
-            if not (passedPawnMask[opcolor][i] & ~fileBits[cord & 7] & pawns) and\
-                    board.arBoard[i] != PAWN:
+            if (
+                not (passedPawnMask[opcolor][i] & ~fileBits[cord & 7] & pawns)
+                and board.arBoard[i] != PAWN
+            ):
                 n1 = bin(pawns & moveArray[opptype][i]).count("1")
                 n2 = bin(oppawns & moveArray[ptype][i]).count("1")
                 if n1 < n2:
@@ -295,11 +363,10 @@ def cacheablePawnInfo(board, phase):
                 score += -(8 + phase)  # Backward pawn penalty
 
             # Pawn base under attack
-            if moveArray[ptype][cord] & oppawns and \
-               moveArray[ptype][cord] & pawns:
+            if moveArray[ptype][cord] & oppawns and moveArray[ptype][cord] & pawns:
                 score += -18
 
-    # Increment file count for isolani & doubled pawn evaluation
+            # Increment file count for isolani & doubled pawn evaluation
             nfile[cord & 7] += 1
 
         for i in range(8):
@@ -381,9 +448,16 @@ def evalPawnStructure(board, color, phase, passed, weaked):
             n1 = FILE(opking)
             n2 = RANK(opking)
             for f in range(7):
-                if t & fileBits[f] and t & fileBits[f + 1] and \
-                        (n1 < f - 1 or n1 > f + 1 or (color == WHITE and n2 < 4) or
-                            (color == BLACK and n2 > 3)):
+                if (
+                    t & fileBits[f]
+                    and t & fileBits[f + 1]
+                    and (
+                        n1 < f - 1
+                        or n1 > f + 1
+                        or (color == WHITE and n2 < 4)
+                        or (color == BLACK and n2 > 3)
+                    )
+                ):
                     score += 50
 
             # Enemy has no pieces & King is outcolor of passed pawn square
@@ -393,8 +467,7 @@ def evalPawnStructure(board, color, phase, passed, weaked):
                     if not squarePawnMask[color][cord] & opboards[KING]:
                         score += passedScores[color][RANK(cord)]
                 else:
-                    if not moveArray[KING][opking] & squarePawnMask[color][
-                            cord]:
+                    if not moveArray[KING][opking] & squarePawnMask[color][cord]:
                         score += passedScores[color][RANK(cord)]
 
         # Estimate if any majors are able to hunt us down
@@ -434,15 +507,16 @@ def evalPawnStructure(board, color, phase, passed, weaked):
 
 # evalBateries
 def evalDoubleQR7(board, color, phase):
-    """ Tests for QR, RR, QB and BB combos on the 7th rank. These are dangerous
-        to kings, and good at killing pawns """
+    """Tests for QR, RR, QB and BB combos on the 7th rank. These are dangerous
+    to kings, and good at killing pawns"""
 
     opcolor = 1 - board.color
     boards = board.boards[color]
     opboards = board.boards[opcolor]
 
-    if bin((boards[QUEEN] | boards[ROOK]) & brank7[color]).count("1") >= 2 and \
-            (opboards[KING] & brank8[color] or opboards[PAWN] & brank7[color]):
+    if bin((boards[QUEEN] | boards[ROOK]) & brank7[color]).count("1") >= 2 and (
+        opboards[KING] & brank8[color] or opboards[PAWN] & brank7[color]
+    ):
         return 30
 
     return 0
@@ -522,7 +596,6 @@ def evalDev(board, color, phase):
     score = 0
 
     if not board.hasCastled[color]:
-
         boards = board.boards[color]
         pawns = boards[PAWN]
 
@@ -551,7 +624,6 @@ def evalDev(board, color, phase):
 
 
 def evalBishops(board, color, phase):
-
     opcolor = 1 - color
     bishops = board.boards[color][BISHOP]
     if not bishops:
@@ -566,10 +638,11 @@ def evalBishops(board, color, phase):
     # In late game phase, add a bonus for enemy pieces on your bishop's color.
 
     if board.pieceCount[color][BISHOP] == 1:
-        squareMask = WHITE_SQUARES if (bishops &
-                                       WHITE_SQUARES) else BLACK_SQUARES
-        score = - bin(pawns & squareMask).count("1") \
-                - bin(oppawns & squareMask).count("1") // 2
+        squareMask = WHITE_SQUARES if (bishops & WHITE_SQUARES) else BLACK_SQUARES
+        score = (
+            -bin(pawns & squareMask).count("1")
+            - bin(oppawns & squareMask).count("1") // 2
+        )
         if phase > 6:
             score += bin(board.friends[1 - color] & squareMask).count("1")
 
@@ -577,7 +650,7 @@ def evalBishops(board, color, phase):
 
 
 def evalTrappedBishops(board, color):
-    """ Check for bishops trapped at A2/H2/A7/H7 """
+    """Check for bishops trapped at A2/H2/A7/H7"""
 
     _bitPosArray = bitPosArray
     wbishops = board.boards[WHITE][BISHOP]
@@ -610,7 +683,7 @@ def evalTrappedBishops(board, color):
 
 
 def evalRooks(board, color, phase):
-    """ rooks on open/half-open files """
+    """rooks on open/half-open files"""
 
     opcolor = 1 - color
     boards = board.boards[color]

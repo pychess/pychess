@@ -3,8 +3,9 @@ from gi.repository import Gtk, GObject, Gdk, Pango
 from pychess.Utils.IconLoader import load_icon
 from pychess.widgets.InfoPanel import Panel
 
-TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
-    TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
+TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(
+    6
+)
 
 add_icon = load_icon(16, "gtk-add", "list-add")
 remove_icon = load_icon(16, "gtk-remove", "list-remove")
@@ -15,13 +16,13 @@ def cmp(x, y):
 
 
 class TextImageTree(Gtk.TreeView):
-    """ :Description: Defines a tree with two columns.
-        The first one has text. The second one a clickable stock_icon
+    """:Description: Defines a tree with two columns.
+    The first one has text. The second one a clickable stock_icon
     """
 
     __gsignals__ = {
-        'activated': (GObject.SignalFlags.RUN_FIRST, None, (str, str, int)),
-        'selected': (GObject.SignalFlags.RUN_FIRST, None, (str, int))
+        "activated": (GObject.SignalFlags.RUN_FIRST, None, (str, str, int)),
+        "selected": (GObject.SignalFlags.RUN_FIRST, None, (str, int)),
     }
 
     def __init__(self, icon):
@@ -65,21 +66,23 @@ class TextImageTree(Gtk.TreeView):
         self.get_selection().connect("changed", self.selection_changed)
 
     def addRow(self, grp_id, text, grp_type):
-        """ :Description: Takes a player or a channel identified by grp_id and adds
-            them to the correct group defined by grp_type
-            :return: None
+        """:Description: Takes a player or a channel identified by grp_id and adds
+        them to the correct group defined by grp_type
+        :return: None
         """
         if grp_id in self.id2iter:
             return
         model = self.sort_model.get_model()
-        m_iter = model.append([grp_id, text, grp_type, GObject.markup_escape_text(text)])
+        m_iter = model.append(
+            [grp_id, text, grp_type, GObject.markup_escape_text(text)]
+        )
         self.id2iter[grp_id] = m_iter
         self.idSet.add(grp_id)
 
     def removeRow(self, grp_id):
-        """ :Description: Takes a player or channel identified by grp_id and removes them from
-            the data model.
-            :return: None
+        """:Description: Takes a player or channel identified by grp_id and removes them from
+        the data model.
+        :return: None
         """
         try:
             m_iter = self.id2iter[grp_id]
@@ -91,10 +94,10 @@ class TextImageTree(Gtk.TreeView):
         self.idSet.remove(grp_id)
 
     def selectRow(self, grp_id):
-        """ :Description: Takes a grp_id and finds the row associated with this id then
-            sets this row to be the focus ie selected
+        """:Description: Takes a grp_id and finds the row associated with this id then
+        sets this row to be the focus ie selected
 
-            :returns: None
+        :returns: None
         """
         m_iter = self.id2iter[grp_id]
         m_iter = self.sort_model.convert_child_iter_to_iter(m_iter)[1]
@@ -102,8 +105,8 @@ class TextImageTree(Gtk.TreeView):
         sel.select_iter(m_iter)
 
     def __contains__(self, grp_id):
-        """ :Description: Checks to see if a grp_id in a member of the id set
-            :returns: boolean
+        """:Description: Checks to see if a grp_id in a member of the id set
+        :returns: boolean
         """
         return grp_id in self.idSet
 
@@ -150,12 +153,10 @@ class TextImageTree(Gtk.TreeView):
 
 
 class ChannelsPanel(Gtk.ScrolledWindow, Panel):
-
     __gsignals__ = {
-        'conversationAdded': (GObject.SignalFlags.RUN_FIRST, None,
-                              (str, str, int)),
-        'conversationRemoved': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
-        'conversationSelected': (GObject.SignalFlags.RUN_FIRST, None, (str, ))
+        "conversationAdded": (GObject.SignalFlags.RUN_FIRST, None, (str, str, int)),
+        "conversationRemoved": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "conversationSelected": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
 
     def __init__(self, connection):
@@ -260,10 +261,9 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         for chan in data:
             if model[m_iter][0] == chan:
                 if data[chan]:
-                    cell.set_property('foreground_rgba',
-                                      Gdk.RGBA(0.9, 0.2, 0.2, 1))
+                    cell.set_property("foreground_rgba", Gdk.RGBA(0.9, 0.2, 0.2, 1))
                 else:
-                    cell.set_property('foreground_rgba', Gdk.RGBA(0, 0, 0, 1))
+                    cell.set_property("foreground_rgba", Gdk.RGBA(0, 0, 0, 1))
 
     def channel_Highlight(self, a, channel, grp_type, b):
         """
@@ -283,16 +283,18 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         if grp_type == TYPE_PERSONAL:
             channel = "person" + channel.lower()
         tmp_iter = j_list.id2iter[channel]
-        tmp_iter = j_list.sort_model.convert_child_iter_to_iter(tmp_iter)[1]  # channel iter
+        tmp_iter = j_list.sort_model.convert_child_iter_to_iter(tmp_iter)[
+            1
+        ]  # channel iter
         j_list.get_selection().select_iter(tmp_iter)
         cell = leftcol.get_cells()[0]
         j_list.get_selection().select_iter(cur_iter)
         self.highlighted[channel] = True
         if cur_iter != tmp_iter:
             # iter = tmp_iter
-            leftcol.set_cell_data_func(cell,
-                                       self.change_fg_colour,
-                                       func_data=self.highlighted)
+            leftcol.set_cell_data_func(
+                cell, self.change_fg_colour, func_data=self.highlighted
+            )
 
     def start(self):
         self.channels = self.connection.cm.getChannels()
@@ -302,19 +304,24 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
             grp_id = self.compileId(player.name, TYPE_PERSONAL)
             if str(player.name) in self.connection.notify_users:
                 self.friendsList.addRow(
-                    grp_id, player.name + player.display_titles(), TYPE_PERSONAL)
-            elif player.online and ('(B)' in player.display_titles()):
+                    grp_id, player.name + player.display_titles(), TYPE_PERSONAL
+                )
+            elif player.online and ("(B)" in player.display_titles()):
                 self.blindList.addRow(
-                    grp_id, player.name + player.display_titles(), TYPE_BLINDFOLD)
-            elif player.online and ('(C)' in player.display_titles()):
-                self.compList.addRow(grp_id, player.name + player.display_titles(),
-                                     TYPE_COMP)
-            elif player.online and ('Guest' in str(player.name)):
+                    grp_id, player.name + player.display_titles(), TYPE_BLINDFOLD
+                )
+            elif player.online and ("(C)" in player.display_titles()):
+                self.compList.addRow(
+                    grp_id, player.name + player.display_titles(), TYPE_COMP
+                )
+            elif player.online and ("Guest" in str(player.name)):
                 self.guestList.addRow(
-                    grp_id, player.name + player.display_titles(), TYPE_GUEST)
+                    grp_id, player.name + player.display_titles(), TYPE_GUEST
+                )
             elif player.online:
                 self.playersList.addRow(
-                    grp_id, player.name + player.display_titles(), TYPE_PERSONAL)
+                    grp_id, player.name + player.display_titles(), TYPE_PERSONAL
+                )
 
         def addPlayer(players, new_players):
             for player in new_players:
@@ -322,34 +329,42 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
                 if str(player.name) in self.connection.notify_users:
                     self.friendsList.addRow(
                         self.compileId(player.name, TYPE_PERSONAL),
-                        player.name + player.display_titles(), TYPE_PERSONAL)
-                elif '(C)' in str(player.display_titles()):
+                        player.name + player.display_titles(),
+                        TYPE_PERSONAL,
+                    )
+                elif "(C)" in str(player.display_titles()):
                     self.compList.addRow(
                         self.compileId(player.name, TYPE_COMP),
-                        player.name + player.display_titles(), TYPE_COMP)
-                elif '(B)' in str(player.display_titles()):
+                        player.name + player.display_titles(),
+                        TYPE_COMP,
+                    )
+                elif "(B)" in str(player.display_titles()):
                     self.blindList.addRow(
                         self.compileId(player.name, TYPE_BLINDFOLD),
-                        player.name + player.display_titles(), TYPE_BLINDFOLD)
-                elif 'Guest' in str(player.name):
+                        player.name + player.display_titles(),
+                        TYPE_BLINDFOLD,
+                    )
+                elif "Guest" in str(player.name):
                     self.guestList.addRow(
                         self.compileId(player.name, TYPE_GUEST),
-                        player.name + player.display_titles(), TYPE_GUEST)
+                        player.name + player.display_titles(),
+                        TYPE_GUEST,
+                    )
                 else:
                     self.playersList.addRow(
                         self.compileId(player.name, TYPE_PERSONAL),
-                        player.name + player.display_titles(), TYPE_PERSONAL)
+                        player.name + player.display_titles(),
+                        TYPE_PERSONAL,
+                    )
             return False
 
         self.connection.players.connect("FICSPlayerEntered", addPlayer)
 
         def removePlayer(players, player):
-            if (str(player.name) in list(self.connection.notify_users)):
-                self.friendsList.removeRow(self.compileId(player.name,
-                                                          TYPE_PERSONAL))
+            if str(player.name) in list(self.connection.notify_users):
+                self.friendsList.removeRow(self.compileId(player.name, TYPE_PERSONAL))
             else:
-                self.playersList.removeRow(self.compileId(player.name,
-                                                          TYPE_PERSONAL))
+                self.playersList.removeRow(self.compileId(player.name, TYPE_PERSONAL))
             return False
 
         self.connection.players.connect("FICSPlayerExited", removePlayer)
@@ -363,8 +378,12 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
             if grp_id in self.connection.cm.getJoinedChannels():
                 grp_id = self.compileId(grp_id, TYPE_CHANNEL)
                 if grp_id.isdigit():
-                    self.onAdd(self.channelsList, grp_id, str(grp_id) + ": " + name,
-                               TYPE_CHANNEL)
+                    self.onAdd(
+                        self.channelsList,
+                        grp_id,
+                        str(grp_id) + ": " + name,
+                        TYPE_CHANNEL,
+                    )
                 else:
                     self.onAdd(self.channelsList, grp_id, name, TYPE_CHANNEL)
 
@@ -386,7 +405,7 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         if grp_id in grp_list:
             grp_list.removeRow(grp_id)
         self.joinedList.addRow(grp_id, text, grp_type)
-        self.emit('conversationAdded', grp_id, text, grp_type)
+        self.emit("conversationAdded", grp_id, text, grp_type)
         if grp_type == TYPE_CHANNEL:
             self.connection.cm.joinChannel(grp_id)
         self.joinedList.selectRow(grp_id)
@@ -406,18 +425,18 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         elif grp_type == TYPE_BLINDFOLD:
             self.blindList.addRow(grp_id, text, grp_type)
 
-        self.emit('conversationRemoved', grp_id)
+        self.emit("conversationRemoved", grp_id)
         if grp_type == TYPE_CHANNEL:
             self.connection.cm.removeChannel(grp_id)
 
     def onSelect(self, joined_list, grp_id, grp_type):
-        self.emit('conversationSelected', grp_id)
+        self.emit("conversationSelected", grp_id)
         joined_list.get_selection().get_selected()[1]  # Selected iter
         cell = joined_list.leftcol.get_cells()[0]
         self.highlighted[grp_id] = False
-        joined_list.leftcol.set_cell_data_func(cell,
-                                               self.change_fg_colour,
-                                               func_data=self.highlighted)
+        joined_list.leftcol.set_cell_data_func(
+            cell, self.change_fg_colour, func_data=self.highlighted
+        )
 
     def onPersonMessage(self, cm, name, title, isadmin, text):
         if not self.compileId(name, TYPE_PERSONAL) in self.joinedList:

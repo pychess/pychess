@@ -1,10 +1,47 @@
 from functools import reduce
 from operator import or_
-from pychess.Utils.const import WHITE, BLACK, KING, PAWN, EMPTY, KNIGHT, ROOK, BISHOP, QUEEN, \
-    A1, A2, A3, A4, A5, A6, A7, A8, \
-    B2, C3, D4, E5, F6, G7, H8,\
-    B7, C6, D5, E4, F3, G2, H1, \
-    B1, B8, H2, H7, G3, G6, B3, B6, sliders
+from pychess.Utils.const import (
+    WHITE,
+    BLACK,
+    KING,
+    PAWN,
+    EMPTY,
+    KNIGHT,
+    ROOK,
+    BISHOP,
+    QUEEN,
+    A1,
+    A2,
+    A3,
+    A4,
+    A5,
+    A6,
+    A7,
+    A8,
+    B2,
+    C3,
+    D4,
+    E5,
+    F6,
+    G7,
+    H8,
+    B7,
+    C6,
+    D5,
+    E4,
+    F3,
+    G2,
+    H1,
+    B1,
+    B8,
+    H2,
+    H7,
+    G3,
+    G6,
+    B3,
+    B6,
+    sliders,
+)
 
 from .bitboard import bitPosArray, iterBits, setBit
 
@@ -27,8 +64,17 @@ QUEEN_VALUE = 900
 KING_VALUE = 2000
 HAWK_VALUE = 800
 ELEPHANT_VALUE = 850
-PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE, BISHOP_VALUE, ROOK_VALUE,
-                QUEEN_VALUE, KING_VALUE, HAWK_VALUE, ELEPHANT_VALUE]
+PIECE_VALUES = [
+    0,
+    PAWN_VALUE,
+    KNIGHT_VALUE,
+    BISHOP_VALUE,
+    ROOK_VALUE,
+    QUEEN_VALUE,
+    KING_VALUE,
+    HAWK_VALUE,
+    ELEPHANT_VALUE,
+]
 
 ASEAN_PIECE_VALUES = (0, 100, 450, 300, 630, 180, 2000)
 CRAZY_PIECE_VALUES = (0, 100, 200, 240, 240, 380, 2000)
@@ -43,7 +89,7 @@ MATE_DEPTH = 255
 
 
 def VALUE_AT_PLY(val, ply):
-    """ Return the value of scoring val a given number of plies into the future. """
+    """Return the value of scoring val a given number of plies into the future."""
     if val >= +32512:
         return val - ply
     if val <= -32512:
@@ -59,8 +105,7 @@ knightTScale = [0, 100, 50, 35, 10, 3, 2, 2, 1, 1]
 rookTScale = [0, 50, 40, 15, 5, 2, 1, 1, 1, 0]
 queenTScale = [0, 100, 60, 20, 10, 7, 5, 4, 3, 2]
 
-passedScores = ((0, 48, 48, 120, 144, 192, 240, 0),
-                (0, 240, 192, 144, 120, 48, 48, 0))
+passedScores = ((0, 48, 48, 120, 144, 192, 240, 0), (0, 240, 192, 144, 120, 48, 48, 0))
 
 # Penalties for one or more isolated pawns on a given file
 isolani_normal = (-8, -10, -12, -14, -14, -12, -10, -8)
@@ -77,10 +122,10 @@ for fcord in range(64):
         fy = RANK(fcord)
         tx = FILE(tcord)
         ty = RANK(tcord)
-        taxicab[fcord][tcord] = taxicab[fcord][tcord] = abs(fx - tx) + abs(fy -
-                                                                           ty)
+        taxicab[fcord][tcord] = taxicab[fcord][tcord] = abs(fx - tx) + abs(fy - ty)
         sdistance[fcord][tcord] = sdistance[fcord][tcord] = min(
-            abs(fx - tx), abs(fy - ty))
+            abs(fx - tx), abs(fy - ty)
+        )
 
 distance = [[[0] * 64 for i in range(64)] for j in range(KING + 1)]
 
@@ -91,21 +136,231 @@ distance[PAWN] = sdistance
 # Special table for knightdistances
 
 knightDistance = [
-    6, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 6,
-    5, 4, 5, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 4, 5,
-    4, 5, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 4,
-    5, 4, 3, 4, 3, 2, 3, 2, 3, 2, 3, 4, 3, 4, 5,
-    4, 3, 4, 3, 2, 3, 2, 3, 2, 3, 2, 3, 4, 3, 4,
-    5, 4, 3, 2, 3, 4, 1, 2, 1, 4, 3, 2, 3, 4, 5,
-    4, 3, 4, 3, 2, 1, 2, 3, 2, 1, 2, 3, 4, 3, 4,
-    5, 4, 3, 2, 3, 2, 3, 0, 3, 2, 3, 2, 3, 4, 5,
-    4, 3, 4, 3, 2, 1, 2, 3, 2, 1, 2, 3, 4, 3, 4,
-    5, 4, 3, 2, 3, 4, 1, 2, 1, 4, 3, 2, 3, 4, 5,
-    4, 3, 4, 3, 2, 3, 2, 3, 2, 3, 2, 3, 4, 3, 4,
-    5, 4, 3, 4, 3, 2, 3, 2, 3, 2, 3, 4, 3, 4, 5,
-    4, 5, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 4,
-    5, 4, 5, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 4, 5,
-    6, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 6,
+    6,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    6,
+    5,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    2,
+    3,
+    2,
+    3,
+    2,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    2,
+    3,
+    2,
+    3,
+    2,
+    3,
+    2,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    3,
+    2,
+    3,
+    4,
+    1,
+    2,
+    1,
+    4,
+    3,
+    2,
+    3,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    2,
+    1,
+    2,
+    3,
+    2,
+    1,
+    2,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    3,
+    2,
+    3,
+    2,
+    3,
+    0,
+    3,
+    2,
+    3,
+    2,
+    3,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    2,
+    1,
+    2,
+    3,
+    2,
+    1,
+    2,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    3,
+    2,
+    3,
+    4,
+    1,
+    2,
+    1,
+    4,
+    3,
+    2,
+    3,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    2,
+    3,
+    2,
+    3,
+    2,
+    3,
+    2,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    2,
+    3,
+    2,
+    3,
+    2,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    4,
+    5,
+    4,
+    5,
+    6,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    4,
+    5,
+    6,
 ]
 
 # Calculate
@@ -123,8 +378,9 @@ for fcord in range(64):
 
         # Knight
         field = (7 - frank + trank) * 15 + 7 - ffile + tfile
-        distance[KNIGHT][tcord][fcord] = distance[KNIGHT][fcord][tcord] = \
-            knightDistance[field]
+        distance[KNIGHT][tcord][fcord] = distance[KNIGHT][fcord][
+            tcord
+        ] = knightDistance[field]
 
         # Rook
         if frank == trank or ffile == tfile:
@@ -139,8 +395,7 @@ for fcord in range(64):
             distance[BISHOP][tcord][fcord] = distance[BISHOP][fcord][tcord] = 2
 
         # Queen
-        if frank == trank or ffile == tfile or abs(frank - trank) == abs(
-                ffile - tfile):
+        if frank == trank or ffile == tfile or abs(frank - trank) == abs(ffile - tfile):
             distance[QUEEN][tcord][fcord] = distance[QUEEN][fcord][tcord] = 1
         else:
             distance[QUEEN][tcord][fcord] = distance[QUEEN][fcord][tcord] = 2
@@ -156,38 +411,475 @@ distance[KNIGHT][H8][G7] = distance[KNIGHT][G7][H8] = 4
 ###############################################################################
 
 pawnScoreBoard = (
-    (0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, -10, -10, 5, 5, 5, -2, -2, -2, 6, 6,
-     -2, -2, -2, 0, 0, 0, 25, 25, 0, 0, 0, 2, 2, 12, 16, 16, 12, 2, 2, 4, 8,
-     12, 16, 16, 12, 4, 4, 4, 8, 12, 16, 16, 12, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0),
-    (0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16, 16, 12, 4, 4, 4, 8, 12, 16, 16, 12,
-     4, 4, 2, 2, 12, 16, 16, 12, 2, 2, 0, 0, 0, 25, 25, 0, 0, 0, -2, -2, -2, 6,
-     6, -2, -2, -2, 5, 5, 5, -10, -10, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0))
+    (
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        5,
+        5,
+        -10,
+        -10,
+        5,
+        5,
+        5,
+        -2,
+        -2,
+        -2,
+        6,
+        6,
+        -2,
+        -2,
+        -2,
+        0,
+        0,
+        0,
+        25,
+        25,
+        0,
+        0,
+        0,
+        2,
+        2,
+        12,
+        16,
+        16,
+        12,
+        2,
+        2,
+        4,
+        8,
+        12,
+        16,
+        16,
+        12,
+        4,
+        4,
+        4,
+        8,
+        12,
+        16,
+        16,
+        12,
+        4,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ),
+    (
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        8,
+        12,
+        16,
+        16,
+        12,
+        4,
+        4,
+        4,
+        8,
+        12,
+        16,
+        16,
+        12,
+        4,
+        4,
+        2,
+        2,
+        12,
+        16,
+        16,
+        12,
+        2,
+        2,
+        0,
+        0,
+        0,
+        25,
+        25,
+        0,
+        0,
+        0,
+        -2,
+        -2,
+        -2,
+        6,
+        6,
+        -2,
+        -2,
+        -2,
+        5,
+        5,
+        5,
+        -10,
+        -10,
+        5,
+        5,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ),
+)
 
-outpost = ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1,
-            1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-           (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-            0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+outpost = (
+    (
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ),
+    (
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ),
+)
 
-normalKing = (24, 24, 24, 16, 16, 0, 32, 32, 24, 20, 16, 12, 12, 16, 20, 24,
-              16, 12, 8, 4, 4, 8, 12, 16, 12, 8, 4, 0, 0, 4, 8, 12, 12, 8, 4,
-              0, 0, 4, 8, 12, 16, 12, 8, 4, 4, 8, 12, 16, 24, 20, 16, 12, 12,
-              16, 20, 24, 24, 24, 24, 16, 16, 0, 32, 32)
+normalKing = (
+    24,
+    24,
+    24,
+    16,
+    16,
+    0,
+    32,
+    32,
+    24,
+    20,
+    16,
+    12,
+    12,
+    16,
+    20,
+    24,
+    16,
+    12,
+    8,
+    4,
+    4,
+    8,
+    12,
+    16,
+    12,
+    8,
+    4,
+    0,
+    0,
+    4,
+    8,
+    12,
+    12,
+    8,
+    4,
+    0,
+    0,
+    4,
+    8,
+    12,
+    16,
+    12,
+    8,
+    4,
+    4,
+    8,
+    12,
+    16,
+    24,
+    20,
+    16,
+    12,
+    12,
+    16,
+    20,
+    24,
+    24,
+    24,
+    24,
+    16,
+    16,
+    0,
+    32,
+    32,
+)
 
-endingKing = (0, 6, 12, 18, 18, 12, 6, 0, 6, 12, 18, 24, 24, 18, 12, 6, 12, 18,
-              24, 32, 32, 24, 18, 12, 18, 24, 32, 48, 48, 32, 24, 18, 18, 24,
-              32, 48, 48, 32, 24, 18, 12, 18, 24, 32, 32, 24, 18, 12, 6, 12,
-              18, 24, 24, 18, 12, 6, 0, 6, 12, 18, 18, 12, 6, 0)
+endingKing = (
+    0,
+    6,
+    12,
+    18,
+    18,
+    12,
+    6,
+    0,
+    6,
+    12,
+    18,
+    24,
+    24,
+    18,
+    12,
+    6,
+    12,
+    18,
+    24,
+    32,
+    32,
+    24,
+    18,
+    12,
+    18,
+    24,
+    32,
+    48,
+    48,
+    32,
+    24,
+    18,
+    18,
+    24,
+    32,
+    48,
+    48,
+    32,
+    24,
+    18,
+    12,
+    18,
+    24,
+    32,
+    32,
+    24,
+    18,
+    12,
+    6,
+    12,
+    18,
+    24,
+    24,
+    18,
+    12,
+    6,
+    0,
+    6,
+    12,
+    18,
+    18,
+    12,
+    6,
+    0,
+)
 
-racingKing = (0, 0, 0, 0, 0, 0, 0, 0,
-              500, 500, 500, 500, 500, 500, 500, 500,
-              950, 950, 950, 950, 950, 950, 950, 950,
-              1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500,
-              2500, 2500, 2500, 2500, 2500, 2500, 2500, 2500,
-              4000, 4000, 4000, 4000, 4000, 4000, 4000, 4000,
-              6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000,
-              14000, 14000, 14000, 14000, 14000, 14000, 14000, 14000)
+racingKing = (
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    500,
+    500,
+    500,
+    500,
+    500,
+    500,
+    500,
+    500,
+    950,
+    950,
+    950,
+    950,
+    950,
+    950,
+    950,
+    950,
+    1500,
+    1500,
+    1500,
+    1500,
+    1500,
+    1500,
+    1500,
+    1500,
+    2500,
+    2500,
+    2500,
+    2500,
+    2500,
+    2500,
+    2500,
+    2500,
+    4000,
+    4000,
+    4000,
+    4000,
+    4000,
+    4000,
+    4000,
+    4000,
+    6000,
+    6000,
+    6000,
+    6000,
+    6000,
+    6000,
+    6000,
+    6000,
+    14000,
+    14000,
+    14000,
+    14000,
+    14000,
+    14000,
+    14000,
+    14000,
+)
 
 # Maps for bitboards
 
@@ -232,14 +924,10 @@ stonewall[BLACK] = 0x81400000000
 # - # - - - - # -
 # # # - - - - # #
 # - - - - - - - -
-qwingpawns1 = (bitPosArray[A2] | bitPosArray[B2], bitPosArray[A7] |
-               bitPosArray[B7])
-qwingpawns2 = (bitPosArray[A2] | bitPosArray[B3], bitPosArray[A7] |
-               bitPosArray[B6])
-kwingpawns1 = (bitPosArray[G2] | bitPosArray[H2], bitPosArray[G7] |
-               bitPosArray[H7])
-kwingpawns2 = (bitPosArray[G3] | bitPosArray[H2], bitPosArray[G6] |
-               bitPosArray[H7])
+qwingpawns1 = (bitPosArray[A2] | bitPosArray[B2], bitPosArray[A7] | bitPosArray[B7])
+qwingpawns2 = (bitPosArray[A2] | bitPosArray[B3], bitPosArray[A7] | bitPosArray[B6])
+kwingpawns1 = (bitPosArray[G2] | bitPosArray[H2], bitPosArray[G7] | bitPosArray[H7])
+kwingpawns2 = (bitPosArray[G3] | bitPosArray[H2], bitPosArray[G6] | bitPosArray[H7])
 
 ################################################################################
 #  Ranks and files                                                             #
@@ -320,23 +1008,135 @@ dir = [
     [-11, -9, 9, 10, 11],
     [-11, -10, -9, 9, 11],
     [-11, -9, 9, 11],
-
     # Following are for front and back walls. Will be removed from list after
     # the loop
     [9, 10, 11],
-    [-9, -10, -11]
+    [-9, -10, -11],
 ]
 
 sliders += [False, False]
 
 map = [
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, 8, 9, 10, 11, 12, 13, 14, 15, -1,
-    -1, 16, 17, 18, 19, 20, 21, 22, 23, -1, -1, 24, 25, 26, 27, 28, 29, 30, 31,
-    -1, -1, 32, 33, 34, 35, 36, 37, 38, 39, -1, -1, 40, 41, 42, 43, 44, 45, 46,
-    47, -1, -1, 48, 49, 50, 51, 52, 53, 54, 55, -1, -1, 56, 57, 58, 59, 60, 61,
-    62, 63, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    -1,
+    -1,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    -1,
+    -1,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    -1,
+    -1,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    -1,
+    -1,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    -1,
+    -1,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    -1,
+    -1,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    -1,
+    -1,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
 ]
 
 moveArray = [[0] * 64 for i in range(len(dir))]  # moveArray[len(dir)][64]
@@ -487,14 +1287,10 @@ for cord in range(A7, H7 + 1):
 
 # These tables are used to calculate rook, queen and bishop moves
 
-ray00 = [rays[cord][5] | rays[cord][6] | 1 << (63 - cord)
-         for cord in range(64)]
-ray45 = [rays[cord][0] | rays[cord][3] | 1 << (63 - cord)
-         for cord in range(64)]
-ray90 = [rays[cord][4] | rays[cord][7] | 1 << (63 - cord)
-         for cord in range(64)]
-ray135 = [rays[cord][1] | rays[cord][2] | 1 << (63 - cord)
-          for cord in range(64)]
+ray00 = [rays[cord][5] | rays[cord][6] | 1 << (63 - cord) for cord in range(64)]
+ray45 = [rays[cord][0] | rays[cord][3] | 1 << (63 - cord) for cord in range(64)]
+ray90 = [rays[cord][4] | rays[cord][7] | 1 << (63 - cord) for cord in range(64)]
+ray135 = [rays[cord][1] | rays[cord][2] | 1 << (63 - cord) for cord in range(64)]
 
 attack00 = [{} for a in range(64)]
 attack45 = [{} for a in range(64)]
@@ -510,7 +1306,6 @@ rot3 = [A8, B7, C6, D5, E4, F3, G2, H1]
 # we will translate it for each possible cord
 for cord in range(8):
     for map in range(1, 256):
-
         # Skip entries without cord set, as cord will always be set
         if not map & cmap[cord]:
             continue
@@ -529,57 +1324,57 @@ for cord in range(8):
         # Remember A1 is the left most bit
         map00 = map << 56
 
-        attack00[cord][map00] = \
-            fromToRay[cord][cord1] |\
-            fromToRay[cord][cord2]
+        attack00[cord][map00] = fromToRay[cord][cord1] | fromToRay[cord][cord2]
 
         map90 = reduce(or_, (1 << 63 - rot1[c] for c in iterBits(map00)))
-        attack90[rot1[cord]][map90] = \
-            fromToRay[rot1[cord]][rot1[cord1]] | \
-            fromToRay[rot1[cord]][rot1[cord2]]
+        attack90[rot1[cord]][map90] = (
+            fromToRay[rot1[cord]][rot1[cord1]] | fromToRay[rot1[cord]][rot1[cord2]]
+        )
 
         map45 = reduce(or_, (1 << 63 - rot2[c] for c in iterBits(map00)))
-        attack45[rot2[cord]][map45] = \
-            fromToRay[rot2[cord]][rot2[cord1]] | \
-            fromToRay[rot2[cord]][rot2[cord2]]
+        attack45[rot2[cord]][map45] = (
+            fromToRay[rot2[cord]][rot2[cord1]] | fromToRay[rot2[cord]][rot2[cord2]]
+        )
 
         map135 = reduce(or_, (1 << 63 - rot3[c] for c in iterBits(map00)))
-        attack135[rot3[cord]][map135] = \
-            fromToRay[rot3[cord]][rot3[cord1]] |\
-            fromToRay[rot3[cord]][rot3[cord2]]
+        attack135[rot3[cord]][map135] = (
+            fromToRay[rot3[cord]][rot3[cord1]] | fromToRay[rot3[cord]][rot3[cord2]]
+        )
 
 MAXBITBOARD = (1 << 64) - 1
 
 for r in range(A2, A8 + 1, 8):
     for cord in iterBits(ray00[r]):
-        attack00[cord] = {map >> 8: ray >> 8
-                              for map, ray in attack00[cord - 8].items()}
+        attack00[cord] = {map >> 8: ray >> 8 for map, ray in attack00[cord - 8].items()}
 
 for r in range(B1, H1 + 1):
     for cord in iterBits(ray90[r]):
-        attack90[cord] = {map >> 1: ray >> 1
-                              for map, ray in attack90[cord - 1].items()}
+        attack90[cord] = {map >> 1: ray >> 1 for map, ray in attack90[cord - 1].items()}
 
 # Bottom right
 for r in range(B1, H1 + 1):
     for cord in iterBits(ray45[r]):
-        attack45[cord] = {map << 8 & MAXBITBOARD: ray << 8 & MAXBITBOARD
-                              for map, ray in attack45[cord + 8].items()}
+        attack45[cord] = {
+            map << 8 & MAXBITBOARD: ray << 8 & MAXBITBOARD
+            for map, ray in attack45[cord + 8].items()
+        }
 
 # Top left
 for r in reversed(range(A8, H8)):
     for cord in iterBits(ray45[r]):
-        attack45[cord] = {map >> 8: ray >> 8
-                              for map, ray in attack45[cord - 8].items()}
+        attack45[cord] = {map >> 8: ray >> 8 for map, ray in attack45[cord - 8].items()}
 
 # Top right
 for r in range(B8, H8 + 1):
     for cord in iterBits(ray135[r]):
-        attack135[cord] = {map >> 8: ray >> 8
-                               for map, ray in attack135[cord - 8].items()}
+        attack135[cord] = {
+            map >> 8: ray >> 8 for map, ray in attack135[cord - 8].items()
+        }
 
 # Bottom left
 for r in reversed(range(A1, H1)):
     for cord in iterBits(ray135[r]):
-        attack135[cord] = {map << 8 & MAXBITBOARD: ray << 8 & MAXBITBOARD
-                               for map, ray in attack135[cord + 8].items()}
+        attack135[cord] = {
+            map << 8 & MAXBITBOARD: ray << 8 & MAXBITBOARD
+            for map, ray in attack135[cord + 8].items()
+        }

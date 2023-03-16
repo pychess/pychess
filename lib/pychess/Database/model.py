@@ -2,11 +2,22 @@ import os
 import shutil
 import time
 
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
-    String, SmallInteger, ForeignKey, event, select
+from sqlalchemy import (
+    create_engine,
+    MetaData,
+    Table,
+    Column,
+    Integer,
+    String,
+    SmallInteger,
+    ForeignKey,
+    event,
+    select,
+)
 from sqlalchemy.engine import Engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.exc import OperationalError
+
 # from sqlalchemy.ext.compiler import compiles
 # from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_text
 
@@ -92,14 +103,22 @@ def get_engine(path=None, dialect="sqlite", echo=False):
         return engines[url]
     else:
         if path is None:
-            engine = create_engine(url, connect_args={'check_same_thread': False},
-                                   echo=echo, poolclass=StaticPool)
+            engine = create_engine(
+                url,
+                connect_args={"check_same_thread": False},
+                echo=echo,
+                poolclass=StaticPool,
+            )
         else:
-            if path != empty_db and (not os.path.isfile(path) or os.path.getsize(path) == 0):
+            if path != empty_db and (
+                not os.path.isfile(path) or os.path.getsize(path) == 0
+            ):
                 shutil.copyfile(empty_db, path)
             engine = create_engine(url, echo=echo)
 
-        if path != empty_db and (path is None or get_schema_version(engine) != SCHEMA_VERSION):
+        if path != empty_db and (
+            path is None or get_schema_version(engine) != SCHEMA_VERSION
+        ):
             metadata.drop_all(engine)
             metadata.create_all(engine)
             ini_schema_version(engine)
@@ -111,75 +130,83 @@ def get_engine(path=None, dialect="sqlite", echo=False):
 metadata = MetaData()
 
 source = Table(
-    'source', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('name', String(256)),
-    Column('info', String(256))
+    "source",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", String(256)),
+    Column("info", String(256)),
 )
 
 event = Table(
-    'event', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('name', String(256), index=True)
+    "event",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", String(256), index=True),
 )
 
 site = Table(
-    'site', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('name', String(256), index=True)
+    "site",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", String(256), index=True),
 )
 
 annotator = Table(
-    'annotator', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('name', String(256), index=True)
+    "annotator",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", String(256), index=True),
 )
 
 player = Table(
-    'player', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('name', String(256), index=True),
+    "player",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", String(256), index=True),
 )
 
 pl1 = player.alias()
 pl2 = player.alias()
 
 game = Table(
-    'game', metadata,
-    Column('id', Integer, primary_key=True, index=True),
-    Column('offset', Integer, index=True),
-    Column('offset8', Integer, index=True),
-    Column('event_id', Integer, ForeignKey('event.id'), index=True),
-    Column('site_id', Integer, ForeignKey('site.id'), index=True),
-    Column('date', String(10), default=""),
-    Column('round', String(8), default=""),
-    Column('white_id', Integer, ForeignKey('player.id'), index=True),
-    Column('black_id', Integer, ForeignKey('player.id'), index=True),
-    Column('result', SmallInteger, default=0),
-    Column('white_elo', String(4), default=""),
-    Column('black_elo', String(4), default=""),
-    Column('ply_count', String(3), default=""),
-    Column('eco', String(3), default=""),
-    Column('time_control', String(7), default=""),
-    Column('board', SmallInteger, default=0),
-    Column('fen', String(128), default=""),
-    Column('variant', SmallInteger, default=0),
-    Column('annotator_id', Integer, ForeignKey('annotator.id'), index=True),
-    Column('source_id', Integer, ForeignKey('source.id'), index=True),
+    "game",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("offset", Integer, index=True),
+    Column("offset8", Integer, index=True),
+    Column("event_id", Integer, ForeignKey("event.id"), index=True),
+    Column("site_id", Integer, ForeignKey("site.id"), index=True),
+    Column("date", String(10), default=""),
+    Column("round", String(8), default=""),
+    Column("white_id", Integer, ForeignKey("player.id"), index=True),
+    Column("black_id", Integer, ForeignKey("player.id"), index=True),
+    Column("result", SmallInteger, default=0),
+    Column("white_elo", String(4), default=""),
+    Column("black_elo", String(4), default=""),
+    Column("ply_count", String(3), default=""),
+    Column("eco", String(3), default=""),
+    Column("time_control", String(7), default=""),
+    Column("board", SmallInteger, default=0),
+    Column("fen", String(128), default=""),
+    Column("variant", SmallInteger, default=0),
+    Column("annotator_id", Integer, ForeignKey("annotator.id"), index=True),
+    Column("source_id", Integer, ForeignKey("source.id"), index=True),
 )
 
 tag_game = Table(
-    'tag_game', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
-    Column('tag_name', String(128), default=""),
-    Column('tag_value', String(128), default=""),
+    "tag_game",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("game_id", Integer, ForeignKey("game.id"), nullable=False),
+    Column("tag_name", String(128), default=""),
+    Column("tag_value", String(128), default=""),
 )
 
 schema_version = Table(
-    'schema_version', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('version', String(8)),
+    "schema_version",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("version", String(8)),
 )
 
 
@@ -204,7 +231,12 @@ def create_indexes(engine):
 
 def ini_schema_version(engine):
     conn = engine.connect()
-    conn.execute(schema_version.insert(), [{"id": 1, "version": SCHEMA_VERSION}, ])
+    conn.execute(
+        schema_version.insert(),
+        [
+            {"id": 1, "version": SCHEMA_VERSION},
+        ],
+    )
     conn.close()
 
 

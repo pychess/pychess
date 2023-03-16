@@ -10,16 +10,16 @@ class Accordion(Gtk.TreeView):
         self.set_property("level-indentation", 10)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn('Column', renderer)
+        column = Gtk.TreeViewColumn("Column", renderer)
 
         def top_level(column, cell, store, iter):
             cell.set_property("text", store[iter][0])
             if store.iter_depth(iter) == 0:
-                cell.set_property('foreground', "black")
-                cell.set_property('background', "gray")
+                cell.set_property("foreground", "black")
+                cell.set_property("background", "gray")
             else:
-                cell.set_property('foreground', "black")
-                cell.set_property('background', "white")
+                cell.set_property("foreground", "black")
+                cell.set_property("background", "white")
 
         column.set_cell_data_func(renderer, top_level)
 
@@ -27,7 +27,7 @@ class Accordion(Gtk.TreeView):
 
         selection = self.get_selection()
         selection.set_mode(Gtk.SelectionMode.SINGLE)
-        selection.connect('changed', self.on_selection_changed)
+        selection.connect("changed", self.on_selection_changed)
         self.current = None
 
     def on_selection_changed(self, selection, data=None):
@@ -50,10 +50,9 @@ if __name__ == "__main__":
 
     treestore = Gtk.TreeStore(str)
     for parent in range(4):
-        piter = treestore.append(None, ['parent %i' % parent])
+        piter = treestore.append(None, ["parent %i" % parent])
         for child in range(3):
-            treestore.append(piter,
-                             ['child %i of parent %i' % (child, parent)])
+            treestore.append(piter, ["child %i of parent %i" % (child, parent)])
     accordion = Accordion(treestore)
     window.add(accordion)
     window.show_all()

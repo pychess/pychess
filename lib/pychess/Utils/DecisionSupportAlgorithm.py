@@ -8,7 +8,6 @@ from pychess.Utils.const import KING
 # This file contains algorithm helping the users to choose the right decisions
 # The first algorithm gives to the user all the pieces attacked and not protected by the foe
 class DecisionSupportAlgorithm:
-
     def __init__(self):
         self.local_game = False
         self.activationEnabled = False
@@ -23,14 +22,18 @@ class DecisionSupportAlgorithm:
         self.local_game = True
 
     def calculate_coordinate_in_danger(self, board, mycolor, newTurn=True):
-        '''this function should be used for applying the algorithm'''
+        """this function should be used for applying the algorithm"""
         if not newTurn:
             return self.coordinate_in_danger
 
         self.coordinate_in_danger = []
 
-        self.coordinate_in_danger = self.__apply_algorithm(board, mycolor, self.__not_protected)
-        self.coordinate_in_danger += self.__apply_algorithm(board, mycolor, self.__attacked_and_not_protected)
+        self.coordinate_in_danger = self.__apply_algorithm(
+            board, mycolor, self.__not_protected
+        )
+        self.coordinate_in_danger += self.__apply_algorithm(
+            board, mycolor, self.__attacked_and_not_protected
+        )
 
         return self.coordinate_in_danger
 
@@ -40,7 +43,8 @@ class DecisionSupportAlgorithm:
         args : board of type Board, coordinate of type Cord, algorithm : function taking two arguments
         board, mycolor and the current coordinate we are looking
 
-        WARNING : The king is currently excluded of the calculus => it is never considered as in danger"""
+        WARNING : The king is currently excluded of the calculus => it is never considered as in danger
+        """
         coordinate_in_danger = []
 
         if self.local_game and self.activationEnabled:
@@ -78,7 +82,9 @@ class DecisionSupportAlgorithm:
         args : board of type Board, cord of type Cord, mycolor of value BLACK or WHITE
         which is the color of the player who will play the next move"""
 
-        pieces_attacking = piecesAttackingCord(board.board, coordinate.cord, 1 - mycolor)
+        pieces_attacking = piecesAttackingCord(
+            board.board, coordinate.cord, 1 - mycolor
+        )
         defense = getAttacks(board.board, coordinate.cord, mycolor)
 
         c_colored = None

@@ -3,19 +3,49 @@ import asyncio
 from gi.repository import GObject
 
 from pychess.System.Log import log
-from pychess.Utils.const import SHUFFLECHESS, WILDCASTLESHUFFLECHESS, FISCHERRANDOMCHESS, \
-    RANDOMCHESS, ASYMMETRICRANDOMCHESS, FEN_START, WHITE, reprResult
+from pychess.Utils.const import (
+    SHUFFLECHESS,
+    WILDCASTLESHUFFLECHESS,
+    FISCHERRANDOMCHESS,
+    RANDOMCHESS,
+    ASYMMETRICRANDOMCHESS,
+    FEN_START,
+    WHITE,
+    reprResult,
+)
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSPlayer
 from pychess.ic.managers.BoardManager import BoardManager, parse_reason
-from pychess.ic import IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING, IC_POS_EXAMINATING
-from pychess.ic.icc import DG_POSITION_BEGIN, DG_SEND_MOVES, DG_MOVE_ALGEBRAIC, DG_MOVE_SMITH, \
-    DG_MOVE_TIME, DG_MOVE_CLOCK, DG_MY_GAME_STARTED, DG_MY_GAME_ENDED, DG_STARTED_OBSERVING, \
-    DG_MY_GAME_RESULT, DG_STOP_OBSERVING, DG_IS_VARIATION, DG_ISOLATED_BOARD, CN_SPGN, DG_BACKWARD, \
-    DG_MOVE_LAG, DG_KNOWS_FISCHER_RANDOM, DG_SET_BOARD, DG_GAME_MESSAGE, DG_TAKEBACK
+from pychess.ic import (
+    IC_POS_OBSERVING,
+    GAME_TYPES,
+    IC_STATUS_PLAYING,
+    IC_POS_EXAMINATING,
+)
+from pychess.ic.icc import (
+    DG_POSITION_BEGIN,
+    DG_SEND_MOVES,
+    DG_MOVE_ALGEBRAIC,
+    DG_MOVE_SMITH,
+    DG_MOVE_TIME,
+    DG_MOVE_CLOCK,
+    DG_MY_GAME_STARTED,
+    DG_MY_GAME_ENDED,
+    DG_STARTED_OBSERVING,
+    DG_MY_GAME_RESULT,
+    DG_STOP_OBSERVING,
+    DG_IS_VARIATION,
+    DG_ISOLATED_BOARD,
+    CN_SPGN,
+    DG_BACKWARD,
+    DG_MOVE_LAG,
+    DG_KNOWS_FISCHER_RANDOM,
+    DG_SET_BOARD,
+    DG_GAME_MESSAGE,
+    DG_TAKEBACK,
+)
 
 
 class ICCBoardManager(BoardManager):
-
     queued_send_moves = {}
 
     def __init__(self, connection):
@@ -23,7 +53,9 @@ class ICCBoardManager(BoardManager):
         self.connection = connection
 
         self.connection.expect_dg_line(DG_MY_GAME_STARTED, self.on_icc_my_game_started)
-        self.connection.expect_dg_line(DG_STARTED_OBSERVING, self.on_icc_started_observing)
+        self.connection.expect_dg_line(
+            DG_STARTED_OBSERVING, self.on_icc_started_observing
+        )
         self.connection.expect_dg_line(DG_STOP_OBSERVING, self.on_icc_stop_observing)
         self.connection.expect_dg_line(DG_MY_GAME_RESULT, self.on_icc_my_game_result)
         self.connection.expect_dg_line(DG_MY_GAME_ENDED, self.on_icc_my_game_ended)
@@ -37,7 +69,9 @@ class ICCBoardManager(BoardManager):
         self.connection.expect_dg_line(DG_BACKWARD, self.on_icc_back)
         self.connection.expect_dg_line(DG_TAKEBACK, self.on_icc_back)
 
-        self.connection.expect_dg_line(DG_KNOWS_FISCHER_RANDOM, self.on_icc_knows_fischer_random)
+        self.connection.expect_dg_line(
+            DG_KNOWS_FISCHER_RANDOM, self.on_icc_knows_fischer_random
+        )
         self.connection.expect_dg_line(DG_SET_BOARD, self.on_icc_set_board)
         self.connection.expect_dg_line(DG_GAME_MESSAGE, self.on_icc_game_message)
 
@@ -137,7 +171,20 @@ class ICCBoardManager(BoardManager):
         # uses-plunkers fancy-timecontrol promote-to-king
         # 685 Salsicha MaxiBomb 0 Blitz 1 3 0 3 0 1 {} 2147 2197 1729752694 {} {} 0 0 0 {} 0
         # 259 Rikikilord ARMH 0 Blitz 1 2 12 2 12 0 {Ex: Rikikilord 0} 1532 1406 1729752286 {} {} 0 0 0 {} 0
-        gameno, wname, bname, wild, rtype, rated, wmin, winc, bmin, binc, played_game, rest = data.split(" ", 11)
+        (
+            gameno,
+            wname,
+            bname,
+            wild,
+            rtype,
+            rated,
+            wmin,
+            winc,
+            bmin,
+            binc,
+            played_game,
+            rest,
+        ) = data.split(" ", 11)
 
         parts = rest.split("}", 1)[1].split()
         wrating = int(parts[0])
@@ -157,28 +204,36 @@ class ICCBoardManager(BoardManager):
                     player.ratings[game_type.rating_type] = rating
                     player.emit("ratings_changed", game_type.rating_type, player)
             except IndexError:
-                log.debug("!!! game_type.rating_type {} is out of range in player.ratings {}".format(game_type.rating_type, player.ratings))
+                log.debug(
+                    "!!! game_type.rating_type {} is out of range in player.ratings {}".format(
+                        game_type.rating_type, player.ratings
+                    )
+                )
 
         wms = bms = int(wmin) * 60 * 1000 + int(winc) * 1000
         # TODO: maybe use DG_POSITION_BEGIN2 and DG_PAST_MOVE ?
         fen = FEN_START
 
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=gameno,
-                        rated=rated == "1",
-                        game_type=game_type,
-                        minutes=int(wmin),
-                        inc=int(winc),
-                        board=FICSBoard(wms,
-                                        bms,
-                                        fen=fen))
+        game = FICSGame(
+            wplayer,
+            bplayer,
+            gameno=gameno,
+            rated=rated == "1",
+            game_type=game_type,
+            minutes=int(wmin),
+            inc=int(winc),
+            board=FICSBoard(wms, bms, fen=fen),
+        )
 
         if self.connection.examined_game is not None:
             pgnHead = [
-                ("Event", "ICC examined game"), ("Site", "chessclub.com"),
-                ("White", wname), ("Black", bname), ("Result", "*"),
-                ("SetUp", "1"), ("FEN", fen)
+                ("Event", "ICC examined game"),
+                ("Site", "chessclub.com"),
+                ("White", wname),
+                ("Black", bname),
+                ("Result", "*"),
+                ("SetUp", "1"),
+                ("FEN", fen),
             ]
             pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
 
@@ -211,7 +266,20 @@ class ICCBoardManager(BoardManager):
 
     def on_icc_started_observing(self, data):
         log.debug("DG_STARTED_OBSERVING %s" % data)
-        gameno, wname, bname, wild, rtype, rated, wmin, winc, bmin, binc, played_game, rest = data.split(" ", 11)
+        (
+            gameno,
+            wname,
+            bname,
+            wild,
+            rtype,
+            rated,
+            wmin,
+            winc,
+            bmin,
+            binc,
+            played_game,
+            rest,
+        ) = data.split(" ", 11)
 
         parts = rest.split("}", 1)[1].split()
         wrating = int(parts[0])
@@ -230,14 +298,16 @@ class ICCBoardManager(BoardManager):
         relation = IC_POS_OBSERVING
         wms = bms = int(wmin) * 60 * 1000 + int(winc) * 1000
 
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=gameno,
-                        rated=rated == "1",
-                        game_type=game_type,
-                        minutes=int(wmin),
-                        inc=int(winc),
-                        relation=relation)
+        game = FICSGame(
+            wplayer,
+            bplayer,
+            gameno=gameno,
+            rated=rated == "1",
+            game_type=game_type,
+            minutes=int(wmin),
+            inc=int(winc),
+            relation=relation,
+        )
 
         game = self.connection.games.get(game, emit=False)
 
@@ -275,10 +345,7 @@ class ICCBoardManager(BoardManager):
         wname = game.wplayer.name
         bname = game.bplayer.name
 
-        result, reason = parse_reason(
-            reprResult.index(result),
-            comment,
-            wname=wname)
+        result, reason = parse_reason(reprResult.index(result), comment, wname=wname)
 
         try:
             wplayer = self.connection.players.get(wname)
@@ -297,11 +364,9 @@ class ICCBoardManager(BoardManager):
             log.debug("%s not in self.connections.players - creating" % bname)
             bplayer = FICSPlayer(bname)
 
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=int(gameno),
-                        result=result,
-                        reason=reason)
+        game = FICSGame(
+            wplayer, bplayer, gameno=int(gameno), result=result, reason=reason
+        )
         if wplayer.game is not None:
             game.rated = wplayer.game.rated
         game = self.connection.games.get(game, emit=False)
@@ -325,11 +390,18 @@ class ICCBoardManager(BoardManager):
         fen, moves_to_go = right_part.split("}")
         self.moves_to_go = int(moves_to_go)
 
-        if fen != FEN_START and (game.game_type == GAME_TYPES["w20"] or
-                                 game.game_type == GAME_TYPES["w21"] or
-                                 game.game_type.variant_type in (
-                SHUFFLECHESS, WILDCASTLESHUFFLECHESS, FISCHERRANDOMCHESS,
-                RANDOMCHESS, ASYMMETRICRANDOMCHESS)):
+        if fen != FEN_START and (
+            game.game_type == GAME_TYPES["w20"]
+            or game.game_type == GAME_TYPES["w21"]
+            or game.game_type.variant_type
+            in (
+                SHUFFLECHESS,
+                WILDCASTLESHUFFLECHESS,
+                FISCHERRANDOMCHESS,
+                RANDOMCHESS,
+                ASYMMETRICRANDOMCHESS,
+            )
+        ):
             # a starting fen coming in a DG_POSITION_BEGIN datagram
             log.debug("wild20 got a starting FEN %s" % fen)
             game.board.fen = fen
@@ -370,13 +442,27 @@ class ICCBoardManager(BoardManager):
 
         if gameno in self.queued_send_moves:
             self.queued_send_moves[gameno].append(send_moves)
-            if self.moves_to_go and len(self.queued_send_moves[gameno]) < self.moves_to_go:
+            if (
+                self.moves_to_go
+                and len(self.queued_send_moves[gameno]) < self.moves_to_go
+            ):
                 return
 
         if self.moves_to_go == 0 or self.moves_to_go is None:
             log.debug("put san_move to move_queue %s" % san_move)
-            game.move_queue.put_nowait((gameno, ply, curcol, san_move, fen,
-                                        game.wplayer.name, game.bplayer.name, wms, bms))
+            game.move_queue.put_nowait(
+                (
+                    gameno,
+                    ply,
+                    curcol,
+                    san_move,
+                    fen,
+                    game.wplayer.name,
+                    game.bplayer.name,
+                    wms,
+                    bms,
+                )
+            )
             self.emit("timesUpdate", gameno, wms, bms)
         else:
             if game.gameno not in self.gamemodelStartedEvents:
@@ -385,7 +471,12 @@ class ICCBoardManager(BoardManager):
                 return
 
             pgnHead = [
-                ("Event", "ICC {} {} game".format(game.display_rated.lower(), game.game_type.fics_name)),
+                (
+                    "Event",
+                    "ICC {} {} game".format(
+                        game.display_rated.lower(), game.game_type.fics_name
+                    ),
+                ),
                 ("Site", "chessclub.com"),
                 ("White", game.wplayer.name),
                 ("Black", game.bplayer.name),
@@ -414,16 +505,16 @@ class ICCBoardManager(BoardManager):
             self.moves_to_go = None
 
             wms = bms = 0
-            game = FICSGame(game.wplayer,
-                            game.bplayer,
-                            game_type=game.game_type,
-                            result=game.result,
-                            rated=game.rated,
-                            minutes=game.minutes,
-                            inc=game.inc,
-                            board=FICSBoard(wms,
-                                            bms,
-                                            pgn=pgn))
+            game = FICSGame(
+                game.wplayer,
+                game.bplayer,
+                game_type=game.game_type,
+                result=game.result,
+                rated=game.rated,
+                minutes=game.minutes,
+                inc=game.inc,
+                board=FICSBoard(wms, bms, pgn=pgn),
+            )
             in_progress = True
             if in_progress:
                 game.gameno = gameno

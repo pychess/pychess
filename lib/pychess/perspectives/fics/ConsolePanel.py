@@ -15,8 +15,7 @@ __icon__ = addDataPrefix("glade/panel_terminal.svg")
 __desc__ = _("Command line interface to the chess server")
 
 
-class Sidepanel():
-
+class Sidepanel:
     def load(self, widgets, connection, lounge):
         self.connection = connection
         self.consoleView = ConsoleView(self.connection)
@@ -29,7 +28,7 @@ class Sidepanel():
 
     @staticmethod
     def filter_unprintable(s):
-        return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9 or c == "\n"])
+        return "".join([c for c in s if ord(c) > 31 or ord(c) == 9 or c == "\n"])
 
     def scroll_to_bottom(self):
         tb_iter = self.consoleView.textbuffer.get_end_iter()
@@ -44,11 +43,13 @@ class Sidepanel():
 
         for line in lines:
             line = self.filter_unprintable(line.line)
-            if line and \
-                (not line.startswith('<')) and \
-                (not line.startswith("{Game")) and \
-                (not line.endswith("available for matches.")) and\
-                    line[-12:-5] != "), Bug(":
+            if (
+                line
+                and (not line.startswith("<"))
+                and (not line.startswith("{Game"))
+                and (not line.endswith("available for matches."))
+                and line[-12:-5] != "), Bug("
+            ):
                 self.consoleView.addMessage(line, False)
                 need_scroll = True
 
@@ -64,9 +65,8 @@ TYPE_COMMAND, TYPE_HELP, TYPE_USER = 0, 1, 2
 
 class ConsoleView(Gtk.Box):
     __gsignals__ = {
-        'messageAdded': (GObject.SignalFlags.RUN_FIRST, None,
-                         (str, str, object)),
-        'messageTyped': (GObject.SignalFlags.RUN_FIRST, None, (str, ))
+        "messageAdded": (GObject.SignalFlags.RUN_FIRST, None, (str, str, object)),
+        "messageTyped": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
 
     def __init__(self, connection):
@@ -121,7 +121,12 @@ class ConsoleView(Gtk.Box):
                 if parts[0] == "help":
                     return modelstr.startswith(parts[1]) and modeltype == TYPE_HELP
                 else:
-                    return parts[0] in FICS_COMMANDS and modelstr.startswith(parts[1].lower()) and modeltype == TYPE_USER
+                    return (
+                        parts[0] in FICS_COMMANDS
+                        and modelstr.startswith(parts[1].lower())
+                        and modeltype == TYPE_USER
+                    )
+
         completion.set_match_func(match, None)
 
         def on_match_selected(completion, treemodel, treeiter):
@@ -137,7 +142,8 @@ class ConsoleView(Gtk.Box):
                 entry.set_text("{} {}".format(parts[0], modelstr))
                 entry.set_position(-1)
                 return True
-        completion.connect('match-selected', on_match_selected)
+
+        completion.connect("match-selected", on_match_selected)
 
         self.entry = Gtk.Entry()
         self.entry.set_completion(completion)
@@ -175,8 +181,7 @@ class ConsoleView(Gtk.Box):
                 if buffer.props.text.startswith("pas"):
                     # don't log password changes
                     self.connection.client.telnet.sensitive = True
-                self.connection.client.run_command(buffer.props.text,
-                                                   show_reply=True)
+                self.connection.client.run_command(buffer.props.text, show_reply=True)
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, True)
 

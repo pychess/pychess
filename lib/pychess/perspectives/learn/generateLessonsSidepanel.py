@@ -15,7 +15,8 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
     generateLessonsSidepanel allows to avoid duplicate code between
     PuzzlesPanel and LessonsPanel.py.
     """
-    class Sidepanel():
+
+    class Sidepanel:
         def load(self, persp):
             self.persp = persp
             self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -45,11 +46,16 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
             def on_progress_updated(solving_progress, key, progress):
                 for i, row in enumerate(self.store):
                     if row[0] == key:
-                        progress_ratio_string, percent, reset_icon = self._compute_progress_info(progress)
+                        (
+                            progress_ratio_string,
+                            percent,
+                            reset_icon,
+                        ) = self._compute_progress_info(progress)
                         treeiter = self.store.get_iter(Gtk.TreePath(i))
                         self.store[treeiter][3] = progress_ratio_string
                         self.store[treeiter][4] = percent
                         self.store[treeiter][5] = reset_icon
+
             solving_progress.connect("progress_updated", on_progress_updated)
 
             self.store = Gtk.ListStore(str, str, str, str, int, str)
@@ -57,9 +63,23 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
             async def coro():
                 for file_name, title, author in entries:
                     progress = solving_progress.get(file_name)
-                    progress_ratio_string, percent, reset_icon = self._compute_progress_info(progress)
-                    self.store.append([file_name, title, author, progress_ratio_string, percent, reset_icon])
+                    (
+                        progress_ratio_string,
+                        percent,
+                        reset_icon,
+                    ) = self._compute_progress_info(progress)
+                    self.store.append(
+                        [
+                            file_name,
+                            title,
+                            author,
+                            progress_ratio_string,
+                            percent,
+                            reset_icon,
+                        ]
+                    )
                     await asyncio.sleep(0)
+
             asyncio.create_task(coro())
 
             self.tv.set_model(self.store)
@@ -85,13 +105,14 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
                 else:
                     conf.set("categorycombo", learn_category_id)
                     from pychess.widgets.TaskerManager import learn_tasker
+
                     learn_tasker.learn_combo.set_active(path[0])
                     start_from(filename)
 
         @staticmethod
         def _compute_progress_info(progress):
             solved = progress.count(1)
-            percent = 0 if solved == 0 else round((solved * 100.) / len(progress))
+            percent = 0 if solved == 0 else round((solved * 100.0) / len(progress))
             reset_icon = None if solved == 0 else GTK_ICON_VIEW_REFRESH
             return "{} / {}".format(solved, len(progress)), percent, reset_icon
 
@@ -100,14 +121,18 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
             _str, _percent, reset_icon = self._compute_progress_info(progress)
             if reset_icon is not None:
                 dialog = Gtk.MessageDialog(
-                    mainwindow(), 0,
+                    mainwindow(),
+                    0,
                     Gtk.MessageType.QUESTION,
                     Gtk.ButtonsType.OK_CANCEL,
-                    _('This will reset the progress to 0 for the puzzle "{title}"').format(title=title),
+                    _(
+                        'This will reset the progress to 0 for the puzzle "{title}"'
+                    ).format(title=title),
                 )
                 response = dialog.run()
                 if response == Gtk.ResponseType.OK:
                     solving_progress[filename] = [0] * len(progress)
                     self.persp.update_progress(None, None, None)
                 dialog.destroy()
+
     return Sidepanel

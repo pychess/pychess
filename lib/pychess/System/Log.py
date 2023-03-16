@@ -8,9 +8,8 @@ logformat = "%(asctime)s.%(msecs)03d %(task)s %(levelname)s: %(message)s"
 
 # delay=True argument prevents creating empty .log files
 file_handler = logging.FileHandler(
-    addUserDataPrefix(newName),
-    delay=True,
-    encoding="utf-8")
+    addUserDataPrefix(newName), delay=True, encoding="utf-8"
+)
 
 
 class TaskFormatter(logging.Formatter):
@@ -39,7 +38,7 @@ class TaskFormatter(logging.Formatter):
         return s
 
 
-formatter = TaskFormatter(fmt=logformat, datefmt='%H:%M:%S')
+formatter = TaskFormatter(fmt=logformat, datefmt="%H:%M:%S")
 file_handler.setFormatter(formatter)
 
 logger = logging.getLogger()
@@ -61,7 +60,7 @@ class LoggerWriter:
         self.level = level
 
     def write(self, message):
-        if message != '\n':
+        if message != "\n":
             self.logger.log(self.level, message)
 
     def flush(self):
@@ -69,8 +68,9 @@ class LoggerWriter:
 
 
 def setup_glib_logging():
-    """ Code from https://github.com/GNOME/meld/blob/master/bin/meld """
+    """Code from https://github.com/GNOME/meld/blob/master/bin/meld"""
     from gi.repository import GLib
+
     levels = {
         GLib.LogLevelFlags.LEVEL_DEBUG: logging.DEBUG,
         GLib.LogLevelFlags.LEVEL_INFO: logging.INFO,
@@ -83,9 +83,9 @@ def setup_glib_logging():
     # Just to make sphinx happy...
     try:
         level_flag = (
-            GLib.LogLevelFlags.LEVEL_WARNING |
-            GLib.LogLevelFlags.LEVEL_ERROR |
-            GLib.LogLevelFlags.LEVEL_CRITICAL
+            GLib.LogLevelFlags.LEVEL_WARNING
+            | GLib.LogLevelFlags.LEVEL_ERROR
+            | GLib.LogLevelFlags.LEVEL_CRITICAL
         )
     except TypeError:
         level_flag = GLib.LogLevelFlags.LEVEL_INFO

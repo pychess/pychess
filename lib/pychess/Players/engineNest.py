@@ -15,10 +15,22 @@ from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.command import Command
 from pychess.System.SubProcess import SubProcess
-from pychess.System.prefix import addUserConfigPrefix, getDataPrefix, getEngineDataPrefix
+from pychess.System.prefix import (
+    addUserConfigPrefix,
+    getDataPrefix,
+    getEngineDataPrefix,
+)
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils import createStoryTextAppEvent
-from pychess.Utils.const import BLACK, UNKNOWN_REASON, WHITE, HINT, ANALYZING, INVERSE_ANALYZING, NORMALCHESS
+from pychess.Utils.const import (
+    BLACK,
+    UNKNOWN_REASON,
+    WHITE,
+    HINT,
+    ANALYZING,
+    INVERSE_ANALYZING,
+    NORMALCHESS,
+)
 from pychess.Players.CECPEngine import CECPEngine
 from pychess.Players.UCIEngine import UCIEngine
 from pychess.Players.engineList import PYTHONBIN, VM_LIST, ENGINES_LIST
@@ -34,17 +46,16 @@ class SubProcessError(Exception):
 
 
 def md5_sum(filename):
-    with open(filename, mode='rb') as file_handle:
+    with open(filename, mode="rb") as file_handle:
         md5sum = md5()
-        for buf in iter(partial(file_handle.read, 4096), b''):
+        for buf in iter(partial(file_handle.read, 4096), b""):
             md5sum.update(buf)
     return md5sum.hexdigest()
 
 
 class EngineDiscoverer(GObject.GObject):
-
     __gsignals__ = {
-        "discovering_started": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        "discovering_started": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         "engine_discovered": (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
         "engine_failed": (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
         "all_engines_discovered": (GObject.SignalFlags.RUN_FIRST, None, ()),
@@ -59,16 +70,18 @@ class EngineDiscoverer(GObject.GObject):
                 self.engines = json.load(fh)
         except ValueError as err:
             log.warning(
-                "engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s\n%s"
-                % (self.jsonpath, err))
+                "engineNest: Couldn't read engines.json, renamed it to .bak\n%s\n%s"
+                % (self.jsonpath, err)
+            )
             os.rename(self.jsonpath, self.jsonpath + ".bak")
         except OSError as err:
-            log.info("engineNest: Couldn\'t open engines.json, creating a new.\n%s" % err)
+            log.info(
+                "engineNest: Couldn't open engines.json, creating a new.\n%s" % err
+            )
 
         # Try to detect engines shipping .eng files on Linux (suggested by HGM on talkchess.com forum)
         for protocol in ("xboard", "uci"):
-            for path in ("/usr/local/share/games/plugins",
-                         "/usr/share/games/plugins"):
+            for path in ("/usr/local/share/games/plugins", "/usr/share/games/plugins"):
                 path = os.path.join(path, protocol)
                 if os.path.isdir(path):
                     for entry in os.listdir(path):
@@ -88,7 +101,10 @@ class EngineDiscoverer(GObject.GObject):
                                     continue
 
                                 new_engine = {}
-                                if engine_command.startswith("cd ") and engine_command.find(";") > 0:
+                                if (
+                                    engine_command.startswith("cd ")
+                                    and engine_command.find(";") > 0
+                                ):
                                     parts = engine_command.split(";")
                                     working_directory = parts[0][3:]
                                     engine_command = parts[1]
@@ -102,19 +118,21 @@ class EngineDiscoverer(GObject.GObject):
         self.backup()
 
     def __findRunData(self, engine):
-        """ Searches for a readable, executable named 'name' in the PATH.
-            For the PyChess engine, special handling is taken, and we search
-            PYTHONPATH as well as the directory from where the 'os' module is
-            imported """
+        """Searches for a readable, executable named 'name' in the PATH.
+        For the PyChess engine, special handling is taken, and we search
+        PYTHONPATH as well as the directory from where the 'os' module is
+        imported"""
         if engine.get("vm_name") is not None:
             vm_command = engine.get("vm_command")
             altpath = dirname(vm_command) if vm_command else None
-            if getattr(sys, 'frozen', False) and engine["vm_name"] == "wine":
+            if getattr(sys, "frozen", False) and engine["vm_name"] == "wine":
                 vmpath = None
             else:
-                vmpath = shutil.which(engine["vm_name"], mode=os.R_OK | os.X_OK, path=altpath)
+                vmpath = shutil.which(
+                    engine["vm_name"], mode=os.R_OK | os.X_OK, path=altpath
+                )
 
-            if engine["name"] == "PyChess.py" and not getattr(sys, 'frozen', False):
+            if engine["name"] == "PyChess.py" and not getattr(sys, "frozen", False):
                 path = join(abspath(dirname(__file__)), "PyChess.py")
                 if not vmpath.endswith(PYTHONBIN):
                     # from python to python3
@@ -136,8 +154,16 @@ class EngineDiscoverer(GObject.GObject):
             command = engine.get("command")
             altpath = dirname(command) if command else None
             if sys.platform == "win32" and not altpath:
-                altpath = os.path.join(getDataPrefix(), "engines") + ";" + os.path.dirname(sys.executable)
-            path = shutil.which(command if command else engine["name"], mode=os.R_OK | os.X_OK, path=altpath)
+                altpath = (
+                    os.path.join(getDataPrefix(), "engines")
+                    + ";"
+                    + os.path.dirname(sys.executable)
+                )
+            path = shutil.which(
+                command if command else engine["name"],
+                mode=os.R_OK | os.X_OK,
+                path=altpath,
+            )
             if path:
                 return None, path
         return False
@@ -146,8 +172,8 @@ class EngineDiscoverer(GObject.GObject):
         ids = subprocess.ids
         options = subprocess.options
         engine = {}
-        if 'author' in ids:
-            engine['author'] = ids['author']
+        if "author" in ids:
+            engine["author"] = ids["author"]
         if options:
             engine["options"] = list(options.values())
         return engine
@@ -156,9 +182,9 @@ class EngineDiscoverer(GObject.GObject):
         features = subprocess.features
         options = subprocess.options
         engine = {}
-        if features['variants'] is not None:
-            engine['variants'] = features['variants'].split(",")
-        if features['analyze'] == 1:
+        if features["variants"] is not None:
+            engine["variants"] = features["variants"].split(",")
+        if features["analyze"] == 1:
             engine["analyze"] = True
         if options:
             engine["options"] = list(options.values())
@@ -166,7 +192,7 @@ class EngineDiscoverer(GObject.GObject):
 
     async def __discoverE(self, engine):
         subproc = await self.initEngine(engine, BLACK, False)
-        subproc.connect('readyForOptions', self.__discoverE2, engine)
+        subproc.connect("readyForOptions", self.__discoverE2, engine)
         subproc.prestart()  # Sends the 'start line'
 
         event = asyncio.Event()
@@ -191,20 +217,20 @@ class EngineDiscoverer(GObject.GObject):
         exitcode = subproc.kill(UNKNOWN_REASON)
         if exitcode:
             log.debug("Engine failed %s" % engine["name"])
-            self.emit("engine_failed", engine['name'], engine)
+            self.emit("engine_failed", engine["name"], engine)
             return
 
-        engine['recheck'] = False
+        engine["recheck"] = False
         log.debug("Engine finished %s" % engine["name"])
-        self.emit("engine_discovered", engine['name'], engine)
+        self.emit("engine_discovered", engine["name"], engine)
 
     ############################################################################
     # Main loop                                                                #
     ############################################################################
 
     def __needClean(self, rundata, engine):
-        """ Check if the filename or md5sum of the engine has changed.
-            In that case we need to clean the engine """
+        """Check if the filename or md5sum of the engine has changed.
+        In that case we need to clean the engine"""
         path = rundata[1]
 
         # Check if filename is not set, or if it has changed
@@ -212,7 +238,7 @@ class EngineDiscoverer(GObject.GObject):
             return True
 
         # If the engine failed last time, we'll recheck it as well
-        if engine.get('recheck'):
+        if engine.get("recheck"):
             return True
 
         # Check if md5sum is not set, or if it has changed
@@ -226,8 +252,8 @@ class EngineDiscoverer(GObject.GObject):
         return False
 
     def __clean(self, rundata, engine):
-        """ Grab the engine from the referenced engines and attach the attributes
-            from rundata. The update engine is ready for discovering.
+        """Grab the engine from the referenced engines and attach the attributes
+        from rundata. The update engine is ready for discovering.
         """
         vmpath, path = rundata
         md5sum = md5_sum(path)
@@ -235,16 +261,19 @@ class EngineDiscoverer(GObject.GObject):
         # Find the referenced engine
         refeng = self.getReferencedEngine(engine["name"])
         if refeng is None:
-            log.warning("Engine '%s' is not in PyChess predefined known engines list" % engine.get('name'))
-            engine['recheck'] = True
+            log.warning(
+                "Engine '%s' is not in PyChess predefined known engines list"
+                % engine.get("name")
+            )
+            engine["recheck"] = True
         else:
             engine["country"] = refeng["country"]
 
         # Clean it
-        engine['command'] = path
-        engine['md5'] = md5sum
+        engine["command"] = path
+        engine["md5"] = md5sum
         if vmpath is not None:
-            engine['vm_command'] = vmpath
+            engine["vm_command"] = vmpath
         if "variants" in engine:
             del engine["variants"]
         if "options" in engine:
@@ -268,16 +297,25 @@ class EngineDiscoverer(GObject.GObject):
             with open(self.jsonpath, "w") as file_handle:
                 json.dump(self.engines, file_handle, indent=1, sort_keys=True)
         except OSError as err:
-            log.error("Saving engines.json raised exception: %s" % ", ".join(str(a) for a in err.args))
+            log.error(
+                "Saving engines.json raised exception: %s"
+                % ", ".join(str(a) for a in err.args)
+            )
 
     def pre_discover(self):
         # Remove the expired engines
-        self.engines = [engine for engine in self.engines if os.path.isfile(engine.get('command', ''))]
+        self.engines = [
+            engine
+            for engine in self.engines
+            if os.path.isfile(engine.get("command", ""))
+        ]
 
         # Scan the referenced engines to see if they are installed
         for engine in ENGINES_LIST:
             if engine.autoDetect:
-                if self.getEngineByName(engine.name, exactName=False) is not None:  # No rediscovery if already exists
+                if (
+                    self.getEngineByName(engine.name, exactName=False) is not None
+                ):  # No rediscovery if already exists
                     continue
                 engine = self.getReferencedEngine(engine.name)
                 if engine is not None and self.__findRunData(engine):
@@ -288,10 +326,12 @@ class EngineDiscoverer(GObject.GObject):
             rundata = self.__findRunData(engine)
             if rundata and self.__needClean(rundata, engine):
                 self.__clean(rundata, engine)
-                engine['recheck'] = True
+                engine["recheck"] = True
 
         # Runs all the engines in toBeRechecked, in order to gather information
-        self.toBeRechecked = sorted([(c["name"], [c, False]) for c in self.engines if c.get('recheck')])
+        self.toBeRechecked = sorted(
+            [(c["name"], [c, False]) for c in self.engines if c.get("recheck")]
+        )
         self.toBeRechecked = OrderedDict(self.toBeRechecked)
 
     def discover(self):
@@ -336,7 +376,7 @@ class EngineDiscoverer(GObject.GObject):
         return [engine for engine in self.getEngines() if self.is_analyzer(engine)]
 
     def getEngines(self):
-        """ Returns a sorted list of engine dicts """
+        """Returns a sorted list of engine dicts"""
         return sorted(self.engines, key=lambda engine: engine["name"].lower())
 
     def getEngineN(self, index):
@@ -355,7 +395,7 @@ class EngineDiscoverer(GObject.GObject):
         if not list:
             list = self.getEngines()
         for engine in list:
-            md5_check = engine.get('md5')
+            md5_check = engine.get("md5")
             if md5_check is None:
                 continue
             if md5_check == md5sum:
@@ -374,13 +414,20 @@ class EngineDiscoverer(GObject.GObject):
                 # UCI knows Chess960 only
                 if engine.get("options"):
                     for option in engine["options"]:
-                        if option["name"] == "UCI_Chess960" and \
-                                variantClass.cecp_name == "fischerandom":
+                        if (
+                            option["name"] == "UCI_Chess960"
+                            and variantClass.cecp_name == "fischerandom"
+                        ):
                             engine_variants.append(variantClass.variant)
                         elif option["name"] == "UCI_Variant":
-                            UCI_without_standard_variant = "chess" not in option["choices"]
-                            if variantClass.cecp_name in option["choices"] or \
-                                    variantClass.cecp_name.lower().replace("-", "") in option["choices"]:
+                            UCI_without_standard_variant = (
+                                "chess" not in option["choices"]
+                            )
+                            if (
+                                variantClass.cecp_name in option["choices"]
+                                or variantClass.cecp_name.lower().replace("-", "")
+                                in option["choices"]
+                            ):
                                 engine_variants.append(variantClass.variant)
 
         if UCI_without_standard_variant:
@@ -391,43 +438,45 @@ class EngineDiscoverer(GObject.GObject):
     def getEngineLearn(self):
         # Local helpers
         def has_classical(engine):
-            status = engine['protocol'] == 'uci'
-            if 'variants' in engine:
-                status = status and 'normal' in engine['variants']
-            if 'options' in engine:
-                for option in engine['options']:
-                    if option['name'] == 'UCI_Variant' and 'choices' in option:
-                        status = status and 'chess' in option['choices']
+            status = engine["protocol"] == "uci"
+            if "variants" in engine:
+                status = status and "normal" in engine["variants"]
+            if "options" in engine:
+                for option in engine["options"]:
+                    if option["name"] == "UCI_Variant" and "choices" in option:
+                        status = status and "chess" in option["choices"]
             return status
 
         def is_stockfish(engine):
-            return 'stockfish' in engine['name'].lower()
+            return "stockfish" in engine["name"].lower()
 
         # Initialization
-        id = conf.get('ana_combobox')
-        analyzer_enabled = conf.get('analyzer_check')
+        id = conf.get("ana_combobox")
+        analyzer_enabled = conf.get("analyzer_check")
 
         # Stockfish from the preferences
-        if analyzer_enabled:  # The analyzer should be active else we might believe that it is irrelevant
+        if (
+            analyzer_enabled
+        ):  # The analyzer should be active else we might believe that it is irrelevant
             for engine in self.engines:
-                if engine['md5'] == id and is_stockfish(engine):
-                    return engine['name']
+                if engine["md5"] == id and is_stockfish(engine):
+                    return engine["name"]
 
         # Stockfish from the raw list of engines
         for engine in self.engines:
             if is_stockfish(engine):
-                return engine['name']
+                return engine["name"]
 
         # Preferred engine
         if analyzer_enabled:
             for engine in self.engines:
-                if engine['md5'] == id and has_classical(engine):
-                    return engine['name']
+                if engine["md5"] == id and has_classical(engine):
+                    return engine["name"]
 
         # First found
         for engine in self.engines:
             if has_classical(engine):
-                return engine['name']
+                return engine["name"]
 
         # No engine found
         return None
@@ -436,19 +485,23 @@ class EngineDiscoverer(GObject.GObject):
         return engine["name"]
 
     def getReferencedEngine(self, name):
-        """ This methods builds an automatic entry based on the name of the engine
-            and the preconfigured values found for it.
+        """This methods builds an automatic entry based on the name of the engine
+        and the preconfigured values found for it.
         """
         for engine in ENGINES_LIST:
             if engine.name.lower() in name.lower():
                 # Properties of the engine
-                result = {"name": os.path.basename(name),
-                          "protocol": engine.protocol[:6],
-                          "recheck": True,
-                          "country": engine.country,
-                          "comment": "",
-                          "level": ENGINE_DEFAULT_LEVEL if engine.defaultLevel is None else engine.defaultLevel}
-                if '/' in name or '\\' in name:
+                result = {
+                    "name": os.path.basename(name),
+                    "protocol": engine.protocol[:6],
+                    "recheck": True,
+                    "country": engine.country,
+                    "comment": "",
+                    "level": ENGINE_DEFAULT_LEVEL
+                    if engine.defaultLevel is None
+                    else engine.defaultLevel,
+                }
+                if "/" in name or "\\" in name:
                     result["command"] = name
                 if engine.protocol == "xboard1":
                     result["protover"] = 1
@@ -474,7 +527,10 @@ class EngineDiscoverer(GObject.GObject):
                         result["vm_name"] = "wine"
 
                 # Verify the host application
-                if result.get("vm_name") and shutil.which(result["vm_name"], mode=os.R_OK | os.X_OK) is None:
+                if (
+                    result.get("vm_name")
+                    and shutil.which(result["vm_name"], mode=os.R_OK | os.X_OK) is None
+                ):
                     return None
 
                 # Found result
@@ -487,17 +543,19 @@ class EngineDiscoverer(GObject.GObject):
         return engine.get("country")
 
     async def initEngine(self, engine, color, lowPriority):
-        name = engine['name']
+        name = engine["name"]
         protocol = engine["protocol"]
         protover = 2 if engine.get("protover") is None else engine.get("protover")
-        path = engine['command']
-        args = [] if engine.get('args') is None else [a for a in engine['args']]
-        if engine.get('vm_command') is not None:
-            vmpath = engine['vm_command']
-            vmargs = [] if engine.get('vm_args') is None else [a for a in engine['vm_args']]
+        path = engine["command"]
+        args = [] if engine.get("args") is None else [a for a in engine["args"]]
+        if engine.get("vm_command") is not None:
+            vmpath = engine["vm_command"]
+            vmargs = (
+                [] if engine.get("vm_args") is None else [a for a in engine["vm_args"]]
+            )
             args = vmargs + [path] + args
             path = vmpath
-        md5_engine = engine['md5']
+        md5_engine = engine["md5"]
 
         working_directory = engine.get("workingDirectory")
         if working_directory:
@@ -506,7 +564,13 @@ class EngineDiscoverer(GObject.GObject):
             workdir = getEngineDataPrefix()
         warnwords = ("illegal", "error", "exception")
         try:
-            subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir, lowPriority=lowPriority)
+            subprocess = SubProcess(
+                path,
+                args=args,
+                warnwords=warnwords,
+                cwd=workdir,
+                lowPriority=lowPriority,
+            )
             await subprocess.start()
         except OSError:
             raise PlayerIsDead
@@ -537,11 +601,17 @@ class EngineDiscoverer(GObject.GObject):
 
         return engine_proc
 
-    async def initPlayerEngine(self, engine, color, diffi, variant,
-                               secs=0,
-                               incr=0,
-                               moves=0,
-                               forcePonderOff=False):
+    async def initPlayerEngine(
+        self,
+        engine,
+        color,
+        diffi,
+        variant,
+        secs=0,
+        incr=0,
+        moves=0,
+        forcePonderOff=False,
+    ):
         engine = await self.initEngine(engine, color, False)
 
         def optionsCallback(engine):
@@ -571,9 +641,11 @@ class EngineDiscoverer(GObject.GObject):
         if refeng is not None:
             engine = copy(refeng)
         else:
-            engine = {"country": "unknown",
-                      "comment": "",
-                      "level": ENGINE_DEFAULT_LEVEL}
+            engine = {
+                "country": "unknown",
+                "comment": "",
+                "level": ENGINE_DEFAULT_LEVEL,
+            }
 
         # New values
         engine["name"] = name
@@ -636,7 +708,9 @@ async def init_engine(analyzer_type, gamemodel, force_engine=None):
             engine = anaengines[-1]
 
         if gamemodel.variant.variant in discoverer.getEngineVariants(engine):
-            analyzer = await discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
+            analyzer = await discoverer.initAnalyzerEngine(
+                engine, mode, gamemodel.variant
+            )
             log.debug("{} analyzer: {}".format(analyzer_type, repr(analyzer)))
 
     return analyzer

@@ -1,7 +1,14 @@
 import unittest
 
-from pychess.Utils.const import BLACKWON, DRAW, WHITEWON, ATOMICCHESS, WON_KINGEXPLODE, WON_MATE, \
-    DRAW_STALEMATE
+from pychess.Utils.const import (
+    BLACKWON,
+    DRAW,
+    WHITEWON,
+    ATOMICCHESS,
+    WON_KINGEXPLODE,
+    WON_MATE,
+    DRAW_STALEMATE,
+)
 from pychess.Utils.logic import validate, getStatus
 from pychess.Utils.Move import Move, parseSAN
 from pychess.Variants.atomic import AtomicBoard
@@ -40,31 +47,31 @@ class AtomicTestCase(unittest.TestCase):
         """Testing castling rights lose in explosion in Atomic variant"""
 
         board = AtomicBoard(setup=FEN1)
-        board = board.move(parseSAN(board, 'Nxa7'))
+        board = board.move(parseSAN(board, "Nxa7"))
         print(board)
         # Rook exploded, no O-O-O anymore!
-        self.assertTrue(validate(board, parseSAN(board, 'b6')))
-        self.assertTrue(not validate(board, parseSAN(board, 'a6')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Rb8')))
-        self.assertTrue(not validate(board, parseSAN(board, 'O-O-O')))
+        self.assertTrue(validate(board, parseSAN(board, "b6")))
+        self.assertTrue(not validate(board, parseSAN(board, "a6")))
+        self.assertTrue(not validate(board, parseSAN(board, "Rb8")))
+        self.assertTrue(not validate(board, parseSAN(board, "O-O-O")))
 
     def test_validate2(self):
         """Testing explode king vs mate in Atomic variant"""
 
         board = AtomicBoard(setup=FEN1)
-        board = board.move(parseSAN(board, 'Nc7+'))
+        board = board.move(parseSAN(board, "Nc7+"))
         print(board)
         # King explosion takes precedence over mate!
-        self.assertTrue(validate(board, parseSAN(board, 'Qxd2')))
-        self.assertTrue(validate(board, parseSAN(board, 'Qxf2')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Qxb2')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Qe4+')))
+        self.assertTrue(validate(board, parseSAN(board, "Qxd2")))
+        self.assertTrue(validate(board, parseSAN(board, "Qxf2")))
+        self.assertTrue(not validate(board, parseSAN(board, "Qxb2")))
+        self.assertTrue(not validate(board, parseSAN(board, "Qe4+")))
 
     def test_getstatus1(self):
         """Testing bare black king is not draw in Atomic variant"""
 
         board = AtomicBoard(setup=FEN2)
-        board = board.move(parseSAN(board, 'Qxc2'))
+        board = board.move(parseSAN(board, "Qxc2"))
         print(board)
         self.assertEqual(getStatus(board), (BLACKWON, WON_KINGEXPLODE))
 
@@ -72,9 +79,9 @@ class AtomicTestCase(unittest.TestCase):
         """Testing bare white king is not draw in Atomic variant"""
 
         board = AtomicBoard(setup=FEN3)
-        self.assertTrue(not validate(board, parseSAN(board, 'Kxg7')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Kg8')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Kh7')))
+        self.assertTrue(not validate(board, parseSAN(board, "Kxg7")))
+        self.assertTrue(not validate(board, parseSAN(board, "Kg8")))
+        self.assertTrue(not validate(board, parseSAN(board, "Kh7")))
         print(board)
         self.assertEqual(getStatus(board), (DRAW, DRAW_STALEMATE))
 
@@ -90,7 +97,7 @@ class AtomicTestCase(unittest.TestCase):
 
         board = AtomicBoard(setup=FEN5)
         print(board)
-        self.assertTrue(validate(board, parseSAN(board, 'Kg5')))
+        self.assertTrue(validate(board, parseSAN(board, "Kg5")))
 
     def test_apply_pop(self):
         """Testing Atomic applyMove popMove"""
@@ -109,8 +116,7 @@ class AtomicTestCase(unittest.TestCase):
                 board.popMove()
                 continue
 
-            hist_exploding_around1 = [a[:]
-                                      for a in board.hist_exploding_around]
+            hist_exploding_around1 = [a[:] for a in board.hist_exploding_around]
             for lmove2 in genAllMoves(board):
                 board.applyMove(lmove2)
                 if print_apply_pop:
@@ -121,8 +127,7 @@ class AtomicTestCase(unittest.TestCase):
                     board.popMove()
                     continue
 
-                hist_exploding_around2 = [a[:]
-                                          for a in board.hist_exploding_around]
+                hist_exploding_around2 = [a[:] for a in board.hist_exploding_around]
                 for lmove3 in genAllMoves(board):
                     board.applyMove(lmove3)
                     if print_apply_pop:
@@ -137,23 +142,22 @@ class AtomicTestCase(unittest.TestCase):
                     if print_apply_pop:
                         print("      popMove3", Move(lmove3))
 
-                    self.assertEqual(hist_exploding_around2,
-                                     board.hist_exploding_around)
+                    self.assertEqual(
+                        hist_exploding_around2, board.hist_exploding_around
+                    )
 
                 board.popMove()
                 if print_apply_pop:
                     print("   popMove2", Move(lmove2))
 
-                self.assertEqual(hist_exploding_around1,
-                                 board.hist_exploding_around)
+                self.assertEqual(hist_exploding_around1, board.hist_exploding_around)
 
             board.popMove()
             if print_apply_pop:
                 print("popMove1", Move(lmove1))
 
-            self.assertEqual(hist_exploding_around0,
-                             board.hist_exploding_around)
+            self.assertEqual(hist_exploding_around0, board.hist_exploding_around)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -9,8 +9,7 @@ from pychess.Utils.lutils import leval
 class EvalTestCase(unittest.TestCase):
     def setUp(self):
         self.board = LBoard(NORMALCHESS)
-        self.board.applyFen(
-            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1")
+        self.board.applyFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1")
 
     def test1(self):
         """Testing eval symmetry with startboard (WHITE)"""
@@ -26,11 +25,15 @@ class EvalTestCase(unittest.TestCase):
         """Testing eval symmetry of each function"""
         funcs = (f for f in dir(leval) if f.startswith("eval"))
         funcs = (getattr(leval, f) for f in funcs)
-        funcs = (f for f in funcs if callable(f) and
-                 f != leval.evaluateComplete and
-                 f != leval.evalMaterial and
-                 f != leval.evalPawnStructure and
-                 f != leval.evalTrappedBishops)
+        funcs = (
+            f
+            for f in funcs
+            if callable(f)
+            and f != leval.evaluateComplete
+            and f != leval.evalMaterial
+            and f != leval.evalPawnStructure
+            and f != leval.evalTrappedBishops
+        )
 
         sw, phasew = leval.evalMaterial(self.board, WHITE)
         sb, phaseb = leval.evalMaterial(self.board, BLACK)
@@ -57,5 +60,5 @@ class EvalTestCase(unittest.TestCase):
             self.assertEqual(sw, sb)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

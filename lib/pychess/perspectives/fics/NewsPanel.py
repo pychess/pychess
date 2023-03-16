@@ -11,8 +11,7 @@ __icon__ = addDataPrefix("glade/panel_annotation.svg")
 __desc__ = _("List of server news")
 
 
-class Sidepanel():
-
+class Sidepanel:
     def load(self, widgets, connection, lounge):
         self.widgets = widgets
 

@@ -12,10 +12,9 @@ FICS_SENDS = 10
 
 
 class NewsManager(GObject.GObject):
-
     __gsignals__ = {
-        'readingNews': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'readNews': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        "readingNews": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "readNews": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
 
     def __init__(self, connection):
@@ -23,11 +22,11 @@ class NewsManager(GObject.GObject):
         self.connection = connection
         self.news = {}
         self.connection.expect_line(
-            self.onNewsItem, r"(\d+) \({}, {} +(\d+)\) (.+)".format(days, months))
+            self.onNewsItem, r"(\d+) \({}, {} +(\d+)\) (.+)".format(days, months)
+        )
         self.connection.client.run_command("news")
 
     def onNewsItem(self, match):
-
         no, weekday, month, day, title = match.groups()
         line = match.group()
         self.news[no] = [_(weekday), _(month), day, title, ""]
@@ -52,8 +51,7 @@ class NewsManager(GObject.GObject):
             self.news[no][4] = details
             self.emit("readNews", self.news[no])
 
-        self.connection.expect_fromto(onFullNewsItem, re.escape(line),
-                                      "Posted by.*")
+        self.connection.expect_fromto(onFullNewsItem, re.escape(line), "Posted by.*")
         self.connection.client.run_command("news %s" % no)
 
     onNewsItem.BLKCMD = BLKCMD_NEWS

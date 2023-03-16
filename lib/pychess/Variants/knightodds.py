@@ -7,8 +7,9 @@ KNIGHTODDSSTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/R1BQKBNR w KQkq - 0 1"
 
 class KnightOddsBoard(Board):
     """:Description: Knight Odds variant plays with the same rules as normal chess
-        but one side start the game with a knight missing
+    but one side start the game with a knight missing
     """
+
     variant = KNIGHTODDSCHESS
     __desc__ = _("One player starts with one less knight piece")
     name = _("Knight odds")

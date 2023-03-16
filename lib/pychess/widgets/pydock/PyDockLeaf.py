@@ -31,12 +31,14 @@ class PyDockLeaf(TabReceiver):
         self.button_cids = []
 
         self.starButton = StarArrowButton(
-            self, addDataPrefix("glade/dock_top.svg"),
+            self,
+            addDataPrefix("glade/dock_top.svg"),
             addDataPrefix("glade/dock_right.svg"),
             addDataPrefix("glade/dock_bottom.svg"),
             addDataPrefix("glade/dock_left.svg"),
             addDataPrefix("glade/dock_center.svg"),
-            addDataPrefix("glade/dock_star.svg"))
+            addDataPrefix("glade/dock_star.svg"),
+        )
 
         self.button_cids += [
             self.starButton.connect("dropped", self.__onDrop),
@@ -87,8 +89,8 @@ class PyDockLeaf(TabReceiver):
         widget.show_all()
 
     def dock(self, widget, position, title, id):
-        """ if position == CENTER: Add a new widget to the leaf-notebook
-            if position != CENTER: Fork this leaf into two """
+        """if position == CENTER: Add a new widget to the leaf-notebook
+        if position != CENTER: Fork this leaf into two"""
 
         if position == CENTER:
             self.__add(widget, title, id)
@@ -106,8 +108,8 @@ class PyDockLeaf(TabReceiver):
             return leaf
 
     def undock(self, widget):
-        """ remove the widget from the leaf-notebook
-            if this was the only widget, remove this leaf from its owner """
+        """remove the widget from the leaf-notebook
+        if this was the only widget, remove this leaf from its owner"""
 
         gtk_version = (Gtk.get_major_version(), Gtk.get_minor_version())
         if gtk_version >= (3, 16):
@@ -139,6 +141,7 @@ class PyDockLeaf(TabReceiver):
             return
 
         from .PyDockTop import PyDockTop
+
         parent = self.get_parent()
         if not isinstance(parent, PyDockTop):
             while not isinstance(parent, PyDockComposite):
@@ -174,7 +177,7 @@ class PyDockLeaf(TabReceiver):
         self.book.set_show_border(True)
 
     def getPanels(self):
-        """ Returns a list of (widget, title, id) tuples """
+        """Returns a list of (widget, title, id) tuples"""
         return self.panels
 
     def getCurrentPanel(self):
@@ -183,7 +186,7 @@ class PyDockLeaf(TabReceiver):
                 return id
 
     def setCurrentPanel(self, id):
-        """ Returns the panel id currently shown """
+        """Returns the panel id currently shown"""
         for i, (widget, title, id_) in enumerate(self.panels):
             if id == id_:
                 self.book.set_current_page(i)
@@ -193,8 +196,8 @@ class PyDockLeaf(TabReceiver):
         return self.dockable
 
     def setDockable(self, dockable):
-        """ If the leaf is not dockable it won't be moveable and won't accept
-            new panels """
+        """If the leaf is not dockable it won't be moveable and won't accept
+        new panels"""
         self.book.set_show_tabs(dockable)
         # self.book.set_show_border(dockable)
         self.dockable = dockable

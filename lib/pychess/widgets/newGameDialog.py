@@ -3,6 +3,7 @@ import os
 import os.path
 import gettext
 import locale
+import sys
 
 from math import pi
 from operator import attrgetter
@@ -10,22 +11,49 @@ from itertools import groupby
 from io import StringIO
 
 import gi
-gi.require_version('Gdk', '3.0')
-gi.require_version('GLib', '2.0')
-gi.require_version('GObject', '2.0')
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gdk, Gtk, GLib, GObject
-gi.require_version('GtkSource', '3.0')
-from gi.repository import GtkSource
+
+try:
+    gi.require_version("Gdk", "3.0")
+    gi.require_version("GLib", "2.0")
+    gi.require_version("GObject", "2.0")
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gdk, Gtk, GLib, GObject
+
+    gi.require_version("GtkSource", "3.0")
+    from gi.repository import GtkSource
+except Exception:
+    print("Failed to import required gi module version")
+    sys.exit(1)
 
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.const import NORMALCHESS, VARIANTS_BLINDFOLD, FISCHERRANDOMCHESS, \
-    VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER, VARIANTS_OTHER_NONSTANDARD, VARIANTS_ASEAN, \
-    WHITE, BLACK, UNSUPPORTED, ARTIFICIAL, LOCAL, reprCord, reprFile, W_OO, W_OOO, B_OO, B_OOO, \
-    FAN_PIECES, reprSign, FEN_START, WAITING_TO_START
+from pychess.Utils.const import (
+    NORMALCHESS,
+    VARIANTS_BLINDFOLD,
+    FISCHERRANDOMCHESS,
+    VARIANTS_ODDS,
+    VARIANTS_SHUFFLE,
+    VARIANTS_OTHER,
+    VARIANTS_OTHER_NONSTANDARD,
+    VARIANTS_ASEAN,
+    WHITE,
+    BLACK,
+    UNSUPPORTED,
+    ARTIFICIAL,
+    LOCAL,
+    reprCord,
+    reprFile,
+    W_OO,
+    W_OOO,
+    B_OO,
+    B_OOO,
+    FAN_PIECES,
+    reprSign,
+    FEN_START,
+    WAITING_TO_START,
+)
 
 from pychess.Utils.repr import localReprSign
 from pychess.Utils.lutils.ldata import FILE
@@ -58,9 +86,18 @@ iwheels = get_pixbuf("glade/wheel.png")
 ipeople = get_pixbuf("glade/people24.png")
 inotebook = load_icon(24, "stock_notebook", "computer")
 
-weather_icons = ("clear", "clear-night", "few-clouds", "few-clouds-night",
-                 "fog", "overcast", "severe-alert", "showers-scattered",
-                 "showers", "storm")
+weather_icons = (
+    "clear",
+    "clear-night",
+    "few-clouds",
+    "few-clouds-night",
+    "fog",
+    "overcast",
+    "severe-alert",
+    "showers-scattered",
+    "showers",
+    "storm",
+)
 skillToIcon = {}
 # Used by TaskerManager. Put here to help synchronization
 skillToIconLarge = {}
@@ -147,12 +184,20 @@ class _GameInitializationMode:
             cls.widgets["skillSlider2"].set_value(whiteLevel)
 
         cls.widgets["whitePlayerButton"].set_image(Gtk.Image.new_from_pixbuf(cls.white))
-        cls.widgets["whitePlayerButton"].connect("button-press-event", on_exchange_players)
+        cls.widgets["whitePlayerButton"].connect(
+            "button-press-event", on_exchange_players
+        )
         cls.widgets["blackPlayerButton"].set_image(Gtk.Image.new_from_pixbuf(cls.black))
-        cls.widgets["blackPlayerButton"].connect("button-press-event", on_exchange_players)
+        cls.widgets["blackPlayerButton"].connect(
+            "button-press-event", on_exchange_players
+        )
 
-        uistuff.createCombo(cls.widgets["whitePlayerCombobox"], name="whitePlayerCombobox")
-        uistuff.createCombo(cls.widgets["blackPlayerCombobox"], name="blackPlayerCombobox")
+        uistuff.createCombo(
+            cls.widgets["whitePlayerCombobox"], name="whitePlayerCombobox"
+        )
+        uistuff.createCombo(
+            cls.widgets["blackPlayerCombobox"], name="blackPlayerCombobox"
+        )
 
         cls.widgets["playersIcon"].set_from_pixbuf(big_people)
         cls.widgets["timeIcon"].set_from_pixbuf(big_time)
@@ -170,26 +215,76 @@ class _GameInitializationMode:
                         if pref_level:
                             skill_level.set_value(pref_level)
 
-        cls.widgets["whitePlayerCombobox"].connect("changed", on_playerCombobox_changed, cls.widgets["skillHbox1"], cls.widgets["skillSlider1"])
-        cls.widgets["blackPlayerCombobox"].connect("changed", on_playerCombobox_changed, cls.widgets["skillHbox2"], cls.widgets["skillSlider2"])
+        cls.widgets["whitePlayerCombobox"].connect(
+            "changed",
+            on_playerCombobox_changed,
+            cls.widgets["skillHbox1"],
+            cls.widgets["skillSlider1"],
+        )
+        cls.widgets["blackPlayerCombobox"].connect(
+            "changed",
+            on_playerCombobox_changed,
+            cls.widgets["skillHbox2"],
+            cls.widgets["skillSlider2"],
+        )
         cls.widgets["whitePlayerCombobox"].set_active(0)
         cls.widgets["blackPlayerCombobox"].set_active(1)
 
         def on_skill_changed(scale, image):
             image.set_from_pixbuf(skillToIcon[int(scale.get_value())])
 
-        cls.widgets["skillSlider1"].connect("value-changed", on_skill_changed, cls.widgets["skillIcon1"])
-        cls.widgets["skillSlider2"].connect("value-changed", on_skill_changed, cls.widgets["skillIcon2"])
+        cls.widgets["skillSlider1"].connect(
+            "value-changed", on_skill_changed, cls.widgets["skillIcon1"]
+        )
+        cls.widgets["skillSlider2"].connect(
+            "value-changed", on_skill_changed, cls.widgets["skillIcon2"]
+        )
         cls.widgets["skillSlider1"].set_value(3)
         cls.widgets["skillSlider2"].set_value(3)
 
-        cls.__initTimeRadio("ngblitz", cls.widgets["blitzRadio"], cls.widgets["configImageBlitz"], 5, 0, 0)
-        cls.__initTimeRadio("ngrapid", cls.widgets["rapidRadio"], cls.widgets["configImageRapid"], 15, 5, 0)
-        cls.__initTimeRadio("ngnormal", cls.widgets["normalRadio"], cls.widgets["configImageNormal"], 45, 15, 0)
-        cls.__initTimeRadio("ngclassical", cls.widgets["classicalRadio"], cls.widgets["configImageClassical"], 3, 0, 40)
+        cls.__initTimeRadio(
+            "ngblitz",
+            cls.widgets["blitzRadio"],
+            cls.widgets["configImageBlitz"],
+            5,
+            0,
+            0,
+        )
+        cls.__initTimeRadio(
+            "ngrapid",
+            cls.widgets["rapidRadio"],
+            cls.widgets["configImageRapid"],
+            15,
+            5,
+            0,
+        )
+        cls.__initTimeRadio(
+            "ngnormal",
+            cls.widgets["normalRadio"],
+            cls.widgets["configImageNormal"],
+            45,
+            15,
+            0,
+        )
+        cls.__initTimeRadio(
+            "ngclassical",
+            cls.widgets["classicalRadio"],
+            cls.widgets["configImageClassical"],
+            3,
+            0,
+            40,
+        )
 
-        cls.__initVariantRadio("ngvariant1", cls.widgets["playVariant1Radio"], cls.widgets["configImageVariant1"])
-        cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"], cls.widgets["configImageVariant2"])
+        cls.__initVariantRadio(
+            "ngvariant1",
+            cls.widgets["playVariant1Radio"],
+            cls.widgets["configImageVariant1"],
+        )
+        cls.__initVariantRadio(
+            "ngvariant2",
+            cls.widgets["playVariant2Radio"],
+            cls.widgets["configImageVariant2"],
+        )
 
         def updateCombos(*args):
             if cls.widgets["playNormalRadio"].get_active():
@@ -199,9 +294,13 @@ class _GameInitializationMode:
             else:
                 variant = conf.get("ngvariant2")
             variant1 = conf.get("ngvariant1")
-            cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)
+            cls.widgets["playVariant1Radio"].set_tooltip_text(
+                variants[variant1].__desc__
+            )
             variant2 = conf.get("ngvariant2")
-            cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
+            cls.widgets["playVariant2Radio"].set_tooltip_text(
+                variants[variant2].__desc__
+            )
             data = [(item[0], item[1]) for item in playerItems[variant]]
             uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], data)
             uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], data)
@@ -222,10 +321,20 @@ class _GameInitializationMode:
 
         # The "variant" has to come before players, because the engine positions
         # in the user comboboxes can be different in different variants
-        for key in ("whitePlayerCombobox", "blackPlayerCombobox",
-                    "skillSlider1", "skillSlider2", "notimeRadio",
-                    "blitzRadio", "rapidRadio", "normalRadio", "classicalRadio",
-                    "playNormalRadio", "playVariant1Radio", "playVariant2Radio"):
+        for key in (
+            "whitePlayerCombobox",
+            "blackPlayerCombobox",
+            "skillSlider1",
+            "skillSlider2",
+            "notimeRadio",
+            "blitzRadio",
+            "rapidRadio",
+            "normalRadio",
+            "classicalRadio",
+            "playNormalRadio",
+            "playVariant1Radio",
+            "playVariant2Radio",
+        ):
             uistuff.keep(cls.widgets[key], key)
 
         # We don't want the dialog to deallocate when closed. Rather we hide
@@ -285,7 +394,7 @@ class _GameInitializationMode:
 
             # Determination of the caption
             def get_game_name():
-                """ https://www.fide.com/fide/handbook.html?id=171&view=article """
+                """https://www.fide.com/fide/handbook.html?id=171&view=article"""
                 if defmoves > 0:
                     return _("Classical")
                 if duration_60 <= 20:  # 10 minutes per player
@@ -295,34 +404,49 @@ class _GameInitializationMode:
                 return _("Normal")
 
             if moves > 0:
-                radiobutton.set_label(_("%(name)s %(minutes)d min / %(moves)d moves %(duration)s") % {
-                    'name': get_game_name(),
-                    'minutes': minutes,
-                    'moves': moves,
-                    'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
-                })
+                radiobutton.set_label(
+                    _("%(name)s %(minutes)d min / %(moves)d moves %(duration)s")
+                    % {
+                        "name": get_game_name(),
+                        "minutes": minutes,
+                        "moves": moves,
+                        "duration": ("(%d')" % duration_40) if duration_40 > 0 else "",
+                    }
+                )
             elif gain != 0:
                 radiobutton.set_label(
-                    _("%(name)s %(minutes)d min %(sign)s %(gain)d sec/move %(duration)s") % {
-                        'name': get_game_name(),
-                        'minutes': minutes,
-                        'sign': "+" if gain > 0 else "–",
-                        'gain': abs(gain),
-                        'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
-                    })
+                    _(
+                        "%(name)s %(minutes)d min %(sign)s %(gain)d sec/move %(duration)s"
+                    )
+                    % {
+                        "name": get_game_name(),
+                        "minutes": minutes,
+                        "sign": "+" if gain > 0 else "–",
+                        "gain": abs(gain),
+                        "duration": ("(%d')" % duration_40) if duration_40 > 0 else "",
+                    }
+                )
             else:
-                radiobutton.set_label(_("%(name)s %(minutes)d min %(duration)s") % {
-                    'name': get_game_name(),
-                    'minutes': minutes,
-                    'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
-                })
+                radiobutton.set_label(
+                    _("%(name)s %(minutes)d min %(duration)s")
+                    % {
+                        "name": get_game_name(),
+                        "minutes": minutes,
+                        "duration": ("(%d')" % duration_40) if duration_40 > 0 else "",
+                    }
+                )
 
             # Determination of the tooltip
             if duration_20 > 0 and duration_60 > 0 and duration_20 != duration_60:
-                radiobutton.set_tooltip_text(_("Estimated duration : %(min)d - %(max)d minutes") % ({
-                    "min": min(duration_20, duration_60),
-                    "max": max(duration_20, duration_60)}
-                ))
+                radiobutton.set_tooltip_text(
+                    _("Estimated duration : %(min)d - %(max)d minutes")
+                    % (
+                        {
+                            "min": min(duration_20, duration_60),
+                            "max": max(duration_20, duration_60),
+                        }
+                    )
+                )
             else:
                 radiobutton.set_tooltip_text("")
 
@@ -336,35 +460,34 @@ class _GameInitializationMode:
         model = Gtk.TreeStore(str)
         treeview = Gtk.TreeView(model)
         treeview.set_headers_visible(False)
-        treeview.append_column(Gtk.TreeViewColumn(None,
-                                                  Gtk.CellRendererText(),
-                                                  text=0))
+        treeview.append_column(Gtk.TreeViewColumn(None, Gtk.CellRendererText(), text=0))
         alignment = Gtk.Alignment.new(1, 1, 1, 1)
         alignment.set_padding(6, 6, 12, 12)
         alignment.add(treeview)
         ImageMenu.switchWithImage(configImage, alignment)
 
-        groupNames = {VARIANTS_BLINDFOLD: _("Blindfold"),
-                      VARIANTS_ODDS: _("Odds"),
-                      VARIANTS_SHUFFLE: _("Shuffle"),
-                      VARIANTS_OTHER: _("Other (standard rules)"),
-                      VARIANTS_OTHER_NONSTANDARD:
-                      _("Other (non standard rules)"),
-                      VARIANTS_ASEAN: _("Asian variants"), }
+        groupNames = {
+            VARIANTS_BLINDFOLD: _("Blindfold"),
+            VARIANTS_ODDS: _("Odds"),
+            VARIANTS_SHUFFLE: _("Shuffle"),
+            VARIANTS_OTHER: _("Other (standard rules)"),
+            VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
+            VARIANTS_ASEAN: _("Asian variants"),
+        }
 
-        specialVariants = [v
-                           for v in variants.values()
-                           if v != NormalBoard and v.variant not in UNSUPPORTED
-                           ]
-        specialVariants = sorted(specialVariants,
-                                 key=attrgetter("variant_group"))
+        specialVariants = [
+            v
+            for v in variants.values()
+            if v != NormalBoard and v.variant not in UNSUPPORTED
+        ]
+        specialVariants = sorted(specialVariants, key=attrgetter("variant_group"))
         groups = groupby(specialVariants, attrgetter("variant_group"))
         pathToVariant = {}
         variantToPath = {}
         for i, (id, group) in enumerate(groups):
-            iter = model.append(None, (groupNames[id], ))
+            iter = model.append(None, (groupNames[id],))
             for variant in group:
-                subiter = model.append(iter, (variant.name, ))
+                subiter = model.append(iter, (variant.name,))
                 path = model.get_path(subiter)
                 pathToVariant[path.to_string()] = variant.variant
                 variantToPath[variant.variant] = path.to_string()
@@ -416,26 +539,41 @@ class _GameInitializationMode:
                     cls.ini_widgets(lboard.asFen())
                     cls.board_control.emit("action", "SETUP", None, text)
                 except SyntaxError as e:
-                    d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
-                                          buttons=Gtk.ButtonsType.OK,
-                                          message_format=e.args[0])
+                    d = Gtk.MessageDialog(
+                        mainwindow(),
+                        type=Gtk.MessageType.WARNING,
+                        buttons=Gtk.ButtonsType.OK,
+                        message_format=e.args[0],
+                    )
                     if len(e.args) > 1:
                         d.format_secondary_text(e.args[1])
                     d.connect("response", lambda d, a: d.hide())
                     d.show()
                 return
             elif response == INITIAL:
-                if os.environ.get('PYCHESS_UNITTEST'):  # The modal dialog cannot be automated in the background
+                if os.environ.get(
+                    "PYCHESS_UNITTEST"
+                ):  # The modal dialog cannot be automated in the background
                     ecofen = FEN_START
                 else:
-                    ecoterms = getUserTextDialog(dialog,
-                                                 _("Start position from the opening book"),
-                                                 _("Type an ECO code or a keyword (with wildcard *):"))
+                    ecoterms = getUserTextDialog(
+                        dialog,
+                        _("Start position from the opening book"),
+                        _("Type an ECO code or a keyword (with wildcard *):"),
+                    )
                     ecofen = find_opening_fen(ecoterms)
                     if ecofen is None:
-                        if ecoterms != '':
-                            dlgwin = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO)
-                            dlgwin.set_markup(_('No position was found. Do you want to use the default setup ?'))
+                        if ecoterms != "":
+                            dlgwin = Gtk.MessageDialog(
+                                mainwindow(),
+                                type=Gtk.MessageType.QUESTION,
+                                buttons=Gtk.ButtonsType.YES_NO,
+                            )
+                            dlgwin.set_markup(
+                                _(
+                                    "No position was found. Do you want to use the default setup ?"
+                                )
+                            )
                             dlgrep = dlgwin.run()
                             dlgwin.destroy()
                             if dlgrep != Gtk.ResponseType.YES:
@@ -507,13 +645,20 @@ class _GameInitializationMode:
 
             # Prepare players
             playertups = []
-            for i, playerno, name, diffi, color in ((0, player0, name0, diffi0, WHITE),
-                                                    (1, player1, name1, diffi1, BLACK)):
+            for i, playerno, name, diffi, color in (
+                (0, player0, name0, diffi0, WHITE),
+                (1, player1, name1, diffi1, BLACK),
+            ):
                 if playerno > 0:
                     engine = discoverer.getEngineByName(name)
-                    playertups.append((ARTIFICIAL, discoverer.initPlayerEngine,
-                                       [engine, color, diffi, variant, secs,
-                                        incr, moves], name))
+                    playertups.append(
+                        (
+                            ARTIFICIAL,
+                            discoverer.initPlayerEngine,
+                            [engine, color, diffi, variant, secs, incr, moves],
+                            name,
+                        )
+                    )
                 else:
                     if not playertups or playertups[0][0] != LOCAL:
                         name = conf.get("firstName")
@@ -522,8 +667,7 @@ class _GameInitializationMode:
                     playertups.append((LOCAL, Human, (color, name), name))
 
             # Set forcePonderOff initPlayerEngine param True in engine-engine games
-            if playertups[0][0] == ARTIFICIAL and playertups[1][
-                    0] == ARTIFICIAL:
+            if playertups[0][0] == ARTIFICIAL and playertups[1][0] == ARTIFICIAL:
                 playertups[0][2].append(True)
                 playertups[1][2].append(True)
 
@@ -537,17 +681,20 @@ class _GameInitializationMode:
                 cls.widgets["newgamedialog"].disconnect(handlerId)
                 callback(gamemodel, playertups[0], playertups[1])
 
-        handlerId = cls.widgets["newgamedialog"].connect("response",
-                                                         onResponse)
+        handlerId = cls.widgets["newgamedialog"].connect("response", onResponse)
         cls.widgets["newgamedialog"].show()
 
     @classmethod
     def _hideOthers(cls):
-        for extension in ("loadsidepanel", "enterGameNotationSidePanel",
-                          "setupPositionSidePanel"):
+        for extension in (
+            "loadsidepanel",
+            "enterGameNotationSidePanel",
+            "setupPositionSidePanel",
+        ):
             cls.widgets[extension].hide()
         for button in ("copy_button", "clear_button", "paste_button", "initial_button"):
             cls.widgets[button].hide()
+
 
 # ###############################################################################
 # NewGameMode                                                                  #
@@ -580,6 +727,7 @@ class NewGameMode(_GameInitializationMode):
 
         cls._generalRun(_callback, _validate)
 
+
 # ###############################################################################
 # SetupPositionExtension                                                       #
 # ###############################################################################
@@ -592,10 +740,10 @@ class SetupPositionExtension(_GameInitializationMode):
     def _init(cls):
         def callback(widget, allocation):
             cls.widgets["setupPositionFrame"].set_size_request(
-                523, allocation.height - 4)
+                523, allocation.height - 4
+            )
 
-        cls.widgets["setupPositionSidePanel"].connect_after("size-allocate",
-                                                            callback)
+        cls.widgets["setupPositionSidePanel"].connect_after("size-allocate", callback)
 
         cls.castl = set()
 
@@ -604,11 +752,11 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["side_button"].set_image(cls.white)
 
         cls.widgets["side_button"].connect("toggled", cls.side_button_toggled)
-        cls.widgets["rotate_button"].connect("button-press-event", cls.rotate_button_pressed)
-        cls.widgets["moveno_spin"].connect("value-changed",
-                                           cls.moveno_spin_changed)
-        cls.widgets["fifty_spin"].connect("value-changed",
-                                          cls.fifty_spin_changed)
+        cls.widgets["rotate_button"].connect(
+            "button-press-event", cls.rotate_button_pressed
+        )
+        cls.widgets["moveno_spin"].connect("value-changed", cls.moveno_spin_changed)
+        cls.widgets["fifty_spin"].connect("value-changed", cls.fifty_spin_changed)
 
         cls.widgets["woo"].connect("toggled", cls.castl_toggled, W_OO)
         cls.widgets["wooo"].connect("toggled", cls.castl_toggled, W_OOO)
@@ -731,8 +879,7 @@ class SetupPositionExtension(_GameInitializationMode):
     def ini_widgets(cls, setup, lboard=None):
         if lboard is None:
             lboard = cls.setupmodel.variant(setup=setup).board
-        cls.widgets["side_button"].set_active(False if lboard.color == WHITE
-                                              else True)
+        cls.widgets["side_button"].set_active(False if lboard.color == WHITE else True)
         cls.widgets["fifty_spin"].set_value(lboard.fifty)
         cls.widgets["moveno_spin"].set_value(lboard.plyCount // 2 + 1)
         ep = lboard.enpassant
@@ -756,9 +903,7 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["setupPositionSidePanel"].show()
 
         cls.setupmodel = SetupModel()
-        cls.board_control = BoardControl(cls.setupmodel,
-                                         {},
-                                         setup_position=True)
+        cls.board_control = BoardControl(cls.setupmodel, {}, setup_position=True)
         cls.setupmodel.curplayer = SetupPlayer(cls.board_control)
         cls.setupmodel.connect("game_changed", cls.game_changed)
 
@@ -770,7 +915,9 @@ class SetupPositionExtension(_GameInitializationMode):
         if fenstr is not None:
             lboard = LBoard(variant)
             lboard.applyFen(fenstr)
-            cls.setupmodel.boards = [cls.setupmodel.variant(setup=fenstr, lboard=lboard)]
+            cls.setupmodel.boards = [
+                cls.setupmodel.variant(setup=fenstr, lboard=lboard)
+            ]
             cls.setupmodel.variations = [cls.setupmodel.boards]
             cls.ini_widgets(fenstr, lboard)
         else:
@@ -787,9 +934,12 @@ class SetupPositionExtension(_GameInitializationMode):
                 cls.setupmodel.variant(setup=fenstr)
                 return True
             except (AssertionError, LoadingError, SyntaxError) as e:
-                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
-                                      buttons=Gtk.ButtonsType.OK,
-                                      message_format=e.args[0])
+                d = Gtk.MessageDialog(
+                    mainwindow(),
+                    type=Gtk.MessageType.WARNING,
+                    buttons=Gtk.ButtonsType.OK,
+                    message_format=e.args[0],
+                )
                 if len(e.args) > 1:
                     d.format_secondary_text(e.args[1])
                 d.connect("response", lambda d, a: d.hide())
@@ -799,10 +949,14 @@ class SetupPositionExtension(_GameInitializationMode):
         def _callback(gamemodel, p0, p1):
             text = cls.get_fen()
             perspective = perspective_manager.get_perspective("games")
-            asyncio.create_task(perspective.generalStart(
-                gamemodel, p0, p1, (StringIO(text), fen, 0, -1)))
+            asyncio.create_task(
+                perspective.generalStart(
+                    gamemodel, p0, p1, (StringIO(text), fen, 0, -1)
+                )
+            )
 
         cls._generalRun(_callback, _validate)
+
 
 # ###############################################################################
 # EnterNotationExtension                                                       #
@@ -814,10 +968,12 @@ class EnterNotationExtension(_GameInitializationMode):
     def _init(cls):
         def callback(widget, allocation):
             cls.widgets["enterGameNotationFrame"].set_size_request(
-                223, allocation.height - 4)
+                223, allocation.height - 4
+            )
 
         cls.widgets["enterGameNotationSidePanel"].connect_after(
-            "size-allocate", callback)
+            "size-allocate", callback
+        )
 
         flags = []
         if isInstalled():
@@ -838,8 +994,7 @@ class EnterNotationExtension(_GameInitializationMode):
 
         cls.sourcebuffer = GtkSource.Buffer()
         sourceview = GtkSource.View.new_with_buffer(cls.sourcebuffer)
-        sourceview.set_tooltip_text(_(
-            "Type or paste PGN game or FEN positions here"))
+        sourceview.set_tooltip_text(_("Type or paste PGN game or FEN positions here"))
         cls.widgets["scrolledwindow6"].add(sourceview)
         sourceview.show()
 
@@ -849,13 +1004,12 @@ class EnterNotationExtension(_GameInitializationMode):
 
         man = GtkSource.LanguageManager()
         # Init new version
-        if hasattr(man.props, 'search_path'):
+        if hasattr(man.props, "search_path"):
             try:
-                path = os.path.join(getDataPrefix(),
-                                    "gtksourceview-3.0/language-specs")
+                path = os.path.join(getDataPrefix(), "gtksourceview-3.0/language-specs")
                 man.props.search_path = man.props.search_path + [path]
-                if 'pgn' in man.get_language_ids():
-                    lang = man.get_language('pgn')
+                if "pgn" in man.get_language_ids():
+                    lang = man.get_language("pgn")
                     cls.sourcebuffer.set_language(lang)
                 else:
                     log.warning("Unable to load pgn syntax-highlighting.")
@@ -887,9 +1041,11 @@ class EnterNotationExtension(_GameInitializationMode):
         cls.widgets["enterGameNotationSidePanel"].show()
 
         def _get_text():
-            text = cls.sourcebuffer.get_text(cls.sourcebuffer.get_start_iter(),
-                                             cls.sourcebuffer.get_end_iter(),
-                                             False)
+            text = cls.sourcebuffer.get_text(
+                cls.sourcebuffer.get_start_iter(),
+                cls.sourcebuffer.get_end_iter(),
+                False,
+            )
 
             # Test if the ImageButton has two layers and is set on the local language
             if len(cls.ib.surfaces) == 2 and cls.ib.current == 0:
@@ -935,9 +1091,12 @@ class EnterNotationExtension(_GameInitializationMode):
                 gamemodel.status = WAITING_TO_START
                 return True
             except LoadingError as e:
-                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
-                                      buttons=Gtk.ButtonsType.OK,
-                                      message_format=e.args[0])
+                d = Gtk.MessageDialog(
+                    mainwindow(),
+                    type=Gtk.MessageType.WARNING,
+                    buttons=Gtk.ButtonsType.OK,
+                    message_format=e.args[0],
+                )
                 d.format_secondary_text(e.args[1])
                 d.connect("response", lambda d, a: d.hide())
                 d.show()
@@ -946,8 +1105,11 @@ class EnterNotationExtension(_GameInitializationMode):
         def _callback(gamemodel, p0, p1):
             text, loadType = _get_text()
             perspective = perspective_manager.get_perspective("games")
-            asyncio.create_task(perspective.generalStart(
-                gamemodel, p0, p1, (StringIO(text), loadType, 0, -1)))
+            asyncio.create_task(
+                perspective.generalStart(
+                    gamemodel, p0, p1, (StringIO(text), loadType, 0, -1)
+                )
+            )
 
         cls._generalRun(_callback, _validate)
 
@@ -956,8 +1118,7 @@ class ImageButton(Gtk.Button):
     def __init__(self, image_paths):
         GObject.GObject.__init__(self)
 
-        self.surfaces = [Gtk.Image().new_from_file(path)
-                         for path in image_paths]
+        self.surfaces = [Gtk.Image().new_from_file(path) for path in image_paths]
         self.current = 0
 
         self.image = self.surfaces[self.current]
@@ -975,8 +1136,8 @@ class ImageButton(Gtk.Button):
 
 
 def createRematch(gamemodel):
-    """ If gamemodel contains only LOCAL or ARTIFICIAL players, this starts a
-        new game, based on the info in gamemodel """
+    """If gamemodel contains only LOCAL or ARTIFICIAL players, this starts a
+    new game, based on the info in gamemodel"""
 
     if gamemodel.timed:
         secs = gamemodel.timemodel.intervals[0][WHITE]
@@ -994,30 +1155,35 @@ def createRematch(gamemodel):
     if wp.__type__ == LOCAL:
         player1tup = (wp.__type__, wp.__class__, (BLACK, repr(wp)), repr(wp))
         if bp.__type__ == LOCAL:
-            player0tup = (bp.__type__, bp.__class__,
-                          (WHITE, repr(wp)), repr(bp))
+            player0tup = (bp.__type__, bp.__class__, (WHITE, repr(wp)), repr(bp))
         else:
             engine = discoverer.getEngineByMd5(bp.md5)
-            player0tup = (ARTIFICIAL, discoverer.initPlayerEngine,
-                          (engine, WHITE, bp.strength, gamemodel.variant, secs,
-                           gain, moves), repr(bp))
+            player0tup = (
+                ARTIFICIAL,
+                discoverer.initPlayerEngine,
+                (engine, WHITE, bp.strength, gamemodel.variant, secs, gain, moves),
+                repr(bp),
+            )
     else:
         player0tup = (bp.__type__, bp.__class__, (WHITE, repr(bp)), repr(bp))
         engine = discoverer.getEngineByMd5(wp.md5)
-        player1tup = (ARTIFICIAL, discoverer.initPlayerEngine,
-                      (engine, BLACK, wp.strength, gamemodel.variant, secs,
-                       gain), repr(wp))
+        player1tup = (
+            ARTIFICIAL,
+            discoverer.initPlayerEngine,
+            (engine, BLACK, wp.strength, gamemodel.variant, secs, gain),
+            repr(wp),
+        )
 
     perspective = perspective_manager.get_perspective("games")
     asyncio.create_task(perspective.generalStart(newgamemodel, player0tup, player1tup))
 
 
 def loadFileAndRun(uri):
-    if uri in [None, '']:
+    if uri in [None, ""]:
         return False
     parts = splitUri(uri)
     uri = parts[1] if len(parts) == 2 else parts[0]
-    loader = enddir[uri[uri.rfind(".") + 1:]]
+    loader = enddir[uri[uri.rfind(".") + 1 :]]
     timemodel = TimeModel(0, 0)
     gamemodel = GameModel(timemodel)
     white_name = _("White")
@@ -1025,15 +1191,21 @@ def loadFileAndRun(uri):
     p0 = (LOCAL, Human, (WHITE, white_name), white_name)
     p1 = (LOCAL, Human, (BLACK, black_name), black_name)
     perspective = perspective_manager.get_perspective("games")
-    asyncio.create_task(perspective.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1)))
+    asyncio.create_task(
+        perspective.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1))
+    )
     return True
 
 
 def loadPgnAndRun(data):
-    if data in [None, '']:
+    if data in [None, ""]:
         return False
     perspective = perspective_manager.get_perspective("games")
     p0 = (LOCAL, Human, (WHITE, _("White")), _("White"))
     p1 = (LOCAL, Human, (BLACK, _("Black")), _("Black"))
-    asyncio.create_task(perspective.generalStart(GameModel(), p0, p1, (StringIO(data), enddir['pgn'], 0, -1)))
+    asyncio.create_task(
+        perspective.generalStart(
+            GameModel(), p0, p1, (StringIO(data), enddir["pgn"], 0, -1)
+        )
+    )
     return True

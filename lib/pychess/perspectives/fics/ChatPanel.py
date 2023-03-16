@@ -4,8 +4,9 @@ from gi.repository import Gtk
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 
-TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
-    TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
+TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(
+    6
+)
 
 
 def get_playername(playername):
@@ -20,8 +21,7 @@ __icon__ = addDataPrefix("glade/panel_chat.svg")
 __desc__ = _("List of server channels")
 
 
-class Sidepanel():
-
+class Sidepanel:
     def load(self, widgets, connection, lounge):
         self.connection = connection
 
@@ -46,16 +46,14 @@ class Sidepanel():
         self.chatbox.add2(notebook)
 
         self.panels = [self.viewspanel, self.channelspanel, self.infopanel]
-        self.viewspanel.connect('channel_content_Changed',
-                                self.channelspanel.channel_Highlight, id)
+        self.viewspanel.connect(
+            "channel_content_Changed", self.channelspanel.channel_Highlight, id
+        )
 
-        self.channelspanel.connect('conversationAdded',
-                                   self.onConversationAdded)
-        self.channelspanel.connect('conversationRemoved',
-                                   self.onConversationRemoved)
-        self.channelspanel.connect('conversationSelected',
-                                   self.onConversationSelected)
-        self.channelspanel.connect('focus_in_event', self.focus_in, self.adj)
+        self.channelspanel.connect("conversationAdded", self.onConversationAdded)
+        self.channelspanel.connect("conversationRemoved", self.onConversationRemoved)
+        self.channelspanel.connect("conversationSelected", self.onConversationSelected)
+        self.channelspanel.connect("focus_in_event", self.focus_in, self.adj)
 
         for panel in self.panels:
             panel.show_all()
@@ -69,14 +67,15 @@ class Sidepanel():
     def onConversationAdded(self, panel, grp_id, text, grp_type):
         # deferred import to not slow down PyChess starting up
         from pychess.widgets.ChatView import ChatView
+
         chatView = ChatView()
-        plus_channel = '+channel ' + str(grp_id)
+        plus_channel = "+channel " + str(grp_id)
         self.connection.cm.connection.client.run_command(plus_channel)
         for panel in self.panels:
             panel.addItem(grp_id, text, grp_type, chatView)
 
     def onConversationRemoved(self, panel, grp_id):
-        minus_channel = '-channel ' + str(grp_id)
+        minus_channel = "-channel " + str(grp_id)
         self.connection.cm.connection.client.run_command(minus_channel)
         for panel in self.panels:
             panel.removeItem(grp_id)

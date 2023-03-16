@@ -37,7 +37,9 @@ class InfoBarMessageButton(GObject.GObject):
 
 
 class InfoBarMessage(Gtk.InfoBar):
-    __gsignals__ = {"dismissed": (GObject.SignalFlags.RUN_FIRST, None, ()), }
+    __gsignals__ = {
+        "dismissed": (GObject.SignalFlags.RUN_FIRST, None, ()),
+    }
 
     def __init__(self, message_type, content, callback):
         GObject.GObject.__init__(self)
@@ -54,13 +56,11 @@ class InfoBarMessage(Gtk.InfoBar):
         if not isinstance(button, InfoBarMessageButton):
             raise TypeError("Not an InfoBarMessageButton: %s" % repr(button))
         self.buttons.append(button)
-        button._button = Gtk.InfoBar.add_button(self, button.text,
-                                                button.response_id)
+        button._button = Gtk.InfoBar.add_button(self, button.text, button.response_id)
 
         def set_sensitive(button, property):
             if self.get_children():
-                self.set_response_sensitive(button.response_id,
-                                            button.sensitive)
+                self.set_response_sensitive(button.response_id, button.sensitive)
 
         button.connect("notify::sensitive", set_sensitive)
 

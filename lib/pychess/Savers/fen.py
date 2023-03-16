@@ -2,7 +2,13 @@ import collections
 from io import StringIO
 
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW, FISCHERRANDOMCHESS
+from pychess.Utils.const import (
+    WAITING_TO_START,
+    BLACKWON,
+    WHITEWON,
+    DRAW,
+    FISCHERRANDOMCHESS,
+)
 from pychess.Utils.logic import getStatus
 from pychess.Variants.fischerandom import FischerandomBoard
 
@@ -18,8 +24,13 @@ def save(handle, model, position=None, flip=False):
     """Saves game to file in fen format"""
     print(position, model.ply, model.lowply)
     print(model.boards)
-    print("%s" % model.boards[-1 if position is None or len(model.boards) == 1 else position].asFen(),
-          file=handle)
+    print(
+        "%s"
+        % model.boards[
+            -1 if position is None or len(model.boards) == 1 else position
+        ].asFen(),
+        file=handle,
+    )
     output = handle.getvalue() if isinstance(handle, StringIO) else ""
     handle.close()
     return output
@@ -45,7 +56,9 @@ class FenFile(ChessFile):
                 rec["Variant"] = FISCHERRANDOMCHESS
                 break
 
-        self.games = [rec, ]
+        self.games = [
+            rec,
+        ]
         self.count = 1
 
     def loadToModel(self, rec, position, model=None):
@@ -66,7 +79,8 @@ class FenFile(ChessFile):
             board = model.variant()
             raise LoadingError(
                 _("The game can't be loaded, because of an error parsing FEN"),
-                err.args[0])
+                err.args[0],
+            )
 
         model.boards = [board]
         model.variations = [model.boards]

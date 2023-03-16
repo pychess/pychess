@@ -40,7 +40,7 @@ def add_provider(widget):
     screen = widget.get_screen()
     style = widget.get_style_context()
     provider = Gtk.CssProvider()
-    provider.load_from_data(css.encode('utf-8'))
+    provider.load_from_data(css.encode("utf-8"))
     style.add_provider_for_screen(screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
 
@@ -84,8 +84,15 @@ class LearnInfoBar(Gtk.InfoBar):
     def get_next_puzzle(self):
         self.clear()
         self.set_message_type(Gtk.MessageType.INFO)
-        if self.gamemodel.learn_type in (LESSON, PUZZLE) and self.gamemodel.current_index + 1 == self.gamemodel.game_count:
-            self.content_area.add(Gtk.Label(_("Well done! %s completed." % learn2str[self.gamemodel.learn_type])))
+        if (
+            self.gamemodel.learn_type in (LESSON, PUZZLE)
+            and self.gamemodel.current_index + 1 == self.gamemodel.game_count
+        ):
+            self.content_area.add(
+                Gtk.Label(
+                    _("Well done! %s completed." % learn2str[self.gamemodel.learn_type])
+                )
+            )
         else:
             if "FEN" in self.gamemodel.tags:
                 self.content_area.add(Gtk.Label(_("Well done!")))
@@ -114,14 +121,19 @@ class LearnInfoBar(Gtk.InfoBar):
         self.boardcontrol.game_preview = True
 
         # disable retry button until engine thinking on next move
-        if self.gamemodel.practice_game and self.gamemodel.status not in UNDOABLE_STATES:
+        if (
+            self.gamemodel.practice_game
+            and self.gamemodel.status not in UNDOABLE_STATES
+        ):
             self.set_response_sensitive(RETRY, False)
         self.show_all()
 
     def back_to_mainline(self):
         self.clear()
         self.set_message_type(Gtk.MessageType.INFO)
-        self.content_area.add(Gtk.Label(_("Cool! Now let see how it goes in the main line.")))
+        self.content_area.add(
+            Gtk.Label(_("Cool! Now let see how it goes in the main line."))
+        )
         self.add_button(_("Back to main line"), BACK_TO_MAINLINE)
 
         # disable playing
@@ -131,7 +143,9 @@ class LearnInfoBar(Gtk.InfoBar):
     def on_response(self, widget, response):
         if response in (HINT, MOVE):
             if self.gamemodel.lesson_game:
-                next_move = self.gamemodel.getMoveAtPly(self.boardview.shown, self.boardview.shown_variation_idx)
+                next_move = self.gamemodel.getMoveAtPly(
+                    self.boardview.shown, self.boardview.shown_variation_idx
+                )
                 hints = {self.boardview.shown: ((next_move.as_uci(),),)}
             else:
                 hints = self.gamemodel.hints
@@ -153,20 +167,29 @@ class LearnInfoBar(Gtk.InfoBar):
                     self.boardview.redrawCanvas()
             else:
                 # TODO:
-                print("No hint available yet!", self.gamemodel.ply, self.boardview.shown)
+                print(
+                    "No hint available yet!", self.gamemodel.ply, self.boardview.shown
+                )
 
         elif response == RETRY:
             self.your_turn()
 
             if self.gamemodel.practice_game:
-                me_played_last_move = self.gamemodel.boards[-1].color != self.gamemodel.boards[0].color
-                moves = 1 if self.gamemodel.status in UNDOABLE_STATES and me_played_last_move else 2
+                me_played_last_move = (
+                    self.gamemodel.boards[-1].color != self.gamemodel.boards[0].color
+                )
+                moves = (
+                    1
+                    if self.gamemodel.status in UNDOABLE_STATES and me_played_last_move
+                    else 2
+                )
                 self.gamemodel.undoMoves(moves)
 
             elif self.gamemodel.lesson_game:
                 prev_board = self.gamemodel.getBoardAtPly(
                     self.boardview.shown - 1,
-                    variation=self.boardview.shown_variation_idx)
+                    variation=self.boardview.shown_variation_idx,
+                )
 
                 self.annotation_panel.choices_enabled = False
 
@@ -176,7 +199,9 @@ class LearnInfoBar(Gtk.InfoBar):
                 for vari in self.gamemodel.variations:
                     if prev_board in vari:
                         break
-                self.boardview.shown_variation_idx = self.gamemodel.variations.index(vari)
+                self.boardview.shown_variation_idx = self.gamemodel.variations.index(
+                    vari
+                )
 
                 self.annotation_panel.choices_enabled = True
 
@@ -195,26 +220,38 @@ class LearnInfoBar(Gtk.InfoBar):
         elif response in (NEXT, SKIP):
             if self.gamemodel.puzzle_game:
                 if self.gamemodel.from_lesson:
-                    start_lesson_from(self.gamemodel.source, self.gamemodel.current_index + 1)
+                    start_lesson_from(
+                        self.gamemodel.source, self.gamemodel.current_index + 1
+                    )
                 else:
-                    start_puzzle_from(self.gamemodel.source, self.gamemodel.current_index + 1)
+                    start_puzzle_from(
+                        self.gamemodel.source, self.gamemodel.current_index + 1
+                    )
             elif self.gamemodel.end_game:
                 start_endgame_from(self.gamemodel.source)
             elif self.gamemodel.lesson_game:
-                start_lesson_from(self.gamemodel.source, self.gamemodel.current_index + 1)
+                start_lesson_from(
+                    self.gamemodel.source, self.gamemodel.current_index + 1
+                )
             else:
                 print(self.gamemodel.__dir__())
-        
+
         elif response == PREVIOUS:
             if self.gamemodel.puzzle_game:
                 if self.gamemodel.from_lesson:
-                    start_lesson_from(self.gamemodel.source, self.gamemodel.current_index - 1)
+                    start_lesson_from(
+                        self.gamemodel.source, self.gamemodel.current_index - 1
+                    )
                 else:
-                    start_puzzle_from(self.gamemodel.source, self.gamemodel.current_index - 1)
+                    start_puzzle_from(
+                        self.gamemodel.source, self.gamemodel.current_index - 1
+                    )
             elif self.gamemodel.end_game:
                 start_endgame_from(self.gamemodel.source)
             elif self.gamemodel.lesson_game:
-                start_lesson_from(self.gamemodel.source, self.gamemodel.current_index - 1)
+                start_lesson_from(
+                    self.gamemodel.source, self.gamemodel.current_index - 1
+                )
             else:
                 print(self.gamemodel.__dir__())
 

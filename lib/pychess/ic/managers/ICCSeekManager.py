@@ -36,7 +36,7 @@ class ICCSeekManager(SeekManager):
             tit.add(TITLES[title])
         player.titles |= tit
 
-        parts = parts[2][titles_end + 1:].split()
+        parts = parts[2][titles_end + 1 :].split()
         rating = int(parts[0])
         deviation = None  # parts[1]
         # wild = parts[2]
@@ -51,7 +51,7 @@ class ICCSeekManager(SeekManager):
         if color == "-1":
             color = None
         else:
-            color = "white" if color == '1' else "black"
+            color = "white" if color == "1" else "black"
         rmin = int(parts[8])
         rmax = int(parts[9])
         automatic = parts[10] == "1"
@@ -62,21 +62,26 @@ class ICCSeekManager(SeekManager):
             log.debug("!!! unsupported variant in seek: %s" % data)
             return
 
-        if gametype.rating_type in RATING_TYPES and player.ratings[gametype.rating_type] != rating:
+        if (
+            gametype.rating_type in RATING_TYPES
+            and player.ratings[gametype.rating_type] != rating
+        ):
             player.ratings[gametype.rating_type] = rating
             player.deviations[gametype.rating_type] = deviation
             player.emit("ratings_changed", gametype.rating_type, player)
 
-        seek = FICSSeek(index,
-                        player,
-                        minutes,
-                        increment,
-                        rated,
-                        color,
-                        gametype,
-                        rmin=rmin,
-                        rmax=rmax,
-                        automatic=automatic)
+        seek = FICSSeek(
+            index,
+            player,
+            minutes,
+            increment,
+            rated,
+            color,
+            gametype,
+            rmin=rmin,
+            rmax=rmax,
+            automatic=automatic,
+        )
         self.emit("addSeek", seek)
 
     def on_icc_seek_removed(self, data):

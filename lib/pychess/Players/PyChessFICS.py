@@ -15,8 +15,19 @@ from pychess.Players.PyChess import PyChess
 from pychess.System.repeat import repeat_sleep
 from pychess.System import fident
 from pychess.System.Log import log
-from pychess.Utils.const import WHITE, PAUSE_OFFER, DRAW_OFFER, BLACK, RESUME_OFFER, \
-    TAKEBACK_OFFER, ABORT_OFFER, ADJOURN_OFFER, SWITCH_OFFER, NORMALCHESS, SAN
+from pychess.Utils.const import (
+    WHITE,
+    PAUSE_OFFER,
+    DRAW_OFFER,
+    BLACK,
+    RESUME_OFFER,
+    TAKEBACK_OFFER,
+    ABORT_OFFER,
+    ADJOURN_OFFER,
+    SWITCH_OFFER,
+    NORMALCHESS,
+    SAN,
+)
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import determineAlgebraicNotation, toLAN, parseSAN
 from pychess.Utils.lutils import lsearch
@@ -69,7 +80,7 @@ class PyChessFICS(PyChess):
             random_num = 1 - random_num
             mid = 1 - mid
             low, high = high, low
-        tri = low + (high - low) * (random_num * mid)**0.5
+        tri = low + (high - low) * (random_num * mid) ** 0.5
         if tri < mode:
             return int(tri)
         elif tri > mode:
@@ -80,16 +91,27 @@ class PyChessFICS(PyChess):
         if self.connection.bm.isPlaying():
             return True
 
-        statsbased = ((0.39197722779282, 3, 0), (0.59341408108783, 5, 0),
-                      (0.77320877377846, 1, 0), (0.8246379941394, 10, 0),
-                      (0.87388717406441, 2, 12), (0.91443760169489, 15, 0),
-                      (0.9286423058163, 4, 0), (0.93891977227793, 2, 0),
-                      (0.94674539138335, 20, 0), (0.95321476842423, 2, 2),
-                      (0.9594588808257, 5, 2), (0.96564528079889, 3, 2),
-                      (0.97173859621034, 7, 0), (0.97774906636184, 3, 1),
-                      (0.98357243654425, 5, 12), (0.98881309737017, 5, 5),
-                      (0.99319644938247, 6, 0), (0.99675879556023, 3, 12),
-                      (1, 5, 3))
+        statsbased = (
+            (0.39197722779282, 3, 0),
+            (0.59341408108783, 5, 0),
+            (0.77320877377846, 1, 0),
+            (0.8246379941394, 10, 0),
+            (0.87388717406441, 2, 12),
+            (0.91443760169489, 15, 0),
+            (0.9286423058163, 4, 0),
+            (0.93891977227793, 2, 0),
+            (0.94674539138335, 20, 0),
+            (0.95321476842423, 2, 2),
+            (0.9594588808257, 5, 2),
+            (0.96564528079889, 3, 2),
+            (0.97173859621034, 7, 0),
+            (0.97774906636184, 3, 1),
+            (0.98357243654425, 5, 12),
+            (0.98881309737017, 5, 5),
+            (0.99319644938247, 6, 0),
+            (0.99675879556023, 3, 12),
+            (1, 5, 3),
+        )
 
         # n = random.random()
         # for culminativeChance, minute, gain in statsbased:
@@ -118,8 +140,9 @@ class PyChessFICS(PyChess):
         # color = random.choice(self.colors)
         self.extendlog(["Seeking %d %d" % (minute, gain)])
         self.connection.glm.seek(minute, gain, True)
-        opps = random.sample(self.connection.players.get_online_playernames(),
-                             self.challenges)
+        opps = random.sample(
+            self.connection.players.get_online_playernames(), self.challenges
+        )
         self.extendlog("Challenging %s" % op for op in opps)
         for player in opps:
             self.connection.om.challenge(player, minute, gain, True)
@@ -131,8 +154,9 @@ class PyChessFICS(PyChess):
 
         PyChess.makeReady(self)
 
-        self.connection = FICSMainConnection("freechess.org", self.ports, True,
-                                             self.username, self.password)
+        self.connection = FICSMainConnection(
+            "freechess.org", self.ports, True, self.username, self.password
+        )
         self.connection.connect("connectingMsg", self.__showConnectLog)
         self.connection._connect()
 
@@ -145,8 +169,7 @@ class PyChessFICS(PyChess):
         self.connection.bm.connect("boardUpdate", self.__onBoardUpdate)
         self.connection.om.connect("onChallengeAdd", self.__onChallengeAdd)
         self.connection.om.connect("onOfferAdd", self.__onOfferAdd)
-        self.connection.adm.connect("onAdjournmentsList",
-                                    self.__onAdjournmentsList)
+        self.connection.adm.connect("onAdjournmentsList", self.__onAdjournmentsList)
         self.connection.em.connect("onAmbiguousMove", self.__onAmbiguousMove)
         self.connection.em.connect("onIllegalMove", self.__onAmbiguousMove)
 
@@ -154,36 +177,41 @@ class PyChessFICS(PyChess):
         self.connection.lvm.setVariable("autoflag", 1)
 
         self.connection.fm.setFingerNote(
-            1, "PyChess is the chess engine bundled with the PyChess %s " %
-            pychess.VERSION +
-            "chess client. This instance is owned by %s, but acts " %
-            self.owner + "quite autonomously.")
+            1,
+            "PyChess is the chess engine bundled with the PyChess %s " % pychess.VERSION
+            + "chess client. This instance is owned by %s, but acts " % self.owner
+            + "quite autonomously.",
+        )
 
         self.connection.fm.setFingerNote(
             2,
-            "PyChess is 100% Python code and is released under the terms of " +
-            "the GPL. The evalution function is largely equal to the one of" +
-            "GnuChess, but it plays quite differently.")
+            "PyChess is 100% Python code and is released under the terms of "
+            + "the GPL. The evalution function is largely equal to the one of"
+            + "GnuChess, but it plays quite differently.",
+        )
 
         self.connection.fm.setFingerNote(
             3,
-            "PyChess runs on an elderly AMD Sempron(tm) Processor 3200+, 512 " +
-            "MB DDR2 Ram, but is built to take use of 64bit calculating when " +
-            "accessible, through the gpm library.")
+            "PyChess runs on an elderly AMD Sempron(tm) Processor 3200+, 512 "
+            + "MB DDR2 Ram, but is built to take use of 64bit calculating when "
+            + "accessible, through the gpm library.",
+        )
 
         self.connection.fm.setFingerNote(
             4,
-            "PyChess uses a small 500 KB openingbook based solely on Kasparov " +
-            "games. The engine doesn't have much endgame knowledge, but might " +
-            "in some cases access an online endgamedatabase.")
+            "PyChess uses a small 500 KB openingbook based solely on Kasparov "
+            + "games. The engine doesn't have much endgame knowledge, but might "
+            + "in some cases access an online endgamedatabase.",
+        )
 
         self.connection.fm.setFingerNote(
             5,
-            "PyChess will allow any pause/resume and adjourn wishes, but will " +
-            "deny takebacks. Draw, abort and switch offers are accepted, " +
-            "if they are found to be an advance. Flag is auto called, but " +
-            "PyChess never resigns. We don't want you to forget your basic " +
-            "mating skills.")
+            "PyChess will allow any pause/resume and adjourn wishes, but will "
+            + "deny takebacks. Draw, abort and switch offers are accepted, "
+            + "if they are found to be an advance. Flag is auto called, but "
+            + "PyChess never resigns. We don't want you to forget your basic "
+            + "mating skills.",
+        )
 
     def main(self):
         self.connection.run()
@@ -224,16 +252,16 @@ class PyChessFICS(PyChess):
                 adjournManager.challenge(adjournment["opponent"])
 
     def __usage(self):
-        return "|| PyChess bot help file || " +\
-               "# help 'Displays this help file' " +\
-               "# sudo <password> <command> 'Lets PyChess execute the given command' " +\
-               "# sendlog 'Makes PyChess send you its current log'"
+        return (
+            "|| PyChess bot help file || "
+            + "# help 'Displays this help file' "
+            + "# sudo <password> <command> 'Lets PyChess execute the given command' "
+            + "# sendlog 'Makes PyChess send you its current log'"
+        )
 
     def __onTell(self, chatManager, name, title, isadmin, text):
-
         if self.waitingForPassword:
-            if text.strip() == self.password or (not self.password and
-                                                 text == "none"):
+            if text.strip() == self.password or (not self.password and text == "none"):
                 self.sudos.add(name)
                 self.tellHome("%s gained sudo access" % name)
                 self.connection.client.run_command(self.waitingForPassword)
@@ -271,19 +299,27 @@ class PyChessFICS(PyChess):
             else:
 
                 def onlineanswer(message):
-                    data = urlopen(
-                        "http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
-                        urlencode({"message": message,
-                                   "botcust2": "x"}).encode("utf-8")).read().decode('utf-8')
+                    data = (
+                        urlopen(
+                            "http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
+                            urlencode({"message": message, "botcust2": "x"}).encode(
+                                "utf-8"
+                            ),
+                        )
+                        .read()
+                        .decode("utf-8")
+                    )
                     bold_ss = "<b>DMPGirl:</b>"
                     break_es = "<br>"
-                    answer = data[data.find(bold_ss) + len(bold_ss):data.find(
-                        break_es, data.find(bold_ss))]
+                    answer = data[
+                        data.find(bold_ss)
+                        + len(bold_ss) : data.find(break_es, data.find(bold_ss))
+                    ]
                     chatManager.tellPlayer(name, answer)
 
-                thread = Thread(target=onlineanswer,
-                                name=fident(onlineanswer),
-                                args=(text, ))
+                thread = Thread(
+                    target=onlineanswer, name=fident(onlineanswer), args=(text,)
+                )
                 thread.daemon = True
                 thread.start()
             # chatManager.tellPlayer(name, "Sorry, your request was nonsense.\n"+\
@@ -299,7 +335,7 @@ class PyChessFICS(PyChess):
     def __onOfferAdd(self, offerManager, offer):
         if offer.type in (PAUSE_OFFER, RESUME_OFFER, ADJOURN_OFFER):
             offerManager.accept(offer)
-        elif offer.type in (TAKEBACK_OFFER, ):
+        elif offer.type in (TAKEBACK_OFFER,):
             offerManager.decline(offer)
         elif offer.type in (DRAW_OFFER, ABORT_OFFER, SWITCH_OFFER):
             if self.__willingToDraw():
@@ -310,7 +346,6 @@ class PyChessFICS(PyChess):
     # Playing
 
     def __onGameCreated(self, boardManager, ficsgame):
-
         base = int(ficsgame.minutes) * 60
         inc = int(ficsgame.inc)
         self.clock[:] = base, base
@@ -321,11 +356,11 @@ class PyChessFICS(PyChess):
         self.acceptedTimesettings.append((base, inc))
 
         self.tellHome(
-            "Starting a game (%s, %s) gameno: %s" %
-            (ficsgame.wplayer.name, ficsgame.bplayer.name, ficsgame.gameno))
+            "Starting a game (%s, %s) gameno: %s"
+            % (ficsgame.wplayer.name, ficsgame.bplayer.name, ficsgame.gameno)
+        )
 
-        if ficsgame.bplayer.name.lower() == self.connection.getUsername(
-        ).lower():
+        if ficsgame.bplayer.name.lower() == self.connection.getUsername().lower():
             self.playingAs = BLACK
         else:
             self.playingAs = WHITE
@@ -347,8 +382,9 @@ class PyChessFICS(PyChess):
         return self.scr <= 0  # FIXME: this misbehaves in all but the simplest use cases
 
     def __onGameEnded(self, boardManager, ficsgame):
-        self.tellHome(reprResult_long[ficsgame.result] + " " + reprReason_long[
-            ficsgame.reason])
+        self.tellHome(
+            reprResult_long[ficsgame.result] + " " + reprReason_long[ficsgame.reason]
+        )
         lsearch.searching = False
         if self.worker:
             self.worker.cancel()
@@ -361,17 +397,17 @@ class PyChessFICS(PyChess):
         self.connection.bm.sendMove(sanmove)
         self.extendlog(["Move sent %s" % sanmove])
 
-    def __onBoardUpdate(self, boardManager, gameno, ply, curcol, lastmove, fen,
-                        wname, bname, wms, bms):
-        self.extendlog(["", "I got move %d %s for gameno %s" % (ply, lastmove,
-                                                                gameno)])
+    def __onBoardUpdate(
+        self, boardManager, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms
+    ):
+        self.extendlog(["", "I got move %d %s for gameno %s" % (ply, lastmove, gameno)])
 
         if self.gameno != gameno:
             return
 
         self.board.applyFen(fen)
 
-        self.clock[:] = wms / 1000., bms / 1000.
+        self.clock[:] = wms / 1000.0, bms / 1000.0
 
         if curcol == self.playingAs:
             self.__go()
@@ -386,9 +422,10 @@ class PyChessFICS(PyChess):
             self.connection.bm.sendMove(lanmove)
         else:
             self.connection.cm.tellOpponent(
-                "I'm sorry, I wanted to move %s, but FICS called " % move +
-                "it 'Ambigious'. I can't find another way to express it, " +
-                "so you can win")
+                "I'm sorry, I wanted to move %s, but FICS called " % move
+                + "it 'Ambigious'. I can't find another way to express it, "
+                + "so you can win"
+            )
             self.connection.bm.resign()
 
     # Utils
@@ -404,14 +441,18 @@ class PyChessFICS(PyChess):
             self.connection.cm.tellPlayer(self.owner, message)
 
     def phoneHome(self, message):
-
-        SENDMAIL = '/usr/sbin/sendmail'
+        SENDMAIL = "/usr/sbin/sendmail"
         SUBJECT = "Besked fra botten"
 
         pipe = subprocess.Popen(
-            [SENDMAIL, '-f', email.utils.parseaddr(self.from_address)[1],
-             email.utils.parseaddr(self.to_address)[1]],
-            stdin=subprocess.PIPE)
+            [
+                SENDMAIL,
+                "-f",
+                email.utils.parseaddr(self.from_address)[1],
+                email.utils.parseaddr(self.to_address)[1],
+            ],
+            stdin=subprocess.PIPE,
+        )
 
         print("MIME-Version: 1.0", file=pipe.stdin)
         print("Content-Type: text/plain; charset=UTF-8", file=pipe.stdin)
@@ -428,7 +469,6 @@ class PyChessFICS(PyChess):
 
 
 if __name__ == "__main__":
-
     if len(sys.argv) == 5 and sys.argv[1] == "fics":
         pychess_fics = PyChessFICS(*sys.argv[2:])
     else:

@@ -8,7 +8,7 @@ class FenTestCase(unittest.TestCase):
         """Testing board-FEN conversion with several positions"""
 
         positions = []
-        with open('gamefiles/perftsuite.epd') as f:
+        with open("gamefiles/perftsuite.epd") as f:
             for line in f:
                 semi = line.find(" ;")
                 positions.append(line[:semi])
@@ -20,5 +20,5 @@ class FenTestCase(unittest.TestCase):
             self.assertEqual(fenstr, fenstr2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

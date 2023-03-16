@@ -2,7 +2,16 @@ import collections
 
 from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW, FISCHERRANDOMCHESS
+from pychess.Utils.const import (
+    WHITE,
+    BLACK,
+    WON_RESIGN,
+    WAITING_TO_START,
+    BLACKWON,
+    WHITEWON,
+    DRAW,
+    FISCHERRANDOMCHESS,
+)
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.leval import evaluateComplete
 from pychess.Variants.fischerandom import FischerandomBoard
@@ -51,12 +60,12 @@ def save(handle, model, position=None, flip=False):
     opcodes = (
         ("fmvn", fen[5]),  # In fen full move number is the 6th field
         ("hmvc", fen[4]),  # In fen halfmove clock is the 5th field
-
         # Email and name of receiver and sender. We don't know the email.
         ("tcri", "?@?.? %s" % repr(model.players[color]).replace(";", "")),
         ("tcsi", "?@?.? %s" % repr(model.players[1 - color]).replace(";", "")),
         ("ce", ceval),
-        ("rc", rep_count), )
+        ("rc", rep_count),
+    )
 
     for key, value in opcodes:
         handle.write(" {} {};".format(key, value))
@@ -121,7 +130,7 @@ class EpdFile(ChessFile):
             if space == -1:
                 opcodes[opcode] = True
             else:
-                opcodes[opcode[:space]] = opcode[space + 1:]
+                opcodes[opcode[:space]] = opcode[space + 1 :]
 
         if "hmvc" in opcodes:
             fen += " " + opcodes["hmvc"]
@@ -167,9 +176,9 @@ class EpdFile(ChessFile):
             else:
                 sem = data.find(";", keyindex)
                 if sem == -1:
-                    opcode = data[keyindex + len(key) + 1:]
+                    opcode = data[keyindex + len(key) + 1 :]
                 else:
-                    opcode = data[keyindex + len(key) + 1:sem]
+                    opcode = data[keyindex + len(key) + 1 : sem]
                 name = opcode.split(" ", 1)[1]
                 names[key] = name
 

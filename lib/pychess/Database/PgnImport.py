@@ -14,14 +14,42 @@ from pychess.Variants import name2variant
 from pychess.System.Log import log
 from pychess.System import download_file
 from pychess.System.protoopen import protoopen, protosave, PGN_ENCODING
-from pychess.Database.model import event, site, player, game, annotator, tag_game, source
+from pychess.Database.model import (
+    event,
+    site,
+    player,
+    game,
+    annotator,
+    tag_game,
+    source,
+)
+
 # from pychess.System import profile_me
 
 # Editable (on game info dialog) tags
-dedicated_tags = ('Event', 'Site', 'Date', 'Round', 'White', 'Black', 'WhiteElo', 'BlackElo')
+dedicated_tags = (
+    "Event",
+    "Site",
+    "Date",
+    "Round",
+    "White",
+    "Black",
+    "WhiteElo",
+    "BlackElo",
+)
 
 # Other tags stored in game table
-other_game_tags = ('Result', 'SetUp', 'FEN', 'ECO', 'Variant', 'PlyCount', 'Annotator', 'offset', 'offset8')
+other_game_tags = (
+    "Result",
+    "SetUp",
+    "FEN",
+    "ECO",
+    "Variant",
+    "PlyCount",
+    "Annotator",
+    "offset",
+    "offset8",
+)
 
 TAG_REGEX = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*)\"\]")
 
@@ -35,15 +63,17 @@ removeDic = {
     ord(" "): None,
 }
 
-pgn2Const = {"*": RUNNING,
-             "?": RUNNING,
-             "1/2-1/2": DRAW,
-             "1/2": DRAW,
-             "1-0": WHITEWON,
-             "0-1": BLACKWON}
+pgn2Const = {
+    "*": RUNNING,
+    "?": RUNNING,
+    "1/2-1/2": DRAW,
+    "1/2": DRAW,
+    "1-0": WHITEWON,
+    "0-1": BLACKWON,
+}
 
 
-class PgnImport():
+class PgnImport:
     def __init__(self, chessfile, append_pgn=False):
         self.chessfile = chessfile
         self.append_pgn = append_pgn
@@ -104,17 +134,19 @@ class PgnImport():
             return name_dict[name]
 
         if field == SOURCE:
-            name_data.append({'name': orig_name, 'info': info})
+            name_data.append({"name": orig_name, "info": info})
         else:
-            name_data.append({'name': orig_name})
+            name_data.append({"name": orig_name})
         name_dict[name] = self.next_id[field]
         self.next_id[field] += 1
         return name_dict[name]
 
     def ini_names(self, name_table, field):
         if field != GAME and field != STAT:
-            name_dict = {n.name.title().translate(removeDic): n.id
-                              for n in self.conn.execute(select(name_table))}
+            name_dict = {
+                n.name.title().translate(removeDic): n.id
+                for n in self.conn.execute(select(name_table))
+            }
 
             if field == EVENT:
                 self.event_dict = name_dict
@@ -127,7 +159,9 @@ class PgnImport():
             elif field == SOURCE:
                 self.source_dict = name_dict
 
-        maxid = self.conn.execute(select(func.max(name_table.c.id).label('maxid'))).scalar()
+        maxid = self.conn.execute(
+            select(func.max(name_table.c.id).label("maxid"))
+        ).scalar()
         if maxid is None:
             next_id = 1
         else:
@@ -144,7 +178,11 @@ class PgnImport():
         self.progressbar = progressbar
 
         orig_filename = filename
-        count_source = self.conn.execute(select(func.count()).select_from(source).where(source.c.name == orig_filename)).scalar()
+        count_source = self.conn.execute(
+            select(func.count())
+            .select_from(source)
+            .where(source.c.name == orig_filename)
+        ).scalar()
         if count_source > 0:
             log.info("%s is already imported" % filename)
             return
@@ -172,7 +210,11 @@ class PgnImport():
         if filename.lower().endswith(".zip") and zipfile.is_zipfile(filename):
             with zipfile.ZipFile(filename, "r") as zf:
                 path = os.path.dirname(filename)
-                files = [os.path.join(path, f) for f in zf.namelist() if f.lower().endswith(".pgn")]
+                files = [
+                    os.path.join(path, f)
+                    for f in zf.namelist()
+                    if f.lower().endswith(".pgn")
+                ]
                 zf.extractall(path)
         else:
             files = [filename]
@@ -248,7 +290,7 @@ class PgnImport():
 
                     date = tags["Date"]
 
-                    game_round = tags['Round']
+                    game_round = tags["Round"]
 
                     white_id = get_id(white, player, PLAYER)
                     black_id = get_id(black, player, PLAYER)
@@ -259,8 +301,8 @@ class PgnImport():
                     else:
                         result = RUNNING
 
-                    white_elo = tags['WhiteElo']
-                    black_elo = tags['BlackElo']
+                    white_elo = tags["WhiteElo"]
+                    black_elo = tags["BlackElo"]
 
                     time_control = tags["TimeControl"]
 
@@ -278,35 +320,43 @@ class PgnImport():
 
                     offset = base_offset + int(tags["offset"])
 
-                    self.game_data.append({
-                        'offset': offset,
-                        'offset8': (offset >> 3) << 3,
-                        'event_id': event_id,
-                        'site_id': site_id,
-                        'date': date,
-                        'round': game_round,
-                        'white_id': white_id,
-                        'black_id': black_id,
-                        'result': result,
-                        'white_elo': white_elo,
-                        'black_elo': black_elo,
-                        'ply_count': ply_count,
-                        'eco': eco,
-                        'fen': fen,
-                        'variant': variant,
-                        'board': board_tag,
-                        'time_control': time_control,
-                        'annotator_id': annotator_id,
-                        'source_id': source_id,
-                    })
+                    self.game_data.append(
+                        {
+                            "offset": offset,
+                            "offset8": (offset >> 3) << 3,
+                            "event_id": event_id,
+                            "site_id": site_id,
+                            "date": date,
+                            "round": game_round,
+                            "white_id": white_id,
+                            "black_id": black_id,
+                            "result": result,
+                            "white_elo": white_elo,
+                            "black_elo": black_elo,
+                            "ply_count": ply_count,
+                            "eco": eco,
+                            "fen": fen,
+                            "variant": variant,
+                            "board": board_tag,
+                            "time_control": time_control,
+                            "annotator_id": annotator_id,
+                            "source_id": source_id,
+                        }
+                    )
 
                     for tag in tags:
-                        if tag not in dedicated_tags and tag not in other_game_tags and tags[tag]:
-                            self.tag_game_data.append({
-                                'game_id': self.next_id[GAME],
-                                'tag_name': tag,
-                                'tag_value': tags[tag],
-                            })
+                        if (
+                            tag not in dedicated_tags
+                            and tag not in other_game_tags
+                            and tags[tag]
+                        ):
+                            self.tag_game_data.append(
+                                {
+                                    "game_id": self.next_id[GAME],
+                                    "tag_name": tag,
+                                    "tag_value": tags[tag],
+                                }
+                            )
 
                     self.next_id[GAME] += 1
                     i += 1
@@ -321,13 +371,11 @@ class PgnImport():
                             self.site_data = []
 
                         if self.player_data:
-                            self.conn.execute(self.ins_player,
-                                              self.player_data)
+                            self.conn.execute(self.ins_player, self.player_data)
                             self.player_data = []
 
                         if self.annotator_data:
-                            self.conn.execute(self.ins_annotator,
-                                              self.annotator_data)
+                            self.conn.execute(self.ins_annotator, self.annotator_data)
                             self.annotator_data = []
 
                         if self.source_data:
@@ -342,9 +390,16 @@ class PgnImport():
                         self.game_data = []
 
                         if progressbar is not None:
-                            GLib.idle_add(progressbar.set_fraction, i / float(all_games))
-                            GLib.idle_add(progressbar.set_text, _(
-                                "%(counter)s game headers from %(filename)s imported" % ({"counter": i, "filename": basename})))
+                            GLib.idle_add(
+                                progressbar.set_fraction, i / float(all_games)
+                            )
+                            GLib.idle_add(
+                                progressbar.set_text,
+                                _(
+                                    "%(counter)s game headers from %(filename)s imported"
+                                    % ({"counter": i, "filename": basename})
+                                ),
+                            )
                         else:
                             log.info("From {} imported {}".format(pgnfile, i))
 
@@ -378,8 +433,13 @@ class PgnImport():
 
                 if progressbar is not None:
                     GLib.idle_add(progressbar.set_fraction, i / float(all_games))
-                    GLib.idle_add(progressbar.set_text, _(
-                        "%(counter)s game headers from %(filename)s imported" % ({"counter": i, "filename": basename})))
+                    GLib.idle_add(
+                        progressbar.set_text,
+                        _(
+                            "%(counter)s game headers from %(filename)s imported"
+                            % ({"counter": i, "filename": basename})
+                        ),
+                    )
                 else:
                     log.info("From {} imported {}".format(pgnfile, i))
                 self.conn.commit()
@@ -387,8 +447,12 @@ class PgnImport():
                 if self.append_pgn:
                     # reopen database to write
                     self.db_handle.close()
-                    with protosave(self.chessfile.path, self.append_pgn) as self.db_handle:
-                        log.info("Append from {} to {}".format(pgnfile, self.chessfile.path))
+                    with protosave(
+                        self.chessfile.path, self.append_pgn
+                    ) as self.db_handle:
+                        log.info(
+                            "Append from {} to {}".format(pgnfile, self.chessfile.path)
+                        )
                         handle.seek(0)
                         self.db_handle.writelines(handle)
                         handle.close()
@@ -396,15 +460,20 @@ class PgnImport():
                     if self.chessfile.scoutfish is not None:
                         # create new .scout from pgnfile we are importing
                         from pychess.Savers.pgn import scoutfish_path
+
                         args = [scoutfish_path, "make", pgnfile, "%s" % base_offset]
-                        output = subprocess.check_output(args, stderr=subprocess.STDOUT).decode()
+                        output = subprocess.check_output(
+                            args, stderr=subprocess.STDOUT
+                        ).decode()
 
                         # append it to our existing one
                         if output.find("Processing...done") > 0:
                             old_scout = self.chessfile.scoutfish.db
-                            new_scout = os.path.splitext(pgnfile)[0] + '.scout'
+                            new_scout = os.path.splitext(pgnfile)[0] + ".scout"
 
-                            with open(old_scout, "ab") as file1, open(new_scout, "rb") as file2:
+                            with open(old_scout, "ab") as file1, open(
+                                new_scout, "rb"
+                            ) as file2:
                                 file1.write(file2.read())
 
                 self.chessfile.handle = protoopen(self.chessfile.path)
@@ -444,11 +513,13 @@ def read_games(handle):
                     game_pos = last_pos
 
                 tag_value = tag_match.group(2)
-                tag_value = tag_value.replace("\\\"", "\"")
+                tag_value = tag_value.replace('\\"', '"')
                 tag_value = tag_value.replace("\\\\", "\\")
 
                 if handle.pgn_encoding != PGN_ENCODING:
-                    tag_value = tag_value.encode(PGN_ENCODING).decode(handle.pgn_encoding)
+                    tag_value = tag_value.encode(PGN_ENCODING).decode(
+                        handle.pgn_encoding
+                    )
                 game_headers[tag_match.group(1)] = tag_value
 
                 last_pos += len(line)

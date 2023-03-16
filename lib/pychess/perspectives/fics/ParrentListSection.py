@@ -9,8 +9,8 @@ def cmp(x, y):
     return (x > y) - (x < y)
 
 
-class ParrentListSection():
-    """ Parrent for sections mainly consisting of a large treeview """
+class ParrentListSection:
+    """Parrent for sections mainly consisting of a large treeview"""
 
     def button_press_event(self, treeview, event):
         if event.button == 3:  # right click
@@ -20,8 +20,9 @@ class ParrentListSection():
                 treeview.grab_focus()
                 treeview.set_cursor(path, col, 0)
                 self.menu.show_all()
-                self.menu.popup(None, None, None, None, event.button,
-                                Gtk.get_current_event_time())
+                self.menu.popup(
+                    None, None, None, None, event.button, Gtk.get_current_event_time()
+                )
             return True
         return False
 
@@ -34,7 +35,8 @@ class ParrentListSection():
             CHAT: (_("Chat"), self.on_chat),
             CHALLENGE: (_("Challenge"), self.on_challenge),
             FINGER: (_("Finger"), self.on_finger),
-            ARCHIVED: (_("Archived"), self.on_archived), }
+            ARCHIVED: (_("Archived"), self.on_archived),
+        }
 
         self.menu = Gtk.Menu()
         for item in items:
@@ -61,7 +63,7 @@ class ParrentListSection():
                 continue
             if i in pix:
                 crp = Gtk.CellRendererPixbuf()
-                crp.props.xalign = .5
+                crp.props.xalign = 0.5
                 column = Gtk.TreeViewColumn(name, crp, pixbuf=i)
             else:
                 crt = Gtk.CellRendererText()
@@ -85,14 +87,15 @@ class ParrentListSection():
     def pixCompareFunction(self, treemodel, iter0, iter1, column):
         pix0 = treemodel.get_value(iter0, column)
         pix1 = treemodel.get_value(iter1, column)
-        if isinstance(pix0, GdkPixbuf.Pixbuf) and isinstance(pix1,
-                                                             GdkPixbuf.Pixbuf):
+        if isinstance(pix0, GdkPixbuf.Pixbuf) and isinstance(pix1, GdkPixbuf.Pixbuf):
             return cmp(pix0.get_pixels(), pix1.get_pixels())
         return cmp(pix0, pix1)
 
     def timeCompareFunction(self, treemodel, iter0, iter1, column):
-        (minute0, minute1) = (treemodel.get_value(iter0, 8),
-                              treemodel.get_value(iter1, 8))
+        (minute0, minute1) = (
+            treemodel.get_value(iter0, 8),
+            treemodel.get_value(iter1, 8),
+        )
         return cmp(minute0, minute1)
 
     def on_accept(self, button):

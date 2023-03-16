@@ -4,8 +4,20 @@ from .ChessFile import ChessFile
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Utils.const import DRAW, WHITEWON, BLACKWON, WAITING_TO_START, \
-    WHITE, BLACK, KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
+from pychess.Utils.const import (
+    DRAW,
+    WHITEWON,
+    BLACKWON,
+    WAITING_TO_START,
+    WHITE,
+    BLACK,
+    KING,
+    QUEEN,
+    ROOK,
+    BISHOP,
+    KNIGHT,
+    PAWN,
+)
 
 __label__ = _("Chess Compositions from yacpdb.org")
 __ending__ = "olv"
@@ -13,13 +25,14 @@ __append__ = True
 
 
 # Note S for the knights as N is reserverd for Nightriders
-chr2piece = {"K": KING,
-             "Q": QUEEN,
-             "R": ROOK,
-             "B": BISHOP,
-             "S": KNIGHT,
-             "P": PAWN,
-             }
+chr2piece = {
+    "K": KING,
+    "Q": QUEEN,
+    "R": ROOK,
+    "B": BISHOP,
+    "S": KNIGHT,
+    "P": PAWN,
+}
 
 
 def save(handle, model, position=None):
@@ -38,7 +51,7 @@ class OLVFile(ChessFile):
         self.count = len(self.games)
 
     def read_games(self, handle):
-        """ We don't return games if stipulation is not 'mate in #' """
+        """We don't return games if stipulation is not 'mate in #'"""
         games = []
         rec = None
         rec_id = 1
@@ -67,7 +80,11 @@ class OLVFile(ChessFile):
 
             # New record start
             if line == "---":
-                if rec is not None and rec["Black"].startswith("Mate in ") and not contains_fairy_pieces:
+                if (
+                    rec is not None
+                    and rec["Black"].startswith("Mate in ")
+                    and not contains_fairy_pieces
+                ):
                     games.append(rec)
                     rec_id += 1
 
@@ -161,26 +178,30 @@ class OLVFile(ChessFile):
 
             else:
                 if in_authors:
-                    author = line[line.find("-") + 1:].lstrip()
+                    author = line[line.find("-") + 1 :].lstrip()
                     if rec["White"]:
                         rec["White"] = "{} - {}".format(rec["White"], author)
                     else:
                         rec["White"] = author
 
                 elif in_white:
-                    piece = line[line.find("-") + 1:].lstrip()
+                    piece = line[line.find("-") + 1 :].lstrip()
                     cord = Cord(piece[1:3]).cord
                     piece = chr2piece[piece[0]]
                     self.lboard._addPiece(cord, piece, WHITE)
 
                 elif in_black:
-                    piece = line[line.find("-") + 1:].lstrip()
+                    piece = line[line.find("-") + 1 :].lstrip()
                     cord = Cord(piece[1:3]).cord
                     piece = chr2piece[piece[0]]
                     self.lboard._addPiece(cord, piece, BLACK)
 
         # Append the latest record
-        if rec is not None and rec["Black"].startswith("Mate in ") and not contains_fairy_pieces:
+        if (
+            rec is not None
+            and rec["Black"].startswith("Mate in ")
+            and not contains_fairy_pieces
+        ):
             games.append(rec)
 
         return games
@@ -189,15 +210,15 @@ class OLVFile(ChessFile):
         if not model:
             model = GameModel()
 
-        model.tags['Event'] = rec["Event"]
-        model.tags['Site'] = rec["Site"]
-        model.tags['Date'] = self.get_date(rec)
-        model.tags['Round'] = ""
-        model.tags['White'] = "?"
-        model.tags['Black'] = "?"
-        model.tags['Termination'] = rec["Termination"]
+        model.tags["Event"] = rec["Event"]
+        model.tags["Site"] = rec["Site"]
+        model.tags["Date"] = self.get_date(rec)
+        model.tags["Round"] = ""
+        model.tags["White"] = "?"
+        model.tags["Black"] = "?"
+        model.tags["Termination"] = rec["Termination"]
         fen = rec["FEN"]
-        model.tags['FEN'] = fen
+        model.tags["FEN"] = fen
 
         model.boards = [model.variant(setup=fen)]
         model.variations = [model.boards]
@@ -206,9 +227,9 @@ class OLVFile(ChessFile):
         return model
 
     def get_date(self, rec):
-        year = rec['Year']
-        month = rec['Month']
-        day = rec['Day']
+        year = rec["Year"]
+        month = rec["Month"]
+        day = rec["Day"]
         if year and month and day:
             tag_date = "%s.%02d.%02d" % (year, int(month), int(day))
         elif year and month:

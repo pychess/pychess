@@ -14,9 +14,24 @@ from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import toSAN, toAN, parseAny
 from pychess.Utils.Offer import Offer
-from pychess.Utils.const import ANALYZING, INVERSE_ANALYZING, DRAW, WHITEWON, BLACKWON, \
-    WON_ADJUDICATION, DRAW_OFFER, ACTION_ERROR_NONE_TO_ACCEPT, CASTLE_KK, WHITE, \
-    CASTLE_SAN, FISCHERRANDOMCHESS, BLACK, reprSign, RESIGNATION, SCHESS
+from pychess.Utils.const import (
+    ANALYZING,
+    INVERSE_ANALYZING,
+    DRAW,
+    WHITEWON,
+    BLACKWON,
+    WON_ADJUDICATION,
+    DRAW_OFFER,
+    ACTION_ERROR_NONE_TO_ACCEPT,
+    CASTLE_KK,
+    WHITE,
+    CASTLE_SAN,
+    FISCHERRANDOMCHESS,
+    BLACK,
+    reprSign,
+    RESIGNATION,
+    SCHESS,
+)
 from pychess.Utils.logic import validate, getMoveKillingKing
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.lutils.lmove import ParsingError
@@ -25,7 +40,8 @@ from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
 from .ProtocolEngine import ProtocolEngine, TIME_OUT_SECOND
 
 
-movere = re.compile(r"""
+movere = re.compile(
+    r"""
     (                   # group start
     (?:                 # non grouping parenthesis start
     [PKQRBN]?            # piece
@@ -40,11 +56,14 @@ movere = re.compile(r"""
     [+#]?               # check/mate
     )                   # group end
     \s*                 # any whitespace
-    """, re.VERBOSE)
+    """,
+    re.VERBOSE,
+)
 
 d_plus_dot_expr = re.compile(r"\d+\.")
 
-anare = re.compile(r"""
+anare = re.compile(
+    r"""
     ^                        # beginning of string
     (\s*                     #
     \d+ [+\-\.]?             # The ply analyzed. Some engines end it with a dot, minus or plus
@@ -60,7 +79,9 @@ anare = re.compile(r"""
     (.+)                     # The Principal-Variation. With or without move numbers
     \s*                      #
     $                        # end of string
-    """, re.VERBOSE)
+    """,
+    re.VERBOSE,
+)
 
 # anare = re.compile("\(d+)\.?\s+ (Mat\d+|[-\d\.]+) \s+ \d+\s+\d+\s+((?:%s\s*)+)" % mov)
 
@@ -93,7 +114,7 @@ class CECPEngine(ProtocolEngine):
             "sigterm": 0,
             "reuse": 0,
             "analyze": 0,
-            "myname": ', '.join(self.defname),
+            "myname": ", ".join(self.defname),
             "variants": None,
             "colors": 1,
             "ics": 0,
@@ -103,22 +124,35 @@ class CECPEngine(ProtocolEngine):
             "debug": 0,
             "memory": 0,
             "smp": 0,
-            "egt": '',
-            "option": '',
+            "egt": "",
+            "option": "",
             "exclude": 0,
             "done": None,
         }
 
         self.supported_features = [
-            "ping", "setboard", "san", "usermove", "time", "draw", "sigint",
-            "analyze", "myname", "variants", "colors", "pause", "done", "egt",
-            "debug", "smp", "memory", "option"
+            "ping",
+            "setboard",
+            "san",
+            "usermove",
+            "time",
+            "draw",
+            "sigint",
+            "analyze",
+            "myname",
+            "variants",
+            "colors",
+            "pause",
+            "done",
+            "egt",
+            "debug",
+            "smp",
+            "memory",
+            "option",
         ]
 
         self.options = {}
-        self.options["Ponder"] = {"name": "Ponder",
-                                  "type": "check",
-                                  "default": False}
+        self.options["Ponder"] = {"name": "Ponder", "type": "check", "default": False}
 
         self.name = None
 
@@ -138,7 +172,9 @@ class CECPEngine(ProtocolEngine):
 
         self.queue = asyncio.Queue()
         self.parse_line_task = asyncio.create_task(self.parseLine(self.engine))
-        self.died_cid = self.engine.connect("died", lambda e: self.queue.put_nowait("die"))
+        self.died_cid = self.engine.connect(
+            "died", lambda e: self.queue.put_nowait("die")
+        )
         self.invalid_move = None
 
         self.optionQueue = []
@@ -179,10 +215,14 @@ class CECPEngine(ProtocolEngine):
             try:
                 return_value = await asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
                 if return_value == "not ready":
-                    return_value = await asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
+                    return_value = await asyncio.wait_for(
+                        self.queue.get(), TIME_OUT_SECOND
+                    )
                     # Gaviota sends done=0 after "xboard" and after "protover 2" too
                     if return_value == "not ready":
-                        return_value = await asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
+                        return_value = await asyncio.wait_for(
+                            self.queue.get(), TIME_OUT_SECOND
+                        )
             except asyncio.TimeoutError:
                 log.warning("Got timeout error", extra={"task": self.defname})
                 is_dead.add(True)
@@ -249,10 +289,10 @@ class CECPEngine(ProtocolEngine):
             self.kill(reason)
 
     def kill(self, reason):
-        """ Kills the engine, starting with the 'quit' command, then sigterm and
-            eventually sigkill.
-            Returns the exitcode, or if engine have already been killed, returns
-            None """
+        """Kills the engine, starting with the 'quit' command, then sigterm and
+        eventually sigkill.
+        Returns the exitcode, or if engine have already been killed, returns
+        None"""
         if self.connected:
             self.connected = False
             try:
@@ -288,14 +328,16 @@ class CECPEngine(ProtocolEngine):
             self.setBoardList([board], [])
             if search:
                 self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+
         asyncio.create_task(coro())
 
     def putMove(self, board1, move, board2):
-        """ Sends the engine the last move made (for spectator engines).
-            @param board1: The current board
-            @param move: The last move made
-            @param board2: The board before the last move was made
+        """Sends the engine the last move made (for spectator engines).
+        @param board1: The current board
+        @param move: The last move made
+        @param board2: The board before the last move was made
         """
+
         async def coro():
             if self.engineIsAnalyzing:
                 self.__stop_analyze()
@@ -304,17 +346,22 @@ class CECPEngine(ProtocolEngine):
             self.setBoardList([board1], [])
             if not self.analyzing_paused:
                 self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+
         asyncio.create_task(coro())
 
     async def makeMove(self, board1, move, board2):
-        """ Gets a move from the engine (for player engines).
-            @param board1: The current board
-            @param move: The last move made
-            @param board2: The board before the last move was made
-            @return: The move the engine decided to make
+        """Gets a move from the engine (for player engines).
+        @param board1: The current board
+        @param move: The last move made
+        @param board2: The board before the last move was made
+        @return: The move the engine decided to make
         """
-        log.debug("makeMove: move={} self.movenext={} board1={} board2={} self.board={}".format(
-            move, self.movenext, board1, board2, self.board), extra={"task": self.defname})
+        log.debug(
+            "makeMove: move={} self.movenext={} board1={} board2={} self.board={}".format(
+                move, self.movenext, board1, board2, self.board
+            ),
+            extra={"task": self.defname},
+        )
         assert self.readyMoves
 
         if self.board == board1 or not board2 or self.movenext:
@@ -336,7 +383,8 @@ class CECPEngine(ProtocolEngine):
         if status == "not ready":
             log.warning(
                 "Engine seems to be protover=2, but is treated as protover=1",
-                extra={"task": self.defname})
+                extra={"task": self.defname},
+            )
             status = await self.queue.get()
         if status == "ready":
             status = await self.queue.get()
@@ -354,8 +402,7 @@ class CECPEngine(ProtocolEngine):
 
     def updateTime(self, secs, opsecs):
         if self.features["time"]:
-            print("time %s" % int(secs * 100 * self.timeHandicap),
-                  file=self.engine)
+            print("time %s" % int(secs * 100 * self.timeHandicap), file=self.engine)
             print("otim %s" % int(opsecs * 100), file=self.engine)
 
     # Standard options
@@ -369,6 +416,7 @@ class CECPEngine(ProtocolEngine):
             # We don't use the optionQueue here, as set board prints a whole lot of
             # stuff. Instead we just call it.
             self.setBoardList(model.boards[:], model.moves[:])
+
         asyncio.create_task(coro())
 
     def setBoardList(self, boards, moves):
@@ -394,13 +442,16 @@ class CECPEngine(ProtocolEngine):
 
     def setOptionVariant(self, variant):
         if self.features["variants"] is None:
-            log.warning("setOptionVariant: engine doesn't support variants",
-                        extra={"task": self.defname})
+            log.warning(
+                "setOptionVariant: engine doesn't support variants",
+                extra={"task": self.defname},
+            )
             return
 
         if variant in variants.values() and not variant.standard_rules:
-            assert variant.cecp_name in self.features["variants"], \
-                "{} doesn't support {} variant".format(self, variant.cecp_name)
+            assert (
+                variant.cecp_name in self.features["variants"]
+            ), "{} doesn't support {} variant".format(self, variant.cecp_name)
             self.optionQueue.append("variant %s" % variant.cecp_name)
 
     #    Strength system                               #
@@ -416,7 +467,7 @@ class CECPEngine(ProtocolEngine):
         self.strength = strength
 
         if strength <= 19:
-            self.__setTimeHandicap(0.01 * 10 ** (strength / 10.))
+            self.__setTimeHandicap(0.01 * 10 ** (strength / 10.0))
 
         if strength <= 18:
             self.__setDepth(strength)
@@ -461,15 +512,16 @@ class CECPEngine(ProtocolEngine):
     # Option handling
 
     def setOption(self, key, value):
-        """ Set an option, which will be sent to the engine, after the
-            'readyForOptions' signal has passed.
-            If you want to know the possible options, you should go to
-            engineDiscoverer or use the hasOption method
-            while you are in your 'readyForOptions' signal handler """
+        """Set an option, which will be sent to the engine, after the
+        'readyForOptions' signal has passed.
+        If you want to know the possible options, you should go to
+        engineDiscoverer or use the hasOption method
+        while you are in your 'readyForOptions' signal handler"""
         if self.readyMoves:
             log.warning(
                 "Options set after 'readyok' are not sent to the engine",
-                extra={"task": self.defname})
+                extra={"task": self.defname},
+            )
         if key == "cores":
             self.optionQueue.append("cores %s" % value)
         elif key == "memory":
@@ -482,9 +534,9 @@ class CECPEngine(ProtocolEngine):
     # Interacting with the player
 
     def pause(self):
-        """ Pauses engine using the "pause" command if available. Otherwise put
-            engine in force mode. By the specs the engine shouldn't ponder in
-            force mode, but some of them do so anyways. """
+        """Pauses engine using the "pause" command if available. Otherwise put
+        engine in force mode. By the specs the engine shouldn't ponder in
+        force mode, but some of them do so anyways."""
 
         log.debug("pause: self=%s" % self, extra={"task": self.defname})
         if self.isAnalyzing():
@@ -504,8 +556,12 @@ class CECPEngine(ProtocolEngine):
         return
 
     def hurry(self):
-        log.debug("hurry: self.waitingForMove={} self.readyForMoveNowCommand={}".format(
-            self.waitingForMove, self.readyForMoveNowCommand), extra={"task": self.defname})
+        log.debug(
+            "hurry: self.waitingForMove={} self.readyForMoveNowCommand={}".format(
+                self.waitingForMove, self.readyForMoveNowCommand
+            ),
+            extra={"task": self.defname},
+        )
         if self.waitingForMove and self.readyForMoveNowCommand:
             self.__tellEngineToMoveNow()
             self.readyForMoveNowCommand = False
@@ -514,8 +570,12 @@ class CECPEngine(ProtocolEngine):
         if self.analyzing_paused:
             return
 
-        log.debug("spectatorUndoMoves: moves={} gamemodel.ply={} gamemodel.boards[-1]={} self.board={}".format(
-            moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task": self.defname})
+        log.debug(
+            "spectatorUndoMoves: moves={} gamemodel.ply={} gamemodel.boards[-1]={} self.board={}".format(
+                moves, gamemodel.ply, gamemodel.boards[-1], self.board
+            ),
+            extra={"task": self.defname},
+        )
 
         for i in range(moves):
             print("undo", file=self.engine)
@@ -523,8 +583,11 @@ class CECPEngine(ProtocolEngine):
         self.board = gamemodel.boards[-1]
 
     def playerUndoMoves(self, moves, gamemodel):
-        log.debug("CECPEngine.playerUndoMoves: moves=%s self=%s gamemodel.curplayer=%s" %
-                  (moves, self, gamemodel.curplayer), extra={"task": self.defname})
+        log.debug(
+            "CECPEngine.playerUndoMoves: moves=%s self=%s gamemodel.curplayer=%s"
+            % (moves, self, gamemodel.curplayer),
+            extra={"task": self.defname},
+        )
 
         self.board = gamemodel.boards[-1]
 
@@ -533,10 +596,17 @@ class CECPEngine(ProtocolEngine):
         for i in range(moves):
             print("undo", file=self.engine)
 
-        if gamemodel.curplayer != self and moves % 2 == 1 or \
-                (gamemodel.curplayer == self and moves % 2 == 0):
+        if (
+            gamemodel.curplayer != self
+            and moves % 2 == 1
+            or (gamemodel.curplayer == self and moves % 2 == 0)
+        ):
             # Interrupt if we were searching, but should no longer do so
-            log.debug("CECPEngine.playerUndoMoves: putting TurnInterrupt into self.move_queue %s" % self.name, extra={"task": self.defname})
+            log.debug(
+                "CECPEngine.playerUndoMoves: putting TurnInterrupt into self.move_queue %s"
+                % self.name,
+                extra={"task": self.defname},
+            )
             self.queue.put_nowait("int")
 
     # Offer handling
@@ -569,11 +639,9 @@ class CECPEngine(ProtocolEngine):
             if board.variant == FISCHERRANDOMCHESS:
                 castle_notation = CASTLE_SAN
             print(
-                toAN(board,
-                     move,
-                     short=True,
-                     castleNotation=castle_notation),
-                file=self.engine)
+                toAN(board, move, short=True, castleNotation=castle_notation),
+                file=self.engine,
+            )
 
     def __tellEngineToMoveNow(self):
         if self.features["sigint"]:
@@ -602,8 +670,18 @@ class CECPEngine(ProtocolEngine):
             # Many engines don't like positions able to take down enemy
             # king. Therefore we just return the "kill king" move
             # automaticaly
-            self.emit("analyze", [(self.board.ply, [toAN(
-                self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "1", "")])
+            self.emit(
+                "analyze",
+                [
+                    (
+                        self.board.ply,
+                        [toAN(self.board, getMoveKillingKing(self.board))],
+                        MATE_VALUE - 1,
+                        "1",
+                        "",
+                    )
+                ],
+            )
             return
 
         print("post", file=self.engine)
@@ -662,7 +740,7 @@ class CECPEngine(ProtocolEngine):
 
     async def parseLine(self, proc):
         while True:
-            line = await wait_signal(proc, 'line')
+            line = await wait_signal(proc, "line")
             if not line:
                 break
             else:
@@ -671,7 +749,7 @@ class CECPEngine(ProtocolEngine):
                     # Debug line which we shall ignore as specified in CECPv2 specs
                     continue
 
-        #        log.debug("__parseLine: line=\"%s\"" % line.strip(), extra={"task":self.defname})
+                #        log.debug("__parseLine: line=\"%s\"" % line.strip(), extra={"task":self.defname})
                 parts = whitespaces.split(line.strip())
                 if parts[0] == "pong":
                     self.lastpong = int(parts[1])
@@ -679,8 +757,12 @@ class CECPEngine(ProtocolEngine):
 
                 # Illegal Move
                 if parts[0].lower().find("illegal") >= 0:
-                    log.warning("__parseLine: illegal move: line=\"{}\", board={}".format(
-                        line.strip(), self.board), extra={"task": self.defname})
+                    log.warning(
+                        '__parseLine: illegal move: line="{}", board={}'.format(
+                            line.strip(), self.board
+                        ),
+                        extra={"task": self.defname},
+                    )
                     if parts[-2] == "sd" and parts[-1].isdigit():
                         print("depth", parts[-1], file=self.engine)
                     continue
@@ -702,9 +784,10 @@ class CECPEngine(ProtocolEngine):
                             # If engine was set in pause just before the engine sent its
                             # move, we ignore it. However the engine has to know that we
                             # ignored it, and thus we step it one back
-                            log.info("__parseLine: Discarding engine's move: %s" %
-                                     movestr,
-                                     extra={"task": self.defname})
+                            log.info(
+                                "__parseLine: Discarding engine's move: %s" % movestr,
+                                extra={"task": self.defname},
+                            )
                             print("undo", file=self.engine)
                             continue
                         else:
@@ -715,9 +798,12 @@ class CECPEngine(ProtocolEngine):
                                 log.info(
                                     "__parseLine: ParsingError engine move: %s %s"
                                     % (movestr, self.board),
-                                    extra={"task": self.defname})
-                                self.end(WHITEWON if self.board.color == BLACK else
-                                         BLACKWON, WON_ADJUDICATION)
+                                    extra={"task": self.defname},
+                                )
+                                self.end(
+                                    WHITEWON if self.board.color == BLACK else BLACKWON,
+                                    WON_ADJUDICATION,
+                                )
                                 continue
 
                             if validate(self.board, move):
@@ -729,9 +815,12 @@ class CECPEngine(ProtocolEngine):
                                 log.info(
                                     "__parseLine: can't validate engine move: %s %s"
                                     % (movestr, self.board),
-                                    extra={"task": self.defname})
-                                self.end(WHITEWON if self.board.color == BLACK else
-                                         BLACKWON, WON_ADJUDICATION)
+                                    extra={"task": self.defname},
+                                )
+                                self.end(
+                                    WHITEWON if self.board.color == BLACK else BLACKWON,
+                                    WON_ADJUDICATION,
+                                )
                                 continue
 
                 # Analyzing
@@ -748,16 +837,31 @@ class CECPEngine(ProtocolEngine):
                         if "mat" in score.lower() or "#" in moves:
                             # Will look either like -Mat 3 or Mat3
                             scoreval = MATE_VALUE
-                            if score.startswith('-'):
+                            if score.startswith("-"):
                                 scoreval = -scoreval
                         else:
                             scoreval = int(score)
 
-                        nps = str(int(int(nodes) / (int(time) / 100))) if int(time) > 0 else ""
+                        nps = (
+                            str(int(int(nodes) / (int(time) / 100)))
+                            if int(time) > 0
+                            else ""
+                        )
 
                         mvstrs = movere.findall(moves)
                         if mvstrs:
-                            self.emit("analyze", [(self.board.ply, mvstrs, scoreval, depth.strip(), nps)])
+                            self.emit(
+                                "analyze",
+                                [
+                                    (
+                                        self.board.ply,
+                                        mvstrs,
+                                        scoreval,
+                                        depth.strip(),
+                                        nps,
+                                    )
+                                ],
+                            )
 
                         continue
 
@@ -767,9 +871,9 @@ class CECPEngine(ProtocolEngine):
                     continue
 
                 # Resigns
-                if parts[0] == "resign" or \
-                        (parts[0] == "tellics" and parts[1] == "resign"):  # buggy crafty
-
+                if parts[0] == "resign" or (
+                    parts[0] == "tellics" and parts[1] == "resign"
+                ):  # buggy crafty
                     # Previously: if "resign" in parts,
                     # however, this is too generic, since "hint", "bk",
                     # "feature option=.." and possibly other, future CECPv2
@@ -788,11 +892,13 @@ class CECPEngine(ProtocolEngine):
                     if "8/8/8/8/8/8/8/8" in "".join(parts[1:]):
                         continue
                     # Create a non-modal non-blocking message dialog with the error:
-                    dlg = Gtk.MessageDialog(mainwindow(),
-                                            flags=0,
-                                            type=Gtk.MessageType.WARNING,
-                                            buttons=Gtk.ButtonsType.CLOSE,
-                                            message_format=None)
+                    dlg = Gtk.MessageDialog(
+                        mainwindow(),
+                        flags=0,
+                        type=Gtk.MessageType.WARNING,
+                        buttons=Gtk.ButtonsType.CLOSE,
+                        message_format=None,
+                    )
 
                     # Use the engine name if already known, otherwise the defname:
                     displayname = self.name
@@ -800,9 +906,13 @@ class CECPEngine(ProtocolEngine):
                         displayname = self.defname
 
                     # Compose the dialog text:
-                    dlg.set_markup(GObject.markup_escape_text(_(
-                        "The engine %s reports an error:") % displayname) + "\n\n" +
-                        GObject.markup_escape_text(" ".join(parts[1:])))
+                    dlg.set_markup(
+                        GObject.markup_escape_text(
+                            _("The engine %s reports an error:") % displayname
+                        )
+                        + "\n\n"
+                        + GObject.markup_escape_text(" ".join(parts[1:]))
+                    )
 
                     # handle response signal so the "Close" button works:
                     dlg.connect("response", lambda dlg, x: dlg.destroy())
@@ -811,11 +921,15 @@ class CECPEngine(ProtocolEngine):
                     continue
 
                 # Tell Somebody
-                if parts[0][:4] == "tell" and \
-                        parts[0][4:] in ("others", "all", "ics", "icsnoalias"):
-
-                    log.info("Ignoring tell %s: %s" %
-                             (parts[0][4:], " ".join(parts[1:])))
+                if parts[0][:4] == "tell" and parts[0][4:] in (
+                    "others",
+                    "all",
+                    "ics",
+                    "icsnoalias",
+                ):
+                    log.info(
+                        "Ignoring tell %s: %s" % (parts[0][4:], " ".join(parts[1:]))
+                    )
                     continue
 
                 if "feature" in parts:
@@ -823,9 +937,8 @@ class CECPEngine(ProtocolEngine):
                     done1 = False
                     # We skip parts before 'feature', as some engines give us lines like
                     # White (1) : feature setboard=1 analyze...e="GNU Chess 5.07" done=1
-                    parts = parts[parts.index("feature"):]
+                    parts = parts[parts.index("feature") :]
                     for i, pair in enumerate(parts[1:]):
-
                         # As "parts" is split with no thoughs on quotes or double quotes
                         # we need to do some extra handling.
 
@@ -842,11 +955,13 @@ class CECPEngine(ProtocolEngine):
                         # If our pair was unfinished, like myname="GNU, we search the
                         # rest of the pairs for a quotating mark.
                         elif value[0] == '"':
-                            rest = value[1:] + " " + " ".join(parts[2 + i:])
+                            rest = value[1:] + " " + " ".join(parts[2 + i :])
                             j = rest.find('"')
                             if j == -1:
-                                log.warning("Missing endquotation in %s feature",
-                                            extra={"task": self.defname})
+                                log.warning(
+                                    "Missing endquotation in %s feature",
+                                    extra={"task": self.defname},
+                                )
                                 value = rest
                             else:
                                 value = rest[:j]
@@ -864,24 +979,30 @@ class CECPEngine(ProtocolEngine):
                                 done1 = True
                                 continue
                             elif value == 0:
-                                log.info("Adds %d seconds timeout" % TIME_OUT_SECOND,
-                                         extra={"task": self.defname})
+                                log.info(
+                                    "Adds %d seconds timeout" % TIME_OUT_SECOND,
+                                    extra={"task": self.defname},
+                                )
                                 # This'll buy you some more time
                                 self.queue.put_nowait("not ready")
                                 break
 
                         if key == "smp" and value == 1:
-                            self.options["cores"] = {"name": "cores",
-                                                     "type": "spin",
-                                                     "default": 1,
-                                                     "min": 1,
-                                                     "max": 64}
+                            self.options["cores"] = {
+                                "name": "cores",
+                                "type": "spin",
+                                "default": 1,
+                                "min": 1,
+                                "max": 64,
+                            }
                         elif key == "memory" and value == 1:
-                            self.options["memory"] = {"name": "memory",
-                                                      "type": "spin",
-                                                      "default": 32,
-                                                      "min": 1,
-                                                      "max": 4096}
+                            self.options["memory"] = {
+                                "name": "memory",
+                                "type": "spin",
+                                "default": 32,
+                                "min": 1,
+                                "max": 4096,
+                            }
                         elif key == "option" and key != "done":
                             option = self.__parse_option(value)
                             self.options[option["name"]] = option
@@ -905,11 +1026,12 @@ class CECPEngine(ProtocolEngine):
                 # Unfortunately it wont work for now, as we don't read any lines from
                 # protover 1 engines. When should we stop?
                 if self.protover == 1:
-                    if self.defname[0] in ''.join(parts):
+                    if self.defname[0] in "".join(parts):
                         basis = self.defname[0]
-                        name = ' '.join(itertools.dropwhile(
-                            lambda part: basis not in part, parts))
-                        self.features['myname'] = name
+                        name = " ".join(
+                            itertools.dropwhile(lambda part: basis not in part, parts)
+                        )
+                        self.features["myname"] = name
                         if not self.name:
                             self.setName(name)
 
@@ -920,19 +1042,23 @@ class CECPEngine(ProtocolEngine):
         elif " -spin " in option:
             name, value = option.split(" -spin ")
             defv, minv, maxv = value.split()
-            return {"type": "spin",
-                    "name": name,
-                    "default": int(defv),
-                    "min": int(minv),
-                    "max": int(maxv)}
+            return {
+                "type": "spin",
+                "name": name,
+                "default": int(defv),
+                "min": int(minv),
+                "max": int(maxv),
+            }
         elif " -slider " in option:
             name, value = option.split(" -slider ")
             defv, minv, maxv = value.split()
-            return {"type": "spin",
-                    "name": name,
-                    "default": int(defv),
-                    "min": int(minv),
-                    "max": int(maxv)}
+            return {
+                "type": "spin",
+                "name": name,
+                "default": int(defv),
+                "min": int(minv),
+                "max": int(maxv),
+            }
         elif " -string " in option:
             name, value = option.split(" -string ")
             return {"type": "text", "name": name, "default": value}
@@ -952,10 +1078,12 @@ class CECPEngine(ProtocolEngine):
                     default = choice[1:]
                     choices[index] = default
                     break
-            return {"type": "combo",
-                    "name": name,
-                    "default": default,
-                    "choices": choices}
+            return {
+                "type": "combo",
+                "name": name,
+                "default": default,
+                "choices": choices,
+            }
         elif " -button" in option:
             pos = option.find(" -button")
             return {"type": "button", "name": option[:pos]}

@@ -5,7 +5,14 @@ from struct import pack
 
 from gi.repository import Gtk, GObject, GLib
 
-from pychess.Utils.const import FIRST_PAGE, NEXT_PAGE, FEN_START, DRAW, WHITEWON, BLACKWON  # , reprCord
+from pychess.Utils.const import (
+    FIRST_PAGE,
+    NEXT_PAGE,
+    FEN_START,
+    DRAW,
+    WHITEWON,
+    BLACKWON,
+)  # , reprCord
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toPolyglot  # , FCORD, TCORD
@@ -19,7 +26,13 @@ from pychess.perspectives.database.PreviewPanel import PreviewPanel
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER
-from pychess.widgets import mainwindow, new_notebook, createImage, createAlignment, gtk_close
+from pychess.widgets import (
+    mainwindow,
+    new_notebook,
+    createImage,
+    createAlignment,
+    gtk_close,
+)
 from pychess.widgets import gamewidget
 from pychess.Database.model import create_indexes, drop_indexes
 from pychess.Database.PgnImport import PgnImport, download_file
@@ -34,11 +47,11 @@ pgn_icon = load_icon(24, "application-x-chess-pgn", "pychess")
 
 class Database(GObject.GObject, Perspective):
     __gsignals__ = {
-        'chessfile_opened0': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'chessfile_opened': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'chessfile_closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
-        'chessfile_imported': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'bookfile_created': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "chessfile_opened0": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "chessfile_opened": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "chessfile_closed": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "chessfile_imported": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "bookfile_created": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
     def __init__(self):
@@ -102,19 +115,26 @@ class Database(GObject.GObject, Perspective):
         self.notebooks = {"gamelist": new_notebook()}
         self.main_notebook = self.notebooks["gamelist"]
         for panel in self.sidePanels:
-            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(
+                panel_name(panel.__name__)
+            )
 
         self.spinner = Gtk.Spinner()
         self.spinner.set_size_request(50, 50)
         self.progressbar0 = Gtk.ProgressBar(show_text=True)
         self.progressbar = Gtk.ProgressBar(show_text=True)
 
-        self.progress_dialog = Gtk.Dialog("", mainwindow(), 0, (
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+        self.progress_dialog = Gtk.Dialog(
+            "", mainwindow(), 0, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        )
         self.progress_dialog.set_deletable(False)
         self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
-        self.progress_dialog.get_content_area().pack_start(self.progressbar0, True, True, 0)
-        self.progress_dialog.get_content_area().pack_start(self.progressbar, True, True, 0)
+        self.progress_dialog.get_content_area().pack_start(
+            self.progressbar0, True, True, 0
+        )
+        self.progress_dialog.get_content_area().pack_start(
+            self.progressbar, True, True, 0
+        )
         self.progress_dialog.get_content_area().show_all()
 
         # Initing headbook
@@ -138,9 +158,15 @@ class Database(GObject.GObject, Perspective):
         self.dock.show()
         perspective_widget.pack_start(align, True, True, 0)
 
-        self.docks["gamelist"] = (Gtk.Label(label="gamelist"), self.notebooks["gamelist"], None)
+        self.docks["gamelist"] = (
+            Gtk.Label(label="gamelist"),
+            self.notebooks["gamelist"],
+            None,
+        )
         for panel in self.sidePanels:
-            self.docks[panel_name(panel.__name__)][1] = self.notebooks[panel_name(panel.__name__)]
+            self.docks[panel_name(panel.__name__)][1] = self.notebooks[
+                panel_name(panel.__name__)
+            ]
 
         self.load_from_xml()
 
@@ -148,12 +174,29 @@ class Database(GObject.GObject, Perspective):
         first_time_layout = False
         if not os.path.isfile(self.dockLocation):
             first_time_layout = True
-            leaf = self.dock.dock(self.docks["gamelist"][1], CENTER, self.docks["gamelist"][0], "gamelist")
+            leaf = self.dock.dock(
+                self.docks["gamelist"][1], CENTER, self.docks["gamelist"][0], "gamelist"
+            )
             leaf.setDockable(False)
 
-            leaf = leaf.dock(self.docks["OpeningTreePanel"][1], EAST, self.docks["OpeningTreePanel"][0], "OpeningTreePanel")
-            leaf = leaf.dock(self.docks["FilterPanel"][1], CENTER, self.docks["FilterPanel"][0], "FilterPanel")
-            leaf.dock(self.docks["PreviewPanel"][1], SOUTH, self.docks["PreviewPanel"][0], "PreviewPanel")
+            leaf = leaf.dock(
+                self.docks["OpeningTreePanel"][1],
+                EAST,
+                self.docks["OpeningTreePanel"][0],
+                "OpeningTreePanel",
+            )
+            leaf = leaf.dock(
+                self.docks["FilterPanel"][1],
+                CENTER,
+                self.docks["FilterPanel"][0],
+                "FilterPanel",
+            )
+            leaf.dock(
+                self.docks["PreviewPanel"][1],
+                SOUTH,
+                self.docks["PreviewPanel"][0],
+                "PreviewPanel",
+            )
 
         def unrealize(dock):
             dock.saveToXML(self.dockLocation)
@@ -164,9 +207,13 @@ class Database(GObject.GObject, Perspective):
         self.dock.show_all()
         perspective_widget.show_all()
 
-        perspective_manager.set_perspective_menuitems("database", self.menuitems, default=first_time_layout)
+        perspective_manager.set_perspective_menuitems(
+            "database", self.menuitems, default=first_time_layout
+        )
 
-        perspective_manager.set_perspective_toolbuttons("database", [self.import_button, self.save_as_button])
+        perspective_manager.set_perspective_toolbuttons(
+            "database", [self.import_button, self.save_as_button]
+        )
 
     def on_switch_page(self, notebook, page, page_num):
         if page in self.page_dict:
@@ -187,13 +234,13 @@ class Database(GObject.GObject, Perspective):
         self.widgets["import_twic"].set_sensitive(on)
 
         if on:
-            gamewidget.getWidgets()["copy_pgn"].set_property('sensitive', on)
-            gamewidget.getWidgets()["copy_fen"].set_property('sensitive', on)
+            gamewidget.getWidgets()["copy_pgn"].set_property("sensitive", on)
+            gamewidget.getWidgets()["copy_fen"].set_property("sensitive", on)
         else:
             persp = perspective_manager.get_perspective("games")
             if persp.cur_gmwidg() is None:
-                gamewidget.getWidgets()["copy_pgn"].set_property('sensitive', on)
-                gamewidget.getWidgets()["copy_fen"].set_property('sensitive', on)
+                gamewidget.getWidgets()["copy_pgn"].set_property("sensitive", on)
+                gamewidget.getWidgets()["copy_fen"].set_property("sensitive", on)
 
     def open_chessfile(self, filename):
         if self.first_run:
@@ -211,7 +258,7 @@ class Database(GObject.GObject, Perspective):
             nonlocal filename
             for ext in [".sqlite", ".bin", ".scout"]:
                 if filename.endswith(ext):
-                    filename = filename[:len(filename) - len(ext)] + ".pgn"
+                    filename = filename[: len(filename) - len(ext)] + ".pgn"
 
             # Processing by file extension
             if filename.endswith(".pgn"):
@@ -355,9 +402,16 @@ class Database(GObject.GObject, Perspective):
 
     def on_save_as_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(
-            _("Save as"), mainwindow(), Gtk.FileChooserAction.SAVE,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
-             Gtk.ResponseType.ACCEPT))
+            _("Save as"),
+            mainwindow(),
+            Gtk.FileChooserAction.SAVE,
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_SAVE,
+                Gtk.ResponseType.ACCEPT,
+            ),
+        )
         dialog.set_current_folder(os.path.expanduser("~"))
 
         response = dialog.run()
@@ -394,7 +448,7 @@ class Database(GObject.GObject, Perspective):
             offs = rec["Offset"]
 
             f.seek(offs)
-            game = ''
+            game = ""
             for line in f:
                 if line.startswith('[Event "'):
                     if game:
@@ -407,9 +461,16 @@ class Database(GObject.GObject, Perspective):
 
     def on_import_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(
-            _("Open chess file"), mainwindow(), Gtk.FileChooserAction.OPEN,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-             Gtk.ResponseType.OK))
+            _("Open chess file"),
+            mainwindow(),
+            Gtk.FileChooserAction.OPEN,
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OPEN,
+                Gtk.ResponseType.OK,
+            ),
+        )
         dialog.set_select_multiple(True)
 
         filter_text = Gtk.FileFilter()
@@ -453,7 +514,9 @@ class Database(GObject.GObject, Perspective):
                 break
             if isinstance(filename, tuple):
                 info_link, pgn_link = filename
-                self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
+                self.importer.do_import(
+                    pgn_link, info=info_link, progressbar=self.progressbar
+                )
             else:
                 self.importer.do_import(filename, progressbar=self.progressbar)
 
@@ -484,7 +547,7 @@ class Database(GObject.GObject, Perspective):
         self.progressbar.show()
         self.progressbar.set_text(_("Preparing to start import..."))
 
-        thread = threading.Thread(target=self.importing, args=(filenames, ))
+        thread = threading.Thread(target=self.importing, args=(filenames,))
         thread.daemon = True
         thread.start()
 
@@ -500,15 +563,25 @@ class Database(GObject.GObject, Perspective):
             if records:
                 callback(records, *args)
                 counter += len(records)
-                GLib.idle_add(self.progressbar.set_text, _("%s games processed") % counter)
+                GLib.idle_add(
+                    self.progressbar.set_text, _("%s games processed") % counter
+                )
             else:
                 break
 
     def create_book(self, new_bin=None):
         if new_bin is None:
             dialog = Gtk.FileChooserDialog(
-                _("Create New Polyglot Opening Book"), mainwindow(), Gtk.FileChooserAction.SAVE,
-                (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
+                _("Create New Polyglot Opening Book"),
+                mainwindow(),
+                Gtk.FileChooserAction.SAVE,
+                (
+                    Gtk.STOCK_CANCEL,
+                    Gtk.ResponseType.CANCEL,
+                    Gtk.STOCK_NEW,
+                    Gtk.ResponseType.ACCEPT,
+                ),
+            )
 
             dialog.set_current_folder(os.path.expanduser("~"))
             dialog.set_current_name("new_book.bin")
@@ -598,17 +671,31 @@ class Database(GObject.GObject, Perspective):
                     # print("%0.16x" % board.prev.hash, poly_move, board.prev.asFen(), move_str)
                     if board.prev.hash in positions:
                         if poly_move in positions[board.prev.hash]:
-                            positions[board.prev.hash][poly_move] += score[board.prev.color]
+                            positions[board.prev.hash][poly_move] += score[
+                                board.prev.color
+                            ]
                         else:
-                            positions[board.prev.hash][poly_move] = score[board.prev.color]
+                            positions[board.prev.hash][poly_move] = score[
+                                board.prev.color
+                            ]
                     else:
                         # board.prev.asFen(), move_str,
-                        positions[board.prev.hash] = {poly_move: score[board.prev.color]}
+                        positions[board.prev.hash] = {
+                            poly_move: score[board.prev.color]
+                        }
 
     def create_database(self):
         dialog = Gtk.FileChooserDialog(
-            _("Create New Pgn Database"), mainwindow(), Gtk.FileChooserAction.SAVE,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
+            _("Create New Pgn Database"),
+            mainwindow(),
+            Gtk.FileChooserAction.SAVE,
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_NEW,
+                Gtk.ResponseType.ACCEPT,
+            ),
+        )
 
         dialog.set_current_folder(os.path.expanduser("~"))
         dialog.set_current_name("new.pgn")
@@ -625,8 +712,9 @@ class Database(GObject.GObject, Perspective):
                     pass
                 self.open_chessfile(new_pgn)
             else:
-                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
-                                      buttons=Gtk.ButtonsType.OK)
+                d = Gtk.MessageDialog(
+                    mainwindow(), type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK
+                )
                 d.set_markup(_("<big><b>File '%s' already exists.</b></big>") % new_pgn)
                 d.run()
                 d.destroy()
@@ -650,7 +738,9 @@ class Database(GObject.GObject, Perspective):
         name, ext = os.path.splitext(chessfile.path)
         basename = os.path.basename(name)
         info = "{}.{}".format(basename, ext[1:])
-        tooltip = _("%(path)s\ncontaining %(count)s games") % ({"path": chessfile.path, "count": chessfile.count})
+        tooltip = _("%(path)s\ncontaining %(count)s games") % (
+            {"path": chessfile.path, "count": chessfile.count}
+        )
         tabcontent.set_tooltip_text(tooltip)
 
         label = Gtk.Label(info)
@@ -673,6 +763,6 @@ def get_latest_twic():
         for line in f:
             position = line.find(PREFIX)
             if position >= 0:
-                latest = int(line[position + len(PREFIX):][:4])
+                latest = int(line[position + len(PREFIX) :][:4])
                 break
     return latest

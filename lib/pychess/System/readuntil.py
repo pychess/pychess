@@ -9,9 +9,11 @@ class IncompleteReadError(EOFError):
     - partial: read bytes string before the end of stream was reached
     - expected: total number of expected bytes (or None if unknown)
     """
+
     def __init__(self, partial, expected):
-        super().__init__("%d bytes read on a total of %r expected bytes"
-                         % (len(partial), expected))
+        super().__init__(
+            "%d bytes read on a total of %r expected bytes" % (len(partial), expected)
+        )
         self.partial = partial
         self.expected = expected
 
@@ -22,6 +24,7 @@ class LimitOverrunError(Exception):
     Attributes:
     - consumed: total number of to be consumed bytes.
     """
+
     def __init__(self, message, consumed):
         super().__init__(message)
         self.consumed = consumed
@@ -37,10 +40,12 @@ async def _wait_for_data(self, func_name):
     # would have an unexpected behaviour. It would not possible to know
     # which coroutine would get the next data.
     if self._waiter is not None:
-        raise RuntimeError('%s() called while another coroutine is '
-                           'already waiting for incoming data' % func_name)
+        raise RuntimeError(
+            "%s() called while another coroutine is "
+            "already waiting for incoming data" % func_name
+        )
 
-    assert not self._eof, '_wait_for_data after EOF'
+    assert not self._eof, "_wait_for_data after EOF"
 
     # Waiting for data while paused will make deadlock, so prevent it.
     if self._paused:
@@ -54,7 +59,7 @@ async def _wait_for_data(self, func_name):
         self._waiter = None
 
 
-async def readuntil(self, separator=b'\n'):
+async def readuntil(self, separator=b"\n"):
     """Read data from the stream until ``separator`` is found.
 
     On success, the data and separator will be removed from the
@@ -76,7 +81,7 @@ async def readuntil(self, separator=b'\n'):
     """
     seplen = len(separator)
     if seplen == 0:
-        raise ValueError('Separator should be at least one-byte string')
+        raise ValueError("Separator should be at least one-byte string")
 
     if self._exception is not None:
         raise self._exception
@@ -121,8 +126,8 @@ async def readuntil(self, separator=b'\n'):
             offset = buflen + 1 - seplen
             if offset > self._limit:
                 raise LimitOverrunError(
-                    'Separator is not found, and chunk exceed the limit',
-                    offset)
+                    "Separator is not found, and chunk exceed the limit", offset
+                )
 
         # Complete message (with full separator) may be present in buffer
         # even when EOF flag is set. This may happen when the last chunk
@@ -134,13 +139,14 @@ async def readuntil(self, separator=b'\n'):
             raise IncompleteReadError(chunk, None)
 
         # _wait_for_data() will resume reading if stream was paused.
-        await self._wait_for_data('readuntil')
+        await self._wait_for_data("readuntil")
 
     if isep > self._limit:
         raise LimitOverrunError(
-            'Separator is found, but chunk is longer than limit', isep)
+            "Separator is found, but chunk is longer than limit", isep
+        )
 
-    chunk = self._buffer[:isep + seplen]
-    del self._buffer[:isep + seplen]
+    chunk = self._buffer[: isep + seplen]
+    del self._buffer[: isep + seplen]
     self._maybe_resume_transport()
     return bytes(chunk)
