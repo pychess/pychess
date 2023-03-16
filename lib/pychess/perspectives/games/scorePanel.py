@@ -12,7 +12,9 @@ from pychess.Utils.lutils import leval
 
 __title__ = _("Score")
 __icon__ = addDataPrefix("glade/panel_score.svg")
-__desc__ = _("The score panel tries to evaluate the positions and shows you a graph of the game progress")
+__desc__ = _(
+    "The score panel tries to evaluate the positions and shows you a graph of the game progress"
+)
 
 
 class Sidepanel:
@@ -28,21 +30,24 @@ class Sidepanel:
         __widget__.show_all()
 
         self.plot_cid = self.plot.connect("selected", self.plot_selected)
-        self.cid = self.boardview.connect('shownChanged', self.shownChanged)
+        self.cid = self.boardview.connect("shownChanged", self.shownChanged)
         self.model_cids = [
             self.boardview.model.connect_after("game_changed", self.game_changed),
             self.boardview.model.connect_after("moves_undone", self.moves_undone),
-            self.boardview.model.connect_after("analysis_changed", self.analysis_changed),
+            self.boardview.model.connect_after(
+                "analysis_changed", self.analysis_changed
+            ),
             self.boardview.model.connect_after("game_started", self.game_started),
-            self.boardview.model.connect_after("game_terminated", self.on_game_terminated),
+            self.boardview.model.connect_after(
+                "game_terminated", self.on_game_terminated
+            ),
         ]
 
         def cb_config_changed(none):
             self.fetch_chess_conf()
             self.plot.redraw()
-        self.cids_conf = [
-            conf.notify_add("scoreLinearScale", cb_config_changed)
-        ]
+
+        self.cids_conf = [conf.notify_add("scoreLinearScale", cb_config_changed)]
         self.fetch_chess_conf()
 
         uistuff.keepDown(__widget__)
@@ -80,8 +85,7 @@ class Sidepanel:
                 points = model.scores[i][1]
                 points = points * -1 if i % 2 == 1 else points
             else:
-                points = leval.evaluateComplete(
-                    model.getBoardAtPly(i).board, WHITE)
+                points = leval.evaluateComplete(model.getBoardAtPly(i).board, WHITE)
             self.plot.addScore(points)
 
         if model.status == DRAW:
@@ -97,7 +101,8 @@ class Sidepanel:
             else:
                 try:
                     points = leval.evaluateComplete(
-                        model.getBoardAtPly(ply).board, WHITE)
+                        model.getBoardAtPly(ply).board, WHITE
+                    )
                 except IndexError:
                     return
         self.plot.addScore(points)
@@ -174,9 +179,8 @@ class Sidepanel:
 
 
 class ScorePlot(Gtk.DrawingArea):
-
     __gtype_name__ = "ScorePlot" + str(randint(0, sys.maxsize))
-    __gsignals__ = {"selected": (GObject.SignalFlags.RUN_FIRST, None, (int, ))}
+    __gsignals__ = {"selected": (GObject.SignalFlags.RUN_FIRST, None, (int,))}
 
     def __init__(self, boardview):
         GObject.GObject.__init__(self)
@@ -184,8 +188,7 @@ class ScorePlot(Gtk.DrawingArea):
         self.connect("draw", self.expose)
         self.connect("button-press-event", self.press)
         self.props.can_focus = True
-        self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK |
-                        Gdk.EventMask.KEY_PRESS_MASK)
+        self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.KEY_PRESS_MASK)
         self.scores = []
         self.selected = 0
 
@@ -225,7 +228,7 @@ class ScorePlot(Gtk.DrawingArea):
 
     def press(self, widget, event):
         self.grab_focus()
-        self.emit('selected', event.x / self.get_move_height())
+        self.emit("selected", event.x / self.get_move_height())
 
     def expose(self, widget, context):
         a = widget.get_allocation()
@@ -261,15 +264,17 @@ class ScorePlot(Gtk.DrawingArea):
             if self.linear_scale:
                 return min(abs(score), 800) / 800 * sign(score)  # Linear
             else:
-                return (e ** (5e-4 * abs(score)) - 1) * sign(score)  # Exponentially stretched
+                return (e ** (5e-4 * abs(score)) - 1) * sign(
+                    score
+                )  # Exponentially stretched
 
         if self.scores:
             cr.set_source_rgb(0, 0, 0)
             cr.move_to(0, height)
-            cr.line_to(0, (height / 2.) * (1 + mapper(self.scores[0])))
+            cr.line_to(0, (height / 2.0) * (1 + mapper(self.scores[0])))
             for i, score in enumerate(self.scores):
                 x = (i + 1) * self.get_move_height()
-                y = (height / 2.) * (1 + mapper(score))
+                y = (height / 2.0) * (1 + mapper(score))
                 y = max(0, min(height, y))
                 cr.line_to(x, y)
             cr.line_to(x, height)
@@ -291,7 +296,7 @@ class ScorePlot(Gtk.DrawingArea):
                 cr.set_source_rgb(1, 0, 0)
             else:
                 cr.set_source_rgb(0.85, 0.85, 0.85)
-            y = (height / 2.) * (1 + mapper(100 * mark))
+            y = (height / 2.0) * (1 + mapper(100 * mark))
             y = max(0, min(height, y))
             cr.move_to(0, y)
             cr.line_to(width, y)
@@ -307,7 +312,7 @@ class ScorePlot(Gtk.DrawingArea):
         x = self.selected * s
         cr.rectangle(x - lw / 2, lw / 2, s + lw, height - lw)
         found, color = self.get_style_context().lookup_color("p_bg_selected")
-        cr.set_source_rgba(color.red, color.green, color.blue, .15)
+        cr.set_source_rgba(color.red, color.green, color.blue, 0.15)
         cr.fill_preserve()
         cr.set_source_rgb(color.red, color.green, color.blue)
         cr.stroke()

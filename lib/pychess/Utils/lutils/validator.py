@@ -1,4 +1,3 @@
-
 from pychess.Utils.lutils.lmovegen import genAllMoves
 
 ################################################################################

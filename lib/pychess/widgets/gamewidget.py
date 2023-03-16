@@ -13,9 +13,27 @@ from pychess.System import conf
 
 from pychess.System.Log import log
 from pychess.Utils.IconLoader import get_pixbuf
-from pychess.Utils.const import REMOTE, UNFINISHED_STATES, PAUSED, RUNNING, LOCAL, \
-    WHITE, BLACK, ACTION_MENU_ITEMS, DRAW, UNDOABLE_STATES, HINT, SPY, WHITEWON, \
-    MENU_ITEMS, BLACKWON, DROP, FAN_PIECES, TOOL_CHESSDB, TOOL_SCOUTFISH
+from pychess.Utils.const import (
+    REMOTE,
+    UNFINISHED_STATES,
+    PAUSED,
+    RUNNING,
+    LOCAL,
+    WHITE,
+    BLACK,
+    ACTION_MENU_ITEMS,
+    DRAW,
+    UNDOABLE_STATES,
+    HINT,
+    SPY,
+    WHITEWON,
+    MENU_ITEMS,
+    BLACKWON,
+    DROP,
+    FAN_PIECES,
+    TOOL_CHESSDB,
+    TOOL_SCOUTFISH,
+)
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils import lmove
@@ -25,7 +43,11 @@ from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.widgets import createImage, createAlignment, gtk_close
-from pychess.widgets.InfoBar import InfoBarNotebook, InfoBarMessage, InfoBarMessageButton
+from pychess.widgets.InfoBar import (
+    InfoBarNotebook,
+    InfoBarMessage,
+    InfoBarMessageButton,
+)
 from pychess.perspectives import perspective_manager
 
 
@@ -46,11 +68,10 @@ def getWidgets():
 
 
 class GameWidget(GObject.GObject):
-
     __gsignals__ = {
-        'game_close_clicked': (GObject.SignalFlags.RUN_FIRST, None, ()),
-        'title_changed': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
-        'closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "game_close_clicked": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "title_changed": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "closed": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
     def __init__(self, gamemodel, perspective):
@@ -63,8 +84,15 @@ class GameWidget(GObject.GObject):
         # InfoBarMessage with rematch, undo or observe buttons
         self.game_ended_message = None
 
-        self.tabcontent, white_label, black_label, self.game_info_label = self.initTabcontents()
-        self.boardvbox, self.board, self.infobar, self.clock = self.initBoardAndClock(self.gamemodel)
+        (
+            self.tabcontent,
+            white_label,
+            black_label,
+            self.game_info_label,
+        ) = self.initTabcontents()
+        self.boardvbox, self.board, self.infobar, self.clock = self.initBoardAndClock(
+            self.gamemodel
+        )
         self.stat_hbox = self.initButtons(self.board)
 
         self.player_name_labels = (white_label, black_label)
@@ -89,24 +117,37 @@ class GameWidget(GObject.GObject):
         ]
         self.players_changed(self.gamemodel)
 
-        self.notify_cids = [conf.notify_add("showFICSgameno", self.on_show_fics_gameno), ]
+        self.notify_cids = [
+            conf.notify_add("showFICSgameno", self.on_show_fics_gameno),
+        ]
 
         if self.gamemodel.display_text:
             if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno"):
-                self.game_info_label.set_text("%s [%s]" % (
-                    self.display_text, self.gamemodel.ficsgame.gameno))
+                self.game_info_label.set_text(
+                    "{} [{}]".format(self.display_text, self.gamemodel.ficsgame.gameno)
+                )
             else:
                 self.game_info_label.set_text(self.display_text)
         if self.gamemodel.timed:
-            self.cids[self.gamemodel.timemodel] = self.gamemodel.timemodel.connect("zero_reached", self.zero_reached)
+            self.cids[self.gamemodel.timemodel] = self.gamemodel.timemodel.connect(
+                "zero_reached", self.zero_reached
+            )
 
         self.connections = defaultdict(list)
         if isinstance(self.gamemodel, ICGameModel):
             self.connections[self.gamemodel.connection.bm].append(
-                self.gamemodel.connection.bm.connect("player_lagged", self.player_lagged))
+                self.gamemodel.connection.bm.connect(
+                    "player_lagged", self.player_lagged
+                )
+            )
             self.connections[self.gamemodel.connection.bm].append(
-                self.gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time))
-        self.cids[self.board.view] = self.board.view.connect("shownChanged", self.shownChanged)
+                self.gamemodel.connection.bm.connect(
+                    "opp_not_out_of_time", self.opp_not_out_of_time
+                )
+            )
+        self.cids[self.board.view] = self.board.view.connect(
+            "shownChanged", self.shownChanged
+        )
 
         if isinstance(self.gamemodel, ICGameModel):
             self.gamemodel.gmwidg_ready.set()
@@ -139,8 +180,8 @@ class GameWidget(GObject.GObject):
             self.game_ended_message.callback = None
 
     def on_show_fics_gameno(self, *args):
-        """ Checks the configuration / preferences to see if the FICS
-            game number should be displayed next to player names.
+        """Checks the configuration / preferences to see if the FICS
+        game number should be displayed next to player names.
         """
         if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno"):
             self.game_info_label.set_text(" [%s]" % self.gamemodel.ficsgame.gameno)
@@ -154,13 +195,15 @@ class GameWidget(GObject.GObject):
         for widget in MENU_ITEMS:
             if widget in self.menuitems:
                 continue
-            elif widget == 'show_sidepanels' and isDesignGWShown():
-                getWidgets()[widget].set_property('sensitive', False)
+            elif widget == "show_sidepanels" and isDesignGWShown():
+                getWidgets()[widget].set_property("sensitive", False)
             else:
-                getWidgets()[widget].set_property('sensitive', True)
+                getWidgets()[widget].set_property("sensitive", True)
 
         # Change window title
-        getWidgets()['main_window'].set_title(self.display_text + (" - " if self.display_text != "" else "") + "PyChess")
+        getWidgets()["main_window"].set_title(
+            self.display_text + (" - " if self.display_text != "" else "") + "PyChess"
+        )
 
     def _update_menu_abort(self):
         if self.gamemodel.hasEnginePlayer():
@@ -168,76 +211,99 @@ class GameWidget(GObject.GObject):
             self.menuitems["abort"].tooltip = ""
         elif self.gamemodel.isObservationGame():
             self.menuitems["abort"].sensitive = False
-        elif isinstance(self.gamemodel, ICGameModel) and self.gamemodel.status in UNFINISHED_STATES:
+        elif (
+            isinstance(self.gamemodel, ICGameModel)
+            and self.gamemodel.status in UNFINISHED_STATES
+        ):
             if self.gamemodel.ply < 2:
                 self.menuitems["abort"].label = _("Abort")
-                self.menuitems["abort"].tooltip = \
-                    _("This game can be automatically aborted without rating loss because \
-                      there has not yet been two moves made")
+                self.menuitems["abort"].tooltip = _(
+                    "This game can be automatically aborted without rating loss because \
+                      there has not yet been two moves made"
+                )
             else:
                 self.menuitems["abort"].label = _("Offer Abort")
-                self.menuitems["abort"].tooltip = \
-                    _("Your opponent must agree to abort the game because there \
-                      has been two or more moves made")
+                self.menuitems["abort"].tooltip = _(
+                    "Your opponent must agree to abort the game because there \
+                      has been two or more moves made"
+                )
             self.menuitems["abort"].sensitive = True
         else:
             self.menuitems["abort"].sensitive = False
             self.menuitems["abort"].tooltip = ""
 
     def _update_menu_adjourn(self):
-        self.menuitems["adjourn"].sensitive = \
-            isinstance(self.gamemodel, ICGameModel) and \
-            self.gamemodel.status in UNFINISHED_STATES and \
-            not self.gamemodel.isObservationGame() and \
-            not self.gamemodel.hasGuestPlayers()
+        self.menuitems["adjourn"].sensitive = (
+            isinstance(self.gamemodel, ICGameModel)
+            and self.gamemodel.status in UNFINISHED_STATES
+            and not self.gamemodel.isObservationGame()
+            and not self.gamemodel.hasGuestPlayers()
+        )
 
-        if isinstance(self.gamemodel, ICGameModel) and \
-                self.gamemodel.status in UNFINISHED_STATES and \
-                not self.gamemodel.isObservationGame() and self.gamemodel.hasGuestPlayers():
-            self.menuitems["adjourn"].tooltip = \
-                _("This game can not be adjourned because one or both players are guests")
+        if (
+            isinstance(self.gamemodel, ICGameModel)
+            and self.gamemodel.status in UNFINISHED_STATES
+            and not self.gamemodel.isObservationGame()
+            and self.gamemodel.hasGuestPlayers()
+        ):
+            self.menuitems["adjourn"].tooltip = _(
+                "This game can not be adjourned because one or both players are guests"
+            )
         else:
             self.menuitems["adjourn"].tooltip = ""
 
     def _update_menu_draw(self):
-        self.menuitems["draw"].sensitive = self.gamemodel.status in UNFINISHED_STATES \
+        self.menuitems["draw"].sensitive = (
+            self.gamemodel.status in UNFINISHED_STATES
             and not self.gamemodel.isObservationGame()
+        )
 
         def can_win(color):
             if self.gamemodel.timed:
-                return playerHasMatingMaterial(self.gamemodel.boards[-1], color) and \
-                    self.gamemodel.timemodel.getPlayerTime(color) > 0
+                return (
+                    playerHasMatingMaterial(self.gamemodel.boards[-1], color)
+                    and self.gamemodel.timemodel.getPlayerTime(color) > 0
+                )
             else:
-                return playerHasMatingMaterial(self.gamemodel.boards[-1],
-                                               color)
-        if isClaimableDraw(self.gamemodel.boards[-1]) or not \
-                (can_win(self.gamemodel.players[0].color) or
-                 can_win(self.gamemodel.players[1].color)):
+                return playerHasMatingMaterial(self.gamemodel.boards[-1], color)
+
+        if isClaimableDraw(self.gamemodel.boards[-1]) or not (
+            can_win(self.gamemodel.players[0].color)
+            or can_win(self.gamemodel.players[1].color)
+        ):
             self.menuitems["draw"].label = _("Claim Draw")
 
     def _update_menu_resign(self):
-        self.menuitems["resign"].sensitive = self.gamemodel.status in UNFINISHED_STATES \
+        self.menuitems["resign"].sensitive = (
+            self.gamemodel.status in UNFINISHED_STATES
             and not self.gamemodel.isObservationGame()
+        )
 
     def _update_menu_pause_and_resume(self):
         def game_is_pausable():
-            if self.gamemodel.isEngine2EngineGame() or \
-                (self.gamemodel.hasLocalPlayer() and
-                 (self.gamemodel.isLocalGame() or
-                  (isinstance(self.gamemodel, ICGameModel) and
-                   self.gamemodel.ply > 1))):
-                if sys.platform == "win32" and self.gamemodel.hasEnginePlayer(
-                ):
+            if self.gamemodel.isEngine2EngineGame() or (
+                self.gamemodel.hasLocalPlayer()
+                and (
+                    self.gamemodel.isLocalGame()
+                    or (
+                        isinstance(self.gamemodel, ICGameModel)
+                        and self.gamemodel.ply > 1
+                    )
+                )
+            ):
+                if sys.platform == "win32" and self.gamemodel.hasEnginePlayer():
                     return False
                 else:
                     return True
             else:
                 return False
 
-        self.menuitems["pause1"].sensitive = \
+        self.menuitems["pause1"].sensitive = (
             self.gamemodel.status == RUNNING and game_is_pausable()
-        self.menuitems["resume1"].sensitive =  \
+        )
+        self.menuitems["resume1"].sensitive = (
             self.gamemodel.status == PAUSED and game_is_pausable()
+        )
         # TODO: if IC game is over and game ended in adjournment
         #       and opponent is available, enable Resume
 
@@ -249,7 +315,9 @@ class GameWidget(GObject.GObject):
                 self.menuitems["undo1"].sensitive = True
             else:
                 self.menuitems["undo1"].sensitive = False
-        elif self.gamemodel.ply > 0 and self.gamemodel.status in UNDOABLE_STATES + (RUNNING,):
+        elif self.gamemodel.ply > 0 and self.gamemodel.status in UNDOABLE_STATES + (
+            RUNNING,
+        ):
             self.menuitems["undo1"].sensitive = True
         else:
             self.menuitems["undo1"].sensitive = False
@@ -259,8 +327,11 @@ class GameWidget(GObject.GObject):
             self.menuitems["ask_to_move"].sensitive = False
         elif isinstance(self.gamemodel, ICGameModel):
             self.menuitems["ask_to_move"].sensitive = False
-        elif self.gamemodel.waitingplayer.__type__ == LOCAL and self.gamemodel.status \
-                in UNFINISHED_STATES and self.gamemodel.status != PAUSED:
+        elif (
+            self.gamemodel.waitingplayer.__type__ == LOCAL
+            and self.gamemodel.status in UNFINISHED_STATES
+            and self.gamemodel.status != PAUSED
+        ):
             self.menuitems["ask_to_move"].sensitive = True
         else:
             self.menuitems["ask_to_move"].sensitive = False
@@ -270,8 +341,9 @@ class GameWidget(GObject.GObject):
         for color in (BLACK, WHITE):
             for piece in holding[color].keys():
                 count = holding[color][piece]
-                figurines[color] += " " if count == 0 else FAN_PIECES[color][
-                    piece] * count
+                figurines[color] += (
+                    " " if count == 0 else FAN_PIECES[color][piece] * count
+                )
         print(figurines[BLACK] + "   " + figurines[WHITE])
 
     def shownChanged(self, boardview, shown):
@@ -280,9 +352,14 @@ class GameWidget(GObject.GObject):
         #    holding = self.gamemodel.getBoardAtPly(shown, boardview.variation).board.holding
         #    self._showHolding(holding)
 
-        if self.gamemodel.timemodel.hasTimes and \
-            (self.gamemodel.endstatus or self.gamemodel.status in (DRAW, WHITEWON, BLACKWON)) and \
-                boardview.shownIsMainLine():
+        if (
+            self.gamemodel.timemodel.hasTimes
+            and (
+                self.gamemodel.endstatus
+                or self.gamemodel.status in (DRAW, WHITEWON, BLACKWON)
+            )
+            and boardview.shownIsMainLine()
+        ):
             wmovecount, color = divmod(shown + 1, 2)
             bmovecount = wmovecount - 1 if color == WHITE else wmovecount
             if self.gamemodel.timemodel.hasBWTimes(bmovecount, wmovecount):
@@ -311,8 +388,7 @@ class GameWidget(GObject.GObject):
         self._update_menu_undo()
         self._update_menu_ask_to_move()
 
-        if isinstance(gamemodel,
-                      ICGameModel) and not gamemodel.isObservationGame():
+        if isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame():
             for item in self.menuitems:
                 if item in self.menuitems.ANAL_MENU_ITEMS:
                     self.menuitems[item].sensitive = False
@@ -336,22 +412,23 @@ class GameWidget(GObject.GObject):
         return False
 
     def game_changed(self, gamemodel, ply):
-        '''This runs when the game changes. It updates everything.'''
+        """This runs when the game changes. It updates everything."""
         self._update_menu_abort()
         self._update_menu_ask_to_move()
         self._update_menu_draw()
         self._update_menu_pause_and_resume()
         self._update_menu_undo()
-        if isinstance(gamemodel,
-                      ICGameModel):  # on FICS game board change update allob
+        if isinstance(gamemodel, ICGameModel):  # on FICS game board change update allob
             if gamemodel.connection is not None and not gamemodel.connection.ICC:
-                allob = 'allob ' + str(gamemodel.ficsgame.gameno)
+                allob = "allob " + str(gamemodel.ficsgame.gameno)
                 gamemodel.connection.client.run_command(allob)
 
         for analyzer_type in (HINT, SPY):
             # only clear arrows if analyzer is examining the last position
-            if analyzer_type in gamemodel.spectators and \
-               gamemodel.spectators[analyzer_type].board == gamemodel.boards[-1]:
+            if (
+                analyzer_type in gamemodel.spectators
+                and gamemodel.spectators[analyzer_type].board == gamemodel.boards[-1]
+            ):
                 self._set_arrow(analyzer_type, None)
         self.name_changed(gamemodel.players[0])  # We may need to add * to name
 
@@ -365,7 +442,7 @@ class GameWidget(GObject.GObject):
         return False
 
     def game_saved(self, gamemodel, uri):
-        '''Run when the game is saved. Will remove * from title.'''
+        """Run when the game is saved. Will remove * from title."""
         self.name_changed(gamemodel.players[0])  # We may need to remove * in name
         return False
 
@@ -423,13 +500,18 @@ class GameWidget(GObject.GObject):
             except ParsingError as e:
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
-                log.debug("GameWidget._on_analyze(): Ignored (%s) from analyzer: ParsingError%s" %
-                          (' '.join(movstrs), e))
+                log.debug(
+                    "GameWidget._on_analyze(): Ignored (%s) from analyzer: ParsingError%s"
+                    % (" ".join(movstrs), e)
+                )
                 return
 
-            if moves and (self.gamemodel.curplayer.__type__ == LOCAL or
-               [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE] or
-               self.gamemodel.status not in UNFINISHED_STATES):
+            if moves and (
+                self.gamemodel.curplayer.__type__ == LOCAL
+                or [player.__type__ for player in self.gamemodel.players]
+                == [REMOTE, REMOTE]
+                or self.gamemodel.status not in UNFINISHED_STATES
+            ):
                 if moves[0].flag == DROP:
                     piece = lmove.FCORD(moves[0].move)
                     color = board.color if analyzer_type == HINT else 1 - board.color
@@ -442,8 +524,9 @@ class GameWidget(GObject.GObject):
         return False
 
     def analyzer_added(self, gamemodel, analyzer, analyzer_type):
-        self.cids[analyzer] = \
-            analyzer.connect("analyze", self._on_analyze, analyzer_type)
+        self.cids[analyzer] = analyzer.connect(
+            "analyze", self._on_analyze, analyzer_type
+        )
         # self.menuitems[analyzer_type + "_mode"].active = True
         self.menuitems[analyzer_type + "_mode"].sensitive = True
         return False
@@ -477,16 +560,17 @@ class GameWidget(GObject.GObject):
         if isinstance(self.gamemodel, ICGameModel):
             if self.gamemodel.ficsplayers:
                 text = self.gamemodel.ficsplayers[color].name
-                if (self.gamemodel.connection.username ==
-                    self.gamemodel.ficsplayers[color].name) and \
-                        self.gamemodel.ficsplayers[color].isGuest():
+                if (
+                    self.gamemodel.connection.username
+                    == self.gamemodel.ficsplayers[color].name
+                ) and self.gamemodel.ficsplayers[color].isGuest():
                     text += " (Player)"
         else:
             if self.gamemodel.players:
                 text = repr(self.gamemodel.players[color])
         if with_elo:
             elo = self.gamemodel.tags.get("WhiteElo" if color == WHITE else "BlackElo")
-            if elo not in [None, '', '?', '0', 0]:
+            if elo not in [None, "", "?", "0", 0]:
                 text += " (%s)" % str(elo)
         return text
 
@@ -494,10 +578,14 @@ class GameWidget(GObject.GObject):
     def display_text(self):
         if not self.gamemodel.players:
             return ""
-        '''This will give you the name of the game.'''
+        """This will give you the name of the game."""
         vs = " - "
-        t = vs.join((self.player_display_text(WHITE, True),
-                     self.player_display_text(BLACK, True)))
+        t = vs.join(
+            (
+                self.player_display_text(WHITE, True),
+                self.player_display_text(BLACK, True),
+            )
+        )
         return t
 
     def players_changed(self, gamemodel):
@@ -518,53 +606,60 @@ class GameWidget(GObject.GObject):
         name = self.player_display_text(color, False)
         self.gamemodel.tags["White" if color == WHITE else "Black"] = name
         self.player_name_labels[color].set_text(name)
-        if isinstance(self.gamemodel, ICGameModel) and \
-                player.__type__ == REMOTE:
+        if isinstance(self.gamemodel, ICGameModel) and player.__type__ == REMOTE:
             self.player_name_labels[color].set_tooltip_text(
-                get_player_tooltip_text(self.gamemodel.ficsplayers[color],
-                                        show_status=False))
+                get_player_tooltip_text(
+                    self.gamemodel.ficsplayers[color], show_status=False
+                )
+            )
 
-        self.emit('title_changed', self.display_text)
+        self.emit("title_changed", self.display_text)
         log.debug("GameWidget.name_changed: returning")
 
     def message_received(self, gamemodel, name, msg):
         if gamemodel.isObservationGame() and not self.isInFront():
             text = self.game_info_label.get_text()
             self.game_info_label.set_markup(
-                '<span color="red" weight="bold">%s</span>' % text)
+                '<span color="red" weight="bold">%s</span>' % text
+            )
 
     def zero_reached(self, timemodel, color):
         if self.gamemodel.status not in UNFINISHED_STATES:
             return
 
-        if self.gamemodel.players[0].__type__ == LOCAL \
-           and self.gamemodel.players[1].__type__ == LOCAL:
+        if (
+            self.gamemodel.players[0].__type__ == LOCAL
+            and self.gamemodel.players[1].__type__ == LOCAL
+        ):
             self.menuitems["call_flag"].sensitive = True
             return
 
         for player in self.gamemodel.players:
-            opplayercolor = BLACK if player == self.gamemodel.players[
-                WHITE] else WHITE
+            opplayercolor = BLACK if player == self.gamemodel.players[WHITE] else WHITE
             if player.__type__ == LOCAL and opplayercolor == color:
-                log.debug("gamewidget.zero_reached: LOCAL player=%s, color=%s" %
-                          (repr(player), str(color)))
+                log.debug(
+                    "gamewidget.zero_reached: LOCAL player=%s, color=%s"
+                    % (repr(player), str(color))
+                )
                 self.menuitems["call_flag"].sensitive = True
                 break
 
     def player_lagged(self, bm, player):
         if player in self.gamemodel.ficsplayers:
             content = get_infobarmessage_content(
-                player, _(" has lagged for 30 seconds"),
-                self.gamemodel.ficsgame.game_type)
+                player,
+                _(" has lagged for 30 seconds"),
+                self.gamemodel.ficsgame.game_type,
+            )
 
             def response_cb(infobar, response, message):
                 message.dismiss()
                 return False
 
-            message = InfoBarMessage(Gtk.MessageType.INFO, content,
-                                     response_cb)
-            message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
-                                                    Gtk.ResponseType.CANCEL))
+            message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+            message.add_button(
+                InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL)
+            )
             self.showMessage(message)
         return False
 
@@ -574,7 +669,8 @@ class GameWidget(GObject.GObject):
                 self.gamemodel.remote_ficsplayer,
                 _(" is lagging heavily but hasn't disconnected"),
                 _("Continue to wait for opponent, or try to adjourn the game?"),
-                gametype=self.gamemodel.ficsgame.game_type)
+                gametype=self.gamemodel.ficsgame.game_type,
+            )
 
             def response_cb(infobar, response, message):
                 if response == 2:
@@ -582,10 +678,8 @@ class GameWidget(GObject.GObject):
                 message.dismiss()
                 return False
 
-            message = InfoBarMessage(Gtk.MessageType.QUESTION, content,
-                                     response_cb)
-            message.add_button(InfoBarMessageButton(
-                _("Wait"), Gtk.ResponseType.CANCEL))
+            message = InfoBarMessage(Gtk.MessageType.QUESTION, content, response_cb)
+            message.add_button(InfoBarMessageButton(_("Wait"), Gtk.ResponseType.CANCEL))
             message.add_button(InfoBarMessageButton(_("Adjourn"), 2))
             self.showMessage(message)
         return False
@@ -605,7 +699,9 @@ class GameWidget(GObject.GObject):
         close_button.set_relief(Gtk.ReliefStyle.NONE)
         close_button.set_size_request(20, 18)
 
-        self.cids[close_button] = close_button.connect("clicked", self.on_game_close_clicked)
+        self.cids[close_button] = close_button.connect(
+            "clicked", self.on_game_close_clicked
+        )
 
         hbox.pack_end(close_button, False, True, 0)
         text_hbox = Gtk.HBox()
@@ -698,14 +794,30 @@ class GameWidget(GObject.GObject):
             else:
                 func()
 
-        self.cids[firstButton] = firstButton.connect("clicked", on_clicked, self.board.view.showFirst)
-        self.cids[prevButton] = prevButton.connect("clicked", on_clicked, self.board.view.showPrev)
-        self.cids[mainButton] = mainButton.connect("clicked", on_clicked, self.board.view.backToMainLine)
-        self.cids[upButton] = upButton.connect("clicked", on_clicked, self.board.view.backToParentLine)
-        self.cids[nextButton] = nextButton.connect("clicked", on_clicked, self.board.view.showNext)
-        self.cids[lastButton] = lastButton.connect("clicked", on_clicked, self.board.view.showLast)
-        self.cids[filterButton] = filterButton.connect("clicked", on_clicked, self.find_in_database)
-        self.cids[self.saveButton] = self.saveButton.connect("clicked", on_clicked, self.save_shapes_to_pgn)
+        self.cids[firstButton] = firstButton.connect(
+            "clicked", on_clicked, self.board.view.showFirst
+        )
+        self.cids[prevButton] = prevButton.connect(
+            "clicked", on_clicked, self.board.view.showPrev
+        )
+        self.cids[mainButton] = mainButton.connect(
+            "clicked", on_clicked, self.board.view.backToMainLine
+        )
+        self.cids[upButton] = upButton.connect(
+            "clicked", on_clicked, self.board.view.backToParentLine
+        )
+        self.cids[nextButton] = nextButton.connect(
+            "clicked", on_clicked, self.board.view.showNext
+        )
+        self.cids[lastButton] = lastButton.connect(
+            "clicked", on_clicked, self.board.view.showLast
+        )
+        self.cids[filterButton] = filterButton.connect(
+            "clicked", on_clicked, self.find_in_database
+        )
+        self.cids[self.saveButton] = self.saveButton.connect(
+            "clicked", on_clicked, self.save_shapes_to_pgn
+        )
 
         self.on_shapes_changed(self.board)
         self.board.connect("shapes_changed", self.on_shapes_changed)
@@ -722,10 +834,12 @@ class GameWidget(GObject.GObject):
     def find_in_database(self):
         persp = perspective_manager.get_perspective("database")
         if persp.chessfile is None:
-            dialogue = Gtk.MessageDialog(pychess.widgets.mainwindow(),
-                                         type=Gtk.MessageType.ERROR,
-                                         buttons=Gtk.ButtonsType.OK,
-                                         message_format=_("No database is currently opened."))
+            dialogue = Gtk.MessageDialog(
+                pychess.widgets.mainwindow(),
+                type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                message_format=_("No database is currently opened."),
+            )
             dialogue.run()
             dialogue.destroy()
             return
@@ -736,28 +850,34 @@ class GameWidget(GObject.GObject):
 
         tool, found = persp.chessfile.has_position(fen)
         if not found:
-            dialogue = Gtk.MessageDialog(pychess.widgets.mainwindow(),
-                                         type=Gtk.MessageType.WARNING,
-                                         buttons=Gtk.ButtonsType.OK,
-                                         message_format=_("The position does not exist in the database."))
+            dialogue = Gtk.MessageDialog(
+                pychess.widgets.mainwindow(),
+                type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.OK,
+                message_format=_("The position does not exist in the database."),
+            )
             dialogue.run()
             dialogue.destroy()
         else:
             if tool == TOOL_CHESSDB:
                 persp.chessfile.set_fen_filter(fen)
             elif tool == TOOL_SCOUTFISH:
-                dialogue = Gtk.MessageDialog(pychess.widgets.mainwindow(),
-                                             type=Gtk.MessageType.QUESTION,
-                                             buttons=Gtk.ButtonsType.YES_NO,
-                                             message_format=_("An approximate position has been found. Do you want to display it ?"))
+                dialogue = Gtk.MessageDialog(
+                    pychess.widgets.mainwindow(),
+                    type=Gtk.MessageType.QUESTION,
+                    buttons=Gtk.ButtonsType.YES_NO,
+                    message_format=_(
+                        "An approximate position has been found. Do you want to display it ?"
+                    ),
+                )
                 response = dialogue.run()
                 dialogue.destroy()
                 if response != Gtk.ResponseType.YES:
                     return
 
-                persp.chessfile.set_scout_filter({'sub-fen': fen})
+                persp.chessfile.set_scout_filter({"sub-fen": fen})
             else:
-                raise RuntimeError('Internal error')
+                raise RuntimeError("Internal error")
             persp.gamelist.ply = view.shown
             persp.gamelist.load_games()
             perspective_manager.activate_perspective("database")
@@ -778,15 +898,21 @@ class GameWidget(GObject.GObject):
         if view.circles:
             csl = []
             for circle in view.circles:
-                csl.append("%s%s" % (circle.color, repr(circle)))
-            shown_board.board.children = ["[%%csl %s]" % ",".join(csl)] + shown_board.board.children
+                csl.append("{}{}".format(circle.color, repr(circle)))
+            shown_board.board.children = [
+                "[%%csl %s]" % ",".join(csl)
+            ] + shown_board.board.children
             self.gamemodel.needsSave = True
 
         if view.arrows:
             cal = []
             for arrow in view.arrows:
-                cal.append("%s%s%s" % (arrow[0].color, repr(arrow[0]), repr(arrow[1])))
-            shown_board.board.children = ["[%%cal %s]" % ",".join(cal)] + shown_board.board.children
+                cal.append(
+                    "{}{}{}".format(arrow[0].color, repr(arrow[0]), repr(arrow[1]))
+                )
+            shown_board.board.children = [
+                "[%%cal %s]" % ",".join(cal)
+            ] + shown_board.board.children
             self.gamemodel.needsSave = True
 
         view.saved_arrows = set()
@@ -810,21 +936,20 @@ class GameWidget(GObject.GObject):
         self.tabcontent.show_all()
 
     def setLocked(self, locked):
-        """ Makes the board insensitive and turns off the tab ready indicator """
-        log.debug("GameWidget.setLocked: %s locked=%s" %
-                  (self.gamemodel.players, str(locked)))
+        """Makes the board insensitive and turns off the tab ready indicator"""
+        log.debug(
+            "GameWidget.setLocked: %s locked=%s" % (self.gamemodel.players, str(locked))
+        )
         self.board.setLocked(locked)
         if not self.tabcontent.get_children():
             return
         if len(self.tabcontent.get_child().get_children()) < 2:
-            log.warning(
-                "GameWidget.setLocked: Not removing last tabcontent child")
+            log.warning("GameWidget.setLocked: Not removing last tabcontent child")
             return
 
         self.light_on_off(not locked)
 
-        log.debug("GameWidget.setLocked: %s: returning" %
-                  self.gamemodel.players)
+        log.debug("GameWidget.setLocked: %s: returning" % self.gamemodel.players)
 
     def bringToFront(self):
         self.perspective.getheadbook().set_current_page(self.getPageNumber())
@@ -847,7 +972,7 @@ class GameWidget(GObject.GObject):
             self.perspective.notebooks["messageArea"].show()
 
     def replaceMessages(self, message):
-        """ Replace all messages with message """
+        """Replace all messages with message"""
         if not self.closed:
             self.infobar.clear_messages()
             self.showMessage(message)

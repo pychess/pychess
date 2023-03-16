@@ -10,12 +10,12 @@ __title__ = _("Move History")
 __active__ = True
 __icon__ = addDataPrefix("glade/panel_moves.svg")
 __desc__ = _(
-    "The moves sheet keeps track of the players' moves and lets you navigate through the game history")
+    "The moves sheet keeps track of the players' moves and lets you navigate through the game history"
+)
 
 
 class Sidepanel:
     def load(self, gmwidg):
-
         self.gamemodel = gmwidg.board.view.model
         self.model_cids = [
             self.gamemodel.connect_after("game_changed", self.game_changed),
@@ -34,6 +34,7 @@ class Sidepanel:
         def is_row_separator(treemodel, treeiter):
             mvcount, wmove, bmove, row, wbg, bbg = self.store[treeiter]
             return row == 0
+
         self.tv.set_row_separator_func(is_row_separator)
 
         self.tv.connect("style-updated", self.on_style_updated)
@@ -47,14 +48,18 @@ class Sidepanel:
         self.white_renderer = Gtk.CellRendererText()
         self.white_renderer.set_property("xalign", 1)
         self.white_renderer.set_property("font", movetext_font)
-        self.white_column = Gtk.TreeViewColumn("white", self.white_renderer, text=1, background=4)
+        self.white_column = Gtk.TreeViewColumn(
+            "white", self.white_renderer, text=1, background=4
+        )
         self.white_column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         self.tv.append_column(self.white_column)
 
         self.black_renderer = Gtk.CellRendererText()
         self.black_renderer.set_property("xalign", 1)
         self.black_renderer.set_property("font", movetext_font)
-        self.black_column = Gtk.TreeViewColumn("black", self.black_renderer, text=2, background=5)
+        self.black_column = Gtk.TreeViewColumn(
+            "black", self.black_renderer, text=2, background=5
+        )
         self.black_column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         self.tv.append_column(self.black_column)
 
@@ -70,7 +75,7 @@ class Sidepanel:
         # mvcount, white move, black move, row number, white move background, black move background
         self.store = Gtk.ListStore(str, str, str, int, str, str)
         self.tv.set_model(self.store)
-        self.tv_cid = self.tv.connect('row_activated', self.on_row_activated)
+        self.tv_cid = self.tv.connect("row_activated", self.on_row_activated)
 
         self.boardview = gmwidg.board.view
         self.cid = self.boardview.connect("shownChanged", self.shownChanged)
@@ -107,13 +112,17 @@ class Sidepanel:
 
         self.cids_conf = []
         self.cids_conf.append(conf.notify_add("movetextFont", font_changed))
-        self.cids_conf.append(conf.notify_add("figuresInNotation", figuresInNotationCallback))
+        self.cids_conf.append(
+            conf.notify_add("figuresInNotation", figuresInNotationCallback)
+        )
 
         return scrollwin
 
     def get_background_rgba(self, selected=False):
         if selected:
-            found, color = self.tv.get_style_context().lookup_color("theme_selected_bg_color")
+            found, color = self.tv.get_style_context().lookup_color(
+                "theme_selected_bg_color"
+            )
         else:
             found, color = self.tv.get_style_context().lookup_color("theme_base_color")
         return hexcol(Gdk.RGBA(color.red, color.green, color.blue, 1))
@@ -142,7 +151,9 @@ class Sidepanel:
         if old_row is not None:
             bg_col = 5 if old_col == self.black_column else 4
             treeiter = self.store.get_iter(Gtk.TreePath(old_row))
-            self.store.set_value(treeiter, bg_col, self.get_background_rgba(selected=False))
+            self.store.set_value(
+                treeiter, bg_col, self.get_background_rgba(selected=False)
+            )
 
         # Make activated cell background color selected
         self.activated_cell = path[0], col
@@ -169,7 +180,9 @@ class Sidepanel:
         row, column = self.ply_to_row_col(shown)
 
         try:
-            self.on_row_activated(self, Gtk.TreePath(row), column, from_show_changed=True)
+            self.on_row_activated(
+                self, Gtk.TreePath(row), column, from_show_changed=True
+            )
             self.tv.scroll_to_cell(row)
         except ValueError:
             pass
@@ -177,7 +190,7 @@ class Sidepanel:
 
     def moves_undone(self, gamemodel, moves):
         for i in range(moves):
-            treeiter = self.store.get_iter((len(self.store) - 1, ))
+            treeiter = self.store.get_iter((len(self.store) - 1,))
             # If latest move is black move don't remove whole line!
             if self.store[-1][2]:
                 self.store.set_value(treeiter, 2, "")
@@ -203,22 +216,55 @@ class Sidepanel:
 
     def add_move(self, gamemodel, ply):
         if ply == gamemodel.lowply:
-            self.store.append(["%4s." % gamemodel.lowply, "1234567", "1234567", 0, self.get_background_rgba(), self.get_background_rgba()])
+            self.store.append(
+                [
+                    "%4s." % gamemodel.lowply,
+                    "1234567",
+                    "1234567",
+                    0,
+                    self.get_background_rgba(),
+                    self.get_background_rgba(),
+                ]
+            )
             return
 
         if self.figuresInNotation:
-            notat = toFAN(gamemodel.getBoardAtPly(ply - 1), gamemodel.getMoveAtPly(ply - 1))
+            notat = toFAN(
+                gamemodel.getBoardAtPly(ply - 1), gamemodel.getMoveAtPly(ply - 1)
+            )
         else:
-            notat = toSAN(gamemodel.getBoardAtPly(ply - 1), gamemodel.getMoveAtPly(ply - 1), localRepr=True)
+            notat = toSAN(
+                gamemodel.getBoardAtPly(ply - 1),
+                gamemodel.getMoveAtPly(ply - 1),
+                localRepr=True,
+            )
 
         row, column = self.ply_to_row_col(ply)
 
         if len(self.store) - 1 < row:
             mvcount = "%s." % ((ply + 1) // 2)
             if column == self.white_column:
-                self.store.append([mvcount, notat, "", row, self.get_background_rgba(), self.get_background_rgba()])
+                self.store.append(
+                    [
+                        mvcount,
+                        notat,
+                        "",
+                        row,
+                        self.get_background_rgba(),
+                        self.get_background_rgba(),
+                    ]
+                )
             else:
-                self.store.append([mvcount, "", notat, row, self.get_background_rgba(), self.get_background_rgba()])
+                self.store.append(
+                    [
+                        mvcount,
+                        "",
+                        notat,
+                        row,
+                        self.get_background_rgba(),
+                        self.get_background_rgba(),
+                    ]
+                )
         else:
             treeiter = self.store.get_iter(Gtk.TreePath(row))
             col = 1 if column == self.white_column else 2

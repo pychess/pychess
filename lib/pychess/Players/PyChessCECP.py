@@ -1,4 +1,3 @@
-
 import re
 import signal
 import sys
@@ -8,11 +7,30 @@ import pychess
 from pychess.Players.PyChess import PyChess
 from pychess.System import conf, fident
 from pychess.Utils.book import getOpenings
-from pychess.Utils.const import NORMALCHESS, FEN_START, BLACK, FISCHERRANDOMCHESS, \
-    CRAZYHOUSECHESS, WILDCASTLESHUFFLECHESS, LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, \
-    THREECHECKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, \
-    SITTUYINCHESS, GIVEAWAYCHESS, HORDECHESS, RACINGKINGSCHESS, PLACEMENTCHESS, \
-    SCHESS, LIGHTBRIGADECHESS, WHITE
+from pychess.Utils.const import (
+    NORMALCHESS,
+    FEN_START,
+    BLACK,
+    FISCHERRANDOMCHESS,
+    CRAZYHOUSECHESS,
+    WILDCASTLESHUFFLECHESS,
+    LOSERSCHESS,
+    SUICIDECHESS,
+    ATOMICCHESS,
+    THREECHECKCHESS,
+    KINGOFTHEHILLCHESS,
+    ASEANCHESS,
+    MAKRUKCHESS,
+    CAMBODIANCHESS,
+    SITTUYINCHESS,
+    GIVEAWAYCHESS,
+    HORDECHESS,
+    RACINGKINGSCHESS,
+    PLACEMENTCHESS,
+    SCHESS,
+    LIGHTBRIGADECHESS,
+    WHITE,
+)
 from pychess.Utils.lutils.Benchmark import benchmark
 from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
@@ -25,12 +43,18 @@ from pychess.System.Log import log
 from pychess.Variants.horde import HORDESTART
 from pychess.Variants.placement import PLACEMENTSTART
 from pychess.Variants.threecheck import THREECHECKSTART
-from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, KAMBODIANSTART, SITTUYINSTART
+from pychess.Variants.asean import (
+    ASEANSTART,
+    MAKRUKSTART,
+    KAMBODIANSTART,
+    SITTUYINSTART,
+)
 from pychess.Variants.seirawan import SCHESSSTART
 from pychess.Variants.lightbrigade import LIGHTBRIGADESTART
 
 if sys.platform != "win32":
     import readline
+
     readline.clear_history()
 
 ASCII = sys.platform == "win32"
@@ -63,9 +87,9 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,light-brigade," +
-                        "losers,suicide,giveaway,horde,atomic,racingkings,seirawan," +
-                        "kingofthehill,3check,placement,asean,cambodian,makruk,sittuyin",
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,light-brigade,"
+            + "losers,suicide,giveaway,horde,atomic,racingkings,seirawan,"
+            + "kingofthehill,3check,placement,asean,cambodian,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
             "name": 0,
@@ -75,12 +99,11 @@ class PyChessCECP(PyChess):
             "memory": 0,  # Unimplemented
             "smp": 0,  # Unimplemented
             "egt": "gaviota",
-            "option": "skipPruneChance -slider 0 0 100"
+            "option": "skipPruneChance -slider 0 0 100",
         }
         python = sys.executable.split("/")[-1]
         python_version = "%s.%s.%s" % sys.version_info[0:3]
-        self.print("# %s [%s %s]" %
-                   (self.features["myname"], python, python_version))
+        self.print("# %s [%s %s]" % (self.features["myname"], python, python_version))
 
     def handle_sigterm(self, *args):
         self.__stopSearching()
@@ -111,8 +134,10 @@ class PyChessCECP(PyChess):
                     pass
 
                 elif lines[0] == "protover":
-                    stringPairs = ["=".join([k, '"%s"' % v if isinstance(
-                        v, str) else str(v)]) for k, v in self.features.items()]
+                    stringPairs = [
+                        "=".join([k, '"%s"' % v if isinstance(v, str) else str(v)])
+                        for k, v in self.features.items()
+                    ]
                     self.print("feature %s" % " ".join(stringPairs))
                     self.print("feature done=1")
 
@@ -223,7 +248,7 @@ class PyChessCECP(PyChess):
                     minutes = lines[2].split(":")
                     # Per protocol spec, strip off any non-numeric suffixes.
                     for i in range(len(minutes)):
-                        minutes[i] = re.match(r'\d*', minutes[i]).group()
+                        minutes[i] = re.match(r"\d*", minutes[i]).group()
                     self.basetime = int(minutes[0]) * 60
                     if len(minutes) > 1 and minutes[1]:
                         self.basetime += int(minutes[1])
@@ -240,10 +265,10 @@ class PyChessCECP(PyChess):
                 # Unimplemented: nps
 
                 elif lines[0] == "time":
-                    self.clock[self.playingAs] = float(lines[1]) / 100.
+                    self.clock[self.playingAs] = float(lines[1]) / 100.0
 
                 elif lines[0] == "otim":
-                    self.clock[1 - self.playingAs] = float(lines[1]) / 100.
+                    self.clock[1 - self.playingAs] = float(lines[1]) / 100.0
 
                 elif lines[0] == "usermove":
                     self.__stopSearching()
@@ -284,11 +309,9 @@ class PyChessCECP(PyChess):
                     try:
                         self.board = LBoard(self.board.variant)
                         fen = " ".join(lines[1:])
-                        self.board.applyFen(fen.replace("[", "/").replace("]",
-                                                                          ""))
+                        self.board.applyFen(fen.replace("[", "/").replace("]", ""))
                     except SyntaxError as err:
-                        self.print("tellusererror Illegal position: %s" %
-                                   str(err))
+                        self.print("tellusererror Illegal position: %s" % str(err))
 
                 # "edit" is unimplemented. See docs. Exiting edit mode returns to analyze mode.
 
@@ -300,9 +323,13 @@ class PyChessCECP(PyChess):
                     if entries:
                         totalWeight = sum(entry[1] for entry in entries)
                         for entry in entries:
-                            self.print("\t%s\t%02.2f%%" %
-                                       (toSAN(self.board, entry[0]), entry[1] *
-                                        100.0 / totalWeight))
+                            self.print(
+                                "\t%s\t%02.2f%%"
+                                % (
+                                    toSAN(self.board, entry[0]),
+                                    entry[1] * 100.0 / totalWeight,
+                                )
+                            )
 
                 elif lines[0] == "undo":
                     self.__stopSearching()
@@ -318,10 +345,10 @@ class PyChessCECP(PyChess):
                         self.__analyze()
 
                 elif lines[0] in ("hard", "easy"):
-                    self.ponder = (lines[0] == "hard")
+                    self.ponder = lines[0] == "hard"
 
                 elif lines[0] in ("post", "nopost"):
-                    self.post = (lines[0] == "post")
+                    self.post = lines[0] == "post"
 
                 elif lines[0] == "analyze":
                     self.analyzing = True
@@ -355,6 +382,7 @@ class PyChessCECP(PyChess):
                         else:
                             conf.set("egtb_path", conf.get("egtb_path"))
                         from pychess.Utils.lutils.lsearch import enableEGTB
+
                         enableEGTB()
 
                 elif lines[0] == "option" and len(lines) > 1:
@@ -368,8 +396,8 @@ class PyChessCECP(PyChess):
                             self.skipPruneChance = value / 100.0
                         else:
                             self.print(
-                                "Error (argument must be an integer 0..100): %s"
-                                % line)
+                                "Error (argument must be an integer 0..100): %s" % line
+                            )
 
                 # CECP analyze mode commands
                 # See http://www.gnu.org/software/xboard/engine-intf.html#11
@@ -385,18 +413,24 @@ class PyChessCECP(PyChess):
 
                 elif lines[0] == "moves":
                     self.print(self.board.prepr(ascii=ASCII))
-                    self.print([toSAN(self.board, move)
-                                for move in genAllMoves(self.board)])
+                    self.print(
+                        [toSAN(self.board, move) for move in genAllMoves(self.board)]
+                    )
 
                 elif lines[0] == "captures":
                     self.print(self.board.prepr(ascii=ASCII))
-                    self.print([toSAN(self.board, move)
-                                for move in genCaptures(self.board)])
+                    self.print(
+                        [toSAN(self.board, move) for move in genCaptures(self.board)]
+                    )
 
                 elif lines[0] == "evasions":
                     self.print(self.board.prepr(ascii=ASCII))
-                    self.print([toSAN(self.board, move)
-                                for move in genCheckEvasions(self.board)])
+                    self.print(
+                        [
+                            toSAN(self.board, move)
+                            for move in genCheckEvasions(self.board)
+                        ]
+                    )
 
                 elif lines[0] == "benchmark":
                     if len(lines) > 1:
@@ -407,8 +441,8 @@ class PyChessCECP(PyChess):
                 elif lines[0] == "profile":
                     if len(lines) > 1:
                         import cProfile
-                        cProfile.runctx("benchmark()", locals(), globals(),
-                                        lines[1])
+
+                        cProfile.runctx("benchmark()", locals(), globals(), lines[1])
                     else:
                         self.print("Usage: profile outputfilename")
 
@@ -459,16 +493,20 @@ class PyChessCECP(PyChess):
                 self.print("move %s" % result)
             # TODO: start pondering, if enabled
 
-        self.thread = Thread(target=PyChess._PyChess__go,
-                             name=fident(PyChess._PyChess__go),
-                             args=(self, ondone))
+        self.thread = Thread(
+            target=PyChess._PyChess__go,
+            name=fident(PyChess._PyChess__go),
+            args=(self, ondone),
+        )
         self.thread.daemon = True
         self.thread.start()
 
     def __analyze(self):
-        self.thread = Thread(target=PyChess._PyChess__analyze,
-                             name=fident(PyChess._PyChess__analyze),
-                             args=(self, ))
+        self.thread = Thread(
+            target=PyChess._PyChess__analyze,
+            name=fident(PyChess._PyChess__analyze),
+            args=(self,),
+        )
         self.thread.daemon = True
         self.thread.start()
 

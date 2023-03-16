@@ -4,9 +4,20 @@ from urllib.request import urlopen
 
 from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import FILE, RANK
-from pychess.Utils.const import WHITE, DRAW, NORMAL_MOVE, ENPASSANT, \
-    EMPTY, PAWN, BLACKWON, WHITEWON, \
-    QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION
+from pychess.Utils.const import (
+    WHITE,
+    DRAW,
+    NORMAL_MOVE,
+    ENPASSANT,
+    EMPTY,
+    PAWN,
+    BLACKWON,
+    WHITEWON,
+    QUEEN_PROMOTION,
+    ROOK_PROMOTION,
+    BISHOP_PROMOTION,
+    KNIGHT_PROMOTION,
+)
 
 from pychess.Utils.repr import reprColor
 from pychess.System.Log import log
@@ -22,7 +33,7 @@ PROMOTION_FLAGS = {
     8: QUEEN_PROMOTION,
     9: ROOK_PROMOTION,
     10: BISHOP_PROMOTION,
-    11: KNIGHT_PROMOTION
+    11: KNIGHT_PROMOTION,
 }
 
 
@@ -47,10 +58,10 @@ class EgtbK4kit:
             url = (URL + fen).replace(" ", "%20")
             try:
                 f = urlopen(url)
-            except IOError as e:
+            except OSError as e:
                 log.warning(
-                    "Unable to read endgame tablebase from the Internet: %s" %
-                    repr(e))
+                    "Unable to read endgame tablebase from the Internet: %s" % repr(e)
+                )
                 data = b""
             data = f.read()
             return data
@@ -64,14 +75,19 @@ class EgtbK4kit:
             try:
                 moves = []
                 for fcord, tcord, promotion, result in expression.findall(
-                        move_data.decode()):
+                    move_data.decode()
+                ):
                     fcord = int(fcord)
                     tcord = int(tcord)
 
                     if promotion:
                         flag = PROMOTION_FLAGS[int(promotion)]
-                    elif RANK(fcord) != RANK(tcord) and FILE(fcord) != FILE(tcord) and \
-                            board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY:
+                    elif (
+                        RANK(fcord) != RANK(tcord)
+                        and FILE(fcord) != FILE(tcord)
+                        and board.arBoard[fcord] == PAWN
+                        and board.arBoard[tcord] == EMPTY
+                    ):
                         flag = ENPASSANT
                     else:
                         flag = NORMAL_MOVE
@@ -101,16 +117,18 @@ class EgtbK4kit:
                 if moves:
                     self.table[(fen, color)] = moves
                 elif color == board.color and board.opIsChecked():
-                    log.warning("Asked endgametable for a won position: %s" %
-                                fen)
+                    log.warning("Asked endgametable for a won position: %s" % fen)
                 elif color == board.color:
                     log.warning(
-                        "Couldn't get %s data for position %s.\nData was: %s" %
-                        (reprColor[color], fen, repr(data)))
+                        "Couldn't get %s data for position %s.\nData was: %s"
+                        % (reprColor[color], fen, repr(data))
+                    )
             except (KeyError, ValueError):
                 log.warning(
-                    "Couldn't parse %s data for position %s.\nData was: %s" % (
-                        reprColor[color], fen, repr(data)))
+                    "Couldn't parse {} data for position {}.\nData was: {}".format(
+                        reprColor[color], fen, repr(data)
+                    )
+                )
                 self.table[(fen, color)] = []  # Don't try again.
 
         if (fen, board.color) in self.table:

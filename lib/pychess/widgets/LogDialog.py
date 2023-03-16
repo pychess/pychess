@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import time
 import logging
 
@@ -31,9 +29,9 @@ class InformationWindow:
         sw.set_shadow_type(Gtk.ShadowType.IN)
         mainHBox.pack_start(sw, False, True, 0)
         cls.treeview = Gtk.TreeView(Gtk.TreeStore(str))
-        cls.treeview.append_column(Gtk.TreeViewColumn("",
-                                                      Gtk.CellRendererText(),
-                                                      text=0))
+        cls.treeview.append_column(
+            Gtk.TreeViewColumn("", Gtk.CellRendererText(), text=0)
+        )
         cls.treeview.set_headers_visible(False)
         cls.treeview.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         sw.add(cls.treeview)
@@ -47,8 +45,7 @@ class InformationWindow:
         def selectionChanged(selection):
             treestore, iter = selection.get_selected()
             if iter:
-                child = cls.pathToPage[treestore.get_path(iter).to_string()][
-                    "child"]
+                child = cls.pathToPage[treestore.get_path(iter).to_string()]["child"]
                 cls.pages.set_current_page(cls.pages.page_num(child))
 
         cls.treeview.get_selection().connect("changed", selectionChanged)
@@ -70,13 +67,16 @@ class InformationWindow:
                 t = time.strftime("%H:%M:%S", time.localtime(timestamp))
                 textview.get_buffer().insert_with_tags_by_name(
                     textview.get_buffer().get_end_iter(),
-                    "\n%s\n%s\n" % (t, "-" * 60), str(logging.INFO))
+                    "\n{}\n{}\n".format(t, "-" * 60),
+                    str(logging.INFO),
+                )
                 cls.tagToTime[tag] = timestamp
 
             if not message.endswith("\n"):
                 message = "%s\n" % message
             textview.get_buffer().insert_with_tags_by_name(
-                textview.get_buffer().get_end_iter(), message, str(importance))
+                textview.get_buffer().get_end_iter(), message, str(importance)
+            )
 
         GLib.idle_add(_newMessage, cls, tag, timestamp, message, importance)
 
@@ -85,7 +85,7 @@ class InformationWindow:
         name = tag[-1]
         if isinstance(name, int):
             name = str(name)
-        iter = cls.treeview.get_model().append(parent_iter, (name, ))
+        iter = cls.treeview.get_model().append(parent_iter, (name,))
         cls.tagToIter[tag] = iter
 
         widgets = uistuff.GladeWidgets("findbar.glade")
@@ -96,39 +96,36 @@ class InformationWindow:
         uistuff.keepDown(widgets["scrolledwindow"])
         textview = widgets["textview"]
         tb = textview.get_buffer()
-        tb.create_tag(str(logging.DEBUG), family='Monospace')
-        tb.create_tag(
-            str(logging.INFO),
-            family='Monospace',
-            weight=Pango.Weight.BOLD)
-        tb.create_tag(
-            str(logging.WARNING),
-            family='Monospace',
-            foreground="red")
+        tb.create_tag(str(logging.DEBUG), family="Monospace")
+        tb.create_tag(str(logging.INFO), family="Monospace", weight=Pango.Weight.BOLD)
+        tb.create_tag(str(logging.WARNING), family="Monospace", foreground="red")
         tb.create_tag(
             str(logging.ERROR),
-            family='Monospace',
+            family="Monospace",
             weight=Pango.Weight.BOLD,
-            foreground="red")
+            foreground="red",
+        )
         tb.create_tag(
             str(logging.CRITICAL),
-            family='Monospace',
+            family="Monospace",
             weight=Pango.Weight.BOLD,
-            foreground="red")
+            foreground="red",
+        )
 
         findbar = widgets["findbar"]
         findbar.hide()
         # Make searchEntry and "out of label" share height with the buttons
         widgets["prevButton"].connect(
             "size-allocate",
-            lambda w, alloc: widgets["searchEntry"].set_size_request(-1, alloc.height) or widgets["outofLabel"].set_size_request(-1, alloc.height - 2))
+            lambda w, alloc: widgets["searchEntry"].set_size_request(-1, alloc.height)
+            or widgets["outofLabel"].set_size_request(-1, alloc.height - 2),
+        )
 
         # Make "out of label" more visually distinct
         uistuff.makeYellow(widgets["outofLabel"])
         widgets["outofLabel"].hide()
 
-        widgets["closeButton"].connect("clicked",
-                                       lambda w: widgets["findbar"].hide())
+        widgets["closeButton"].connect("clicked", lambda w: widgets["findbar"].hide())
 
         # Connect showing/hiding of the findbar
         cls.window.connect("key-press-event", cls.onTextviewKeypress, widgets)
@@ -136,16 +133,13 @@ class InformationWindow:
 
         widgets["searchEntry"].connect("changed", cls.onSearchChanged, widgets)
 
-        widgets["prevButton"].connect("clicked",
-                                      lambda w: cls.searchJump(-1, widgets))
-        widgets["nextButton"].connect("clicked",
-                                      lambda w: cls.searchJump(1, widgets))
+        widgets["prevButton"].connect("clicked", lambda w: cls.searchJump(-1, widgets))
+        widgets["nextButton"].connect("clicked", lambda w: cls.searchJump(1, widgets))
 
         cls.pages.append_page(frame, None)
         page = {"child": frame, "textview": textview}
         cls.tagToPage[tag] = page
-        cls.pathToPage[cls.treeview.get_model().get_path(iter).to_string(
-        )] = page
+        cls.pathToPage[cls.treeview.get_model().get_path(iter).to_string()] = page
 
         cls.treeview.expand_all()
 
@@ -154,15 +148,15 @@ class InformationWindow:
         if isinstance(tag, list):
             tag = tuple(tag)
         elif not isinstance(tag, tuple):
-            tag = (tag, )
+            tag = (tag,)
 
         if tag in cls.tagToPage:
             return cls.tagToPage[tag]
 
         for i in range(len(tag) - 1):
-            subtag = tag[:-i - 1]
+            subtag = tag[: -i - 1]
             if subtag in cls.tagToIter:
-                newtag = subtag + (tag[len(subtag)], )
+                newtag = subtag + (tag[len(subtag)],)
                 iter = cls.tagToIter[subtag]
                 cls._createPage(iter, newtag)
                 return cls._getPageFromTag(tag)
@@ -201,13 +195,11 @@ class InformationWindow:
         else:
             widgets["outofLabel"].searchCurrent += count
             current = widgets["outofLabel"].searchCurrent % amount
-            widgets["outofLabel"].set_text("%d %s %d" %
-                                           (current + 1, _("of"), amount))
+            widgets["outofLabel"].set_text("%d %s %d" % (current + 1, _("of"), amount))
             goto = widgets["outofLabel"].hits[current]
             iter0 = widgets["textview"].get_buffer().get_iter_at_offset(goto)
             length = len(widgets["searchEntry"].get_text())
-            iter1 = widgets["textview"].get_buffer().get_iter_at_offset(goto +
-                                                                        length)
+            iter1 = widgets["textview"].get_buffer().get_iter_at_offset(goto + length)
             widgets["textview"].get_buffer().select_range(iter0, iter1)
             widgets["textview"].scroll_to_iter(iter0, 0.2, False, 0.5, 0.5)
 
@@ -215,12 +207,13 @@ class InformationWindow:
     def onTextviewKeypress(cls, textview, event, widgets):
         if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
             if event.keyval in (ord("f"), ord("F")):
-                widgets["findbar"].props.visible = not widgets[
-                    "findbar"].props.visible
+                widgets["findbar"].props.visible = not widgets["findbar"].props.visible
                 if widgets["findbar"].props.visible:
                     signal = widgets["searchEntry"].connect_after(
                         "draw",
-                        lambda w, e: w.grab_focus() or widgets["searchEntry"].disconnect(signal))
+                        lambda w, e: w.grab_focus()
+                        or widgets["searchEntry"].disconnect(signal),
+                    )
 
     @classmethod
     def onFindbarKeypress(cls, findbar, event):

@@ -1,10 +1,8 @@
-# -*- coding: UTF-8 -*-
-
 from collections import namedtuple
 
 # https://www.iso.org/obp/ui/#iso:pub:PUB500001:en
 
-ISO3166 = namedtuple('ISO3166', 'iso2, country')
+ISO3166 = namedtuple("ISO3166", "iso2, country")
 ISO3166_LIST = [
     ISO3166("unknown", _("Unknown")),
     # Specific to pyChess: ISO3166("C", _("Computer")),
@@ -259,11 +257,11 @@ ISO3166_LIST = [
     # Discontinued: ISO3166("yu", _("Yugoslavia")),
     ISO3166("za", _("South Africa")),
     ISO3166("zm", _("Zambia")),
-    ISO3166("zw", _("Zimbabwe"))
+    ISO3166("zw", _("Zimbabwe")),
 ]
 
 # Bubble sort for the translated countries
-for i in range(len(ISO3166_LIST) - 1, 1, - 1):
+for i in range(len(ISO3166_LIST) - 1, 1, -1):
     for j in range(1, i - 1):
         if ISO3166_LIST[i].country < ISO3166_LIST[j].country:
             tmp = ISO3166_LIST[i]

@@ -2,8 +2,9 @@ import re
 from gi.repository import Gtk, GObject, Pango
 from pychess.widgets import insert_formatted
 
-TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
-    TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
+TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(
+    6
+)
 
 
 def get_playername(playername):
@@ -13,7 +14,12 @@ def get_playername(playername):
 
 class BulletCellRenderer(Gtk.CellRenderer):
     __gproperties__ = {
-        "color": (object, "Color", "Color", GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE),
+        "color": (
+            object,
+            "Color",
+            "Color",
+            GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE,
+        ),
     }
 
     def __init__(self):
@@ -52,7 +58,7 @@ class BulletCellRenderer(Gtk.CellRenderer):
 
     def on_get_size(self, widget, cell_area=None):
         if cell_area:
-            y_loc = int(cell_area.height / 2. - self.height / 2.) + cell_area.y
+            y_loc = int(cell_area.height / 2.0 - self.height / 2.0) + cell_area.y
             x_loc = cell_area.x
         else:
             y_loc = 0
@@ -86,7 +92,7 @@ class InfoPanel(Gtk.Notebook, Panel):
 
         label = Gtk.Label()
         label.set_markup("<big>%s</big>" % _("No conversation's selected"))
-        label.props.xalign = .5
+        label.props.xalign = 0.5
         label.props.yalign = 0.381966011
         label.props.justify = Gtk.Justification.CENTER
         label.props.wrap = True
@@ -96,12 +102,16 @@ class InfoPanel(Gtk.Notebook, Panel):
         self.connection = connection
 
     def addItem(self, grp_id, text, grp_type, chat_view):
-        if grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN,
-                        TYPE_BLINDFOLD):
+        if grp_type in (
+            TYPE_PERSONAL,
+            TYPE_COMP,
+            TYPE_GUEST,
+            TYPE_ADMIN,
+            TYPE_BLINDFOLD,
+        ):
             infoItem = self.PlayerInfoItem(grp_id, text, chat_view, self.connection)
         elif grp_type == TYPE_CHANNEL:
-            infoItem = self.ChannelInfoItem(grp_id, text, chat_view,
-                                            self.connection)
+            infoItem = self.ChannelInfoItem(grp_id, text, chat_view, self.connection)
         self.addPage(infoItem, grp_id)
 
     def removeItem(self, grp_id):
@@ -129,13 +139,16 @@ class InfoPanel(Gtk.Notebook, Panel):
             playername = get_playername(text)
             self.fm = connection.fm
             self.handle_id = self.fm.connect(
-                "fingeringFinished", self.onFingeringFinished, playername)
+                "fingeringFinished", self.onFingeringFinished, playername
+            )
 
             self.fm.finger(playername)
 
         def onFingeringFinished(self, fm, finger, playername):
-            if not isinstance(self.get_child(), Gtk.Label) or \
-                    finger.getName().lower() != playername.lower():
+            if (
+                not isinstance(self.get_child(), Gtk.Label)
+                or finger.getName().lower() != playername.lower()
+            ):
                 return
             self.fm.disconnect(self.handle_id)
 
@@ -176,16 +189,15 @@ class InfoPanel(Gtk.Notebook, Panel):
 
             self.names = set()
             chat_view.connect("messageAdded", self.onMessageAdded)
-            self.store = Gtk.ListStore(object,  # (r,g,b) Color tuple
-                                       str,  # name string
-                                       bool  # is separator
-                                       )
+            self.store = Gtk.ListStore(
+                object, str, bool  # (r,g,b) Color tuple  # name string  # is separator
+            )
 
-            connection.players.connect("FICSPlayerExited",
-                                       self.onPlayerRemoved)
+            connection.players.connect("FICSPlayerExited", self.onPlayerRemoved)
 
-            self.handle_id = self.cm.connect("receivedNames",
-                                             self.onNamesReceived, grp_id)
+            self.handle_id = self.cm.connect(
+                "receivedNames", self.onNamesReceived, grp_id
+            )
             self.cm.getPeopleInChannel(grp_id)
 
         def onPlayerRemoved(self, players, player):
@@ -197,8 +209,7 @@ class InfoPanel(Gtk.Notebook, Panel):
                 self.names.remove(player.name)
 
         def onNamesReceived(self, cm, channel, people, channel_):
-            if not isinstance(self.get_child(),
-                              Gtk.Label) or channel != channel_:
+            if not isinstance(self.get_child(), Gtk.Label) or channel != channel_:
                 return
             cm.disconnect(self.handle_id)
 
@@ -209,9 +220,7 @@ class InfoPanel(Gtk.Notebook, Panel):
             tv_list.set_headers_visible(False)
             tv_list.set_tooltip_column(1)
             tv_list.set_model(self.store)
-            tv_list.append_column(Gtk.TreeViewColumn("",
-                                                     BulletCellRenderer(),
-                                                     color=0))
+            tv_list.append_column(Gtk.TreeViewColumn("", BulletCellRenderer(), color=0))
             cell = Gtk.CellRendererText()
             cell.props.ellipsize = Pango.EllipsizeMode.END
             tv_list.append_column(Gtk.TreeViewColumn("", cell, text=1))
@@ -219,17 +228,15 @@ class InfoPanel(Gtk.Notebook, Panel):
 
             self.separatorIter = self.store.append([(), "", True])
 
-            tv_list.set_row_separator_func(lambda m, i, d: m.get_value(i, 2),
-                                           None)
+            tv_list.set_row_separator_func(lambda m, i, d: m.get_value(i, 2), None)
             scroll_win.add(tv_list)
 
-            self.store.connect("row-inserted",
-                               lambda w, p, i: tv_list.queue_resize())
+            self.store.connect("row-inserted", lambda w, p, i: tv_list.queue_resize())
             self.store.connect("row-deleted", lambda w, i: tv_list.queue_resize())
 
             # Add those names. If this is not the first namesReceive, we only
             # add the new names
-            noneed = set([name for (color, name, isSeparator) in self.store])
+            noneed = {name for (color, name, isSeparator) in self.store}
             for name in people:
                 if name in noneed:
                     continue
@@ -248,7 +255,8 @@ class InfoPanel(Gtk.Notebook, Panel):
                 return
 
             while self.store.get_path(s_iter) != self.store.get_path(
-                    self.separatorIter):
+                self.separatorIter
+            ):
                 person = self.store.get_value(s_iter, 1)
                 # If the person is already in the area before the separator, we
                 # don't have to do anything
@@ -270,5 +278,4 @@ class InfoPanel(Gtk.Notebook, Panel):
             # If the person was not in the area under the separator of the
             # store, it must be a new person, who has joined the channel, and we
             # simply add him before the separator
-            self.store.insert_before(self.separatorIter,
-                                     [color, sender, False])
+            self.store.insert_before(self.separatorIter, [color, sender, False])

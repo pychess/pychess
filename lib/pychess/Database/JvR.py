@@ -78,11 +78,26 @@ JvR_links = (
     ("http://www.endgame.nl/comeback.html", "http://www.endgame.nl/comeback.pgn"),
     ("http://www.endgame.nl/strategy.htm", "http://www.endgame.nl/strategy.pgn"),
     ("http://www.endgame.nl/computer.html", "http://www.endgame.nl/computer.pgn"),
-    ("http://www.endgame.nl/correspondence.html", "http://www.endgame.nl/gambitnimzo.pgn"),
-    ("http://web.inter.nl.net/hcc/rekius/buckle.htm", "http://web.inter.nl.net/hcc/rekius/buckle.pgn"),
-    ("http://web.inter.nl.net/hcc/rekius/euwe.htm", "http://web.inter.nl.net/hcc/rekius/euwem.pgn"),
+    (
+        "http://www.endgame.nl/correspondence.html",
+        "http://www.endgame.nl/gambitnimzo.pgn",
+    ),
+    (
+        "http://web.inter.nl.net/hcc/rekius/buckle.htm",
+        "http://web.inter.nl.net/hcc/rekius/buckle.pgn",
+    ),
+    (
+        "http://web.inter.nl.net/hcc/rekius/euwe.htm",
+        "http://web.inter.nl.net/hcc/rekius/euwem.pgn",
+    ),
 )
 
 JvR = []
 for item in JvR_links:
-    JvR.append((item[0], "https://raw.githubusercontent.com/gbtami/JvR-archive/master/%s" % item[1][7:]))
+    JvR.append(
+        (
+            item[0],
+            "https://raw.githubusercontent.com/gbtami/JvR-archive/master/%s"
+            % item[1][7:],
+        )
+    )

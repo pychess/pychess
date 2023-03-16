@@ -4,20 +4,19 @@ sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
 
 
 class ErrorManager(GObject.GObject):
-
     __gsignals__ = {
-        'onCommandNotFound': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
-        'onAmbiguousMove': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
-        'onIllegalMove': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
+        "onCommandNotFound": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "onAmbiguousMove": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "onIllegalMove": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
 
     def __init__(self, connection):
         GObject.GObject.__init__(self)
         connection.expect_line(self.onError, r"(.*?): Command not found\.")
-        connection.expect_line(self.onAmbiguousMove,
-                               r"Ambiguous move \((%s)\)\." % sanmove)
-        connection.expect_line(self.onIllegalMove, r"Illegal move \((%s)\)\." %
-                               sanmove)
+        connection.expect_line(
+            self.onAmbiguousMove, r"Ambiguous move \((%s)\)\." % sanmove
+        )
+        connection.expect_line(self.onIllegalMove, r"Illegal move \((%s)\)\." % sanmove)
 
     def onError(self, match):
         command = match.groups()[0]

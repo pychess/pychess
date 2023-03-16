@@ -25,6 +25,7 @@ class DialogTests(unittest.TestCase):
     def setUp(self):
         if sys.platform == "win32":
             from asyncio.windows_events import ProactorEventLoop
+
             loop = ProactorEventLoop()
             asyncio.set_event_loop(loop)
         else:
@@ -48,7 +49,7 @@ class DialogTests(unittest.TestCase):
         self.games_persp.gamewidgets.clear()
 
     def test0(self):
-        """ Open engines dialogs """
+        """Open engines dialogs"""
 
         # engines dialog
         enginesDialog.run(gamewidget.getWidgets())
@@ -56,7 +57,7 @@ class DialogTests(unittest.TestCase):
         self.assertTrue("PyChess.py" in engines)
 
     def test1(self):
-        """ Open new game dialog """
+        """Open new game dialog"""
 
         dialog = newGameDialog.NewGameMode()
 
@@ -75,7 +76,7 @@ class DialogTests(unittest.TestCase):
         self.loop.run_until_complete(coro(dialog))
 
     def test2(self):
-        """ Open setup position dialog """
+        """Open setup position dialog"""
 
         dialog = newGameDialog.SetupPositionExtension()
 
@@ -97,11 +98,13 @@ class DialogTests(unittest.TestCase):
 
         self.loop.run_until_complete(coro(dialog))
 
-    @unittest.skipIf(sys.platform == "win32",
-                     "Windows produces TypeError: could not get a reference to type class\n" +
-                     "on line: cls.sourcebuffer = GtkSource.Buffer()")
+    @unittest.skipIf(
+        sys.platform == "win32",
+        "Windows produces TypeError: could not get a reference to type class\n"
+        + "on line: cls.sourcebuffer = GtkSource.Buffer()",
+    )
     def test3(self):
-        """ Start a new game from enter notation dialog """
+        """Start a new game from enter notation dialog"""
 
         dialog = newGameDialog.EnterNotationExtension()
 
@@ -140,7 +143,7 @@ class DialogTests(unittest.TestCase):
         self.loop.run_until_complete(coro1())
 
     def test4(self):
-        """ Open preferences dialog """
+        """Open preferences dialog"""
 
         widgets = gamewidget.getWidgets()
         preferencesDialog.run(widgets)
@@ -161,7 +164,7 @@ class DialogTests(unittest.TestCase):
         self.assertIsNotNone(preferencesDialog.save_tab)
 
     def test5(self):
-        """ Open engine discoverer dialog """
+        """Open engine discoverer dialog"""
         dd = DiscovererDialog(discoverer)
 
         async def coro():
@@ -169,7 +172,9 @@ class DialogTests(unittest.TestCase):
                 event.set()
 
             event = asyncio.Event()
-            discoverer.connect("all_engines_discovered", on_all_engines_discovered, event)
+            discoverer.connect(
+                "all_engines_discovered", on_all_engines_discovered, event
+            )
 
             asyncio.create_task(dd.start())
 
@@ -178,5 +183,5 @@ class DialogTests(unittest.TestCase):
         self.loop.run_until_complete(coro())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

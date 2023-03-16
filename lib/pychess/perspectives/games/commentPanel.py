@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from gi.repository import Gtk
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
@@ -13,8 +11,7 @@ __title__ = _("Comments")
 
 __icon__ = addDataPrefix("glade/panel_comments.svg")
 
-__desc__ = _(
-    "The comments panel will try to analyze and explain the moves played")
+__desc__ = _("The comments panel will try to analyze and explain the moves played")
 
 
 class Sidepanel:
@@ -22,7 +19,6 @@ class Sidepanel:
         self.givenTips = {}
 
     def load(self, gmwidg):
-
         self.gamemodel = gmwidg.board.view.model
         self.model_cids = [
             self.gamemodel.connect_after("game_changed", self.game_changed),
@@ -41,7 +37,7 @@ class Sidepanel:
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         uistuff.appendAutowrapColumn(self.tv, "Comment", text=0)
-        self.tv_cid = self.tv.connect('cursor_changed', self.cursorChanged)
+        self.tv_cid = self.tv.connect("cursor_changed", self.cursorChanged)
 
         self.boardview = gmwidg.board.view
         self.cid = self.boardview.connect("shownChanged", self.shownChanged)
@@ -82,7 +78,7 @@ class Sidepanel:
     def moves_undone(self, game, moves):
         model = self.tv.get_model()
         for i in range(moves):
-            model.remove(model.get_iter((len(model) - 1, )))
+            model.remove(model.get_iter((len(model) - 1,)))
 
     def game_started(self, model):
         if model.lesson_game:
@@ -121,7 +117,6 @@ class Sidepanel:
             self.tv.get_selection().select_iter(iter)
 
     def __chooseComment(self, model, ply):
-
         if ply == model.lowply:
             return _("Initial position")
 
@@ -131,7 +126,8 @@ class Sidepanel:
 
         color = model.getBoardAtPly(ply - 1).board.color
         s, phase = evalMaterial(
-            model.getBoardAtPly(ply).board, model.getBoardAtPly(ply - 1).color)
+            model.getBoardAtPly(ply).board, model.getBoardAtPly(ply - 1).color
+        )
 
         #   * Final: Will be shown alone: "mates", "draws"
         #   * Prefix: Will always be shown: "castles", "promotes"
@@ -163,7 +159,7 @@ class Sidepanel:
 
         messages = getMessages("final")
         if messages:
-            return "%s %s" % (reprColor[color], messages[0])
+            return "{} {}".format(reprColor[color], messages[0])
 
         # ---
 
@@ -175,7 +171,7 @@ class Sidepanel:
 
         messages = getMessages("attack")
         for message in messages:
-            strings.append("%s %s" % (reprColor[color], message))
+            strings.append("{} {}".format(reprColor[color], message))
 
         # ----------------------------------------------------------------------
         # Check for prefixes
@@ -194,11 +190,11 @@ class Sidepanel:
         for message in getMessages("offencive_moves") + getMessages("defencive_moves"):
             if prefix:
                 strings.append(
-                    "%s %s %s %s" %
-                    (reprColor[color], prefix, _("and") + "\n", message))
+                    "%s %s %s %s" % (reprColor[color], prefix, _("and") + "\n", message)
+                )
                 prefix = ""
             else:
-                strings.append("%s %s" % (reprColor[color], message))
+                strings.append("{} {}".format(reprColor[color], message))
 
         # ----------------------------------------------------------------------
         # Simple
@@ -212,8 +208,9 @@ class Sidepanel:
                 score, message = messages[0]
                 if prefix:
                     strings.append(
-                        "%s %s %s %s" %
-                        (reprColor[color], prefix, _("and") + "\n", message))
+                        "%s %s %s %s"
+                        % (reprColor[color], prefix, _("and") + "\n", message)
+                    )
                     prefix = ""
 
         # ----------------------------------------------------------------------
@@ -223,7 +220,7 @@ class Sidepanel:
         # There was nothing to apply the prefix to, so we just post it here
         # before the states and tips
         if prefix:
-            strings.append("%s %s" % (reprColor[color], prefix))
+            strings.append("{} {}".format(reprColor[color], prefix))
             prefix = ""
 
         # ----------------------------------------------------------------------
@@ -242,7 +239,7 @@ class Sidepanel:
         tips = getMessages("tip")
         tips.sort(reverse=True)
 
-        for (score, tip) in tips:
+        for score, tip in tips:
             if tip in self.givenTips:
                 oldscore, oldply = self.givenTips[tip]
                 if score < oldscore * 1.3 or model.ply < oldply + 10:
@@ -259,10 +256,13 @@ class Sidepanel:
         if not strings:
             tcord = TCORD(model.getMoveAtPly(ply - 1).move)
             piece = model.getBoardAtPly(ply).board.arBoard[tcord]
-            strings.append(_("%(color)s moves a %(piece)s to %(cord)s") % {
-                'color': reprColor[color],
-                'piece': reprPiece[piece],
-                'cord': reprCord[tcord]
-            })
+            strings.append(
+                _("%(color)s moves a %(piece)s to %(cord)s")
+                % {
+                    "color": reprColor[color],
+                    "piece": reprPiece[piece],
+                    "cord": reprCord[tcord],
+                }
+            )
 
         return ";\n".join(strings)

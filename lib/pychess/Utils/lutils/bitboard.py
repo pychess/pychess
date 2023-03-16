@@ -6,7 +6,7 @@ def setBit(bitboard, i):
     return bitboard | bitPosArray[i]
 
 
-bitPosArray = [2**(63 - i) for i in range(64)]
+bitPosArray = [2 ** (63 - i) for i in range(64)]
 
 
 # clearBit returns the bitboard with the ith bit unset
@@ -14,17 +14,17 @@ def clearBit(bitboard, i):
     return bitboard & notBitPosArray[i]
 
 
-notBitPosArray = [~2**(63 - i) for i in range(64)]
+notBitPosArray = [~(2 ** (63 - i)) for i in range(64)]
 
 
 # firstBit returns the bit closest to 0 (A4) that is set in the board
 def firstBit(bitboard):
-    """ Returns the index of the first non-zero bit from left """
-    if (bitboard >> 48):
+    """Returns the index of the first non-zero bit from left"""
+    if bitboard >> 48:
         return lzArray[bitboard >> 48]
-    if (bitboard >> 32):
+    if bitboard >> 32:
         return lzArray[bitboard >> 32] + 16
-    if (bitboard >> 16):
+    if bitboard >> 16:
         return lzArray[bitboard >> 16] + 32
     return lzArray[bitboard] + 48
 
@@ -32,7 +32,7 @@ def firstBit(bitboard):
 # The bitCount array returns the leading non-zero bit in the 16 bit
 # input argument.
 
-lzArray = array('B', [0] * 65536)
+lzArray = array("B", [0] * 65536)
 
 s = n = 1
 for i in range(16):
@@ -78,6 +78,6 @@ def toString(bitboard):
 
     s2 = ""
     for i in range(64, 0, -8):
-        a = s[i - 8:i]
+        a = s[i - 8 : i]
         s2 += "".join(a) + "\n"
     return s2

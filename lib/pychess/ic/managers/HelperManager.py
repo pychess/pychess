@@ -3,11 +3,29 @@ import re
 from gi.repository import GObject
 
 from pychess.Utils.const import reprResult
-from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING, BLKCMD_GAMES, \
-    GAME_TYPES, TITLES, TYPE_BLITZ, parse_title_hex, TYPE_ATOMIC, TYPE_WILD, \
-    TYPE_STANDARD, TYPE_LIGHTNING, TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_BUGHOUSE, \
-    TYPE_SUICIDE, DEVIATION, STATUS, BLKCMD_WHO, IC_STATUS_NOT_AVAILABLE, \
-    IC_STATUS_AVAILABLE, parseRating
+from pychess.ic import (
+    GAME_TYPES_BY_SHORT_FICS_NAME,
+    IC_STATUS_PLAYING,
+    BLKCMD_GAMES,
+    GAME_TYPES,
+    TITLES,
+    TYPE_BLITZ,
+    parse_title_hex,
+    TYPE_ATOMIC,
+    TYPE_WILD,
+    TYPE_STANDARD,
+    TYPE_LIGHTNING,
+    TYPE_CRAZYHOUSE,
+    TYPE_LOSERS,
+    TYPE_BUGHOUSE,
+    TYPE_SUICIDE,
+    DEVIATION,
+    STATUS,
+    BLKCMD_WHO,
+    IC_STATUS_NOT_AVAILABLE,
+    IC_STATUS_AVAILABLE,
+    parseRating,
+)
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 from pychess.ic.managers.BoardManager import parse_reason
 
@@ -21,7 +39,9 @@ names = "([a-zA-Z]+)%s" % titles
 mf = r"(?:([mf]{1,2})\s?)?"
 whomatch = r"(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
-whoI = r"([A-Za-z]+)([\^~:\#. &])(\\d{2})" + r"(\d{1,4})([P E])" * 8 + r"(\d{1,4})([PE]?)"
+whoI = (
+    r"([A-Za-z]+)([\^~:\#. &])(\\d{2})" + r"(\d{1,4})([P E])" * 8 + r"(\d{1,4})([PE]?)"
+)
 re_whoI = re.compile(whoI)
 
 
@@ -44,38 +64,46 @@ class HelperManager(GObject.GObject):
         self.helperconn.expect_fromto(
             self.on_game_list,
             r"(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
-            %
-            (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())),
-            r"(\d+) games displayed.")
+            % (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())),
+            r"(\d+) games displayed.",
+        )
 
         if self.helperconn.FatICS or self.helperconn.USCN:
-            self.helperconn.expect_line(self.on_player_who, r"%s(?:\s{2,}%s)+" %
-                                        (whomatch, whomatch))
-            self.helperconn.expect_line(self.on_player_connect,
-                                        r"\[([A-Za-z]+) has connected\.\]")
-            self.helperconn.expect_line(self.on_player_disconnect,
-                                        r"\[([A-Za-z]+) has disconnected\.\]")
+            self.helperconn.expect_line(
+                self.on_player_who, r"%s(?:\s{2,}%s)+" % (whomatch, whomatch)
+            )
+            self.helperconn.expect_line(
+                self.on_player_connect, r"\[([A-Za-z]+) has connected\.\]"
+            )
+            self.helperconn.expect_line(
+                self.on_player_disconnect, r"\[([A-Za-z]+) has disconnected\.\]"
+            )
         else:
             # New ivar pin
             # http://www.freechess.org/Help/HelpFiles/new_features.html
-            self.helperconn.expect_fromto(self.on_player_whoI, whoI, r"(\d+) Players Displayed.")
+            self.helperconn.expect_fromto(
+                self.on_player_whoI, whoI, r"(\d+) Players Displayed."
+            )
             self.helperconn.expect_line(self.on_player_connectI, "<wa> %s" % whoI)
             self.helperconn.expect_line(self.on_player_disconnectI, "<wd> ([A-Za-z]+)")
 
         self.helperconn.expect_line(
             self.on_game_add,
-            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
+            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$",
+        )
         self.helperconn.expect_line(
             self.on_game_remove,
-            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
-        self.helperconn.expect_line(self.on_player_unavailable,
-                                    "%s is no longer available for matches." %
-                                    names)
+            r"\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$",
+        )
+        self.helperconn.expect_line(
+            self.on_player_unavailable, "%s is no longer available for matches." % names
+        )
         self.helperconn.expect_fromto(
             self.on_player_available,
             r"%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)"
             % (names, ratings, ratings, ratings, ratings, ratings),
-            "is now available for matches.")
+            "is now available for matches.",
+        )
 
         # FICS game types
         # b: blitz      l: lightning   u: untimed      e: examined game
@@ -106,8 +134,28 @@ class HelperManager(GObject.GObject):
                 else:
                     continue
             else:
-                gameno, wrating, wname, brating, bname, private, shorttype, rated, min, \
-                    inc, whour, wmin, wsec, bhour, bmin, bsec, wmat, bmat, color, movno = match.groups()
+                (
+                    gameno,
+                    wrating,
+                    wname,
+                    brating,
+                    bname,
+                    private,
+                    shorttype,
+                    rated,
+                    min,
+                    inc,
+                    whour,
+                    wmin,
+                    wsec,
+                    bhour,
+                    bmin,
+                    bsec,
+                    wmat,
+                    bmat,
+                    color,
+                    movno,
+                ) = match.groups()
             try:
                 gametype = GAME_TYPES_BY_SHORT_FICS_NAME[shorttype]
             except KeyError:
@@ -115,14 +163,16 @@ class HelperManager(GObject.GObject):
 
             wplayer = self.connection.players.get(wname)
             bplayer = self.connection.players.get(bname)
-            game = FICSGame(wplayer,
-                            bplayer,
-                            gameno=int(gameno),
-                            rated=(rated == "r"),
-                            private=(private == "p"),
-                            minutes=int(min),
-                            inc=int(inc),
-                            game_type=gametype)
+            game = FICSGame(
+                wplayer,
+                bplayer,
+                gameno=int(gameno),
+                rated=(rated == "r"),
+                private=(private == "p"),
+                minutes=int(min),
+                inc=int(inc),
+                game_type=gametype,
+            )
 
             for player, rating in ((wplayer, wrating), (bplayer, brating)):
                 if player.status != IC_STATUS_PLAYING:
@@ -146,11 +196,13 @@ class HelperManager(GObject.GObject):
             return
         wplayer = self.connection.players.get(wname)
         bplayer = self.connection.players.get(bname)
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=int(gameno),
-                        rated=(rated == "rated"),
-                        game_type=GAME_TYPES[game_type])
+        game = FICSGame(
+            wplayer,
+            bplayer,
+            gameno=int(gameno),
+            rated=(rated == "rated"),
+            game_type=GAME_TYPES[game_type],
+        )
 
         for player in (wplayer, bplayer):
             if player.status != IC_STATUS_PLAYING:
@@ -162,10 +214,7 @@ class HelperManager(GObject.GObject):
 
     def on_game_remove(self, match):
         gameno, wname, bname, comment, result = match.groups()
-        result, reason = parse_reason(
-            reprResult.index(result),
-            comment,
-            wname=wname)
+        result, reason = parse_reason(reprResult.index(result), comment, wname=wname)
 
         try:
             wplayer = self.connection.players.get(wname)
@@ -184,19 +233,19 @@ class HelperManager(GObject.GObject):
             print("%s not in self.connections.players - creating" % bname)
             bplayer = FICSPlayer(bname)
 
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=int(gameno),
-                        result=result,
-                        reason=reason)
+        game = FICSGame(
+            wplayer, bplayer, gameno=int(gameno), result=result, reason=reason
+        )
         if wplayer.game is not None:
             game.rated = wplayer.game.rated
         game = self.connection.games.get(game, emit=False)
 
         # Our played/observed game ends are handled in main connection to prevent
         # removing them by helper connection before latest move(style12) comes from server
-        if game == self.connection.bm.theGameImPlaying or \
-           game in self.connection.bm.gamesImObserving:
+        if (
+            game == self.connection.bm.theGameImPlaying
+            or game in self.connection.bm.gamesImObserving
+        ):
             return
 
         self.connection.games.game_ended(game)
@@ -217,25 +266,46 @@ class HelperManager(GObject.GObject):
     def on_player_connectI(self, match, set_online=True):
         # bslwBzSLx
         # gbtami 001411E1663P1483P1720P0P1646P0P0P1679P
-        name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
-            wild, wilddev, bughouse, bughousedev, crazyhouse, crazyhousedev, \
-            suicide, suicidedev, losers, losersdev, atomic, atomicdev = match.groups()
+        (
+            name,
+            status,
+            titlehex,
+            blitz,
+            blitzdev,
+            std,
+            stddev,
+            light,
+            lightdev,
+            wild,
+            wilddev,
+            bughouse,
+            bughousedev,
+            crazyhouse,
+            crazyhousedev,
+            suicide,
+            suicidedev,
+            losers,
+            losersdev,
+            atomic,
+            atomicdev,
+        ) = match.groups()
         player = self.connection.players.get(name)
 
         titles = parse_title_hex(titlehex)
         if not player.titles >= titles:
             player.titles |= titles
 
-        for rating_type, elo, dev in \
-                ((TYPE_BLITZ, blitz, blitzdev),
-                 (TYPE_STANDARD, std, stddev),
-                 (TYPE_LIGHTNING, light, lightdev),
-                 (TYPE_ATOMIC, atomic, atomicdev),
-                 (TYPE_WILD, wild, wilddev),
-                 (TYPE_CRAZYHOUSE, crazyhouse, crazyhousedev),
-                 (TYPE_BUGHOUSE, bughouse, bughousedev),
-                 (TYPE_LOSERS, losers, losersdev),
-                 (TYPE_SUICIDE, suicide, suicidedev)):
+        for rating_type, elo, dev in (
+            (TYPE_BLITZ, blitz, blitzdev),
+            (TYPE_STANDARD, std, stddev),
+            (TYPE_LIGHTNING, light, lightdev),
+            (TYPE_ATOMIC, atomic, atomicdev),
+            (TYPE_WILD, wild, wilddev),
+            (TYPE_CRAZYHOUSE, crazyhouse, crazyhousedev),
+            (TYPE_BUGHOUSE, bughouse, bughousedev),
+            (TYPE_LOSERS, losers, losersdev),
+            (TYPE_SUICIDE, suicide, suicidedev),
+        ):
             rating = parseRating(elo)
             if player.ratings[rating_type] != rating:
                 player.ratings[rating_type] = rating
@@ -304,8 +374,10 @@ class HelperManager(GObject.GObject):
             player.titles |= titles
         # we get here after players start a game, so we make sure that we don't
         # overwrite IC_STATUS_PLAYING
-        if player.game is None and \
-                player.status not in (IC_STATUS_PLAYING, IC_STATUS_NOT_AVAILABLE):
+        if player.game is None and player.status not in (
+            IC_STATUS_PLAYING,
+            IC_STATUS_NOT_AVAILABLE,
+        ):
             player.status = IC_STATUS_NOT_AVAILABLE
 
     def on_player_available(self, matches):
@@ -320,9 +392,13 @@ class HelperManager(GObject.GObject):
         if not player.titles >= titles:
             player.titles |= titles
 
-        for rating_type, rating in ((TYPE_BLITZ, blitz), (TYPE_STANDARD, std),
-                                    (TYPE_LIGHTNING, light), (TYPE_WILD, wild),
-                                    (TYPE_BUGHOUSE, bughouse)):
+        for rating_type, rating in (
+            (TYPE_BLITZ, blitz),
+            (TYPE_STANDARD, std),
+            (TYPE_LIGHTNING, light),
+            (TYPE_WILD, wild),
+            (TYPE_BUGHOUSE, bughouse),
+        ):
             rating = parseRating(rating)
             if player.ratings[rating_type] != rating:
                 player.ratings[rating_type] = rating

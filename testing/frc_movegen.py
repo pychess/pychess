@@ -10,7 +10,7 @@ from pychess.Utils.const import FISCHERRANDOMCHESS
 
 class FRCFindMovesTestCase(unittest.TestCase):
     """Move generator test using perftsuite.epd from
-       http://www.albert.nu/programs/sharper/perft.htm"""
+    http://www.albert.nu/programs/sharper/perft.htm"""
 
     MAXDEPTH = 0
 
@@ -43,7 +43,7 @@ class FRCFindMovesTestCase(unittest.TestCase):
             castl = castl.replace("k", "h")
             castl = castl.replace("q", "a")
             fen[2] = castl
-            fen = ' '.join(fen)
+            fen = " ".join(fen)
 
             print(i + 1, "/", len(positions), "-", fen)
             board.applyFen(fen)
@@ -62,7 +62,7 @@ class FRCFindMovesTestCase(unittest.TestCase):
         print()
         self.MAXDEPTH = 3
         positions = []
-        with open('gamefiles/perftsuite.epd') as f:
+        with open("gamefiles/perftsuite.epd") as f:
             for line in f:
                 parts = line.split(";")
                 depths = [int(s[3:].rstrip()) for s in parts[1:]]
@@ -75,7 +75,7 @@ class FRCFindMovesTestCase(unittest.TestCase):
         print()
         self.MAXDEPTH = 3
         positions = []
-        with open('gamefiles/frc_perftsuite.epd') as f:
+        with open("gamefiles/frc_perftsuite.epd") as f:
             for line in f:
                 parts = line.split(";")
                 depths = [int(s[3:].rstrip()) for s in parts[1:]]
@@ -83,5 +83,5 @@ class FRCFindMovesTestCase(unittest.TestCase):
         self.movegen(positions)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

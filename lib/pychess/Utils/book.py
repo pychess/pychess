@@ -1,4 +1,3 @@
-
 import os
 from struct import Struct
 from collections import namedtuple
@@ -18,7 +17,7 @@ else:
 # The book probing code is based on that of PolyGlot by Fabien Letouzey.
 # PolyGlot is available under the GNU GPL from http://wbec-ridderkerk.nl
 
-BookEntry = namedtuple('BookEntry', 'key move weight learn')
+BookEntry = namedtuple("BookEntry", "key move weight learn")
 # 'key' c_uint64      the position's hash
 # 'move' c_uint16     the candidate move
 # 'weight' c_uint16   proportional to prob. we should play it
@@ -31,12 +30,12 @@ entrysize = entrystruct.size
 
 
 def getOpenings(board):
-    """ Return a tuple (move, weight, learn) for each opening move
-        in the given position. The weight is proportional to the probability
-        that a move should be played. By convention, games is the number of
-        times a move has been tried, and score the number of points it has
-        scored (with 2 per victory and 1 per draw). However, opening books
-        aren't required to keep this information. """
+    """Return a tuple (move, weight, learn) for each opening move
+    in the given position. The weight is proportional to the probability
+    that a move should be played. By convention, games is the number of
+    times a move has been tried, and score the number of points it has
+    scored (with 2 per victory and 1 per draw). However, opening books
+    aren't required to keep this information."""
 
     openings = []
     if not bookfile:

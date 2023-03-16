@@ -3,7 +3,13 @@ from gi.repository import GObject
 from pychess.ic.FICSObjects import FICSGame
 from pychess.ic.managers.HelperManager import HelperManager
 from pychess.ic import parseRating, GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING
-from pychess.ic.icc import DG_PLAYER_ARRIVED_SIMPLE, DG_PLAYER_LEFT, DG_TOURNEY, CN_GAMES, DG_WILD_KEY
+from pychess.ic.icc import (
+    DG_PLAYER_ARRIVED_SIMPLE,
+    DG_PLAYER_LEFT,
+    DG_TOURNEY,
+    CN_GAMES,
+    DG_WILD_KEY,
+)
 
 
 class ICCHelperManager(HelperManager):
@@ -12,7 +18,9 @@ class ICCHelperManager(HelperManager):
 
         self.connection = connection
 
-        self.connection.expect_dg_line(DG_PLAYER_ARRIVED_SIMPLE, self.on_icc_player_arrived_simple)
+        self.connection.expect_dg_line(
+            DG_PLAYER_ARRIVED_SIMPLE, self.on_icc_player_arrived_simple
+        )
         self.connection.expect_dg_line(DG_PLAYER_LEFT, self.on_icc_player_left)
         self.connection.expect_dg_line(DG_TOURNEY, self.on_icc_tourney)
         self.connection.expect_dg_line(DG_WILD_KEY, self.on_icc_wild_key)
@@ -99,14 +107,16 @@ class ICCHelperManager(HelperManager):
 
             wplayer = self.connection.players.get(wname)
             bplayer = self.connection.players.get(bname)
-            game = FICSGame(wplayer,
-                            bplayer,
-                            gameno=int(gameno),
-                            rated=(rated == "r"),
-                            private=(private == "p"),
-                            minutes=int(min),
-                            inc=int(inc),
-                            game_type=gametype)
+            game = FICSGame(
+                wplayer,
+                bplayer,
+                gameno=int(gameno),
+                rated=(rated == "r"),
+                private=(private == "p"),
+                minutes=int(min),
+                inc=int(inc),
+                game_type=gametype,
+            )
 
             for player, rating in ((wplayer, wrating), (bplayer, brating)):
                 if player.status != IC_STATUS_PLAYING:
@@ -123,9 +133,11 @@ class ICCHelperManager(HelperManager):
             games_got.append(game)
 
         for game in previous_games:
-            if game not in games_got and \
-                game not in self.connection.bm.gamesImObserving and \
-                    game is not self.connection.bm.theGameImPlaying:
+            if (
+                game not in games_got
+                and game not in self.connection.bm.gamesImObserving
+                and game is not self.connection.bm.theGameImPlaying
+            ):
                 self.connection.games.game_ended(game)
                 game.wplayer.game = None
                 game.bplayer.game = None

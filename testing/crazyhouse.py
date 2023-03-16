@@ -1,6 +1,3 @@
-# -*- coding: UTF-8 -*-
-
-
 import unittest
 
 from pychess.Utils.logic import validate
@@ -48,29 +45,29 @@ class CrazyhouseTestCase(unittest.TestCase):
         board = CrazyhouseBoard(setup=FEN0)
         print(board)
         # Drop can save mate
-        self.assertTrue(validate(board, parseSAN(board, 'R@b8')))
-        self.assertTrue(validate(board, parseSAN(board, 'Ka7')))
-        self.assertTrue(validate(board, parseSAN(board, 'Kb7')))
-        self.assertTrue(not validate(board, parseSAN(board, 'P@b8')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Kb8')))
+        self.assertTrue(validate(board, parseSAN(board, "R@b8")))
+        self.assertTrue(validate(board, parseSAN(board, "Ka7")))
+        self.assertTrue(validate(board, parseSAN(board, "Kb7")))
+        self.assertTrue(not validate(board, parseSAN(board, "P@b8")))
+        self.assertTrue(not validate(board, parseSAN(board, "Kb8")))
 
     def test_check_evasions(self):
         """Testing check evasions in Crazyhouse variant"""
         board = CrazyhouseBoard(setup=FEN1)
         print(board)
         # invalid drop
-        self.assertTrue(validate(board, parseSAN(board, 'Q@b1')))
-        self.assertTrue(validate(board, parseSAN(board, 'Q@c1')))
-        self.assertTrue(validate(board, parseSAN(board, 'Kxb2')))
-        self.assertTrue(not validate(board, parseSAN(board, 'P@b1')))
-        self.assertTrue(not validate(board, parseSAN(board, 'P@c1')))
+        self.assertTrue(validate(board, parseSAN(board, "Q@b1")))
+        self.assertTrue(validate(board, parseSAN(board, "Q@c1")))
+        self.assertTrue(validate(board, parseSAN(board, "Kxb2")))
+        self.assertTrue(not validate(board, parseSAN(board, "P@b1")))
+        self.assertTrue(not validate(board, parseSAN(board, "P@c1")))
 
         evasions = [move for move in genCheckEvasions(board.board)]
-        self.assertTrue(parseSAN(board, 'Q@b1').move in evasions)
-        self.assertTrue(parseSAN(board, 'Q@c1').move in evasions)
-        self.assertTrue(parseSAN(board, 'Kxb2').move in evasions)
-        self.assertTrue(parseSAN(board, 'P@b1').move not in evasions)
-        self.assertTrue(parseSAN(board, 'P@c1').move not in evasions)
+        self.assertTrue(parseSAN(board, "Q@b1").move in evasions)
+        self.assertTrue(parseSAN(board, "Q@c1").move in evasions)
+        self.assertTrue(parseSAN(board, "Kxb2").move in evasions)
+        self.assertTrue(parseSAN(board, "P@b1").move not in evasions)
+        self.assertTrue(parseSAN(board, "P@c1").move not in evasions)
 
     def test_apply_pop(self):
         """Testing Crazyhouse applyMove popMove"""
@@ -91,8 +88,9 @@ class CrazyhouseTestCase(unittest.TestCase):
             #    continue
             board.applyMove(lmove1)
             if print_apply_pop:
-                print("applyMove1", Move(lmove1), board.holding,
-                      board.capture_promoting)
+                print(
+                    "applyMove1", Move(lmove1), board.holding, board.capture_promoting
+                )
             if print_board_promoted:
                 print(board.promoted)
             if board.opIsChecked():
@@ -110,8 +108,12 @@ class CrazyhouseTestCase(unittest.TestCase):
                 #   continue
                 board.applyMove(lmove2)
                 if print_apply_pop:
-                    print("   applyMove2", Move(lmove2), board.holding,
-                          board.capture_promoting)
+                    print(
+                        "   applyMove2",
+                        Move(lmove2),
+                        board.holding,
+                        board.capture_promoting,
+                    )
                 if print_board_promoted:
                     print(board.promoted)
                 if board.opIsChecked():
@@ -129,8 +131,12 @@ class CrazyhouseTestCase(unittest.TestCase):
                     #   continue
                     board.applyMove(lmove3)
                     if print_apply_pop:
-                        print("      applyMove3", Move(lmove3), board.holding,
-                              board.capture_promoting)
+                        print(
+                            "      applyMove3",
+                            Move(lmove3),
+                            board.holding,
+                            board.capture_promoting,
+                        )
                     if print_board_promoted:
                         print(board.promoted)
                     if board.opIsChecked():
@@ -141,44 +147,49 @@ class CrazyhouseTestCase(unittest.TestCase):
 
                     board.popMove()
                     if print_apply_pop:
-                        print("      popMove3", Move(lmove3), board.holding,
-                              board.capture_promoting)
+                        print(
+                            "      popMove3",
+                            Move(lmove3),
+                            board.holding,
+                            board.capture_promoting,
+                        )
                     if print_board_promoted:
                         print(board.promoted)
 
                     self.assertEqual(holding2, board.holding)
                     self.assertEqual(promoted2, board.promoted)
-                    self.assertEqual(capture_promoting2,
-                                     board.capture_promoting)
-                    self.assertEqual(hist_capture_promoting2,
-                                     board.hist_capture_promoting)
+                    self.assertEqual(capture_promoting2, board.capture_promoting)
+                    self.assertEqual(
+                        hist_capture_promoting2, board.hist_capture_promoting
+                    )
 
                 board.popMove()
                 if print_apply_pop:
-                    print("   popMove2", Move(lmove2), board.holding,
-                          board.capture_promoting)
+                    print(
+                        "   popMove2",
+                        Move(lmove2),
+                        board.holding,
+                        board.capture_promoting,
+                    )
                 if print_board_promoted:
                     print(board.promoted)
 
                 self.assertEqual(holding1, board.holding)
                 self.assertEqual(promoted1, board.promoted)
                 self.assertEqual(capture_promoting1, board.capture_promoting)
-                self.assertEqual(hist_capture_promoting1,
-                                 board.hist_capture_promoting)
+                self.assertEqual(hist_capture_promoting1, board.hist_capture_promoting)
 
             board.popMove()
             if print_apply_pop:
-                print("popMove1", Move(lmove1), board.holding,
-                      board.capture_promoting)
+                print("popMove1", Move(lmove1), board.holding, board.capture_promoting)
             if print_board_promoted:
                 print(board.promoted)
 
             self.assertEqual(holding0, board.holding)
             self.assertEqual(promoted0, board.promoted)
             self.assertEqual(capture_promoting0, board.capture_promoting)
-            self.assertEqual(hist_capture_promoting0,
-                             board.hist_capture_promoting)
+            self.assertEqual(hist_capture_promoting0, board.hist_capture_promoting)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

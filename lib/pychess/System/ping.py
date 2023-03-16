@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import asyncio
 import re
 import sys
@@ -12,12 +10,12 @@ from pychess.System.SubProcess import SubProcess
 
 
 class Pinger(GObject.GObject):
-    """ The received signal contains the time it took to get response from the
-        server in millisecconds. -1 means that some error occurred """
+    """The received signal contains the time it took to get response from the
+    server in millisecconds. -1 means that some error occurred"""
 
     __gsignals__ = {
-        "received": (GObject.SignalFlags.RUN_FIRST, None, (float, )),
-        "error": (GObject.SignalFlags.RUN_FIRST, None, (str, ))
+        "received": (GObject.SignalFlags.RUN_FIRST, None, (float,)),
+        "error": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
 
     def __init__(self, host):
@@ -33,7 +31,7 @@ class Pinger(GObject.GObject):
             return msg
 
         error = _("Destination Host Unreachable")
-        self.errorExprs = (re.compile("(%s)" % error), )
+        self.errorExprs = (re.compile("(%s)" % error),)
         del _
 
         self.restartsOnDead = 3
@@ -67,9 +65,11 @@ class Pinger(GObject.GObject):
 
     def __handleDead(self, subprocess):
         if self.deadCount < self.restartsOnDead:
-            log.warning("Pinger died and restarted (%d/%d)" %
-                        (self.deadCount + 1, self.restartsOnDead),
-                        extra={"task": self.subproc.defname})
+            log.warning(
+                "Pinger died and restarted (%d/%d)"
+                % (self.deadCount + 1, self.restartsOnDead),
+                extra={"task": self.subproc.defname},
+            )
             self.stop()
             self.start()
             self.deadCount += 1
@@ -96,6 +96,7 @@ if __name__ == "__main__":
     pinger.connect("received", callback)
     pinger.start()
     import time
+
     time.sleep(5)
     pinger.stop()
     time.sleep(3)

@@ -17,6 +17,7 @@ from pychess.perspectives.database import Database
 from pychess.perspectives.welcome import Welcome
 from pychess.perspectives.database.FilterPanel import formatted, TAG_FILTER, RULE
 from pychess.System.Log import log
+
 log.logger.setLevel(logging.INFO)
 
 
@@ -51,7 +52,7 @@ class DatabaseTests(unittest.TestCase):
         self.database_persp.create_toolbuttons()
 
     def test1(self):
-        """ Play and save Human-Human 1 min game """
+        """Play and save Human-Human 1 min game"""
 
         loop = asyncio.get_event_loop()
         loop.set_debug(enabled=True)
@@ -80,7 +81,9 @@ class DatabaseTests(unittest.TestCase):
 
             gamemodel.connect("players_changed", on_players_changed)
 
-            asyncio.create_task(self.games_persp.generalStart(gamemodel, player0tup, player1tup))
+            asyncio.create_task(
+                self.games_persp.generalStart(gamemodel, player0tup, player1tup)
+            )
 
             # waiting for game end ...
             await event.wait()
@@ -94,12 +97,16 @@ class DatabaseTests(unittest.TestCase):
         loop.run_until_complete(coro())
 
     def test2(self):
-        """ Import world_matches.pgn into pychess.pgn """
+        """Import world_matches.pgn into pychess.pgn"""
 
         def on_chessfile_opened(persp, cf):
             self.assertEqual(self.database_persp.chessfile.count, 1)
 
-            self.database_persp.importing(["gamefiles/world_matches.pgn", ])
+            self.database_persp.importing(
+                [
+                    "gamefiles/world_matches.pgn",
+                ]
+            )
             # We saved 1 game in test1 and world_matches.pgn has 580 games
             self.assertEqual(self.database_persp.chessfile.count, 581)
 
@@ -107,7 +114,7 @@ class DatabaseTests(unittest.TestCase):
         self.database_persp.open_chessfile(test_pgn)
 
     def test3(self):
-        """ Filter pychess.pgn by Kasparov as white """
+        """Filter pychess.pgn by Kasparov as white"""
 
         def on_chessfile_opened(persp, cf):
             self.assertEqual(self.database_persp.chessfile.count, 581)
@@ -120,7 +127,9 @@ class DatabaseTests(unittest.TestCase):
 
             selection = fp.get_selection()
             model, treeiter = selection.get_selected()
-            fp.treestore.append(treeiter, [formatted(tag_query), tag_query, TAG_FILTER, RULE])
+            fp.treestore.append(
+                treeiter, [formatted(tag_query), tag_query, TAG_FILTER, RULE]
+            )
             fp.filtered = True
             fp.update_filters()
             # world_matches.pgn has 49 games where Kasparov was white
@@ -130,5 +139,5 @@ class DatabaseTests(unittest.TestCase):
         self.database_persp.open_chessfile(test_pgn)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -8,13 +8,36 @@ from collections import defaultdict
 
 from gi.repository import Gtk
 
-from pychess.ic.FICSObjects import make_sensitive_if_available, make_sensitive_if_playing
+from pychess.ic.FICSObjects import (
+    make_sensitive_if_available,
+    make_sensitive_if_playing,
+)
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.Utils.Offer import Offer
-from pychess.Utils.const import WAITING_TO_START, WHITE, BLACK, WHITEWON, \
-    BLACKWON, WON_ADJUDICATION, TAKEBACK_OFFER, LOCAL, UNDOABLE_STATES, WHITE_ENGINE_DIED, \
-    UNDOABLE_REASONS, BLACK_ENGINE_DIED, HINT, SPY, RUNNING, ABORT_OFFER, ADJOURN_OFFER, \
-    DRAW_OFFER, PAUSE_OFFER, RESUME_OFFER, HURRY_ACTION, FLAG_CALL
+from pychess.Utils.const import (
+    WAITING_TO_START,
+    WHITE,
+    BLACK,
+    WHITEWON,
+    BLACKWON,
+    WON_ADJUDICATION,
+    TAKEBACK_OFFER,
+    LOCAL,
+    UNDOABLE_STATES,
+    WHITE_ENGINE_DIED,
+    UNDOABLE_REASONS,
+    BLACK_ENGINE_DIED,
+    HINT,
+    SPY,
+    RUNNING,
+    ABORT_OFFER,
+    ADJOURN_OFFER,
+    DRAW_OFFER,
+    PAUSE_OFFER,
+    RESUME_OFFER,
+    HURRY_ACTION,
+    FLAG_CALL,
+)
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.Utils.LearnModel import LearnModel
 from pychess.System import conf
@@ -33,22 +56,30 @@ class GameNanny:
         self.model_cids = defaultdict(list)
 
     def nurseGame(self, gmwidg, gamemodel):
-        """ Call this function when gmwidget is just created """
-        log.debug("nurseGame: %s %s" % (gmwidg, gamemodel))
+        """Call this function when gmwidget is just created"""
+        log.debug("nurseGame: {} {}".format(gmwidg, gamemodel))
         self.gmwidg_cids[gmwidg] = [
             gmwidg.connect("closed", self.on_gmwidg_closed),
             gmwidg.connect("title_changed", self.on_gmwidg_title_changed),
         ]
         if gamemodel.status == WAITING_TO_START:
-            self.model_cids[gamemodel].append(gamemodel.connect("game_started", self.on_game_started, gmwidg))
+            self.model_cids[gamemodel].append(
+                gamemodel.connect("game_started", self.on_game_started, gmwidg)
+            )
         else:
             self.on_game_started(gamemodel, gmwidg)
 
-        self.model_cids[gamemodel].append(gamemodel.connect("game_ended", self.game_ended, gmwidg))
-        self.model_cids[gamemodel].append(gamemodel.connect("game_terminated", self.on_game_terminated, gmwidg))
+        self.model_cids[gamemodel].append(
+            gamemodel.connect("game_ended", self.game_ended, gmwidg)
+        )
+        self.model_cids[gamemodel].append(
+            gamemodel.connect("game_terminated", self.on_game_terminated, gmwidg)
+        )
 
         if isinstance(gamemodel, ICGameModel):
-            gmwidg.cids[gamemodel.connection] = gamemodel.connection.connect("disconnected", self.on_disconnected, gmwidg)
+            gmwidg.cids[gamemodel.connection] = gamemodel.connection.connect(
+                "disconnected", self.on_disconnected, gmwidg
+            )
 
     def on_game_terminated(self, gamemodel, gmwidg):
         for player in self.offer_cids[gamemodel]:
@@ -77,13 +108,13 @@ class GameNanny:
     def on_gmwidg_closed(self, gmwidg):
         perspective = perspective_manager.get_perspective("games")
         if len(perspective.key2gmwidg) == 1:
-            getWidgets()['main_window'].set_title('%s - PyChess' % _('Welcome'))
+            getWidgets()["main_window"].set_title("%s - PyChess" % _("Welcome"))
         return False
 
     def on_gmwidg_title_changed(self, gmwidg, new_title):
         # log.debug("gamenanny.on_gmwidg_title_changed: starting %s" % repr(gmwidg))
         if gmwidg.isInFront():
-            getWidgets()['main_window'].set_title('%s - PyChess' % new_title)
+            getWidgets()["main_window"].set_title("%s - PyChess" % new_title)
         # log.debug("gamenanny.on_gmwidg_title_changed: returning")
         return False
 
@@ -92,11 +123,15 @@ class GameNanny:
     # ===============================================================================
 
     def game_ended(self, gamemodel, reason, gmwidg):
-        log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s" %
-                  (reason, gmwidg, gamemodel))
-        nameDic = {"white": gamemodel.players[WHITE],
-                   "black": gamemodel.players[BLACK],
-                   "mover": gamemodel.curplayer}
+        log.debug(
+            "gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s"
+            % (reason, gmwidg, gamemodel)
+        )
+        nameDic = {
+            "white": gamemodel.players[WHITE],
+            "black": gamemodel.players[BLACK],
+            "mover": gamemodel.curplayer,
+        }
         if gamemodel.status == WHITEWON:
             nameDic["winner"] = gamemodel.players[WHITE]
             nameDic["loser"] = gamemodel.players[BLACK]
@@ -128,11 +163,18 @@ class GameNanny:
                     elif response == 1:
                         gamemodel.remote_player.observe()
                     return False
-                gmwidg.cids[gamemodel.remote_ficsplayer] = \
-                    gamemodel.remote_ficsplayer.connect("notify::status", status_changed, message)
+
+                gmwidg.cids[
+                    gamemodel.remote_ficsplayer
+                ] = gamemodel.remote_ficsplayer.connect(
+                    "notify::status", status_changed, message
+                )
                 message.add_button(InfoBarMessageButton(_("Offer Rematch"), 0))
-                message.add_button(InfoBarMessageButton(
-                    _("Observe %s" % gamemodel.remote_ficsplayer.name), 1))
+                message.add_button(
+                    InfoBarMessageButton(
+                        _("Observe %s" % gamemodel.remote_ficsplayer.name), 1
+                    )
+                )
                 status_changed(gamemodel.remote_ficsplayer, None, message)
 
             else:
@@ -148,7 +190,9 @@ class GameNanny:
                 for i, player in enumerate(gamemodel.ficsplayers):
                     button = InfoBarMessageButton(_("Observe %s" % player.name), i)
                     message.add_button(button)
-                    gmwidg.cids[player] = player.connect("notify::status", status_changed, button)
+                    gmwidg.cids[player] = player.connect(
+                        "notify::status", status_changed, button
+                    )
                     status_changed(player, None, button)
 
         elif gamemodel.hasLocalPlayer() and not isinstance(gamemodel, LearnModel):
@@ -157,6 +201,7 @@ class GameNanny:
                 if response == 1:
                     # newGameDialog uses perspectives.games uses gamenanny uses newGameDialog...
                     from pychess.widgets.newGameDialog import createRematch
+
                     createRematch(gamemodel)
                 elif response == 2:
                     if gamemodel.ply > 1:
@@ -171,12 +216,14 @@ class GameNanny:
 
             if not gamemodel.isLoadedGame():
                 message.add_button(InfoBarMessageButton(_("Play Rematch"), 1))
-            if gamemodel.status in UNDOABLE_STATES and gamemodel.reason in UNDOABLE_REASONS:
+            if (
+                gamemodel.status in UNDOABLE_STATES
+                and gamemodel.reason in UNDOABLE_REASONS
+            ):
                 if gamemodel.ply == 1:
                     message.add_button(InfoBarMessageButton(_("Undo one move"), 2))
                 elif gamemodel.ply > 1:
-                    message.add_button(InfoBarMessageButton(
-                        _("Undo two moves"), 2))
+                    message.add_button(InfoBarMessageButton(_("Undo two moves"), 2))
 
         message.callback = callback
         gmwidg.game_ended_message = message
@@ -190,9 +237,11 @@ class GameNanny:
         elif reason == BLACK_ENGINE_DIED:
             self.engineDead(gamemodel.players[1], gmwidg)
 
-        if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
-                gamemodel.isEngine2EngineGame() or \
-                (isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best):
+        if (
+            (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame())
+            or gamemodel.isEngine2EngineGame()
+            or (isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best)
+        ):
             asyncio.create_task(gamemodel.restart_analyzer(HINT))
             asyncio.create_task(gamemodel.restart_analyzer(SPY))
             if not conf.get("hint_mode"):
@@ -227,7 +276,8 @@ class GameNanny:
         for player in gamemodel.players:
             if player.__type__ == LOCAL:
                 self.offer_cids[gamemodel][player] = player.connect(
-                    "offer", self.offer_callback, gamemodel, gmwidg)
+                    "offer", self.offer_callback, gamemodel, gmwidg
+                )
 
         # Start analyzers if any
         if not gamemodel.isEngine2EngineGame():
@@ -272,6 +322,7 @@ class GameNanny:
         def response_cb(infobar, response, message):
             message.dismiss()
             return False
+
         content = InfoBar.get_message_content("", message, Gtk.STOCK_DIALOG_INFO)
         message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
         gmwidg.replaceMessages(message)
@@ -284,12 +335,16 @@ class GameNanny:
 
     def engineDead(self, engine, gmwidg):
         gmwidg.bringToFront()
-        dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
-                                   buttons=Gtk.ButtonsType.OK)
+        dialog = Gtk.MessageDialog(
+            mainwindow(), type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK
+        )
         dialog.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
-        dialog.format_secondary_text(_(
-            "PyChess has lost connection to the engine, probably because it has died.\n\n \
-            You can try to start a new game with the engine, or try to play against another one."))
+        dialog.format_secondary_text(
+            _(
+                "PyChess has lost connection to the engine, probably because it has died.\n\n \
+            You can try to start a new game with the engine, or try to play against another one."
+            )
+        )
         dialog.connect("response", lambda dialog, r: dialog.hide())
         dialog.show_all()
 

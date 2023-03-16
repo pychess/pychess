@@ -1,4 +1,3 @@
-
 import cairo
 
 from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
@@ -14,7 +13,7 @@ def ceil(f):
 
 
 class HighlightArea(OverlayWindow):
-    """ An entirely blue widget """
+    """An entirely blue widget"""
 
     def __init__(self, parent):
         OverlayWindow.__init__(self, parent)
@@ -53,7 +52,7 @@ class HighlightArea(OverlayWindow):
         a = self_.get_allocation()
         context.rectangle(a.x, a.y, a.width, a.height)
         sc = self.get_style_context()
-        found, color = sc.lookup_color('p_light_selected')
+        found, color = sc.lookup_color("p_light_selected")
         if self.is_composited():
             context.set_operator(cairo.OPERATOR_CLEAR)
             context.set_source_rgba(0, 0, 0, 0.0)

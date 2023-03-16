@@ -1,6 +1,3 @@
-# -*- coding: UTF-8 -*-
-
-
 import unittest
 
 from pychess.Utils.logic import validate
@@ -41,22 +38,22 @@ class LosersTestCase(unittest.TestCase):
 
         board = LosersBoard(setup=FEN0)
         print(board)
-        self.assertTrue(validate(board, parseSAN(board, 'Kxa7')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Kb8')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Kb7')))
+        self.assertTrue(validate(board, parseSAN(board, "Kxa7")))
+        self.assertTrue(not validate(board, parseSAN(board, "Kb8")))
+        self.assertTrue(not validate(board, parseSAN(board, "Kb7")))
 
         board = LosersBoard(setup=FEN1)
         print(board)
-        self.assertTrue(not validate(board, parseSAN(board, 'Kxa7')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Kb8')))
-        self.assertTrue(validate(board, parseSAN(board, 'Kb7')))
+        self.assertTrue(not validate(board, parseSAN(board, "Kxa7")))
+        self.assertTrue(not validate(board, parseSAN(board, "Kb8")))
+        self.assertTrue(validate(board, parseSAN(board, "Kb7")))
 
         board = LosersBoard(setup=FEN2)
         print(board)
-        self.assertTrue(not validate(board, parseSAN(board, 'Kxb7')))
-        self.assertTrue(not validate(board, parseSAN(board, 'Kb8')))
-        self.assertTrue(validate(board, parseSAN(board, 'Rxb7')))
+        self.assertTrue(not validate(board, parseSAN(board, "Kxb7")))
+        self.assertTrue(not validate(board, parseSAN(board, "Kb8")))
+        self.assertTrue(validate(board, parseSAN(board, "Rxb7")))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

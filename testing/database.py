@@ -21,10 +21,10 @@ class DatabaseTests(unittest.TestCase):
         perspective_manager.add_perspective(self.database_persp)
 
     def test1(self):
-        """ Open a .pgn database """
+        """Open a .pgn database"""
         filename = "gamefiles/world_matches.pgn"
         self.database_persp.open_chessfile(filename)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

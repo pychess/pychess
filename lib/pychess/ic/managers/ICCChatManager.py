@@ -1,8 +1,15 @@
 from gi.repository import GLib, GObject
 
 from pychess.ic import GAME_TYPES
-from pychess.ic.icc import DG_PLAYERS_IN_MY_GAME, DG_KIBITZ, DG_PERSONAL_TELL, \
-    DG_SHOUT, DG_CHANNEL_TELL, DG_PEOPLE_IN_MY_CHANNEL, DG_CHANNELS_SHARED
+from pychess.ic.icc import (
+    DG_PLAYERS_IN_MY_GAME,
+    DG_KIBITZ,
+    DG_PERSONAL_TELL,
+    DG_SHOUT,
+    DG_CHANNEL_TELL,
+    DG_PEOPLE_IN_MY_CHANNEL,
+    DG_CHANNELS_SHARED,
+)
 from pychess.ic.managers.ChatManager import ChatManager
 
 CHANNEL_SHOUT = "shout"
@@ -14,12 +21,16 @@ class ICCChatManager(ChatManager):
         GObject.GObject.__init__(self)
         self.connection = connection
 
-        self.connection.expect_dg_line(DG_PLAYERS_IN_MY_GAME, self.on_icc_players_in_my_game)
+        self.connection.expect_dg_line(
+            DG_PLAYERS_IN_MY_GAME, self.on_icc_players_in_my_game
+        )
         self.connection.expect_dg_line(DG_KIBITZ, self.on_icc_kibitz)
         self.connection.expect_dg_line(DG_PERSONAL_TELL, self.on_icc_personal_tell)
         self.connection.expect_dg_line(DG_SHOUT, self.on_icc_shout)
         self.connection.expect_dg_line(DG_CHANNEL_TELL, self.on_icc_channel_tell)
-        self.connection.expect_dg_line(DG_PEOPLE_IN_MY_CHANNEL, self.on_icc_people_in_my_channel)
+        self.connection.expect_dg_line(
+            DG_PEOPLE_IN_MY_CHANNEL, self.on_icc_people_in_my_channel
+        )
         self.connection.expect_dg_line(DG_CHANNELS_SHARED, self.on_icc_channels_shared)
 
         self.connection.client.run_command("set-2 %s 1" % DG_PLAYERS_IN_MY_GAME)
@@ -36,17 +47,18 @@ class ICCChatManager(ChatManager):
 
         self.connection.client.run_command("set height 240")
 
-        self.connection.client.run_command("inchannel %s" %
-                                           self.connection.username)
+        self.connection.client.run_command("inchannel %s" % self.connection.username)
         self.connection.client.run_command("help channel_list")
         self.observers = {}
 
-        self.channels = [(CHANNEL_SHOUT, _("Shout")),
-                         (CHANNEL_CSHOUT, _("Chess Shout"))]
+        self.channels = [
+            (CHANNEL_SHOUT, _("Shout")),
+            (CHANNEL_CSHOUT, _("Chess Shout")),
+        ]
 
         for id, channel in ICC_CHANNELS:
             self.channels.append((str(id), channel))
-        GLib.idle_add(self.emit, 'channelsListed', self.channels)
+        GLib.idle_add(self.emit, "channelsListed", self.channels)
 
     def on_icc_players_in_my_game(self, data):
         # gamenumber playername symbol kibvalue
@@ -61,9 +73,9 @@ class ICCChatManager(ChatManager):
         gameno, name, symbol, kibvalue = data.split()
 
         ficsplayer = self.connection.players.get(name)
-        rating = ficsplayer.getRatingByGameType(GAME_TYPES['standard'])
+        rating = ficsplayer.getRatingByGameType(GAME_TYPES["standard"])
         if rating:
-            name = "%s(%s)" % (name, rating)
+            name = "{}({})".format(name, rating)
 
         if gameno not in self.observers:
             observers = set()
@@ -75,7 +87,7 @@ class ICCChatManager(ChatManager):
             self.observers[gameno].remove(name)
 
         obs_str = " ".join(list(self.observers[gameno]))
-        self.emit('observers_received', gameno, obs_str)
+        self.emit("observers_received", gameno, obs_str)
 
     def on_icc_kibitz(self, data):
         # gamenumber playername titles kib/whi ^Y{kib string^Y}
@@ -105,7 +117,9 @@ class ICCChatManager(ChatManager):
         # print(name, shout_type, text)
         isadmin = shout_type == "3"  # announcements
         isme = name.lower() == self.connection.username.lower()
-        GLib.idle_add(self.emit, "channelMessage", name, isadmin, isme, "shout", text[:-2])
+        GLib.idle_add(
+            self.emit, "channelMessage", name, isadmin, isme, "shout", text[:-2]
+        )
 
     def on_icc_channel_tell(self, data):
         # channel playername titles ^Y{tell string^Y} type

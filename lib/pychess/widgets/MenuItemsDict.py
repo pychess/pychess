@@ -1,4 +1,3 @@
-
 from gi.repository import GLib
 
 from pychess.System import conf
@@ -10,11 +9,7 @@ from pychess.Utils.const import ACTION_MENU_ITEMS
 
 
 class GtkMenuItem:
-    def __init__(self,
-                 name,
-                 sensitive=False,
-                 label=None,
-                 tooltip=None):
+    def __init__(self, name, sensitive=False, label=None, tooltip=None):
         assert isinstance(sensitive, bool)
         assert label is None or isinstance(label, str)
         self.name = name
@@ -54,6 +49,7 @@ class GtkMenuItem:
 
     def _set_widget(self, prop, value):
         from . import gamewidget
+
         if gamewidget.getWidgets()[self.name].get_property(prop) != value:
             # print("setting %s property %s to %s.." % (self.name, prop, str(value)))
 
@@ -73,11 +69,7 @@ class GtkMenuItem:
 
 
 class GtkMenuToggleButton(GtkMenuItem):
-    def __init__(self,
-                 name,
-                 sensitive=False,
-                 active=False,
-                 label=None):
+    def __init__(self, name, sensitive=False, active=False, label=None):
         assert isinstance(active, bool)
         GtkMenuItem.__init__(self, name, sensitive, label)
         self._active = active
@@ -104,8 +96,13 @@ class MenuItemsDict(dict):
     the GUI if we are encapsulated in the gamewidget that's focused/infront
     """
 
-    ANAL_MENU_ITEMS = ("analyze_game1", "analyzer_check", "inv_analyzer_check",
-                       "ana_combobox", "inv_ana_combobox")
+    ANAL_MENU_ITEMS = (
+        "analyze_game1",
+        "analyzer_check",
+        "inv_analyzer_check",
+        "ana_combobox",
+        "inv_ana_combobox",
+    )
     VIEW_MENU_ITEMS = ("hint_mode", "spy_mode")
 
     def __init__(self):
@@ -115,4 +112,6 @@ class MenuItemsDict(dict):
         for item in self.ANAL_MENU_ITEMS:
             dict.__setitem__(self, item, GtkMenuItem(item, sensitive=True))
         for item in self.VIEW_MENU_ITEMS:
-            dict.__setitem__(self, item, GtkMenuToggleButton(item, active=conf.get(item)))
+            dict.__setitem__(
+                self, item, GtkMenuToggleButton(item, active=conf.get(item))
+            )

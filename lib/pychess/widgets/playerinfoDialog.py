@@ -14,7 +14,7 @@ def run(widgets):
 
 def initialize(widgets):
     def addColumns(treeview, *columns):
-        model = Gtk.ListStore(*((str, ) * len(columns)))
+        model = Gtk.ListStore(*((str,) * len(columns)))
         treeview.set_model(model)
         treeview.get_selection().set_mode(Gtk.SelectionMode.NONE)
         for i, name in enumerate(columns):
@@ -22,25 +22,24 @@ def initialize(widgets):
             column = Gtk.TreeViewColumn(name, crt, text=i)
             treeview.append_column(column)
 
-    addColumns(widgets["results_view"], "", "Games", "Won", "Drawn", "Lost",
-               "Score")
+    addColumns(widgets["results_view"], "", "Games", "Won", "Drawn", "Lost", "Score")
     model = widgets["results_view"].get_model()
     model.append(("White", "67", "28", "24", "15", "59%"))
     model.append(("Black", "66", "26", "23", "17", "56%"))
     model.append(("Total", "133", "54", "47", "32", "58%"))
 
-    addColumns(widgets["rating_view"], "Current", "Initial", "Lowest",
-               "Highest", "Average")
+    addColumns(
+        widgets["rating_view"], "Current", "Initial", "Lowest", "Highest", "Average"
+    )
     model = widgets["rating_view"].get_model()
     model.append(("1771", "1734", "1659", "1791", "1700"))
 
     widgets["history_view"].set_model(Gtk.ListStore(object))
     widgets["history_view"].get_selection().set_mode(Gtk.SelectionMode.NONE)
     widgets["history_view"].append_column(
-        Gtk.TreeViewColumn("Player Rating History",
-                           HistoryCellRenderer(),
-                           data=0))
-    widgets["history_view"].get_model().append((1, ))
+        Gtk.TreeViewColumn("Player Rating History", HistoryCellRenderer(), data=0)
+    )
+    widgets["history_view"].get_model().append((1,))
 
     def hide_window(button, *args):
         widgets["player_info"].hide()
@@ -52,8 +51,12 @@ def initialize(widgets):
 
 class HistoryCellRenderer(Gtk.CellRenderer):
     __gproperties__ = {
-        "data":
-        (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE),
+        "data": (
+            GObject.TYPE_PYOBJECT,
+            "Data",
+            "Data",
+            GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE,
+        ),
     }
 
     def __init__(self):
@@ -66,8 +69,7 @@ class HistoryCellRenderer(Gtk.CellRenderer):
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
 
-    def on_render(self, window, widget, background_area, rect, expose_area,
-                  flags):
+    def on_render(self, window, widget, background_area, rect, expose_area, flags):
         if not self.data:
             return
         cairo = window.cairo_create()

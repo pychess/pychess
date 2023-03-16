@@ -63,8 +63,7 @@ class SetupBoard(Board):
         new_board = self.clone()
         new_board._ply = self._ply + 1
         cord0, cord1 = move.cord0, move.cord1
-        if cord0.x < 0 or cord0.x > self.FILES - 1 and \
-                (cord1.x >= 0 and cord1.x <= 7):
+        if cord0.x < 0 or cord0.x > self.FILES - 1 and (cord1.x >= 0 and cord1.x <= 7):
             new_board[cord1] = new_board[cord0]
             new_board[cord0] = Piece(color, self[cord0].sign)
         elif cord1.x < 0 or cord1.x > self.FILES - 1:

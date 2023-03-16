@@ -8,9 +8,9 @@ from .BorderBox import BorderBox
 
 
 class ChainVBox(Gtk.VBox):
-    """ Inspired by the GIMP chainbutton widget """
+    """Inspired by the GIMP chainbutton widget"""
 
-    __gsignals__ = {'clicked': (GObject.SignalFlags.RUN_FIRST, None, ())}
+    __gsignals__ = {"clicked": (GObject.SignalFlags.RUN_FIRST, None, ())}
 
     def __init__(self):
         GObject.GObject.__init__(self)
@@ -36,22 +36,18 @@ class ChainVBox(Gtk.VBox):
         assert isinstance(active, bool)
         self._active = active
         if self._active is True:
-            self.image.set_from_file(addDataPrefix(
-                "glade/stock-vchain-24.png"))
+            self.image.set_from_file(addDataPrefix("glade/stock-vchain-24.png"))
         else:
-            self.image.set_from_file(addDataPrefix(
-                "glade/stock-vchain-broken-24.png"))
+            self.image.set_from_file(addDataPrefix("glade/stock-vchain-broken-24.png"))
 
     active = property(getActive, setActive)
 
     def onClicked(self, button):
         if self._active is False:
-            self.image.set_from_file(addDataPrefix(
-                "glade/stock-vchain-24.png"))
+            self.image.set_from_file(addDataPrefix("glade/stock-vchain-24.png"))
             self._active = True
         else:
-            self.image.set_from_file(addDataPrefix(
-                "glade/stock-vchain-broken-24.png"))
+            self.image.set_from_file(addDataPrefix("glade/stock-vchain-broken-24.png"))
             self._active = False
         self.emit("clicked")
 
@@ -62,9 +58,9 @@ LONG_LINE = 8
 
 
 class ChainLine(Gtk.Alignment):
-    """ The ChainLine's are the little right-angle lines above and below the chain
-        button that visually connect the ChainButton to the widgets who's values
-        are "chained" together by the ChainButton being active """
+    """The ChainLine's are the little right-angle lines above and below the chain
+    button that visually connect the ChainButton to the widgets who's values
+    are "chained" together by the ChainButton being active"""
 
     def __init__(self, position):
         GObject.GObject.__init__(self)
@@ -78,10 +74,17 @@ class ChainLine(Gtk.Alignment):
         if self.get_window():
             allocation = self.get_allocation()
             rect = Gdk.Rectangle()
-            rect.x, rect.y, rect.width, rect.height = (allocation.x, allocation.y,
-                                                       allocation.width, allocation.height)
-            unionrect = union(self.lastRectangle,
-                              rect) if self.lastRectangle is not None else rect
+            rect.x, rect.y, rect.width, rect.height = (
+                allocation.x,
+                allocation.y,
+                allocation.width,
+                allocation.height,
+            )
+            unionrect = (
+                union(self.lastRectangle, rect)
+                if self.lastRectangle is not None
+                else rect
+            )
             self.get_window().invalidate_rect(unionrect, True)
             self.get_window().process_updates(True)
             self.lastRectangle = rect
@@ -90,36 +93,36 @@ class ChainLine(Gtk.Alignment):
         self.draw(context)
         return False
 
-###
-# the original Gtk.Style.paint_polygon() way to draw, like The GIMP does it
-###
-#    def draw (self, widget, event):
-#        a = self.get_allocation()
-#        print a.x, a.y, a.width, a.height
-#        points = [None, None, None]
-#        points[0] = (a.x + a.width/2 - SHORT_LINE, a.y + a.height/2)
-#        points[1] = (points[0][0] + SHORT_LINE, points[0][1])
-#        points[2] = (points[1][0], self.position == CHAIN_TOP and a.y+a.height-1 or a.y)
-#        if self.position == CHAIN_BOTTOM:
-#            t = points[0]
-#            points[0] = points[2]
-#            points[2] = t
-#        print points
-#        self.points = points
-#
-#        style = widget.get_style()
-#        style.paint_polygon(widget.get_parent_window(),
-#                            Gtk.StateType.NORMAL,
-#                            Gtk.ShadowType.ETCHED_OUT,
-#                            event.area,
-#                            widget,
-#                            "chainbutton",
-#                            points,
-#                            False)
+    ###
+    # the original Gtk.Style.paint_polygon() way to draw, like The GIMP does it
+    ###
+    #    def draw (self, widget, event):
+    #        a = self.get_allocation()
+    #        print a.x, a.y, a.width, a.height
+    #        points = [None, None, None]
+    #        points[0] = (a.x + a.width/2 - SHORT_LINE, a.y + a.height/2)
+    #        points[1] = (points[0][0] + SHORT_LINE, points[0][1])
+    #        points[2] = (points[1][0], self.position == CHAIN_TOP and a.y+a.height-1 or a.y)
+    #        if self.position == CHAIN_BOTTOM:
+    #            t = points[0]
+    #            points[0] = points[2]
+    #            points[2] = t
+    #        print points
+    #        self.points = points
+    #
+    #        style = widget.get_style()
+    #        style.paint_polygon(widget.get_parent_window(),
+    #                            Gtk.StateType.NORMAL,
+    #                            Gtk.ShadowType.ETCHED_OUT,
+    #                            event.area,
+    #                            widget,
+    #                            "chainbutton",
+    #                            points,
+    #                            False)
 
     def __toAHalf(self, number):
-        """ To draw thin straight lines in cairo that aren't blurry, you have to
-            adjust the endpoints by 0.5: http://www.cairographics.org/FAQ/#sharp_lines """
+        """To draw thin straight lines in cairo that aren't blurry, you have to
+        adjust the endpoints by 0.5: http://www.cairographics.org/FAQ/#sharp_lines"""
         return int(number) + 0.5
 
     def draw(self, context):
@@ -129,22 +132,26 @@ class ChainLine(Gtk.Alignment):
         width = allocation.width - 1
         height = allocation.height
 
-        context.set_source_rgb(.2, .2, .2)
+        context.set_source_rgb(0.2, 0.2, 0.2)
         #        context.rectangle(0, 0, width, height)
         #        context.fill()
 
         context.move_to(
-            self.__toAHalf(x_loc + width / 2.) - LONG_LINE,
-            self.__toAHalf(y_loc + height / 2.))
+            self.__toAHalf(x_loc + width / 2.0) - LONG_LINE,
+            self.__toAHalf(y_loc + height / 2.0),
+        )
         context.line_to(
-            self.__toAHalf(x_loc + width / 2.), self.__toAHalf(y_loc + height / 2.))
+            self.__toAHalf(x_loc + width / 2.0), self.__toAHalf(y_loc + height / 2.0)
+        )
         if self.position == CHAIN_TOP:
             context.line_to(
-                self.__toAHalf(x_loc + width / 2.),
-                self.__toAHalf(float(y_loc + height)))
+                self.__toAHalf(x_loc + width / 2.0),
+                self.__toAHalf(float(y_loc + height)),
+            )
         else:
             context.line_to(
-                self.__toAHalf(x_loc + width / 2.), self.__toAHalf(y_loc + 0.))
+                self.__toAHalf(x_loc + width / 2.0), self.__toAHalf(y_loc + 0.0)
+            )
         context.set_line_width(1.0)
         context.set_line_cap(cairo.LINE_CAP_ROUND)
         context.set_line_join(cairo.LINE_JOIN_ROUND)
@@ -152,9 +159,10 @@ class ChainLine(Gtk.Alignment):
 
     def __str__(self):
         allocation = self.get_allocation()
-        chain_str = "ChainLine(%s, %s, %s, %s" % (allocation.x, allocation.y,
-                                                  allocation.width, allocation.height)
-        chain_str += (self.position == CHAIN_TOP and ", CHAIN_TOP" or ", CHAIN_BOTTOM")
+        chain_str = "ChainLine({}, {}, {}, {}".format(
+            allocation.x, allocation.y, allocation.width, allocation.height
+        )
+        chain_str += self.position == CHAIN_TOP and ", CHAIN_TOP" or ", CHAIN_BOTTOM"
         return chain_str + ")"
 
 

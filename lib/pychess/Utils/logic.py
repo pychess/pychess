@@ -8,11 +8,40 @@ from .lutils.lmove import FCORD, TCORD
 from .lutils import ldraw
 from .Cord import Cord
 from .Move import Move
-from .const import LOSERSCHESS, WHITE, WHITEWON, BLACKWON, WON_NOMATERIAL, KING, HORDECHESS, \
-    SUICIDECHESS, GIVEAWAYCHESS, ATOMICCHESS, WON_KINGEXPLODE, KINGOFTHEHILLCHESS, BLACK, DRAW, \
-    CRAZYHOUSECHESS, WON_KINGINCENTER, THREECHECKCHESS, WON_THREECHECK, WON_MATE, DRAW_STALEMATE, \
-    DRAW_INSUFFICIENT, DRAW_EQUALMATERIAL, WON_LESSMATERIAL, WON_WIPEOUT, DRAW_REPETITION, \
-    WON_KINGINEIGHTROW, RACINGKINGSCHESS, DRAW_50MOVES, DRAW_KINGSINEIGHTROW, RUNNING, ENPASSANT, UNKNOWN_REASON
+from .const import (
+    LOSERSCHESS,
+    WHITE,
+    WHITEWON,
+    BLACKWON,
+    WON_NOMATERIAL,
+    KING,
+    HORDECHESS,
+    SUICIDECHESS,
+    GIVEAWAYCHESS,
+    ATOMICCHESS,
+    WON_KINGEXPLODE,
+    KINGOFTHEHILLCHESS,
+    BLACK,
+    DRAW,
+    CRAZYHOUSECHESS,
+    WON_KINGINCENTER,
+    THREECHECKCHESS,
+    WON_THREECHECK,
+    WON_MATE,
+    DRAW_STALEMATE,
+    DRAW_INSUFFICIENT,
+    DRAW_EQUALMATERIAL,
+    WON_LESSMATERIAL,
+    WON_WIPEOUT,
+    DRAW_REPETITION,
+    WON_KINGINEIGHTROW,
+    RACINGKINGSCHESS,
+    DRAW_50MOVES,
+    DRAW_KINGSINEIGHTROW,
+    RUNNING,
+    ENPASSANT,
+    UNKNOWN_REASON,
+)
 
 from .lutils.bitboard import iterBits
 from .lutils.attack import getAttacks
@@ -120,7 +149,8 @@ def getStatus(board):
     for move in lmovegen.genAllMoves(lboard):
         if board.variant == ATOMICCHESS:
             if kingExplode(lboard, move, 1 - board.color) and not kingExplode(
-                    lboard, move, board.color):
+                lboard, move, board.color
+            ):
                 hasMove = True
                 break
             elif kingExplode(lboard, move, board.color):
@@ -157,8 +187,9 @@ def getStatus(board):
                 if pieceCount(lboard, WHITE) == pieceCount(lboard, BLACK):
                     return status, DRAW_EQUALMATERIAL
                 else:
-                    if board.color == WHITE and pieceCount(
-                            lboard, WHITE) < pieceCount(lboard, BLACK):
+                    if board.color == WHITE and pieceCount(lboard, WHITE) < pieceCount(
+                        lboard, BLACK
+                    ):
                         status = WHITEWON
                     else:
                         status = BLACKWON
@@ -176,8 +207,9 @@ def getStatus(board):
 
 
 def standard_validate(board, move):
-    return validateMove(board.board, move.move) and \
-        not board.board.willLeaveInCheck(move.move)
+    return validateMove(board.board, move.move) and not board.board.willLeaveInCheck(
+        move.move
+    )
 
 
 def validate(board, move):
@@ -221,8 +253,9 @@ def validate(board, move):
         if kingExplode(board.board, move.move, board.color):
             return False
         # Exploding oppont king takes precedence over mate
-        elif kingExplode(board.board, move.move, 1 -
-                         board.color) and validateMove(board.board, move.move):
+        elif kingExplode(board.board, move.move, 1 - board.color) and validateMove(
+            board.board, move.move
+        ):
             return True
         else:
             return standard_validate(board, move)
@@ -237,8 +270,8 @@ def validate(board, move):
 
 
 def getMoveKillingKing(board):
-    """ Returns a move from the current color, able to capture the opponent
-        king """
+    """Returns a move from the current color, able to capture the opponent
+    king"""
 
     lboard = board.board
     color = lboard.color

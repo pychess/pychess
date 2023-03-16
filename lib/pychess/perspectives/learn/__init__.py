@@ -37,7 +37,7 @@ class Learn(GObject.GObject, Perspective):
         self.exit_button.connect("clicked", on_exit_clicked)
 
     def init_layout(self):
-        perspective_manager.set_perspective_toolbuttons("learn", (self.exit_button, ))
+        perspective_manager.set_perspective_toolbuttons("learn", (self.exit_button,))
 
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("learn", perspective_widget)
@@ -45,7 +45,9 @@ class Learn(GObject.GObject, Perspective):
         self.notebooks = {"home": new_notebook()}
         self.main_notebook = self.notebooks["home"]
         for panel in self.sidePanels:
-            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(
+                panel_name(panel.__name__)
+            )
 
         self.dock = PyDockTop("learn", self)
         align = Gtk.Alignment()
@@ -57,11 +59,19 @@ class Learn(GObject.GObject, Perspective):
         self.notebooks = {"learnhome": new_notebook()}
         self.main_notebook = self.notebooks["learnhome"]
         for panel in self.sidePanels:
-            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(
+                panel_name(panel.__name__)
+            )
 
-        self.docks["learnhome"] = (Gtk.Label(label="learnhome"), self.notebooks["learnhome"], None)
+        self.docks["learnhome"] = (
+            Gtk.Label(label="learnhome"),
+            self.notebooks["learnhome"],
+            None,
+        )
         for panel in self.sidePanels:
-            self.docks[panel_name(panel.__name__)][1] = self.notebooks[panel_name(panel.__name__)]
+            self.docks[panel_name(panel.__name__)][1] = self.notebooks[
+                panel_name(panel.__name__)
+            ]
 
         self.load_from_xml()
 
@@ -69,14 +79,39 @@ class Learn(GObject.GObject, Perspective):
         first_time_layout = False
         if not os.path.isfile(self.dockLocation):
             first_time_layout = True
-            leaf0 = self.dock.dock(self.docks["learnhome"][1], CENTER, self.docks["learnhome"][0], "learnhome")
+            leaf0 = self.dock.dock(
+                self.docks["learnhome"][1],
+                CENTER,
+                self.docks["learnhome"][0],
+                "learnhome",
+            )
             leaf0.setDockable(False)
 
-            leaf = leaf0.dock(self.docks["PuzzlesPanel"][1], WEST, self.docks["PuzzlesPanel"][0], "PuzzlesPanel")
-            leaf.dock(self.docks["LessonsPanel"][1], SOUTH, self.docks["LessonsPanel"][0], "LessonsPanel")
+            leaf = leaf0.dock(
+                self.docks["PuzzlesPanel"][1],
+                WEST,
+                self.docks["PuzzlesPanel"][0],
+                "PuzzlesPanel",
+            )
+            leaf.dock(
+                self.docks["LessonsPanel"][1],
+                SOUTH,
+                self.docks["LessonsPanel"][0],
+                "LessonsPanel",
+            )
 
-            leaf = leaf0.dock(self.docks["LecturesPanel"][1], SOUTH, self.docks["LecturesPanel"][0], "LecturesPanel")
-            leaf.dock(self.docks["EndgamesPanel"][1], SOUTH, self.docks["EndgamesPanel"][0], "EndgamesPanel")
+            leaf = leaf0.dock(
+                self.docks["LecturesPanel"][1],
+                SOUTH,
+                self.docks["LecturesPanel"][0],
+                "LecturesPanel",
+            )
+            leaf.dock(
+                self.docks["EndgamesPanel"][1],
+                SOUTH,
+                self.docks["EndgamesPanel"][0],
+                "EndgamesPanel",
+            )
 
         def unrealize(dock):
             dock.saveToXML(self.dockLocation)
@@ -87,7 +122,9 @@ class Learn(GObject.GObject, Perspective):
         self.dock.show_all()
         perspective_widget.show_all()
 
-        perspective_manager.set_perspective_menuitems("learn", self.menuitems, default=first_time_layout)
+        perspective_manager.set_perspective_menuitems(
+            "learn", self.menuitems, default=first_time_layout
+        )
 
         log.debug("Learn.__init__: finished")
 
@@ -105,7 +142,9 @@ class Learn(GObject.GObject, Perspective):
         color = Gdk.RGBA()
         color.parse("lightblue")
 
-        for i, col in enumerate((_("lichess"), _("wtharvey"), _("yacpdb"), _("lessons"))):
+        for i, col in enumerate(
+            (_("lichess"), _("wtharvey"), _("yacpdb"), _("lessons"))
+        ):
             renderer = Gtk.CellRendererProgress()
             renderer.set_orientation(Gtk.Orientation.VERTICAL)
             renderer.props.height = 100
@@ -136,9 +175,13 @@ class Learn(GObject.GObject, Perspective):
         learn_home.pack_start(reset, False, False, 6)
 
         def on_reset_clicked(button):
-            dialog = Gtk.MessageDialog(mainwindow(), 0, Gtk.MessageType.QUESTION,
-                                       Gtk.ButtonsType.OK_CANCEL,
-                                       _("You will lose all your progress data!"))
+            dialog = Gtk.MessageDialog(
+                mainwindow(),
+                0,
+                Gtk.MessageType.QUESTION,
+                Gtk.ButtonsType.OK_CANCEL,
+                _("You will lose all your progress data!"),
+            )
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 for filename, progress in lessons_solving_progress.items():
@@ -193,7 +236,11 @@ class Learn(GObject.GObject, Perspective):
 
         stats = []
         for i in range(4):
-            percent = 0 if not stat[i * 2 + 1] else round((stat[i * 2 + 1] * 100.) / stat[i * 2])
+            percent = (
+                0
+                if not stat[i * 2 + 1]
+                else round((stat[i * 2 + 1] * 100.0) / stat[i * 2])
+            )
             stats.append("%s%%" % percent)
             stats.append(percent)
 
@@ -201,22 +248,30 @@ class Learn(GObject.GObject, Perspective):
 
 
 class GObjectMutableMapping(GObjectMeta, ABCMeta):
-    """ GObject.GObject and UserDict has different metaclasses
-        so we have to create this metaclass to avoid
-        TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
+    """GObject.GObject and UserDict has different metaclasses
+    so we have to create this metaclass to avoid
+    TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
     """
+
     pass
 
 
 class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping):
-    """ Book keeping of puzzle/lesson solving progress
-        Each dict key is a .pgn/.olv file name
-        Values are list of 0/1 values showing a given file puzzles solved or not
-        The dict is automatically synced with corresponding puzzles.json/lessons.json files
+    """Book keeping of puzzle/lesson solving progress
+    Each dict key is a .pgn/.olv file name
+    Values are list of 0/1 values showing a given file puzzles solved or not
+    The dict is automatically synced with corresponding puzzles.json/lessons.json files
     """
 
     __gsignals__ = {
-        "progress_updated": (GObject.SignalFlags.RUN_FIRST, None, (str, object, )),
+        "progress_updated": (
+            GObject.SignalFlags.RUN_FIRST,
+            None,
+            (
+                str,
+                object,
+            ),
+        ),
     }
 
     def __init__(self, progress_file):
@@ -227,18 +282,25 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
     def get_count(self, filename):
         subdir = "puzzles" if self.progress_file.endswith("puzzles.json") else "lessons"
         if filename.lower().endswith(".pgn"):
-            chessfile = PGNFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename))))
+            chessfile = PGNFile(
+                protoopen(addDataPrefix("learn/{}/{}".format(subdir, filename)))
+            )
             chessfile.limit = 1000
             chessfile.init_tag_database()
         elif filename.lower().endswith(".olv"):
-            chessfile = OLVFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename)), encoding="utf-8"))
+            chessfile = OLVFile(
+                protoopen(
+                    addDataPrefix("learn/{}/{}".format(subdir, filename)),
+                    encoding="utf-8",
+                )
+            )
         chessfile.close()
         count = chessfile.count
         return count
 
     def __getitem__(self, key):
         if os.path.isfile(self.progress_file):
-            with open(self.progress_file, "r") as f:
+            with open(self.progress_file) as f:
                 self.data = json.load(f)
             if key not in self.data:
                 self.__setitem__(key, [0] * self.get_count(key))
@@ -257,7 +319,7 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
 
     def read_all(self):
         if os.path.isfile(self.progress_file):
-            with open(self.progress_file, "r") as f:
+            with open(self.progress_file) as f:
                 self.data = json.load(f)
                 return self.data
         else:

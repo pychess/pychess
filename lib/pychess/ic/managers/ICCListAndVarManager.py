@@ -11,9 +11,10 @@ class ICCListAndVarManager(ListAndVarManager):
         self.personalBackup = {}
 
         # Auto flag
-        conf.notify_add('autoCallFlag', self.autoFlagNotify)
+        conf.notify_add("autoCallFlag", self.autoFlagNotify)
 
     def autoFlagNotify(self, *args):
         self.connection.client.run_command(
-            "set autoflag %s" % int(conf.get('autoCallFlag')))
+            "set autoflag %s" % int(conf.get("autoCallFlag"))
+        )
         # print 'notify flag', conf.get('autoCallFlag')

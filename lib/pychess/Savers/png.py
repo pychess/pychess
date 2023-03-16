@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import math
 
 import cairo
@@ -34,7 +32,9 @@ def save(file, model, position=None, flip=False):
         boardview._rotation = math.pi
         boardview.matrix = cairo.Matrix.init_rotate(math.pi)
 
-    boardview.matrix, boardview.invmatrix = matrixAround(boardview.matrix, width / 2., height / 2.)
+    boardview.matrix, boardview.invmatrix = matrixAround(
+        boardview.matrix, width / 2.0, height / 2.0
+    )
     context.transform(boardview.matrix)
 
     boardview.drawBoard(context, None)

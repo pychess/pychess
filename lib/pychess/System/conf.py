@@ -9,7 +9,12 @@ import locale
 from configparser import RawConfigParser
 
 from pychess import MSYS2
-from pychess.Utils.const import FISCHERRANDOMCHESS, LOSERSCHESS, COUNT_OF_SOUNDS, SOUND_MUTE
+from pychess.Utils.const import (
+    FISCHERRANDOMCHESS,
+    LOSERSCHESS,
+    COUNT_OF_SOUNDS,
+    SOUND_MUTE,
+)
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix, addUserConfigPrefix, getDataPrefix
 
@@ -39,6 +44,7 @@ if sys.platform == "win32":
 else:
     from os import getuid
     from pwd import getpwuid
+
     userdata = getpwuid(getuid())
     realname = userdata.pw_gecos.split(",")[0]
     if realname:
@@ -46,7 +52,7 @@ else:
     else:
         username = userdata.pw_name
 
-if getattr(sys, 'frozen', False) and not MSYS2:
+if getattr(sys, "frozen", False) and not MSYS2:
     # pyinstaller specific!
     if hasattr(sys, "_MEIPASS"):
         base_path = sys._MEIPASS
@@ -77,6 +83,7 @@ def notify_remove(conid):
 
 
 if "_" not in builtins.__dir__():
+
     def _(text):
         return text
 
@@ -277,9 +284,14 @@ def set(key, value, section=section):
             configParser.write(fh)
     except Exception as err:
         log.error(
-            "Unable to save configuration '%s'='%s' because of error: %s %s" %
-            (repr(key), repr(value), err.__class__.__name__, ", ".join(
-                str(a) for a in err.args)))
+            "Unable to save configuration '%s'='%s' because of error: %s %s"
+            % (
+                repr(key),
+                repr(value),
+                err.__class__.__name__,
+                ", ".join(str(a) for a in err.args),
+            )
+        )
     for key_, func, args, section_ in idkeyfuncs.values():
         if key_ == key and section_ == section:
             func(None, *args)

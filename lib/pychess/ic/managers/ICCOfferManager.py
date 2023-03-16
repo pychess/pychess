@@ -1,6 +1,12 @@
 from gi.repository import GObject
 
-from pychess.Utils.const import OFFERS, DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, TAKEBACK_OFFER
+from pychess.Utils.const import (
+    OFFERS,
+    DRAW_OFFER,
+    ABORT_OFFER,
+    ADJOURN_OFFER,
+    TAKEBACK_OFFER,
+)
 
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
@@ -13,7 +19,9 @@ class ICCOfferManager(OfferManager):
         GObject.GObject.__init__(self)
         self.connection = connection
 
-        self.connection.expect_dg_line(DG_OFFERS_IN_MY_GAME, self.on_icc_offers_in_my_game)
+        self.connection.expect_dg_line(
+            DG_OFFERS_IN_MY_GAME, self.on_icc_offers_in_my_game
+        )
         self.connection.expect_dg_line(DG_MATCH, self.on_icc_match)
         self.connection.expect_dg_line(DG_MATCH_REMOVED, self.on_icc_match_removed)
 
@@ -27,7 +35,17 @@ class ICCOfferManager(OfferManager):
     def on_icc_offers_in_my_game(self, data):
         log.debug("DG_OFFERS_IN_MY_GAME %s" % data)
         # gamenumber wdraw bdraw wadjourn badjourn wabort babort wtakeback btakeback
-        gamenumber, wdraw, bdraw, wadjourn, badjourn, wabort, babort, wtakeback, btakeback = map(int, data.split())
+        (
+            gamenumber,
+            wdraw,
+            bdraw,
+            wadjourn,
+            badjourn,
+            wabort,
+            babort,
+            wtakeback,
+            btakeback,
+        ) = map(int, data.split())
 
         if wdraw or bdraw:
             offertype = DRAW_OFFER
@@ -38,7 +56,10 @@ class ICCOfferManager(OfferManager):
         elif wtakeback or btakeback:
             offertype = TAKEBACK_OFFER
         else:
-            log.debug("ICCOfferManager.on_icc_offers_in_my_game: unknown offer data: %s" % data)
+            log.debug(
+                "ICCOfferManager.on_icc_offers_in_my_game: unknown offer data: %s"
+                % data
+            )
             return
 
         index = gamenumber * 100000 + OFFERS.index(offertype)
@@ -49,7 +70,9 @@ class ICCOfferManager(OfferManager):
             offer = Offer(offertype, index=index)
         self.offers[offer.index] = offer
 
-        log.debug("ICCOfferManager.on_icc_offers_in_my_game: emitting onOfferAdd: %s" % offer)
+        log.debug(
+            "ICCOfferManager.on_icc_offers_in_my_game: emitting onOfferAdd: %s" % offer
+        )
         self.emit("onOfferAdd", offer)
 
     def on_icc_match(self, data):

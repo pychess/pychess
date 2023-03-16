@@ -1,7 +1,19 @@
 import os
 import re
-from ctypes import byref, c_byte, c_char_p, c_int, c_uint, c_ulong, c_size_t, c_double, Structure,\
-    CDLL, CFUNCTYPE, POINTER
+from ctypes import (
+    byref,
+    c_byte,
+    c_char_p,
+    c_int,
+    c_uint,
+    c_ulong,
+    c_size_t,
+    c_double,
+    Structure,
+    CDLL,
+    CFUNCTYPE,
+    POINTER,
+)
 
 from .bitboard import firstBit, clearBit
 from .lmovegen import genAllMoves, genCheckEvasions
@@ -13,23 +25,23 @@ from pychess.System.Log import log
 
 class TbStats(Structure):
     _fields_ = [
-        ('wdl_easy_hits', c_ulong * 2),
-        ('wdl_hard_prob', c_ulong * 2),
-        ('wdl_soft_prob', c_ulong * 2),
-        ('wdl_cachesize', c_size_t),
-        ('wdl_occupancy', c_double),
-        ('dtm_easy_hits', c_ulong * 2),
-        ('dtm_hard_prob', c_ulong * 2),
-        ('dtm_soft_prob', c_ulong * 2),
-        ('dtm_cachesize', c_size_t),
-        ('dtm_occupancy', c_double),
-        ('total_hits', c_ulong * 2),
-        ('memory_hits', c_ulong * 2),
-        ('drive_hits', c_ulong * 2),
-        ('drive_miss', c_ulong * 2),
-        ('bytes_read', c_ulong * 2),
-        ('files_opened', c_ulong),
-        ('memory_efficiency', c_double),
+        ("wdl_easy_hits", c_ulong * 2),
+        ("wdl_hard_prob", c_ulong * 2),
+        ("wdl_soft_prob", c_ulong * 2),
+        ("wdl_cachesize", c_size_t),
+        ("wdl_occupancy", c_double),
+        ("dtm_easy_hits", c_ulong * 2),
+        ("dtm_hard_prob", c_ulong * 2),
+        ("dtm_soft_prob", c_ulong * 2),
+        ("dtm_cachesize", c_size_t),
+        ("dtm_occupancy", c_double),
+        ("total_hits", c_ulong * 2),
+        ("memory_hits", c_ulong * 2),
+        ("drive_hits", c_ulong * 2),
+        ("drive_miss", c_ulong * 2),
+        ("bytes_read", c_ulong * 2),
+        ("files_opened", c_ulong),
+        ("memory_efficiency", c_double),
     ]
 
 
@@ -58,8 +70,9 @@ class EgtbGaviota:
         compressionScheme = max(zip(schemeCount, range(10)))
         if compressionScheme[0] == 0:
             if configuredTbPath:
-                log.warning("Could not find any Gaviota TB files in %s" %
-                            configuredTbPath)
+                log.warning(
+                    "Could not find any Gaviota TB files in %s" % configuredTbPath
+                )
             return
         compressionScheme = compressionScheme[1]
 
@@ -71,10 +84,9 @@ class EgtbGaviota:
         self.pathList = self.tbpaths_init()
         self.pathList = self.tbpaths_add(self.pathList, tbPath.encode())
         initInfo = self.tb_init(True, compressionScheme, self.pathList)
-        self.initialized = (self.tb_is_initialized() != 0)
+        self.initialized = self.tb_is_initialized() != 0
         if not self.initialized:
-            log.warning(initInfo or
-                        "Failed to initialize Gaviota EGTB library")
+            log.warning(initInfo or "Failed to initialize Gaviota EGTB library")
             self.pathList = self.tbpaths_done(self.pathList)
             return
         elif initInfo:
@@ -97,7 +109,8 @@ class EgtbGaviota:
 
     def supports(self, size):
         return self.initialized and (
-            sum(size) <= 2 or (self.availability & (3 << (2 * sum(size) - 6))) != 0)
+            sum(size) <= 2 or (self.availability & (3 << (2 * sum(size) - 6))) != 0
+        )
 
     def scoreAllMoves(self, board):
         result, depth = self.scoreGame(board, False, False)
@@ -111,8 +124,7 @@ class EgtbGaviota:
             if not board.opIsChecked():
                 result, depth = self.scoreGame(board, False, False)
                 if result is None:
-                    log.warning(
-                        "An EGTB file does not have all its dependencies")
+                    log.warning("An EGTB file does not have all its dependencies")
                     board.popMove()
                     return []
                 scores.append((move, result, depth))
@@ -154,21 +166,51 @@ class EgtbGaviota:
             pc[-1][i] = 0  # tb_NOPIECE,  terminates the list
 
         if omitDepth and probeSoft:
-            ok = self.tb_probe_WDL_soft(stm, epsq, castles, sq[WHITE],
-                                        sq[BLACK], pc[WHITE], pc[BLACK],
-                                        byref(tbinfo))
+            ok = self.tb_probe_WDL_soft(
+                stm,
+                epsq,
+                castles,
+                sq[WHITE],
+                sq[BLACK],
+                pc[WHITE],
+                pc[BLACK],
+                byref(tbinfo),
+            )
         elif omitDepth and not probeSoft:
-            ok = self.tb_probe_WDL_hard(stm, epsq, castles, sq[WHITE],
-                                        sq[BLACK], pc[WHITE], pc[BLACK],
-                                        byref(tbinfo))
+            ok = self.tb_probe_WDL_hard(
+                stm,
+                epsq,
+                castles,
+                sq[WHITE],
+                sq[BLACK],
+                pc[WHITE],
+                pc[BLACK],
+                byref(tbinfo),
+            )
         elif not omitDepth and probeSoft:
-            ok = self.tb_probe_soft(stm, epsq, castles, sq[WHITE], sq[BLACK],
-                                    pc[WHITE], pc[BLACK], byref(tbinfo),
-                                    byref(depth))
+            ok = self.tb_probe_soft(
+                stm,
+                epsq,
+                castles,
+                sq[WHITE],
+                sq[BLACK],
+                pc[WHITE],
+                pc[BLACK],
+                byref(tbinfo),
+                byref(depth),
+            )
         elif not omitDepth and not probeSoft:
-            ok = self.tb_probe_hard(stm, epsq, castles, sq[WHITE], sq[BLACK],
-                                    pc[WHITE], pc[BLACK], byref(tbinfo),
-                                    byref(depth))
+            ok = self.tb_probe_hard(
+                stm,
+                epsq,
+                castles,
+                sq[WHITE],
+                sq[BLACK],
+                pc[WHITE],
+                pc[BLACK],
+                byref(tbinfo),
+                byref(depth),
+            )
 
         resultMap = [DRAW, WHITEWON, BLACKWON]
         if not ok or not 0 <= tbinfo.value <= 2:
@@ -203,30 +245,78 @@ class EgtbGaviota:
         uip = POINTER(c_uint)
         ucp = POINTER(c_byte)
 
-        proto("tb_init", c_char_p, (c_int, "verbosity"),
-              (c_int, "compression_scheme"), (paths_t, "paths"))
-        proto("tb_restart", c_char_p, (c_int, "verbosity"),
-              (c_int, "compression_scheme"), (paths_t, "paths"))
+        proto(
+            "tb_init",
+            c_char_p,
+            (c_int, "verbosity"),
+            (c_int, "compression_scheme"),
+            (paths_t, "paths"),
+        )
+        proto(
+            "tb_restart",
+            c_char_p,
+            (c_int, "verbosity"),
+            (c_int, "compression_scheme"),
+            (paths_t, "paths"),
+        )
         proto("tb_done", None)
-        proto("tb_probe_hard", c_int, (c_uint, "stm"), (c_uint, "epsq"),
-              (c_uint, "castles"), (uip, "wSQ"), (uip, "bSQ"), (ucp, "wPC"),
-              (ucp, "bPC"), (uip, "tbinfo"), (uip, "plies"))
-        proto("tb_probe_soft", c_int, (c_uint, "stm"), (c_uint, "epsq"),
-              (c_uint, "castles"), (uip, "wSQ"), (uip, "bSQ"), (ucp, "wPC"),
-              (ucp, "bPC"), (uip, "tbinfo"), (uip, "plies"))
-        proto("tb_probe_WDL_hard", c_int, (c_uint, "stm"), (c_uint, "epsq"),
-              (c_uint, "castles"), (uip, "wSQ"), (uip, "bSQ"), (ucp, "wPC"),
-              (ucp, "bPC"), (uip, "tbinfo"))
-        proto("tb_probe_WDL_soft", c_int, (c_uint, "stm"), (c_uint, "epsq"),
-              (c_uint, "castles"), (uip, "wSQ"), (uip, "bSQ"), (ucp, "wPC"),
-              (ucp, "bPC"), (uip, "tbinfo"))
+        proto(
+            "tb_probe_hard",
+            c_int,
+            (c_uint, "stm"),
+            (c_uint, "epsq"),
+            (c_uint, "castles"),
+            (uip, "wSQ"),
+            (uip, "bSQ"),
+            (ucp, "wPC"),
+            (ucp, "bPC"),
+            (uip, "tbinfo"),
+            (uip, "plies"),
+        )
+        proto(
+            "tb_probe_soft",
+            c_int,
+            (c_uint, "stm"),
+            (c_uint, "epsq"),
+            (c_uint, "castles"),
+            (uip, "wSQ"),
+            (uip, "bSQ"),
+            (ucp, "wPC"),
+            (ucp, "bPC"),
+            (uip, "tbinfo"),
+            (uip, "plies"),
+        )
+        proto(
+            "tb_probe_WDL_hard",
+            c_int,
+            (c_uint, "stm"),
+            (c_uint, "epsq"),
+            (c_uint, "castles"),
+            (uip, "wSQ"),
+            (uip, "bSQ"),
+            (ucp, "wPC"),
+            (ucp, "bPC"),
+            (uip, "tbinfo"),
+        )
+        proto(
+            "tb_probe_WDL_soft",
+            c_int,
+            (c_uint, "stm"),
+            (c_uint, "epsq"),
+            (c_uint, "castles"),
+            (uip, "wSQ"),
+            (uip, "bSQ"),
+            (ucp, "wPC"),
+            (ucp, "bPC"),
+            (uip, "tbinfo"),
+        )
         proto("tb_is_initialized", c_int)
         proto("tb_availability", c_uint)
         proto("tb_indexmemory", c_size_t)
-        proto("tbcache_init", c_int, (c_size_t, "cache_mem"),
-              (c_int, "wdl_fraction"))
-        proto("tbcache_restart", c_int, (c_size_t, "cache_mem"),
-              (c_int, "wdl_fraction"))
+        proto("tbcache_init", c_int, (c_size_t, "cache_mem"), (c_int, "wdl_fraction"))
+        proto(
+            "tbcache_restart", c_int, (c_size_t, "cache_mem"), (c_int, "wdl_fraction")
+        )
         proto("tbcache_done", None)
         proto("tbcache_is_on", c_int)
         proto("tbcache_flush", None)

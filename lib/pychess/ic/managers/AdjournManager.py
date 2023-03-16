@@ -3,14 +3,35 @@ import datetime
 from gi.repository import GObject
 from .BoardManager import names, months, dates
 
-from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, BLKCMD_STORED, \
-    BLKCMD_HISTORY, BLKCMD_JOURNAL
+from pychess.ic import (
+    GAME_TYPES_BY_SHORT_FICS_NAME,
+    BLKCMD_STORED,
+    BLKCMD_HISTORY,
+    BLKCMD_JOURNAL,
+)
 from pychess.ic.FICSObjects import FICSAdjournedGame, FICSHistoryGame, FICSJournalGame
 
-from pychess.Utils.const import WON_ADJUDICATION, DRAW_AGREE, WON_DISCONNECTION, WON_CALLFLAG, \
-    WON_MATE, DRAW_INSUFFICIENT, DRAW_REPETITION, WON_RESIGN, DRAW_STALEMATE, \
-    DRAW_BLACKINSUFFICIENTANDWHITETIME, WON_NOMATERIAL, DRAW_50MOVES, WHITEWON, DRAW, \
-    BLACK, WHITE, BLACKWON, reprResult, ADJOURNED
+from pychess.Utils.const import (
+    WON_ADJUDICATION,
+    DRAW_AGREE,
+    WON_DISCONNECTION,
+    WON_CALLFLAG,
+    WON_MATE,
+    DRAW_INSUFFICIENT,
+    DRAW_REPETITION,
+    WON_RESIGN,
+    DRAW_STALEMATE,
+    DRAW_BLACKINSUFFICIENTANDWHITETIME,
+    WON_NOMATERIAL,
+    DRAW_50MOVES,
+    WHITEWON,
+    DRAW,
+    BLACK,
+    WHITE,
+    BLACKWON,
+    reprResult,
+    ADJOURNED,
+)
 
 from pychess.System.Log import log
 
@@ -24,11 +45,10 @@ reasons_dict = {
     "Rep": DRAW_REPETITION,
     "Res": WON_RESIGN,
     "Sta": DRAW_STALEMATE,
-    "TM":
-    DRAW_BLACKINSUFFICIENTANDWHITETIME,  # DRAW_WHITEINSUFFICIENTANDBLACKTIME
+    "TM": DRAW_BLACKINSUFFICIENTANDWHITETIME,  # DRAW_WHITEINSUFFICIENTANDBLACKTIME
     "WLM": WON_NOMATERIAL,
     "WNM": WON_NOMATERIAL,
-    "50": DRAW_50MOVES
+    "50": DRAW_50MOVES,
 }
 
 reasons = "(%s)" % "|".join(reasons_dict.keys())
@@ -36,16 +56,13 @@ ratings = r"([0-9\ \-\+]{1,4}[P E]?|UNR)"
 
 
 class AdjournManager(GObject.GObject):
-
     __gsignals__ = {
-        'adjournedGameAdded': (GObject.SignalFlags.RUN_FIRST, None,
-                               (object, )),
-        'onAdjournmentsList': (GObject.SignalFlags.RUN_FIRST, None,
-                               (object, )),
-        'historyGameAdded': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'onHistoryList': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'journalGameAdded': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'onJournalList': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        "adjournedGameAdded": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "onAdjournmentsList": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "historyGameAdded": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "onHistoryList": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "journalGameAdded": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "onJournalList": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
 
     def __init__(self, connection):
@@ -53,36 +70,46 @@ class AdjournManager(GObject.GObject):
 
         self.connection = connection
 
-        self.connection.expect_line(self.__onStoredResponseNO,
-                                    r"%s has no adjourned games\." % names)
+        self.connection.expect_line(
+            self.__onStoredResponseNO, r"%s has no adjourned games\." % names
+        )
 
-        self.connection.expect_line(self.__onHistoryResponseNO,
-                                    r"%s has no history games\." % names)
+        self.connection.expect_line(
+            self.__onHistoryResponseNO, r"%s has no history games\." % names
+        )
 
         self.connection.expect_line(
             self.__onJournalResponseNO,
-            r"(%s has no journal entries\.)|(That journal is private.)" % names)
+            r"(%s has no journal entries\.)|(That journal is private.)" % names,
+        )
 
         self.connection.expect_fromABplus(
-            self.__onStoredResponseYES, "Stored games for %s:" % names,
+            self.__onStoredResponseYES,
+            "Stored games for %s:" % names,
             r"\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
             r"\s*\d+: (B|W) %s\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s"
-            % (names, dates))
+            % (names, dates),
+        )
 
         self.connection.expect_fromABplus(
-            self.__onHistoryResponseYES, "History for %s:" % names,
+            self.__onHistoryResponseYES,
+            "History for %s:" % names,
             r"\s*Opponent\s+Type\s+ECO\s+End\s+Date",
             r"\s*(\d+): (-|\+|=)\s+(\d+)\s+(W|B)\s+(\d+) %s\s+\[([a-z ]{3})\s*(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s"
-            % (names, reasons, dates))
+            % (names, reasons, dates),
+        )
 
         self.connection.expect_fromABplus(
-            self.__onJournalResponseYES, "Journal for %s:" % names,
+            self.__onJournalResponseYES,
+            "Journal for %s:" % names,
             r"\s*White\s+Rating\s+Black\s+Rating\s+Type\s+ECO\s+End\s+Result",
             r"\s*%%(\d+): %s\s+%s\s+%s\s+%s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+(\*|1/2-1/2|1-0|0-1)"
-            % (names, ratings, names, ratings, reasons))
+            % (names, ratings, names, ratings, reasons),
+        )
 
-        self.connection.expect_line(self.__onAdjournedGameResigned,
-                                    r"You have resigned the game\.")
+        self.connection.expect_line(
+            self.__onAdjournedGameResigned, r"You have resigned the game\."
+        )
 
         self.connection.bm.connect("curGameEnded", self.__onCurGameEnded)
 
@@ -111,8 +138,8 @@ class AdjournManager(GObject.GObject):
             move_num = match.groups()[9]
             week, month, day, hour, minute, timezone, year = match.groups()[11:18]
             gametime = datetime.datetime(
-                int(year), months.index(month) + 1, int(day), int(hour),
-                int(minute))
+                int(year), months.index(month) + 1, int(day), int(hour), int(minute)
+            )
             private = game_type[0] == "p"
             rated = game_type[2] == "r"
             gametype = GAME_TYPES_BY_SHORT_FICS_NAME[game_type[1]]
@@ -125,17 +152,21 @@ class AdjournManager(GObject.GObject):
 
             user = self.connection.players.get(self.connection.stored_owner)
             opponent = self.connection.players.get(opponent_name)
-            wplayer, bplayer = (user, opponent) if our_color == WHITE else (opponent, user)
-            game = FICSAdjournedGame(wplayer,
-                                     bplayer,
-                                     game_type=gametype,
-                                     rated=rated,
-                                     our_color=our_color,
-                                     length=length,
-                                     time=gametime,
-                                     minutes=minutes,
-                                     inc=gain,
-                                     private=private)
+            wplayer, bplayer = (
+                (user, opponent) if our_color == WHITE else (opponent, user)
+            )
+            game = FICSAdjournedGame(
+                wplayer,
+                bplayer,
+                game_type=gametype,
+                rated=rated,
+                our_color=our_color,
+                length=length,
+                time=gametime,
+                minutes=minutes,
+                inc=gain,
+                private=private,
+            )
             if game.opponent.adjournment is False:
                 game.opponent.adjournment = True
 
@@ -184,8 +215,8 @@ class AdjournManager(GObject.GObject):
             reason = reasons_dict[match.groups()[10]]
             week, month, day, hour, minute, timezone, year = match.groups()[11:18]
             gametime = datetime.datetime(
-                int(year), months.index(month) + 1, int(day), int(hour),
-                int(minute))
+                int(year), months.index(month) + 1, int(day), int(hour), int(minute)
+            )
             private = game_type[0] == "p"
             rated = game_type[2] == "r"
             gametype = GAME_TYPES_BY_SHORT_FICS_NAME[game_type[1]]
@@ -195,19 +226,21 @@ class AdjournManager(GObject.GObject):
 
             wplayer = self.connection.players.get(white)
             bplayer = self.connection.players.get(black)
-            game = FICSHistoryGame(wplayer,
-                                   bplayer,
-                                   game_type=gametype,
-                                   rated=rated,
-                                   minutes=minutes,
-                                   inc=gain,
-                                   private=private,
-                                   wrating=wrating,
-                                   brating=brating,
-                                   time=gametime,
-                                   reason=reason,
-                                   history_no=history_no,
-                                   result=result)
+            game = FICSHistoryGame(
+                wplayer,
+                bplayer,
+                game_type=gametype,
+                rated=rated,
+                minutes=minutes,
+                inc=gain,
+                private=private,
+                wrating=wrating,
+                brating=brating,
+                time=gametime,
+                reason=reason,
+                history_no=history_no,
+                result=result,
+            )
 
             if game not in self.connection.games:
                 game = self.connection.games.get(game, emit=False)
@@ -245,18 +278,20 @@ class AdjournManager(GObject.GObject):
 
             wplayer = self.connection.players.get(white)
             bplayer = self.connection.players.get(black)
-            game = FICSJournalGame(wplayer,
-                                   bplayer,
-                                   game_type=gametype,
-                                   rated=rated,
-                                   minutes=minutes,
-                                   inc=gain,
-                                   private=private,
-                                   wrating=wrating,
-                                   brating=brating,
-                                   reason=reason,
-                                   journal_no=journal_no,
-                                   result=result)
+            game = FICSJournalGame(
+                wplayer,
+                bplayer,
+                game_type=gametype,
+                rated=rated,
+                minutes=minutes,
+                inc=gain,
+                private=private,
+                wrating=wrating,
+                brating=brating,
+                reason=reason,
+                journal_no=journal_no,
+                result=result,
+            )
 
             if game not in self.connection.games:
                 game = self.connection.games.get(game, emit=False)
@@ -314,66 +349,69 @@ class AdjournManager(GObject.GObject):
 
     def queryMoves(self, game):
         if isinstance(game, FICSHistoryGame):
-            self.connection.client.run_command("smoves %s %s" % (
-                self.connection.history_owner, game.history_no))
+            self.connection.client.run_command(
+                "smoves {} {}".format(self.connection.history_owner, game.history_no)
+            )
         elif isinstance(game, FICSJournalGame):
-            self.connection.client.run_command("smoves %s %%%s" % (
-                self.connection.journal_owner, game.journal_no))
+            self.connection.client.run_command(
+                "smoves {} %{}".format(self.connection.journal_owner, game.journal_no)
+            )
         else:
-            self.connection.client.run_command("smoves %s %s" % (
-                self.connection.stored_owner, game.opponent.name))
+            self.connection.client.run_command(
+                "smoves {} {}".format(self.connection.stored_owner, game.opponent.name)
+            )
 
     def examine(self, game):
         game.board = None
         self.connection.archived_examine = game
         if isinstance(game, FICSAdjournedGame):
-            self.connection.client.run_command("examine %s %s" % (
-                self.connection.stored_owner, game.opponent.name))
+            self.connection.client.run_command(
+                "examine {} {}".format(self.connection.stored_owner, game.opponent.name)
+            )
         elif isinstance(game, FICSHistoryGame):
-            self.connection.client.run_command("examine %s %s" % (
-                self.connection.history_owner, game.history_no))
+            self.connection.client.run_command(
+                "examine {} {}".format(self.connection.history_owner, game.history_no)
+            )
         elif isinstance(game, FICSJournalGame):
-            self.connection.client.run_command("examine %s %%%s" % (
-                self.connection.journal_owner, game.journal_no))
+            self.connection.client.run_command(
+                "examine {} %{}".format(self.connection.journal_owner, game.journal_no)
+            )
 
     def challenge(self, playerName):
         self.connection.client.run_command("match %s" % playerName)
 
     def resign(self, game):
-        """ This is (and draw and abort) are possible even when one's
-            opponent is not logged on """
+        """This is (and draw and abort) are possible even when one's
+        opponent is not logged on"""
         if not game.opponent.adjournment:
-            log.warning("AdjournManager.resign: no adjourned game vs %s" %
-                        game.opponent)
+            log.warning(
+                "AdjournManager.resign: no adjourned game vs %s" % game.opponent
+            )
             return
         log.info("AdjournManager.resign: resigning adjourned game=%s" % game)
         self.connection.client.run_command("resign %s" % game.opponent.name)
 
     def draw(self, game):
         if not game.opponent.adjournment:
-            log.warning("AdjournManager.draw: no adjourned game vs %s" %
-                        game.opponent)
+            log.warning("AdjournManager.draw: no adjourned game vs %s" % game.opponent)
             return
-        log.info("AdjournManager.draw: offering sdraw for adjourned game=%s" %
-                 game)
+        log.info("AdjournManager.draw: offering sdraw for adjourned game=%s" % game)
         self.connection.client.run_command("sdraw %s" % game.opponent.name)
 
     def abort(self, game):
         if not game.opponent.adjournment:
-            log.warning("AdjournManager.abort: no adjourned game vs %s" %
-                        game.opponent)
+            log.warning("AdjournManager.abort: no adjourned game vs %s" % game.opponent)
             return
-        log.info("AdjournManager.abort: offering sabort for adjourned game=%s"
-                 % game)
+        log.info("AdjournManager.abort: offering sabort for adjourned game=%s" % game)
         self.connection.client.run_command("sabort %s" % game.opponent.name)
 
     def resume(self, game):
         if not game.opponent.adjournment:
-            log.warning("AdjournManager.resume: no adjourned game vs %s" %
-                        game.opponent)
+            log.warning(
+                "AdjournManager.resume: no adjourned game vs %s" % game.opponent
+            )
             return
-        log.info("AdjournManager.resume: offering resume for adjourned game=%s"
-                 % game)
+        log.info("AdjournManager.resume: offering resume for adjourned game=%s" % game)
         self.connection.client.run_command("match %s" % game.opponent.name)
 
     # (a)  Users who have more than 15 stored games are restricted from starting new

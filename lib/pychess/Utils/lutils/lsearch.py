@@ -4,9 +4,26 @@ from heapq import heappush, heappop
 
 from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from .egtb_gaviota import EgtbGaviota
-from pychess.Utils.const import ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS,\
-    LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, EMPTY, PROMOTIONS, DROP, KING,\
-    RACINGKINGSCHESS, hashfALPHA, hashfBETA, hashfEXACT, hashfBAD, DRAW, WHITE, WHITEWON
+from pychess.Utils.const import (
+    ATOMICCHESS,
+    KINGOFTHEHILLCHESS,
+    THREECHECKCHESS,
+    LOSERSCHESS,
+    SUICIDECHESS,
+    GIVEAWAYCHESS,
+    EMPTY,
+    PROMOTIONS,
+    DROP,
+    KING,
+    RACINGKINGSCHESS,
+    hashfALPHA,
+    hashfBETA,
+    hashfEXACT,
+    hashfBAD,
+    DRAW,
+    WHITE,
+    WHITEWON,
+)
 from .leval import evaluateComplete
 from .lsort import getCaptureValue, getMoveValue
 from .ldata import MATE_VALUE, VALUE_AT_PLY
@@ -29,16 +46,16 @@ egtb = None
 
 
 def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
-    """ This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
-        Based on moves found by the validator.py findmoves2 function and
-        evaluated by eval.py.
-        The function recalls itself "depth" times. If the last move in range
-        depth was a capture, it will continue calling itself, only searching for
-        captures.
-        It returns a tuple of
-        *   a list of the path it found through the search tree (last item being
-            the deepest)
-        *   a score of your standing the the last possition. """
+    """This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
+    Based on moves found by the validator.py findmoves2 function and
+    evaluated by eval.py.
+    The function recalls itself "depth" times. If the last move in range
+    depth was a capture, it will continue calling itself, only searching for
+    captures.
+    It returns a tuple of
+    *   a list of the path it found through the search tree (last item being
+        the deepest)
+    *   a score of your standing the the last possition."""
 
     global searching, nodes, table, endtime, timecheck_counter
     foundPv = False
@@ -159,7 +176,13 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if isCheck:
             # Being in check is that serious, that we want to take a deeper look
             depth += 1
-        elif board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, ATOMICCHESS, RACINGKINGSCHESS):
+        elif board.variant in (
+            LOSERSCHESS,
+            SUICIDECHESS,
+            GIVEAWAYCHESS,
+            ATOMICCHESS,
+            RACINGKINGSCHESS,
+        ):
             return [], evaluateComplete(board, board.color)
         else:
             mvs, val = quiescent(board, alpha, beta, ply)
@@ -189,24 +212,29 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         moves = [(-getMoveValue(board, table, depth, m), m) for m in mlist]
     elif board.variant == ATOMICCHESS:
         if isCheck:
-            mlist = [m
-                     for m in genCheckEvasions(board)
-                     if not kingExplode(board, m, board.color)]
+            mlist = [
+                m
+                for m in genCheckEvasions(board)
+                if not kingExplode(board, m, board.color)
+            ]
         else:
-            mlist = [m
-                     for m in genAllMoves(board)
-                     if not kingExplode(board, m, board.color)]
+            mlist = [
+                m for m in genAllMoves(board) if not kingExplode(board, m, board.color)
+            ]
         moves = [(-getMoveValue(board, table, depth, m), m) for m in mlist]
     elif board.variant == RACINGKINGSCHESS:
         mlist = [m for m in genAllMoves(board) if not board.willGiveCheck(m)]
         moves = [(-getMoveValue(board, table, depth, m), m) for m in mlist]
     else:
         if isCheck:
-            moves = [(-getMoveValue(board, table, depth, m), m)
-                     for m in genCheckEvasions(board)]
+            moves = [
+                (-getMoveValue(board, table, depth, m), m)
+                for m in genCheckEvasions(board)
+            ]
         else:
-            moves = [(-getMoveValue(board, table, depth, m), m)
-                     for m in genAllMoves(board)]
+            moves = [
+                (-getMoveValue(board, table, depth, m), m) for m in genAllMoves(board)
+            ]
     moves.sort()
 
     # This is needed on checkmate
@@ -242,12 +270,15 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if val > alpha:
             if val >= beta:
                 if searching and move >> 12 != DROP:
-                    table.record(board, move, VALUE_AT_PLY(beta, -ply),
-                                 hashfBETA, depth)
+                    table.record(
+                        board, move, VALUE_AT_PLY(beta, -ply), hashfBETA, depth
+                    )
                     # We don't want to use our valuable killer move spaces for
                     # captures and promotions, as these are searched early anyways.
-                    if board.arBoard[move & 63] == EMPTY and \
-                            not move >> 12 in PROMOTIONS:
+                    if (
+                        board.arBoard[move & 63] == EMPTY
+                        and not move >> 12 in PROMOTIONS
+                    ):
                         table.addKiller(depth, move)
                         table.addButterfly(move, depth)
                 return [move] + mvs, beta
@@ -263,16 +294,14 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
 
     if amove:
         if searching:
-            table.record(board, amove[0], VALUE_AT_PLY(alpha, -ply), hashf,
-                         depth)
+            table.record(board, amove[0], VALUE_AT_PLY(alpha, -ply), hashf, depth)
             if board.arBoard[amove[0] & 63] == EMPTY:
                 table.addKiller(depth, amove[0])
         return amove, alpha
 
     if catchFailLow:
         if searching:
-            table.record(board, catchFailLow, VALUE_AT_PLY(alpha, -ply), hashf,
-                         depth)
+            table.record(board, catchFailLow, VALUE_AT_PLY(alpha, -ply), hashf, depth)
         return [catchFailLow], alpha
 
     # If no moves were found, this must be a mate or stalemate
@@ -283,7 +312,6 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
 
 
 def quiescent(board, alpha, beta, ply):
-
     if skipPruneChance and random() < skipPruneChance:
         return [], (alpha + beta) // 2
 
@@ -332,7 +360,6 @@ def quiescent(board, alpha, beta, ply):
             heappush(heap, (-getCaptureValue(board, move), move))
 
     while heap:
-
         nodes += 1
 
         v, move = heappop(heap)
@@ -362,7 +389,7 @@ def quiescent(board, alpha, beta, ply):
         return [], alpha
 
 
-class EndgameTable():
+class EndgameTable:
     def __init__(self):
         self.provider = EgtbGaviota()
 
@@ -370,12 +397,12 @@ class EndgameTable():
         return sorted([bin(board.friends[i]).count("1") for i in range(2)])
 
     def scoreAllMoves(self, lBoard):
-        """ Return each move's result and depth to mate.
-            lBoard: A low-level board structure
-            Return value: a list, with best moves first, of:
-            move: A high-level move structure
-            game_result: Either WHITEWON, DRAW, BLACKWON
-            depth: Depth to mate
+        """Return each move's result and depth to mate.
+        lBoard: A low-level board structure
+        Return value: a list, with best moves first, of:
+        move: A high-level move structure
+        game_result: Either WHITEWON, DRAW, BLACKWON
+        depth: Depth to mate
         """
 
         pc = self._pieceCounts(lBoard)

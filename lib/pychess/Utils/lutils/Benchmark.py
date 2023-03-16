@@ -23,12 +23,12 @@ benchmarkPositions = [
     "3r1rk1/p5pp/bpp1pp2/8/q1PP1P2/b3P3/P2NQRPP/1R2B1K1 b - - 6 22",
     "r1q2rk1/2p1bppp/2Pp4/p6b/Q1PNp3/4B3/PP1R1PPP/2K4R w - - 2 18",
     "4k2r/1pb2ppp/1p2p3/1R1p4/3P4/2r1PN2/P4PPP/1R4K1 b - - 3 22",
-    "3q2k1/pb3p1p/4pbp1/2r5/PpN2N2/1P2P2P/5PP1/Q2R2K1 b - - 4 26"
+    "3q2k1/pb3p1p/4pbp1/2r5/PpN2N2/1P2P2P/5PP1/Q2R2K1 b - - 4 26",
 ]
 
 
 def benchmark(maxdepth=6):
-    """ Times a search of a static list of positions. """
+    """Times a search of a static list of positions."""
 
     suite_time = time()
     suite_nodes = lsearch.nodes
@@ -48,9 +48,22 @@ def benchmark(maxdepth=6):
             pv = " ".join(listToSan(board, mvs))
             time_cs = int(100 * pos_time)
             print(depth, scr, time_cs, pos_nodes, pv)
-        print("Searched position", i, "at", int(pos_nodes / pos_time) if pos_time > 0 else pos_nodes, "n/s")
+        print(
+            "Searched position",
+            i,
+            "at",
+            int(pos_nodes / pos_time) if pos_time > 0 else pos_nodes,
+            "n/s",
+        )
     suite_time = time() - suite_time
     suite_nodes = lsearch.nodes - suite_nodes
-    print("Total:", suite_nodes, "nodes in", suite_time, "s: ", suite_nodes /
-          suite_time, "n/s")
+    print(
+        "Total:",
+        suite_nodes,
+        "nodes in",
+        suite_time,
+        "s: ",
+        suite_nodes / suite_time,
+        "n/s",
+    )
     lsearch.nodes = 0

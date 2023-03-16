@@ -1,20 +1,50 @@
-import gi
-gi.require_version('Rsvg', '2.0')
-from gi.repository import Rsvg
+import sys
 
-from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN, \
-    reprSign, SITTUYINCHESS, HAWK, ELEPHANT, SCHESS
+import gi
+
+try:
+    gi.require_version("Rsvg", "2.0")
+    from gi.repository import Rsvg
+except Exception:
+    print("Failed to import required gi module version")
+    sys.exit(1)
+
+from pychess.Utils.const import (
+    BLACK,
+    WHITE,
+    KING,
+    QUEEN,
+    BISHOP,
+    KNIGHT,
+    ROOK,
+    PAWN,
+    reprSign,
+    SITTUYINCHESS,
+    HAWK,
+    ELEPHANT,
+    SCHESS,
+)
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 
 
 piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
-pnames = ('Pawn', 'Knight', 'Bishop', 'Rook', 'Queen', 'King')
+pnames = ("Pawn", "Knight", "Bishop", "Rook", "Queen", "King")
 
 size = 800.0
 
 
-def drawPiece(piece, context, x, y, psize, allwhite=False, allpawns=False, asean=False, variant=None):
+def drawPiece(
+    piece,
+    context,
+    x,
+    y,
+    psize,
+    allwhite=False,
+    allpawns=False,
+    asean=False,
+    variant=None,
+):
     """Rendering pieces using .svg chess figurines"""
 
     color = WHITE if allwhite else piece.color
@@ -55,8 +85,7 @@ def drawPiece(piece, context, x, y, psize, allwhite=False, allpawns=False, asean
     if asean:
         image.render_cairo(context)
     elif all_in_one:
-        pieceid = '#%s%s' % ('White' if color == 0 else 'Black',
-                             pnames[sign - 1])
+        pieceid = "#{}{}".format("White" if color == 0 else "Black", pnames[sign - 1])
         image.render_cairo_sub(context, id=pieceid)
     else:
         image.render_cairo(context)
@@ -75,17 +104,22 @@ def get_svg_pieces(svgdir):
     """Load figurines from .svg files"""
 
     if all_in_one:
-        rsvg_handles = Rsvg.Handle.new_from_file(addDataPrefix(
-            "pieces/%s/%s.svg" % (svgdir, svgdir)))
+        rsvg_handles = Rsvg.Handle.new_from_file(
+            addDataPrefix("pieces/{}/{}.svg".format(svgdir, svgdir))
+        )
     else:
         rsvg_handles = [[None] * 9, [None] * 9]
-        for c, color in ((WHITE, 'white'), (BLACK, 'black')):
+        for c, color in ((WHITE, "white"), (BLACK, "black")):
             for p in pieces:
                 if p in (HAWK, ELEPHANT) and svgdir != "merida":
                     continue
-                rsvg_handles[c][p] = Rsvg.Handle.new_from_file(addDataPrefix(
-                    "pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[
-                        p].lower())))
+                rsvg_handles[c][p] = Rsvg.Handle.new_from_file(
+                    addDataPrefix(
+                        "pieces/{}/{}{}.svg".format(
+                            svgdir, color[0], reprSign[p].lower()
+                        )
+                    )
+                )
     return rsvg_handles
 
 
@@ -103,8 +137,16 @@ def set_piece_theme(piece_set):
     global piece2char
 
     piece_set = piece_set.lower()
-    if piece_set in ('celtic', 'eyes', 'fantasy', 'fantasy_alt', 'freak',
-                       'prmi', 'skulls', 'spatial'):
+    if piece_set in (
+        "celtic",
+        "eyes",
+        "fantasy",
+        "fantasy_alt",
+        "freak",
+        "prmi",
+        "skulls",
+        "spatial",
+    ):
         all_in_one = True
     else:
         all_in_one = False

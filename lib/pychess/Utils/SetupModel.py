@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 import asyncio
 
 from gi.repository import GObject
@@ -45,12 +43,12 @@ class SetupPlayer:
 class SetupModel(GObject.GObject):
     __gsignals__ = {
         "game_started": (GObject.SignalFlags.RUN_FIRST, None, ()),
-        "game_changed": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
-        "moves_undoing": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
+        "game_changed": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "moves_undoing": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
         "variation_undoing": (GObject.SignalFlags.RUN_FIRST, None, ()),
-        "game_loading": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        "game_loaded": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        "game_ended": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
+        "game_loading": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "game_loaded": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "game_ended": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
     }
 
     def __init__(self):

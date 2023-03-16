@@ -2,12 +2,7 @@ from gi.repository import Gtk, GObject
 
 
 class BorderBox(Gtk.Alignment):
-    def __init__(self,
-                 widget=None,
-                 top=False,
-                 right=False,
-                 bottom=False,
-                 left=False):
+    def __init__(self, widget=None, top=False, right=False, bottom=False, left=False):
         GObject.GObject.__init__(self)
         self.connect("draw", self._onExpose)
 
@@ -29,8 +24,8 @@ class BorderBox(Gtk.Alignment):
         context.set_source_rgba(red, green, blue, alpha)
 
         allocation = self.get_allocation()
-        x_loc = allocation.x + .5
-        y_loc = allocation.y + .5
+        x_loc = allocation.x + 0.5
+        y_loc = allocation.y + 0.5
         width = allocation.width - 1
         height = allocation.height - 1
 
@@ -50,8 +45,12 @@ class BorderBox(Gtk.Alignment):
         context.stroke()
 
     def _updateBorders(self):
-        self.set_padding(self.top and 1 or 0, self.bottom and 1 or 0,
-                         self.right and 1 or 0, self.left and 1 or 0)
+        self.set_padding(
+            self.top and 1 or 0,
+            self.bottom and 1 or 0,
+            self.right and 1 or 0,
+            self.left and 1 or 0,
+        )
 
     def isTop(self):
         return self.__top

@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL
@@ -12,7 +10,8 @@ __title__ = _("Chat")
 __icon__ = addDataPrefix("glade/panel_chat.svg")
 
 __desc__ = _(
-    "The chat panel lets you communicate with your opponent during the game, assuming he or she is interested")
+    "The chat panel lets you communicate with your opponent during the game, assuming he or she is interested"
+)
 
 
 class Sidepanel:
@@ -27,15 +26,23 @@ class Sidepanel:
         self.chatView.disable("Waiting for game to load")
         self.chatview_cid = self.chatView.connect("messageTyped", self.onMessageSent)
         if isinstance(self.gamemodel, ICGameModel):
-            self.model_cids.append(self.gamemodel.connect("observers_received",
-                                   self.chatView.update_observers))
-            self.model_cids.append(self.gamemodel.connect("message_received",
-                                   self.onICMessageReieved))
+            self.model_cids.append(
+                self.gamemodel.connect(
+                    "observers_received", self.chatView.update_observers
+                )
+            )
+            self.model_cids.append(
+                self.gamemodel.connect("message_received", self.onICMessageReieved)
+            )
         return self.chatView
 
     def on_game_terminated(self, model):
         self.chatView.disconnect(self.chatview_cid)
-        if hasattr(self, "player") and hasattr(self, "player_cid") and not self.gamemodel.examined:
+        if (
+            hasattr(self, "player")
+            and hasattr(self, "player_cid")
+            and not self.gamemodel.examined
+        ):
             self.player.disconnect(self.player_cid)
         for cid in self.model_cids:
             self.gamemodel.disconnect(cid)
@@ -65,38 +72,51 @@ class Sidepanel:
 
         if isinstance(gamemodel, ICGameModel):
             if gamemodel.connection.ICC:
-                gamemodel.connection.client.run_command("set-2 %s 1" % DG_PLAYERS_IN_MY_GAME)
+                gamemodel.connection.client.run_command(
+                    "set-2 %s 1" % DG_PLAYERS_IN_MY_GAME
+                )
             else:
-                allob = 'allob ' + str(gamemodel.ficsgame.gameno)
+                allob = "allob " + str(gamemodel.ficsgame.gameno)
                 gamemodel.connection.client.run_command(allob)
 
-        if hasattr(self, "player") and not gamemodel.examined and self.player_cid is None:
-            self.player_cid = self.player.connect("messageReceived", self.onMessageRecieved)
+        if (
+            hasattr(self, "player")
+            and not gamemodel.examined
+            and self.player_cid is None
+        ):
+            self.player_cid = self.player.connect(
+                "messageReceived", self.onMessageRecieved
+            )
 
         self.chatView.enable()
 
     def onMessageRecieved(self, player, text):
-        sender = "pychessbot" if player.gamemodel.offline_lecture else repr(self.opplayer)
+        sender = (
+            "pychessbot" if player.gamemodel.offline_lecture else repr(self.opplayer)
+        )
         self.chatView.addMessage(sender, text)
 
     def onICMessageReieved(self, icgamemodel, player, text):
         self.chatView.addMessage(player, text)
         # emit an allob <gameno> to FICS
         if not icgamemodel.connection.ICC:
-            allob = 'allob ' + str(icgamemodel.ficsgame.gameno)
+            allob = "allob " + str(icgamemodel.ficsgame.gameno)
             icgamemodel.connection.client.run_command(allob)
 
     def onMessageSent(self, chatView, text):
         if hasattr(self, "player") or self.gamemodel.examined:
-            if text.startswith('# '):
+            if text.startswith("# "):
                 text = text[2:]
                 self.gamemodel.connection.cm.whisper(text)
-            elif text.startswith('whisper '):
+            elif text.startswith("whisper "):
                 text = text[8:]
                 self.gamemodel.connection.cm.whisper(text)
             else:
                 if not hasattr(self, "player"):
-                    if self.gamemodel.players[0].name == self.gamemodel.connection.username:
+                    if (
+                        self.gamemodel.players[0].name
+                        == self.gamemodel.connection.username
+                    ):
                         self.player = self.gamemodel.players[0]
                         self.opplayer = self.gamemodel.players[1]
                     else:

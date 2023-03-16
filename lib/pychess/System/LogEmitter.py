@@ -6,7 +6,7 @@ from gi.repository import GObject, GLib
 
 class LogEmitter(GObject.GObject):
     __gsignals__ = {
-        "logged": (GObject.SignalFlags.RUN_FIRST, None, (object, ))
+        "logged": (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }  # list of (str, float, str, int)
 
     def __init__(self):
@@ -28,11 +28,14 @@ class GLogHandler(logging.Handler):
         def _emit(record):
             message = self.format(record)
             if self.emitter.messages is not None:
-                self.emitter.messages.append((record.task, time.time(), message,
-                                              record.levelno))
+                self.emitter.messages.append(
+                    (record.task, time.time(), message, record.levelno)
+                )
 
-            self.emitter.emit("logged",
-                              (record.task, time.time(), message, record.levelno))
+            self.emitter.emit(
+                "logged", (record.task, time.time(), message, record.levelno)
+            )
+
         GLib.idle_add(_emit, record)
 
 

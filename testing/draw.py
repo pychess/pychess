@@ -8,15 +8,15 @@ from pychess.System.protoopen import protoopen
 class DrawTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.f1 = protoopen('gamefiles/3fold.pgn')
+        cls.f1 = protoopen("gamefiles/3fold.pgn")
         cls.PgnFile1 = pgn.load(cls.f1)
         cls.PgnFile1.get_records()
 
-        cls.f2 = protoopen('gamefiles/bilbao.pgn')
+        cls.f2 = protoopen("gamefiles/bilbao.pgn")
         cls.PgnFile2 = pgn.load(cls.f2)
         cls.PgnFile2.get_records()
 
-        cls.f3 = protoopen('gamefiles/material.pgn')
+        cls.f3 = protoopen("gamefiles/material.pgn")
         cls.PgnFile3 = pgn.load(cls.f3)
         cls.PgnFile3.get_records()
 
@@ -60,5 +60,5 @@ class DrawTestCase(unittest.TestCase):
             self.assertEqual(ldraw.testMaterial(lboard), True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

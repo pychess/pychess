@@ -18,7 +18,14 @@ from pychess.System.protoopen import isWriteable
 from pychess.System.uistuff import GladeWidgets
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.Savers.pgn import parseDateTag
-from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, LOCAL, ARTIFICIAL, MENU_ITEMS
+from pychess.Utils.const import (
+    UNFINISHED_STATES,
+    ABORTED,
+    ABORTED_AGREEMENT,
+    LOCAL,
+    ARTIFICIAL,
+    MENU_ITEMS,
+)
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamewidget, mainwindow, new_notebook
 from pychess.widgets.gamenanny import game_nanny
@@ -48,9 +55,7 @@ for saver in savers:
 
 
 class Games(GObject.GObject, Perspective):
-    __gsignals__ = {
-        'gmwidg_created': (GObject.SignalFlags.RUN_FIRST, None, (object, ))
-    }
+    __gsignals__ = {"gmwidg_created": (GObject.SignalFlags.RUN_FIRST, None, (object,))}
 
     def __init__(self):
         GObject.GObject.__init__(self)
@@ -71,7 +76,7 @@ class Games(GObject.GObject, Perspective):
         self.dockLocation = addUserConfigPrefix("pydock.xml")
 
     async def generalStart(self, gamemodel, player0tup, player1tup, loaddata=None):
-        """ The player tuples are:
+        """The player tuples are:
         (The type af player in a System.const value,
         A callable creating the player,
         A list of arguments for the callable,
@@ -84,8 +89,9 @@ class Games(GObject.GObject, Perspective):
         The position from where to start the game)
         """
 
-        log.debug("Games.generalStart: %s\n %s\n %s" %
-                  (gamemodel, player0tup, player1tup))
+        log.debug(
+            "Games.generalStart: %s\n %s\n %s" % (gamemodel, player0tup, player1tup)
+        )
         gmwidg = gamewidget.GameWidget(gamemodel, self)
         self.gamewidgets.add(gmwidg)
         self.gmwidg_cids[gmwidg] = gmwidg.connect("game_close_clicked", self.closeGame)
@@ -127,13 +133,13 @@ class Games(GObject.GObject, Perspective):
                 if gmwidg.isInFront():
                     gamemodel.curplayer.emit("offer", Offer(action, param=param))
 
-            self.board_cids[gmwidg.board] = gmwidg.board.connect("action", emit_action, gmwidg)
+            self.board_cids[gmwidg.board] = gmwidg.board.connect(
+                "action", emit_action, gmwidg
+            )
 
-        log.debug("Games.generalStart: -> gamemodel.setPlayers(): %s" %
-                  (gamemodel))
+        log.debug("Games.generalStart: -> gamemodel.setPlayers(): %s" % (gamemodel))
         gamemodel.setPlayers(players)
-        log.debug("Games.generalStart: <- gamemodel.setPlayers(): %s" %
-                  (gamemodel))
+        log.debug("Games.generalStart: <- gamemodel.setPlayers(): %s" % (gamemodel))
 
         # Forward information from the engines
         for playertup, tagname in ((player0tup, "WhiteElo"), (player1tup, "BlackElo")):
@@ -150,8 +156,11 @@ class Games(GObject.GObject, Perspective):
                 if position != gamemodel.ply and position != -1:
                     gmwidg.board.view.shown = position
             except LoadingError as e:
-                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
-                                      buttons=Gtk.ButtonsType.OK)
+                d = Gtk.MessageDialog(
+                    mainwindow(),
+                    type=Gtk.MessageType.WARNING,
+                    buttons=Gtk.ButtonsType.OK,
+                )
                 d.set_markup(_("<big><b>Error loading game</big></b>"))
                 d.format_secondary_text(", ".join(str(a) for a in e.args))
                 d.show()
@@ -161,15 +170,15 @@ class Games(GObject.GObject, Perspective):
             if gamemodel.variant.need_initial_board:
                 for player in gamemodel.players:
                     player.setOptionInitialBoard(gamemodel)
-            log.debug("Games..generalStart: -> gamemodel.start(): %s" %
-                      (gamemodel))
+            log.debug("Games..generalStart: -> gamemodel.start(): %s" % (gamemodel))
             gamemodel.emit("game_loaded", "")
             gamemodel.start()
-            log.debug("Games.generalStart: <- gamemodel.start(): %s" %
-                      (gamemodel))
+            log.debug("Games.generalStart: <- gamemodel.start(): %s" % (gamemodel))
 
-        log.debug("Games.generalStart: returning gmwidg=%s\n gamemodel=%s" %
-                  (gmwidg, gamemodel))
+        log.debug(
+            "Games.generalStart: returning gmwidg=%s\n gamemodel=%s"
+            % (gmwidg, gamemodel)
+        )
 
     ################################################################################
     # Saving                                                                       #
@@ -198,9 +207,9 @@ class Games(GObject.GObject, Perspective):
         filename = filename.replace("#n1", game.tags["White"])
         filename = filename.replace("#n2", game.tags["Black"])
         year, month, day = parseDateTag(game.tags["Date"])
-        year = '' if year is None else str(year)
-        month = '' if month is None else str(month)
-        day = '' if day is None else str(day)
+        year = "" if year is None else str(year)
+        month = "" if month is None else str(month)
+        day = "" if day is None else str(day)
         filename = filename.replace("#y", "%s" % year)
         filename = filename.replace("#m", "%s" % month)
         filename = filename.replace("#d", "%s" % day)
@@ -214,15 +223,18 @@ class Games(GObject.GObject, Perspective):
             base_offset = os.path.getsize(pgn_path)
 
             # save to .sqlite
-            database_path = os.path.splitext(pgn_path)[0] + '.sqlite'
+            database_path = os.path.splitext(pgn_path)[0] + ".sqlite"
             database.save(database_path, game, base_offset)
 
             # save to .scout
             from pychess.Savers.pgn import scoutfish_path
+
             if scoutfish_path is not None:
                 pgn_text = pgn.save(StringIO(), game)
 
-                tmp = tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", delete=False)
+                tmp = tempfile.NamedTemporaryFile(
+                    mode="w", encoding="utf-8", delete=False
+                )
                 pgnfile = tmp.name
                 with tmp.file as f:
                     f.write(pgn_text)
@@ -232,9 +244,9 @@ class Games(GObject.GObject, Perspective):
                 output = subprocess.check_output(args, stderr=subprocess.STDOUT)
 
                 # append it to our existing one
-                if output.decode().find(u"Processing...done") > 0:
-                    old_scout = os.path.splitext(pgn_path)[0] + '.scout'
-                    new_scout = os.path.splitext(pgnfile)[0] + '.scout'
+                if output.decode().find("Processing...done") > 0:
+                    old_scout = os.path.splitext(pgn_path)[0] + ".scout"
+                    new_scout = os.path.splitext(pgnfile)[0] + ".scout"
 
                     with open(old_scout, "ab") as file1, open(new_scout, "rb") as file2:
                         file1.write(file2.read())
@@ -245,7 +257,7 @@ class Games(GObject.GObject, Perspective):
             game.save(pgn_path, pgn, append)
 
             return True
-        except IOError:
+        except OSError:
             return False
 
     def saveGameAs(self, game, position=None, export=False):
@@ -256,7 +268,7 @@ class Games(GObject.GObject, Perspective):
         title = _("Save Game") if not export else _("Export position")
         savedialog.set_title(title)
         while True:
-            filename = "%s-%s" % (game.players[0], game.players[1])
+            filename = "{}-{}".format(game.players[0], game.players[1])
             savedialog.set_current_name(filename.replace(" ", "_"))
 
             res = savedialog.run()
@@ -272,14 +284,19 @@ class Games(GObject.GObject, Perspective):
             index = savecombo.get_active()
             if index == 0:
                 if ending not in enddir:
-                    d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
-                                          buttons=Gtk.ButtonsType.OK)
+                    d = Gtk.MessageDialog(
+                        mainwindow(),
+                        type=Gtk.MessageType.ERROR,
+                        buttons=Gtk.ButtonsType.OK,
+                    )
                     folder, file = os.path.split(uri)
-                    d.set_markup(_("<big><b>Unknown file type '%s'</b></big>") %
-                                 ending)
-                    d.format_secondary_text(_(
-                        "Was unable to save '%(uri)s' as PyChess doesn't know the format '%(ending)s'.") %
-                        {'uri': uri, 'ending': ending})
+                    d.set_markup(_("<big><b>Unknown file type '%s'</b></big>") % ending)
+                    d.format_secondary_text(
+                        _(
+                            "Was unable to save '%(uri)s' as PyChess doesn't know the format '%(ending)s'."
+                        )
+                        % {"uri": uri, "ending": ending}
+                    )
                     d.run()
                     d.destroy()
                     continue
@@ -292,28 +309,44 @@ class Games(GObject.GObject, Perspective):
                     uri += ".%s" % saver.__ending__
 
             if os.path.isfile(uri) and not os.access(uri, os.W_OK):
-                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
-                                      buttons=Gtk.ButtonsType.OK)
+                d = Gtk.MessageDialog(
+                    mainwindow(), type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK
+                )
                 d.set_markup(_("<big><b>Unable to save file '%s'</b></big>") % uri)
-                d.format_secondary_text(_(
-                    "You don't have the necessary rights to save the file.\n\
-    Please ensure that you have given the right path and try again."))
+                d.format_secondary_text(
+                    _(
+                        "You don't have the necessary rights to save the file.\n\
+    Please ensure that you have given the right path and try again."
+                    )
+                )
                 d.run()
                 d.destroy()
                 continue
 
             if os.path.isfile(uri):
                 d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION)
-                d.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                              _("_Replace"), Gtk.ResponseType.ACCEPT)
+                d.add_buttons(
+                    Gtk.STOCK_CANCEL,
+                    Gtk.ResponseType.CANCEL,
+                    _("_Replace"),
+                    Gtk.ResponseType.ACCEPT,
+                )
                 if saver.__append__:
                     d.add_buttons(Gtk.STOCK_ADD, 1)
                 d.set_title(_("File exists"))
                 folder, file = os.path.split(uri)
-                d.set_markup(_(
-                    "<big><b>A file named '%s' already exists. Would you like to replace it?</b></big>") % file)
-                d.format_secondary_text(_(
-                    "The file already exists in '%s'. If you replace it, its content will be overwritten.") % folder)
+                d.set_markup(
+                    _(
+                        "<big><b>A file named '%s' already exists. Would you like to replace it?</b></big>"
+                    )
+                    % file
+                )
+                d.format_secondary_text(
+                    _(
+                        "The file already exists in '%s'. If you replace it, its content will be overwritten."
+                    )
+                    % folder
+                )
                 replaceRes = d.run()
                 d.destroy()
 
@@ -327,14 +360,16 @@ class Games(GObject.GObject, Perspective):
             try:
                 flip = self.cur_gmwidg().board.view.rotation > 0
                 game.save(uri, saver, append, position, flip)
-            except IOError as e:
+            except OSError as e:
                 d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR)
                 d.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)
                 d.set_title(_("Could not save the file"))
-                d.set_markup(_(
-                    "<big><b>PyChess was not able to save the game</b></big>"))
-                d.format_secondary_text(_("The error was: %s") % ", ".join(
-                    str(a) for a in e.args))
+                d.set_markup(
+                    _("<big><b>PyChess was not able to save the game</b></big>")
+                )
+                d.format_secondary_text(
+                    _("The error was: %s") % ", ".join(str(a) for a in e.args)
+                )
                 d.run()
                 d.destroy()
                 continue
@@ -350,18 +385,29 @@ class Games(GObject.GObject, Perspective):
     def closeAllGames(self, gamewidgets):
         log.debug("Games.closeAllGames")
         response = None
-        changedPairs = [(gmwidg, gmwidg.gamemodel) for gmwidg in gamewidgets
-                        if gmwidg.gamemodel.isChanged()]
+        changedPairs = [
+            (gmwidg, gmwidg.gamemodel)
+            for gmwidg in gamewidgets
+            if gmwidg.gamemodel.isChanged()
+        ]
         if len(changedPairs) == 0:
             response = Gtk.ResponseType.OK
 
         elif len(changedPairs) == 1:
             response = self.closeGame(changedPairs[0][0])
         else:
-            markup = "<big><b>" + ngettext("There is %d game with unsaved moves.",
-                                           "There are %d games with unsaved moves.",
-                                           len(changedPairs)) % len(changedPairs) + " " + \
-                _("Save moves before closing?") + "</b></big>"
+            markup = (
+                "<big><b>"
+                + ngettext(
+                    "There is %d game with unsaved moves.",
+                    "There are %d games with unsaved moves.",
+                    len(changedPairs),
+                )
+                % len(changedPairs)
+                + " "
+                + _("Save moves before closing?")
+                + "</b></big>"
+            )
 
             for gmwidg, game in changedPairs:
                 if not gmwidg.gamemodel.isChanged():
@@ -373,8 +419,14 @@ class Games(GObject.GObject, Perspective):
                             response = Gtk.ResponseType.OK
                         else:
                             response = None
-                            markup = "<b><big>" + _("Unable to save to configured file. \
-                                                    Save the games before closing?") + "</big></b>"
+                            markup = (
+                                "<b><big>"
+                                + _(
+                                    "Unable to save to configured file. \
+                                                    Save the games before closing?"
+                                )
+                                + "</big></b>"
+                            )
                             break
 
             if response is None:
@@ -391,18 +443,27 @@ class Games(GObject.GObject, Perspective):
                 renderer = Gtk.CellRendererToggle()
                 renderer.props.activatable = True
                 treeview.append_column(Gtk.TreeViewColumn("", renderer, active=0))
-                treeview.append_column(Gtk.TreeViewColumn("",
-                                                          Gtk.CellRendererText(),
-                                                          text=1))
+                treeview.append_column(
+                    Gtk.TreeViewColumn("", Gtk.CellRendererText(), text=1)
+                )
                 for gmwidg, game in changedPairs:
-                    liststore.append((True, "%s %s %s" % (game.players[0], _("vs."), game.players[1])))
+                    liststore.append(
+                        (
+                            True,
+                            "{} {} {}".format(
+                                game.players[0], _("vs."), game.players[1]
+                            ),
+                        )
+                    )
 
                 def callback(cell, path):
                     if path:
                         liststore[path][0] = not liststore[path][0]
                     saves = len(tuple(row for row in liststore if row[0]))
-                    saveLabel.set_text(ngettext(
-                        "_Save %d document", "_Save %d documents", saves) % saves)
+                    saveLabel.set_text(
+                        ngettext("_Save %d document", "_Save %d documents", saves)
+                        % saves
+                    )
                     saveLabel.set_use_underline(True)
 
                 renderer.connect("toggled", callback)
@@ -417,7 +478,7 @@ class Games(GObject.GObject, Perspective):
                             if checked:
                                 cgmwidg, cgame = changedPairs[i]
                                 if self.saveGame(cgame) == Gtk.ResponseType.ACCEPT:
-                                    liststore.remove(liststore.get_iter((i, )))
+                                    liststore.remove(liststore.get_iter((i,)))
                                     del changedPairs[i]
                                     if cgame.status in UNFINISHED_STATES:
                                         cgame.end(ABORTED, ABORTED_AGREEMENT)
@@ -431,8 +492,7 @@ class Games(GObject.GObject, Perspective):
                         break
                 dialog.destroy()
 
-        if response not in (Gtk.ResponseType.DELETE_EVENT,
-                            Gtk.ResponseType.CANCEL):
+        if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
             pairs = [(gmwidg, gmwidg.gamemodel) for gmwidg in gamewidgets]
             for gmwidg, game in pairs:
                 if game.status in UNFINISHED_STATES:
@@ -449,14 +509,24 @@ class Games(GObject.GObject, Perspective):
         if not gmwidg.gamemodel.isChanged():
             response = Gtk.ResponseType.OK
         else:
-            markup = "<b><big>" + _("Save the current game before you close it?") + "</big></b>"
+            markup = (
+                "<b><big>"
+                + _("Save the current game before you close it?")
+                + "</big></b>"
+            )
             if conf.get("autoSave"):
                 x = self.saveGamePGN(gmwidg.gamemodel)
                 if x:
                     response = Gtk.ResponseType.OK
                 else:
-                    markup = "<b><big>" + _("Unable to save to configured file. \
-                                            Save the current game before you close it?") + "</big></b>"
+                    markup = (
+                        "<b><big>"
+                        + _(
+                            "Unable to save to configured file. \
+                                            Save the current game before you close it?"
+                        )
+                        + "</big></b>"
+                    )
 
             if response is None:
                 d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING)
@@ -470,8 +540,11 @@ class Games(GObject.GObject, Perspective):
                 gmwidg.bringToFront()
 
                 d.set_markup(markup)
-                d.format_secondary_text(_(
-                    "It is not possible later to continue the game,\nif you don't save it."))
+                d.format_secondary_text(
+                    _(
+                        "It is not possible later to continue the game,\nif you don't save it."
+                    )
+                )
 
                 response = d.run()
                 d.destroy()
@@ -481,8 +554,7 @@ class Games(GObject.GObject, Perspective):
                 if self.saveGame(gmwidg.gamemodel) != Gtk.ResponseType.ACCEPT:
                     response = Gtk.ResponseType.CANCEL
 
-        if response not in (Gtk.ResponseType.DELETE_EVENT,
-                            Gtk.ResponseType.CANCEL):
+        if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
             if gmwidg.gamemodel.status in UNFINISHED_STATES:
                 gmwidg.gamemodel.end(ABORTED, ABORTED_AGREEMENT)
 
@@ -504,14 +576,17 @@ class Games(GObject.GObject, Perspective):
             db_persp = perspective_manager.get_perspective("database")
             if len(self.gamewidgets) == 0:
                 for widget in MENU_ITEMS:
-                    if widget in ("copy_pgn", "copy_fen") and db_persp.preview_panel is not None:
+                    if (
+                        widget in ("copy_pgn", "copy_fen")
+                        and db_persp.preview_panel is not None
+                    ):
                         continue
-                    gamewidget.getWidgets()[widget].set_property('sensitive', False)
+                    gamewidget.getWidgets()[widget].set_property("sensitive", False)
 
         return response
 
     def delGameWidget(self, gmwidg):
-        """ Remove the widget from the GUI after the game has been terminated """
+        """Remove the widget from the GUI after the game has been terminated"""
         log.debug("Games.delGameWidget: starting %s" % repr(gmwidg))
         gmwidg.closed = True
         gmwidg.emit("closed")
@@ -553,12 +628,16 @@ class Games(GObject.GObject, Perspective):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("games", perspective_widget)
 
-        self.notebooks = {"board": new_notebook("board"),
-                          "buttons": new_notebook("buttons"),
-                          "messageArea": new_notebook("messageArea")}
+        self.notebooks = {
+            "board": new_notebook("board"),
+            "buttons": new_notebook("buttons"),
+            "messageArea": new_notebook("messageArea"),
+        }
         self.main_notebook = self.notebooks["board"]
         for panel in self.sidePanels:
-            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(
+                panel_name(panel.__name__)
+            )
 
         # Initing headbook
 
@@ -587,7 +666,9 @@ class Games(GObject.GObject, Perspective):
 
         self.docks["board"] = (Gtk.Label(label="Board"), self.notebooks["board"], None)
         for panel in self.sidePanels:
-            self.docks[panel_name(panel.__name__)][1] = self.notebooks[panel_name(panel.__name__)]
+            self.docks[panel_name(panel.__name__)][1] = self.notebooks[
+                panel_name(panel.__name__)
+            ]
 
         self.load_from_xml()
 
@@ -595,34 +676,63 @@ class Games(GObject.GObject, Perspective):
         first_time_layout = False
         if not os.path.isfile(self.dockLocation):
             first_time_layout = True
-            leaf = self.dock.dock(self.docks["board"][1],
-                                  CENTER,
-                                  Gtk.Label(label=self.docks["board"][0]),
-                                  "board")
+            leaf = self.dock.dock(
+                self.docks["board"][1],
+                CENTER,
+                Gtk.Label(label=self.docks["board"][0]),
+                "board",
+            )
             self.docks["board"][1].show_all()
             leaf.setDockable(False)
 
             # S
-            epanel = leaf.dock(self.docks["bookPanel"][1], SOUTH, self.docks["bookPanel"][0],
-                               "bookPanel")
+            epanel = leaf.dock(
+                self.docks["bookPanel"][1],
+                SOUTH,
+                self.docks["bookPanel"][0],
+                "bookPanel",
+            )
             epanel.default_item_height = 45
-            epanel = epanel.dock(self.docks["engineOutputPanel"][1], CENTER,
-                                 self.docks["engineOutputPanel"][0],
-                                 "engineOutputPanel")
+            epanel = epanel.dock(
+                self.docks["engineOutputPanel"][1],
+                CENTER,
+                self.docks["engineOutputPanel"][0],
+                "engineOutputPanel",
+            )
 
             # NE
-            leaf = leaf.dock(self.docks["annotationPanel"][1], EAST,
-                             self.docks["annotationPanel"][0], "annotationPanel")
-            leaf = leaf.dock(self.docks["historyPanel"][1], CENTER,
-                             self.docks["historyPanel"][0], "historyPanel")
-            leaf = leaf.dock(self.docks["scorePanel"][1], CENTER,
-                             self.docks["scorePanel"][0], "scorePanel")
+            leaf = leaf.dock(
+                self.docks["annotationPanel"][1],
+                EAST,
+                self.docks["annotationPanel"][0],
+                "annotationPanel",
+            )
+            leaf = leaf.dock(
+                self.docks["historyPanel"][1],
+                CENTER,
+                self.docks["historyPanel"][0],
+                "historyPanel",
+            )
+            leaf = leaf.dock(
+                self.docks["scorePanel"][1],
+                CENTER,
+                self.docks["scorePanel"][0],
+                "scorePanel",
+            )
 
             # SE
-            leaf = leaf.dock(self.docks["chatPanel"][1], SOUTH, self.docks["chatPanel"][0],
-                             "chatPanel")
-            leaf = leaf.dock(self.docks["commentPanel"][1], CENTER,
-                             self.docks["commentPanel"][0], "commentPanel")
+            leaf = leaf.dock(
+                self.docks["chatPanel"][1],
+                SOUTH,
+                self.docks["chatPanel"][0],
+                "chatPanel",
+            )
+            leaf = leaf.dock(
+                self.docks["commentPanel"][1],
+                CENTER,
+                self.docks["commentPanel"][0],
+                "commentPanel",
+            )
 
         def unrealize(dock, notebooks):
             # unhide the panel before saving so its configuration is saved correctly
@@ -650,8 +760,9 @@ class Games(GObject.GObject, Perspective):
         hbox.pack_start(align, True, True, 0)
 
         def ma_switch_page(notebook, gpointer, page_num):
-            notebook.props.visible = notebook.get_nth_page(page_num).\
-                get_child().props.visible
+            notebook.props.visible = (
+                notebook.get_nth_page(page_num).get_child().props.visible
+            )
 
         self.notebooks["messageArea"].connect("switch-page", ma_switch_page)
         centerVBox.pack_start(hbox, False, True, 0)
@@ -660,7 +771,9 @@ class Games(GObject.GObject, Perspective):
         centerVBox.show_all()
         perspective_widget.show_all()
 
-        perspective_manager.set_perspective_menuitems("games", self.menuitems, default=first_time_layout)
+        perspective_manager.set_perspective_menuitems(
+            "games", self.menuitems, default=first_time_layout
+        )
 
         conf.notify_add("hideTabs", self.tabsCallback)
 
@@ -680,18 +793,19 @@ class Games(GObject.GObject, Perspective):
         if hasattr(headbook, "set_tab_reorderable"):
 
             def page_reordered(widget, child, new_num, headbook):
-                old_num = self.notebooks["board"].page_num(self.key2gmwidg[child].boardvbox)
+                old_num = self.notebooks["board"].page_num(
+                    self.key2gmwidg[child].boardvbox
+                )
                 if old_num == -1:
-                    log.error('Games and labels are out of sync!')
+                    log.error("Games and labels are out of sync!")
                 else:
                     for notebook in self.notebooks.values():
-                        notebook.reorder_child(
-                            notebook.get_nth_page(old_num), new_num)
+                        notebook.reorder_child(notebook.get_nth_page(old_num), new_num)
 
             headbook.connect("page-reordered", page_reordered, headbook)
 
     def adjust_divider(self, diff):
-        """ Try to move paned (containing board) divider to show/hide captured pieces """
+        """Try to move paned (containing board) divider to show/hide captured pieces"""
         if self.dock is None:
             return
         child = self.dock.get_children()[0]
@@ -765,9 +879,12 @@ class Games(GObject.GObject, Perspective):
                     gmwidg.light_on_off(False)
                     text = gmwidg.game_info_label.get_text()
                     gmwidg.game_info_label.set_markup(
-                        '<span color="black" weight="bold">%s</span>' % text)
+                        '<span color="black" weight="bold">%s</span>' % text
+                    )
 
-        self.key2cid[gmwidg.notebookKey] = headbook.connect_after("switch-page", callback, gmwidg)
+        self.key2cid[gmwidg.notebookKey] = headbook.connect_after(
+            "switch-page", callback, gmwidg
+        )
         gmwidg.infront()
 
         align = gamewidget.createAlignment(0, 0, 0, 0)
@@ -797,9 +914,16 @@ class Games(GObject.GObject, Perspective):
 
 def get_save_dialog(export=False):
     savedialog = Gtk.FileChooserDialog(
-        "", mainwindow(), Gtk.FileChooserAction.SAVE,
-        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
-         Gtk.ResponseType.ACCEPT))
+        "",
+        mainwindow(),
+        Gtk.FileChooserAction.SAVE,
+        (
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_SAVE,
+            Gtk.ResponseType.ACCEPT,
+        ),
+    )
     savedialog.set_current_folder(os.path.expanduser("~"))
 
     # Add widgets to the savedialog
@@ -808,11 +932,11 @@ def get_save_dialog(export=False):
 
     crt = Gtk.CellRendererText()
     savecombo.pack_start(crt, True)
-    savecombo.add_attribute(crt, 'text', 0)
+    savecombo.add_attribute(crt, "text", 0)
 
     crt = Gtk.CellRendererText()
     savecombo.pack_start(crt, False)
-    savecombo.add_attribute(crt, 'text', 1)
+    savecombo.add_attribute(crt, "text", 1)
 
     if export:
         savecombo.set_model(exportformats)
@@ -827,9 +951,16 @@ def get_save_dialog(export=False):
 
 def get_open_dialog():
     opendialog = Gtk.FileChooserDialog(
-        _("Open chess file"), mainwindow(), Gtk.FileChooserAction.OPEN,
-        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-         Gtk.ResponseType.OK))
+        _("Open chess file"),
+        mainwindow(),
+        Gtk.FileChooserAction.OPEN,
+        (
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
+        ),
+    )
     opendialog.set_show_hidden(True)
     opendialog.set_select_multiple(True)
 

@@ -8,21 +8,63 @@ from pychess.Savers.pgn import save
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.const import WHITE, BLACK, \
-    CRAZYHOUSECHESS, WILDCASTLESHUFFLECHESS, LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, \
-    THREECHECKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, \
-    SITTUYINCHESS, GIVEAWAYCHESS, NORMALCHESS, FISCHERRANDOMCHESS, WILDCASTLECHESS, \
-    ASYMMETRICRANDOMCHESS, RANDOMCHESS, SHUFFLECHESS, CORNERCHESS, HORDECHESS, PLACEMENTCHESS, SCHESS
+from pychess.Utils.const import (
+    WHITE,
+    BLACK,
+    CRAZYHOUSECHESS,
+    WILDCASTLESHUFFLECHESS,
+    LOSERSCHESS,
+    SUICIDECHESS,
+    ATOMICCHESS,
+    THREECHECKCHESS,
+    KINGOFTHEHILLCHESS,
+    ASEANCHESS,
+    MAKRUKCHESS,
+    CAMBODIANCHESS,
+    SITTUYINCHESS,
+    GIVEAWAYCHESS,
+    NORMALCHESS,
+    FISCHERRANDOMCHESS,
+    WILDCASTLECHESS,
+    ASYMMETRICRANDOMCHESS,
+    RANDOMCHESS,
+    SHUFFLECHESS,
+    CORNERCHESS,
+    HORDECHESS,
+    PLACEMENTCHESS,
+    SCHESS,
+)
 from pychess.Variants import variants
 from pychess.System.Log import log
+
 log.logger.setLevel(logging.INFO)
 
 discoverer.pre_discover()
 
-PYCHESS_VARIANTS = (SCHESS, NORMALCHESS, CRAZYHOUSECHESS, FISCHERRANDOMCHESS, LOSERSCHESS, SUICIDECHESS,
-                    THREECHECKCHESS, KINGOFTHEHILLCHESS, WILDCASTLESHUFFLECHESS, ASEANCHESS,
-                    MAKRUKCHESS, CAMBODIANCHESS, SITTUYINCHESS, GIVEAWAYCHESS, ATOMICCHESS, HORDECHESS,
-                    ASYMMETRICRANDOMCHESS, RANDOMCHESS, WILDCASTLECHESS, SHUFFLECHESS, CORNERCHESS, PLACEMENTCHESS)
+PYCHESS_VARIANTS = (
+    SCHESS,
+    NORMALCHESS,
+    CRAZYHOUSECHESS,
+    FISCHERRANDOMCHESS,
+    LOSERSCHESS,
+    SUICIDECHESS,
+    THREECHECKCHESS,
+    KINGOFTHEHILLCHESS,
+    WILDCASTLESHUFFLECHESS,
+    ASEANCHESS,
+    MAKRUKCHESS,
+    CAMBODIANCHESS,
+    SITTUYINCHESS,
+    GIVEAWAYCHESS,
+    ATOMICCHESS,
+    HORDECHESS,
+    ASYMMETRICRANDOMCHESS,
+    RANDOMCHESS,
+    WILDCASTLECHESS,
+    SHUFFLECHESS,
+    CORNERCHESS,
+    PLACEMENTCHESS,
+)
 
 
 class CECPTests(unittest.TestCase):
@@ -30,10 +72,11 @@ class CECPTests(unittest.TestCase):
         self.engine = discoverer.getEngineByName("PyChess.py")
 
     def test(self):
-        """ Play PyChess-PyChess 1 min variant games """
+        """Play PyChess-PyChess 1 min variant games"""
 
         if sys.platform == "win32":
             from asyncio.windows_events import ProactorEventLoop
+
             loop = ProactorEventLoop()
             asyncio.set_event_loop(loop)
         else:
@@ -91,5 +134,5 @@ class CECPTests(unittest.TestCase):
             loop.run_until_complete(coro(variant))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

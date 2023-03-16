@@ -1,7 +1,15 @@
 from gi.repository import Gtk
 
 from pychess.Utils.Piece import Piece
-from pychess.Utils.const import WHITE, HAWK, ELEPHANT, HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK
+from pychess.Utils.const import (
+    WHITE,
+    HAWK,
+    ELEPHANT,
+    HAWK_GATE,
+    ELEPHANT_GATE,
+    HAWK_GATE_AT_ROOK,
+    ELEPHANT_GATE_AT_ROOK,
+)
 from pychess.System import uistuff
 from pychess.widgets import mainwindow
 
@@ -19,12 +27,16 @@ class GatingDialog:
         if self.widgets["hawkDock"].get_child() is None:
             self.widgets["hawkDock"].add(PieceWidget(Piece(WHITE, HAWK), variant))
             self.widgets["hawkDock"].get_child().show()
-            self.widgets["elephantDock"].add(PieceWidget(Piece(WHITE, ELEPHANT), variant))
+            self.widgets["elephantDock"].add(
+                PieceWidget(Piece(WHITE, ELEPHANT), variant)
+            )
             self.widgets["elephantDock"].get_child().show()
 
             self.widgets["hawkAtRookDock"].add(PieceWidget(Piece(WHITE, HAWK), variant))
             self.widgets["hawkAtRookDock"].get_child().show()
-            self.widgets["elephantAtRookDock"].add(PieceWidget(Piece(WHITE, ELEPHANT), variant))
+            self.widgets["elephantAtRookDock"].add(
+                PieceWidget(Piece(WHITE, ELEPHANT), variant)
+            )
             self.widgets["elephantAtRookDock"].get_child().show()
 
     def setColor(self, color):
@@ -57,5 +69,7 @@ class GatingDialog:
         res = self.dialog.run()
         self.dialog.hide()
         if res != Gtk.ResponseType.DELETE_EVENT:
-            return [HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK][int(res)]
+            return [HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK][
+                int(res)
+            ]
         return None

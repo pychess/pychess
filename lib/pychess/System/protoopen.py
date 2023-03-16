@@ -9,7 +9,7 @@ PGN_ENCODING = "latin_1"
 
 def splitUri(uri):
     uri = unquote(uri)  # escape special chars
-    uri = uri.strip('\r\n\x00')  # remove \r\n and NULL
+    uri = uri.strip("\r\n\x00")  # remove \r\n and NULL
     if sys.platform == "win32":
         return uri.split(":///")
     else:
@@ -17,29 +17,31 @@ def splitUri(uri):
 
 
 def protoopen(uri, encoding=PGN_ENCODING):
-    """ Function for opening many things """
+    """Function for opening many things"""
     splitted = splitUri(uri)
 
     if splitted[0] == "file":
         uri = splitted[1]
 
     try:
-        handle = open(unquote(uri), "r", encoding=encoding, newline="")
-        handle.pgn_encoding = "utf-8" if os.path.basename(uri).startswith("lichess_") else encoding
+        handle = open(unquote(uri), encoding=encoding, newline="")
+        handle.pgn_encoding = (
+            "utf-8" if os.path.basename(uri).startswith("lichess_") else encoding
+        )
         return handle
-    except (IOError, OSError):
+    except OSError:
         pass
 
     try:
         return urlopen(uri)
-    except (IOError, OSError):
+    except OSError:
         pass
 
-    raise IOError("Protocol isn't supported by pychess")
+    raise OSError("Protocol isn't supported by pychess")
 
 
 def protosave(uri, append=False):
-    """ Function for saving many things """
+    """Function for saving many things"""
 
     splitted = splitUri(uri)
 
@@ -52,11 +54,11 @@ def protosave(uri, append=False):
             return open(splitted[0], "a", encoding=PGN_ENCODING, newline="")
         return open(splitted[0], "w", encoding=PGN_ENCODING, newline="")
 
-    raise IOError("PyChess doesn't support writing to protocol")
+    raise OSError("PyChess doesn't support writing to protocol")
 
 
 def isWriteable(uri):
-    """ Returns true if protoopen can open a write pipe to the uri """
+    """Returns true if protoopen can open a write pipe to the uri"""
 
     splitted = splitUri(uri)
 

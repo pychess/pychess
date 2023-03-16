@@ -1,18 +1,32 @@
 from gi.repository import Gtk
 
 from pychess.Utils.Piece import Piece
-from pychess.Utils.const import SUICIDECHESS, GIVEAWAYCHESS, SITTUYINCHESS, SCHESS, \
-    WHITE, KING, QUEEN, ROOK, BISHOP, KNIGHT, HAWK, ELEPHANT
+from pychess.Utils.const import (
+    SUICIDECHESS,
+    GIVEAWAYCHESS,
+    SITTUYINCHESS,
+    SCHESS,
+    WHITE,
+    KING,
+    QUEEN,
+    ROOK,
+    BISHOP,
+    KNIGHT,
+    HAWK,
+    ELEPHANT,
+)
 
 from .PieceWidget import PieceWidget
 
 
 class PromotionDialog:
-    """ :Description: A popup dialog that allows you to select form a set of pieces the exchange
-        for a pawn through the promotion rule
+    """:Description: A popup dialog that allows you to select form a set of pieces the exchange
+    for a pawn through the promotion rule
     """
+
     def __init__(self, variant):
         from .gamewidget import getWidgets
+
         self.widgets = getWidgets()
         self.dialog = self.widgets["promotionDialog"]
 
@@ -32,7 +46,9 @@ class PromotionDialog:
             if variant == SCHESS:
                 self.widgets["hawkDock"].add(PieceWidget(Piece(WHITE, HAWK), variant))
                 self.widgets["hawkDock"].get_child().show()
-                self.widgets["elephantDock"].add(PieceWidget(Piece(WHITE, ELEPHANT), variant))
+                self.widgets["elephantDock"].add(
+                    PieceWidget(Piece(WHITE, ELEPHANT), variant)
+                )
                 self.widgets["elephantDock"].get_child().show()
 
     def setColor(self, color, variant):

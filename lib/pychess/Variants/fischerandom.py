@@ -11,8 +11,9 @@ from pychess.Utils.const import reprFile
 class FischerandomBoard(Board):
     variant = FISCHERRANDOMCHESS
     __desc__ = _(
-        "http://en.wikipedia.org/wiki/Chess960\n" +
-        "FICS wild/fr: http://www.freechess.org/Help/HelpFiles/wild.html")
+        "http://en.wikipedia.org/wiki/Chess960\n"
+        + "FICS wild/fr: http://www.freechess.org/Help/HelpFiles/wild.html"
+    )
     name = _("Fischer Random")
     cecp_name = "fischerandom"
     need_initial_board = True
@@ -27,44 +28,57 @@ class FischerandomBoard(Board):
 
     def getFrcFen(self, position=519):
         position = max(1, min(960, position))
-        pieces = ['', '', '', '', '', '', '', '']
+        pieces = ["", "", "", "", "", "", "", ""]
 
         # Bishops
-        pieces[floor(0.08 * (floor(25 * (position - 1)) % 100) + 1.5)] = 'b'
-        pieces[floor(0.08 * (floor(25 * floor((position - 1) / 4)) % 100) + 0.5)] = 'b'
+        pieces[floor(0.08 * (floor(25 * (position - 1)) % 100) + 1.5)] = "b"
+        pieces[floor(0.08 * (floor(25 * floor((position - 1) / 4)) % 100) + 0.5)] = "b"
 
         # Queen
         z = floor(floor((position - 1) / 4) / 4) / 6
         p = floor(6 * (z - floor(z)) + 0.5)
         for i in range(8):
-            if pieces[i] == '':
+            if pieces[i] == "":
                 if p == 0:
-                    pieces[i] = 'q'
+                    pieces[i] = "q"
                     break
                 p -= 1
 
         # KRN
-        krn = ['nnrkr', 'nrnkr', 'nrknr', 'nrkrn', 'rnnkr', 'rnknr', 'rnkrn', 'rknnr', 'rknrn', 'rkrnn'][floor(z)]
+        krn = [
+            "nnrkr",
+            "nrnkr",
+            "nrknr",
+            "nrkrn",
+            "rnnkr",
+            "rnknr",
+            "rnkrn",
+            "rknnr",
+            "rknrn",
+            "rkrnn",
+        ][floor(z)]
         for i in range(8):
-            if pieces[i] == '':
+            if pieces[i] == "":
                 pieces[i] = krn[:1]
                 krn = krn[1:]
 
         # Castling
-        castling = ''
+        castling = ""
         for i in range(8):
-            if pieces[i] == 'r':
+            if pieces[i] == "r":
                 castling += reprFile[i]
 
         # FEN
-        pieces = ''.join(pieces)
-        return '%s/pppppppp/8/8/8/8/PPPPPPPP/%s w %s%s - 0 1' % (pieces, pieces.upper(), castling.upper(), castling)
+        pieces = "".join(pieces)
+        return "{}/pppppppp/8/8/8/8/PPPPPPPP/{} w {}{} - 0 1".format(
+            pieces, pieces.upper(), castling.upper(), castling
+        )
 
     def shuffle_start(self):
         return self.getFrcFen(randrange(1, 960))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     frcBoard = FischerandomBoard(True)
     for i in range(10):
         print(frcBoard.shuffle_start())

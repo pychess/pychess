@@ -1,4 +1,3 @@
-
 from time import time
 
 from pychess.Utils.lutils.lmovegen import genAllMoves
@@ -30,5 +29,7 @@ def perft(board, depth, root):
         start_time = time()
         nodes = do_perft(board, i + 1, root)
         ttime = time() - start_time
-        print("%2d %10d %5.2f %12.2fnps" %
-              (i + 1, nodes, ttime, nodes / ttime if ttime > 0 else nodes))
+        print(
+            "%2d %10d %5.2f %12.2fnps"
+            % (i + 1, nodes, ttime, nodes / ttime if ttime > 0 else nodes)
+        )

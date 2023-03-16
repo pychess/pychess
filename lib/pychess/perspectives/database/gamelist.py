@@ -1,12 +1,20 @@
-# -*- coding: UTF-8 -*-
-
 import asyncio
 from io import StringIO
 
 from gi.repository import Gtk, GObject
 
-from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult, \
-    UNDOABLE_STATES, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
+from pychess.Utils.const import (
+    DRAW,
+    LOCAL,
+    WHITE,
+    BLACK,
+    WAITING_TO_START,
+    reprResult,
+    UNDOABLE_STATES,
+    FIRST_PAGE,
+    PREV_PAGE,
+    NEXT_PAGE,
+)
 from pychess.Players.Human import Human
 from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
@@ -16,9 +24,23 @@ from pychess.widgets import newGameDialog
 from pychess.Savers import pgn
 
 
-cols = (game.c.id, pl1.c.name, game.c.white_elo, pl2.c.name, game.c.black_elo,
-        game.c.result, game.c.date, event.c.name, site.c.name, game.c.round,
-        game.c.ply_count, game.c.eco, game.c.time_control, game.c.variant, game.c.fen)
+cols = (
+    game.c.id,
+    pl1.c.name,
+    game.c.white_elo,
+    pl2.c.name,
+    game.c.black_elo,
+    game.c.result,
+    game.c.date,
+    event.c.name,
+    site.c.name,
+    game.c.round,
+    game.c.ply_count,
+    game.c.eco,
+    game.c.time_control,
+    game.c.variant,
+    game.c.fen,
+)
 
 
 class GameList(Gtk.TreeView):
@@ -32,8 +54,9 @@ class GameList(Gtk.TreeView):
         # GTK_SELECTION_BROWSE - exactly one item is always selected
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
 
-        self.liststore = Gtk.ListStore(int, str, str, str, str, str, str, str,
-                                       str, str, str, str, str, str, str)
+        self.liststore = Gtk.ListStore(
+            int, str, str, str, str, str, str, str, str, str, str, str, str, str, str
+        )
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
         self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
@@ -44,9 +67,23 @@ class GameList(Gtk.TreeView):
         self.set_rules_hint(True)
         self.set_search_column(1)
 
-        titles = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
-                  _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
-                  _("Length"), "ECO", _("Time control"), _("Variant"), "FEN")
+        titles = (
+            _("Id"),
+            _("White"),
+            _("W Elo"),
+            _("Black"),
+            _("B Elo"),
+            _("Result"),
+            _("Date"),
+            _("Event"),
+            _("Site"),
+            _("Round"),
+            _("Length"),
+            "ECO",
+            _("Time control"),
+            _("Variant"),
+            "FEN",
+        )
 
         for i, title in enumerate(titles):
             r = Gtk.CellRendererText()
@@ -130,8 +167,11 @@ class GameList(Gtk.TreeView):
 
     def load_games(self, direction=FIRST_PAGE):
         selection = self.get_selection()
-        if selection is not None and self.preview_cid is not None and \
-                selection.handler_is_connected(self.preview_cid):
+        if (
+            selection is not None
+            and self.preview_cid is not None
+            and selection.handler_is_connected(self.preview_cid)
+        ):
             with GObject.signal_handler_block(selection, self.preview_cid):
                 self.liststore.clear()
         else:
@@ -153,7 +193,11 @@ class GameList(Gtk.TreeView):
             event = "" if rec["Event"] is None else rec["Event"].replace("?", "")
             site = "" if rec["Site"] is None else rec["Site"].replace("?", "")
             round_ = "" if rec["Round"] is None else rec["Round"].replace("?", "")
-            date = "" if rec["Date"] is None else rec["Date"].replace(".??", "").replace("????.", "")
+            date = (
+                ""
+                if rec["Date"] is None
+                else rec["Date"].replace(".??", "").replace("????.", "")
+            )
 
             try:
                 ply = rec["PlyCount"]
@@ -166,8 +210,25 @@ class GameList(Gtk.TreeView):
             variant = variants[variant].cecp_name.capitalize() if variant else ""
             fen = rec["FEN"]
 
-            add([game_id, wname, welo, bname, belo, result, date, event, site,
-                 round_, length, eco, tc, variant, fen])
+            add(
+                [
+                    game_id,
+                    wname,
+                    welo,
+                    bname,
+                    belo,
+                    result,
+                    date,
+                    event,
+                    site,
+                    round_,
+                    length,
+                    eco,
+                    tc,
+                    variant,
+                    fen,
+                ]
+            )
 
             ply = plys.get(offs) if offs in plys else 0
             self.records.append((rec, ply))
@@ -206,7 +267,9 @@ class GameList(Gtk.TreeView):
         p1 = (LOCAL, Human, (BLACK, bp), bp)
         self.persp.chessfile.loadToModel(rec, -1, self.gamemodel)
 
-        self.gamemodel.endstatus = self.gamemodel.status if self.gamemodel.status in UNDOABLE_STATES else None
+        self.gamemodel.endstatus = (
+            self.gamemodel.status if self.gamemodel.status in UNDOABLE_STATES else None
+        )
         self.gamemodel.status = WAITING_TO_START
 
         perspective_manager.activate_perspective("games")

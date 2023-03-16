@@ -9,9 +9,26 @@ if os.path.join(this_dir, "../..") not in sys.path:
 
 try:
     from pychess.Utils.book import getOpenings  # nopep8
-    from pychess.Utils.const import WHITE, ASEANCHESS, SITTUYINCHESS, ATOMICCHESS, reprResult, \
-        CAMBODIANCHESS, LOSERSCHESS, KINGOFTHEHILLCHESS, DRAW, BLACKWON, WHITEWON, MAKRUKCHESS, \
-        SUICIDECHESS, GIVEAWAYCHESS, THREECHECKCHESS, HORDECHESS, RACINGKINGSCHESS, PLACEMENTCHESS  # nopep8
+    from pychess.Utils.const import (
+        WHITE,
+        ASEANCHESS,
+        SITTUYINCHESS,
+        ATOMICCHESS,
+        reprResult,
+        CAMBODIANCHESS,
+        LOSERSCHESS,
+        KINGOFTHEHILLCHESS,
+        DRAW,
+        BLACKWON,
+        WHITEWON,
+        MAKRUKCHESS,
+        SUICIDECHESS,
+        GIVEAWAYCHESS,
+        THREECHECKCHESS,
+        HORDECHESS,
+        RACINGKINGSCHESS,
+        PLACEMENTCHESS,
+    )  # nopep8
     from pychess.Utils.lutils import lsearch  # nopep8
     from pychess.Utils.lutils.ldata import MAXPLY  # nopep8
     from pychess.Utils.lutils.lsearch import alphaBeta  # nopep8
@@ -51,13 +68,15 @@ class PyChess:
     def __remainingMovesA(self):
         # Based on regression of a 180k games pgn
         ply_count = self.board.plyCount
-        remaining = -1.71086e-12 * ply_count**6 \
-            + 1.69103e-9 * ply_count**5 \
-            - 6.00801e-7 * ply_count**4 \
-            + 8.17741e-5 * ply_count**3 \
-            + 2.91858e-4 * ply_count**2 \
-            - 0.94497 * ply_count \
+        remaining = (
+            -1.71086e-12 * ply_count**6
+            + 1.69103e-9 * ply_count**5
+            - 6.00801e-7 * ply_count**4
+            + 8.17741e-5 * ply_count**3
+            + 2.91858e-4 * ply_count**2
+            - 0.94497 * ply_count
             + 78.8979
+        )
         self.print("# remaining moves estimate=%s" % remaining)
         return remaining
 
@@ -71,9 +90,21 @@ class PyChess:
     def __getBestOpening(self):
         totalWeight = 0
         choice = None
-        if self.board.variant not in (ASEANCHESS, CAMBODIANCHESS, MAKRUKCHESS, HORDECHESS, PLACEMENTCHESS,
-                                      SITTUYINCHESS, LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS,
-                                      ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS, RACINGKINGSCHESS):
+        if self.board.variant not in (
+            ASEANCHESS,
+            CAMBODIANCHESS,
+            MAKRUKCHESS,
+            HORDECHESS,
+            PLACEMENTCHESS,
+            SITTUYINCHESS,
+            LOSERSCHESS,
+            SUICIDECHESS,
+            GIVEAWAYCHESS,
+            ATOMICCHESS,
+            KINGOFTHEHILLCHESS,
+            THREECHECKCHESS,
+            RACINGKINGSCHESS,
+        ):
             for move, weight, learn in getOpenings(self.board):
                 totalWeight += weight
                 if totalWeight == 0:
@@ -85,18 +116,17 @@ class PyChess:
         return choice
 
     def __go(self, ondone=None):
-        """ Finds and prints the best move from the current position """
+        """Finds and prints the best move from the current position"""
 
         mv = False if self.outOfBook else self.__getBestOpening()
         if mv:
             mvs = [mv]
 
         if not mv:
-
             lsearch.skipPruneChance = self.skipPruneChance
             lsearch.searching = True
 
-            timed = (self.basetime > 0 or self.increment > 0 or self.searchtime > 0)
+            timed = self.basetime > 0 or self.increment > 0 or self.searchtime > 0
 
             if self.searchtime > 0:
                 usetime = self.searchtime
@@ -120,8 +150,10 @@ class PyChess:
             lsearch.endtime = starttime + usetime if timed else sys.maxsize
             if self.debug:
                 if timed:
-                    self.print("# Time left: %3.2f s; Planing to think for %3.2f s" %
-                               (self.clock[self.playingAs], usetime))
+                    self.print(
+                        "# Time left: %3.2f s; Planing to think for %3.2f s"
+                        % (self.clock[self.playingAs], usetime)
+                    )
                 else:
                     self.print("# Searching to depth %d without timelimit" % self.sd)
 
@@ -140,8 +172,11 @@ class PyChess:
                     if self.post:
                         pv1 = " ".join(listToSan(self.board, mvs))
                         time_cs = int(100 * (time() - starttime))
-                        self.print("%s %s %s %s %s" % (
-                            depth, self.scr, time_cs, lsearch.nodes, pv1))
+                        self.print(
+                            "{} {} {} {} {}".format(
+                                depth, self.scr, time_cs, lsearch.nodes, pv1
+                            )
+                        )
                 else:
                     # We were interrupted
                     if depth == 1:
@@ -149,8 +184,7 @@ class PyChess:
                     break
                 prevtime = time() - starttime - prevtime
 
-                self.clock[self.playingAs] -= time(
-                ) - starttime - self.increment
+                self.clock[self.playingAs] -= time() - starttime - self.increment
 
             if not mvs:
                 if not lsearch.searching:
@@ -184,8 +218,8 @@ class PyChess:
         return sanmove
 
     def __analyze(self):
-        """ Searches, and prints info from, the position as stated in the cecp
-            protocol """
+        """Searches, and prints info from, the position as stated in the cecp
+        protocol"""
 
         start = time()
         lsearch.endtime = sys.maxsize
@@ -199,7 +233,7 @@ class PyChess:
 
             pv1 = " ".join(listToSan(board, mvs))
             time_cs = int(100 * (time() - start))
-            self.print("%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv1))
+            self.print("{} {} {} {} {}".format(depth, scr, time_cs, lsearch.nodes, pv1))
 
             lsearch.nodes = 0
 
@@ -207,6 +241,7 @@ class PyChess:
 if __name__ == "__main__":
     import logging
     from pychess.Players.PyChessCECP import PyChessCECP
+
     if len(sys.argv) == 1 or sys.argv[1:] == ["debug"]:
         if "debug" in sys.argv[1:]:
             log.logger.setLevel(logging.DEBUG)

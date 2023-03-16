@@ -11,8 +11,7 @@ __icon__ = addDataPrefix("glade/panel_annotation.svg")
 __desc__ = _("List of server news")
 
 
-class Sidepanel():
-
+class Sidepanel:
     def load(self, widgets, connection, lounge):
         self.widgets = widgets
 
@@ -25,7 +24,7 @@ class Sidepanel():
     def onNewsItem(self, nm, news):
         weekday, month, day, title, details = news
 
-        dtitle = "%s, %s %s: %s" % (weekday, month, day, title)
+        dtitle = "{}, {} {}: {}".format(weekday, month, day, title)
         label = Gtk.Label(label=dtitle)
         label.props.width_request = 300
         label.props.xalign = 0

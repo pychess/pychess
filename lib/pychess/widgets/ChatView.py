@@ -11,9 +11,8 @@ from pychess.ic.ICGameModel import ICGameModel
 
 class ChatView(Gtk.Box):
     __gsignals__ = {
-        'messageAdded': (GObject.SignalFlags.RUN_FIRST, None,
-                         (str, str, object)),
-        'messageTyped': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
+        "messageAdded": (GObject.SignalFlags.RUN_FIRST, None, (str, str, object)),
+        "messageTyped": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
 
     def __init__(self, gamemodel=None):
@@ -41,8 +40,7 @@ class ChatView(Gtk.Box):
 
         if isinstance(self.gamemodel, ICGameModel):
             self.refresh = Gtk.Image()
-            self.refresh.set_from_pixbuf(load_icon(16, "view-refresh",
-                                                   "stock-refresh"))
+            self.refresh.set_from_pixbuf(load_icon(16, "view-refresh", "stock-refresh"))
             label = _("Observers")
             self.obs_btn = Gtk.Button()
             self.obs_btn.set_image(self.refresh)
@@ -95,14 +93,16 @@ class ChatView(Gtk.Box):
             self.go_on_btn = Gtk.Button()
             self.go_on_btn.set_label(label)
             self.go_on_btn_cid = self.go_on_btn.connect(
-                "clicked", lambda btn: self.gamemodel.lecture_skip_event.set())
+                "clicked", lambda btn: self.gamemodel.lecture_skip_event.set()
+            )
             box.add(self.go_on_btn)
 
             label = _("Pause")
             self.pause_btn = Gtk.Button()
             self.pause_btn.set_label(label)
             self.pause_btn_cid = self.pause_btn.connect(
-                "clicked", lambda btn: self.gamemodel.lecture_pause_event.set())
+                "clicked", lambda btn: self.gamemodel.lecture_pause_event.set()
+            )
             box.add(self.pause_btn)
 
         self.pack_start(box, False, False, 0)
@@ -110,7 +110,9 @@ class ChatView(Gtk.Box):
         self.writeview_cid = self.writeView.connect("key-press-event", self.onKeyPress)
         self.cid = None
         if self.gamemodel is not None:
-            self.cid = self.gamemodel.connect_after("game_terminated", self.on_game_terminated)
+            self.cid = self.gamemodel.connect_after(
+                "game_terminated", self.on_game_terminated
+            )
 
     def on_game_terminated(self, model):
         if isinstance(self.gamemodel, ICGameModel):
@@ -121,11 +123,11 @@ class ChatView(Gtk.Box):
 
     def on_obs_btn_clicked(self, other):
         if not self.gamemodel.connection.ICC:
-            allob = 'allob ' + str(self.gamemodel.ficsgame.gameno)
+            allob = "allob " + str(self.gamemodel.ficsgame.gameno)
             self.gamemodel.connection.client.run_command(allob)
 
     def update_observers(self, other, observers):
-        """ Rebuilds observers list text """
+        """Rebuilds observers list text"""
         text_buf = self.obsView.get_buffer()
         start_iter = text_buf.get_end_iter()
         start_iter.backward_to_tag_toggle(self.button_tag)
@@ -140,16 +142,15 @@ class ChatView(Gtk.Box):
             if player.endswith("(U)"):
                 text_buf.insert(iter, "%s " % player[:-3])
             elif "(" in player:
-                pref = player.split('(', 1)[0]
+                pref = player.split("(", 1)[0]
                 self._ensureColor(pref)
-                text_buf.insert_with_tags_by_name(iter, "%s " % player,
-                                                  pref + "_bold")
+                text_buf.insert_with_tags_by_name(iter, "%s " % player, pref + "_bold")
             else:
                 text_buf.insert(iter, "%s " % player)
         self.obsView.show_all()
 
     def _ensureColor(self, pref):
-        """ Ensures that the tags for pref_normal and pref_bold are set in the text buffer """
+        """Ensures that the tags for pref_normal and pref_bold are set in the text buffer"""
         text_buf = self.readView.get_buffer()
         if pref not in self.colors:
             color = uistuff.genColor(len(self.colors) + 1, self.startpoint)
@@ -157,14 +158,15 @@ class ChatView(Gtk.Box):
             color = [int(c * 255) for c in color]
             color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
             text_buf.create_tag(pref + "_normal", foreground=color)
-            text_buf.create_tag(pref + "_bold", foreground=color,
-                                weight=Pango.Weight.BOLD)
+            text_buf.create_tag(
+                pref + "_bold", foreground=color, weight=Pango.Weight.BOLD
+            )
             if isinstance(self.gamemodel, ICGameModel):
                 otb = self.obsView.get_buffer()
                 otb.create_tag(pref + "_normal", foreground=color)
-                otb.create_tag(pref + "_bold",
-                               foreground=color,
-                               weight=Pango.Weight.BOLD)
+                otb.create_tag(
+                    pref + "_bold", foreground=color, weight=Pango.Weight.BOLD
+                )
 
     def clear(self):
         self.writeView.get_buffer().props.text = ""
@@ -199,9 +201,9 @@ class ChatView(Gtk.Box):
         self.emit("messageAdded", sender, text, self.colors[pref])
 
     def insertLogMessage(self, timestamp, sender, text):
-        """ Takes a list of (timestamp, sender, text) pairs, and inserts them in
-            the beginning of the document.
-            All text will be in a gray color
+        """Takes a list of (timestamp, sender, text) pairs, and inserts them in
+        the beginning of the document.
+        All text will be in a gray color
         """
         text_buffer = self.readView.get_buffer()
         iter = text_buffer.get_iter_at_mark(text_buffer.get_mark("logMark"))
@@ -214,9 +216,9 @@ class ChatView(Gtk.Box):
         self.__addMessage(iter, strftime("%H:%M:%S"), sender, text)
 
     def disable(self, message):
-        """ Sets the write field insensitive, in cases where the channel is
-            read only. Use the message to give the user a propriate
-            exlpanation """
+        """Sets the write field insensitive, in cases where the channel is
+        read only. Use the message to give the user a propriate
+        exlpanation"""
         self.writeView.set_sensitive(False)
         self.writeView.set_text(message)
 
@@ -225,8 +227,7 @@ class ChatView(Gtk.Box):
         self.writeView.set_sensitive(True)
 
     def onKeyPress(self, widget, event):
-        if event.keyval in list(map(Gdk.keyval_from_name,
-                                    ("Return", "KP_Enter"))):
+        if event.keyval in list(map(Gdk.keyval_from_name, ("Return", "KP_Enter"))):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
                 if buffer.props.text:

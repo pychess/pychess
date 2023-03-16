@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from gi.repository import Gtk
 
 from pychess.Utils.const import EMPTY, FEN_EMPTY, FEN_START
@@ -73,7 +71,7 @@ class PreviewPanel:
         self.box.show_all()
 
         selection = self.persp.gamelist.get_selection()
-        self.conid = selection.connect_after('changed', self.on_selection_changed)
+        self.conid = selection.connect_after("changed", self.on_selection_changed)
         self.persp.gamelist.preview_cid = self.conid
 
         # force first game to show
@@ -97,9 +95,12 @@ class PreviewPanel:
         try:
             self.persp.chessfile.loadToModel(rec, -1, self.gamemodel)
         except LoadingError as err:
-            dialogue = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
-                                         buttons=Gtk.ButtonsType.OK,
-                                         message_format=err.args[0])
+            dialogue = Gtk.MessageDialog(
+                mainwindow(),
+                type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.OK,
+                message_format=err.args[0],
+            )
             if len(err.args) > 1:
                 dialogue.format_secondary_text(err.args[1])
             dialogue.connect("response", lambda dialogue, a: dialogue.hide())
@@ -146,7 +147,7 @@ class PreviewPanel:
             self.update_gamelist()
 
     def on_add_clicked(self, button):
-        """ Create sub-fen from current FEN removing pieces not marked with circles """
+        """Create sub-fen from current FEN removing pieces not marked with circles"""
 
         self.board = self.gamemodel.boards[self.boardview.shown].board
         board = self.board.clone()

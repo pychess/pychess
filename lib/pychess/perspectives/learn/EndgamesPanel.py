@@ -5,7 +5,18 @@ from io import StringIO
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, chr2Sign, chrU2Sign, FAN_PIECES, HINT, ENDGAME
+from pychess.Utils.const import (
+    WHITE,
+    BLACK,
+    LOCAL,
+    NORMALCHESS,
+    ARTIFICIAL,
+    chr2Sign,
+    chrU2Sign,
+    FAN_PIECES,
+    HINT,
+    ENDGAME,
+)
 from pychess.Utils.LearnModel import LearnModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.lutils.attack import isAttacked
@@ -43,7 +54,7 @@ ENDGAMES = (
 )
 
 
-class Sidepanel():
+class Sidepanel:
     def load(self, persp):
         self.persp = persp
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -78,7 +89,7 @@ class Sidepanel():
             else:
                 for piece in pieces:
                     if piece not in ("kqrbnp"):
-                        print("Invalid piece %s in %s" % (piece, pieces))
+                        print("Invalid piece {} in {}".format(piece, pieces))
                         continue
 
                 pos = pieces.rfind("k")
@@ -111,6 +122,7 @@ class Sidepanel():
             pieces = ENDGAMES[path[0]][0].lower()
             conf.set("categorycombo", ENDGAME)
             from pychess.widgets.TaskerManager import learn_tasker
+
             learn_tasker.learn_combo.set_active(path[0])
             start_endgame_from(pieces)
 
@@ -128,24 +140,36 @@ def start_endgame_from(pieces):
     engine = discoverer.getEngineByName(discoverer.getEngineLearn())
     ponder_off = True
     engine_name = discoverer.getName(engine)
-    p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
-          (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), engine_name)
+    p1 = (
+        ARTIFICIAL,
+        discoverer.initPlayerEngine,
+        (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off),
+        engine_name,
+    )
 
     def restart_analyzer(gamemodel):
         asyncio.create_task(gamemodel.restart_analyzer(HINT))
+
     gamemodel.connect("learn_success", restart_analyzer)
 
     def on_game_started(gamemodel):
         perspective.activate_panel("annotationPanel")
-        asyncio.create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+        asyncio.create_task(
+            gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn())
+        )
+
     gamemodel.connect("game_started", on_game_started)
 
     perspective = perspective_manager.get_perspective("games")
-    asyncio.create_task(perspective.generalStart(gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
+    asyncio.create_task(
+        perspective.generalStart(
+            gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)
+        )
+    )
 
 
 def create_fen(pieces):
-    """ Create a random FEN position using given pieces """
+    """Create a random FEN position using given pieces"""
 
     pos = pieces.rfind("k")
     pieces = pieces[:pos], pieces[pos:]
@@ -187,7 +211,9 @@ def create_fen(pieces):
                     bishop_colors_ok = False
                     break
 
-        ok = (not lboard.isChecked()) and (not lboard.opIsChecked()) and bishop_colors_ok
+        ok = (
+            (not lboard.isChecked()) and (not lboard.opIsChecked()) and bishop_colors_ok
+        )
 
     fen = lboard.asFen()
     return fen

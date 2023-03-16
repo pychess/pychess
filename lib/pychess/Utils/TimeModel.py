@@ -7,12 +7,11 @@ from pychess.System.Log import log
 
 
 class TimeModel(GObject.GObject):
-
     __gsignals__ = {
         "player_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
         "time_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
-        "zero_reached": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
-        "pause_changed": (GObject.SignalFlags.RUN_FIRST, None, (bool, ))
+        "zero_reached": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "pause_changed": (GObject.SignalFlags.RUN_FIRST, None, (bool,)),
     }
 
     ############################################################################
@@ -53,18 +52,21 @@ class TimeModel(GObject.GObject):
 
         self.movingColor = WHITE
 
-        self.connect('time_changed', self.__zerolistener, 'time_changed')
-        self.connect('player_changed', self.__zerolistener, 'player_changed')
-        self.connect('pause_changed', self.__zerolistener, 'pause_changed')
+        self.connect("time_changed", self.__zerolistener, "time_changed")
+        self.connect("player_changed", self.__zerolistener, "player_changed")
+        self.connect("pause_changed", self.__zerolistener, "pause_changed")
 
         self.zero_listener_id = None
         self.zero_listener_time = 0
         self.zero_listener_source = None
 
     def __repr__(self):
-        text = "<TimeModel object at %s (White: %s Black: %s ended=%s)>" % \
-            (id(self), str(self.getPlayerTime(WHITE)),
-             str(self.getPlayerTime(BLACK)), self.ended)
+        text = "<TimeModel object at %s (White: %s Black: %s ended=%s)>" % (
+            id(self),
+            str(self.getPlayerTime(WHITE)),
+            str(self.getPlayerTime(BLACK)),
+            self.ended,
+        )
         return text
 
     def __zerolistener(self, *args):
@@ -83,23 +85,26 @@ class TimeModel(GObject.GObject):
 
         remaining_time = the_time - cur_time + 0.01
         if remaining_time > 0 and remaining_time != self.zero_listener_time:
-            if (self.zero_listener_id is not None) and \
-                (self.zero_listener_source is not None) and \
-                    not self.zero_listener_source.is_destroyed():
+            if (
+                (self.zero_listener_id is not None)
+                and (self.zero_listener_source is not None)
+                and not self.zero_listener_source.is_destroyed()
+            ):
                 GLib.source_remove(self.zero_listener_id)
             self.zero_listener_time = remaining_time
-            self.zero_listener_id = GLib.timeout_add(10, self.__checkzero,
-                                                     color)
-            default_context = GLib.main_context_get_thread_default(
-            ) or GLib.main_context_default()
+            self.zero_listener_id = GLib.timeout_add(10, self.__checkzero, color)
+            default_context = (
+                GLib.main_context_get_thread_default() or GLib.main_context_default()
+            )
             if hasattr(default_context, "find_source_by_id"):
                 self.zero_listener_source = default_context.find_source_by_id(
-                    self.zero_listener_id)
+                    self.zero_listener_id
+                )
 
     def __checkzero(self, color):
         if self.getPlayerTime(color) <= 0 and self.started:
             self.emit("time_changed")
-            self.emit('zero_reached', color)
+            self.emit("zero_reached", color)
             return False
         return True
 
@@ -131,7 +136,9 @@ class TimeModel(GObject.GObject):
             self.intervals[self.movingColor].append(ticker)
         else:
             if len(self.intervals[self.movingColor]) % self.moves == 0:
-                self.intervals[self.movingColor].append(self.intervals[self.movingColor][0])
+                self.intervals[self.movingColor].append(
+                    self.intervals[self.movingColor][0]
+                )
             else:
                 self.intervals[self.movingColor].append(ticker)
 
@@ -153,9 +160,11 @@ class TimeModel(GObject.GObject):
         log.debug("TimeModel.end: self=%s" % self)
         self.pause()
         self.ended = True
-        if (self.zero_listener_id is not None) and \
-            (self.zero_listener_source is not None) and \
-                not self.zero_listener_source.is_destroyed():
+        if (
+            (self.zero_listener_id is not None)
+            and (self.zero_listener_source is not None)
+            and not self.zero_listener_source.is_destroyed()
+        ):
             GLib.source_remove(self.zero_listener_id)
 
     def pause(self):
@@ -186,7 +195,7 @@ class TimeModel(GObject.GObject):
     ############################################################################
 
     def undoMoves(self, moves):
-        """ Sets time and color to move, to the values they were having in the
+        """Sets time and color to move, to the values they were having in the
             beginning of the ply before the current.
         his move.
         Example:
@@ -194,7 +203,7 @@ class TimeModel(GObject.GObject):
         Black intervals:               [120, 115]
         Is undoed to:
         White intervals:               [120, 130]
-        Black intervals (is thinking): [120, ...] """
+        Black intervals (is thinking): [120, ...]"""
 
         if not self.started:
             self.start()
@@ -231,7 +240,9 @@ class TimeModel(GObject.GObject):
             if self.paused:
                 return max(0, self.intervals[color][movecount] - self.pauseInterval)
             elif self.counter:
-                return max(0, self.intervals[color][movecount] - (time() - self.counter))
+                return max(
+                    0, self.intervals[color][movecount] - (time() - self.counter)
+                )
         return max(0, self.intervals[color][movecount])
 
     def getInitialTime(self):
@@ -241,8 +252,11 @@ class TimeModel(GObject.GObject):
         movecount, color = divmod(ply + 1, 2)
         gain = self.gain if ply > 2 else 0
         if len(self.intervals[color]) > movecount:
-            return self.intervals[color][movecount - 1] - self.intervals[
-                color][movecount] + gain
+            return (
+                self.intervals[color][movecount - 1]
+                - self.intervals[color][movecount]
+                + gain
+            )
         else:
             return 0
 
@@ -262,9 +276,13 @@ class TimeModel(GObject.GObject):
         return len(self.intervals[BLACK]) + len(self.intervals[WHITE]) - 2
 
     def hasBWTimes(self, bmovecount, wmovecount):
-        return len(self.intervals[BLACK]) > bmovecount and len(self.intervals[
-            WHITE]) > wmovecount
+        return (
+            len(self.intervals[BLACK]) > bmovecount
+            and len(self.intervals[WHITE]) > wmovecount
+        )
 
     def isBlitzFide(self):
         val = 60 * self.minutes + 60 * (self.gain if self.handle_gain else 0)
-        return val > 0 and val <= 600  # Less or equal than 10 minutes for 60 moves and for each player
+        return (
+            val > 0 and val <= 600
+        )  # Less or equal than 10 minutes for 60 moves and for each player

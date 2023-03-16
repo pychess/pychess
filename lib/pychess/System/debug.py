@@ -3,12 +3,14 @@ import types
 
 # from pychess.Utils.Board import Board
 from pychess.Utils.GameModel import GameModel
+
 # from pychess.Utils.lutils.LBoard import LBoard
 from pychess.widgets.BoardView import BoardView
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.gamewidget import GameWidget
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock.PyDockLeaf import PyDockLeaf
+
 # from pychess.widgets.pydock.ArrowButton import ArrowButton
 # from pychess.widgets.pydock.StarArrowButton import StarArrowButton
 # from pychess.widgets.pydock.HighlightArea import HighlightArea
@@ -29,7 +31,7 @@ def obj_referrers(klass):
             for c in obj.__closure__:
                 try:
                     if isinstance(c.cell_contents, klass):
-                        print('!!!', obj, c.cell_contents)
+                        print("!!!", obj, c.cell_contents)
                 except ValueError:
                     print("Cell is empty...")
         if isinstance(obj, klass):
@@ -40,7 +42,11 @@ def obj_referrers(klass):
                 print(type(ob), ob.__name__ if type(ob) is type else repr(ob)[:140])
                 rs1 = gc.get_referrers(ob)
                 for ob1 in rs1:
-                    print('    ', type(ob1), ob1.__name__ if type(ob1) is type else repr(ob1)[:140])
+                    print(
+                        "    ",
+                        type(ob1),
+                        ob1.__name__ if type(ob1) is type else repr(ob1)[:140],
+                    )
             print("---------------------------")
     if not find_obj:
         print("Nothing refrences %s" % klass.__name__)

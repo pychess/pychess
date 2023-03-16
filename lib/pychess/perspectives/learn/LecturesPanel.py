@@ -34,7 +34,11 @@ LECTURES = (
     ("lec11.txt", "A draw against a Grandmaster", "talpa"),
     ("lec12.txt", "Tactics Training lesson 4# 'King in the centre'", "knackie"),
     ("lec13.txt", "The Modern Defense", "GMDavies"),
-    ("lec14.txt", "Tactics Training lesson 5# 'Pulling the king to the open'", "knackie"),
+    (
+        "lec14.txt",
+        "Tactics Training lesson 5# 'Pulling the king to the open'",
+        "knackie",
+    ),
     ("lec15.txt", "King's Indian Attack vs. the Caro-Kann", "cissmjg"),
     ("lec16.txt", "Introduction to Bughouse", "Tecumseh"),
     ("lec17.txt", "Refuting the Milner-Barry Gambit in the French Defense", "Kabal"),
@@ -43,7 +47,11 @@ LECTURES = (
     ("lec20.txt", "Hypermodern Magic - A study of the central blockade", "Bahamut"),
     ("lec21.txt", "Tactics Training lesson 7# 'Opening / Closing Files'", "knackie"),
     ("lec22.txt", "Thoughts on the Refutation of the Milner-Barry", "knackie"),
-    ("lec23.txt", "Tactics Training lesson 8# 'Opening / Closing Diagonals'", "knackie"),
+    (
+        "lec23.txt",
+        "Tactics Training lesson 8# 'Opening / Closing Diagonals'",
+        "knackie",
+    ),
     ("lec24.txt", "King's Indian Attack vs. Other Defenses", "cissmjg"),
     ("lec25.txt", "Basic Pawn Endings I", "DAV"),
     ("lec26.txt", "Giuoco Piano", "afw"),
@@ -55,7 +63,7 @@ LECTURES = (
 )
 
 
-class Sidepanel():
+class Sidepanel:
     def load(self, persp):
         self.persp = persp
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -97,6 +105,7 @@ class Sidepanel():
             filename = LECTURES[path[0]][0]
             conf.set("categorycombo", LECTURE)
             from pychess.widgets.TaskerManager import learn_tasker
+
             learn_tasker.learn_combo.set_active(path[0])
             start_lecture_from(filename)
 
@@ -116,15 +125,15 @@ def start_lecture_from(filename, index=None):
 
     def on_game_started(gamemodel):
         perspective.activate_panel("chatPanel")
+
     gamemodel.connect("game_started", on_game_started)
 
     perspective = perspective_manager.get_perspective("games")
     asyncio.create_task(perspective.generalStart(gamemodel, p0, p1))
 
     def lecture_steps(lecture_file):
-        with open(lecture_file, "r") as f:
-            for line in f:
-                yield line
+        with open(lecture_file) as f:
+            yield from f
         return
 
     lecture_file = addDataPrefix("learn/lectures/%s" % filename)
@@ -136,8 +145,21 @@ def start_lecture_from(filename, index=None):
         paused = False
         moves_played = 0
 
-        KIBITZ, BACKWARD, BSETUP, BSETUP_DONE, FEN, TOMOVE, WCASTLE, BCASTLE, \
-            WNAME, BNAME, REVERT, WAIT, MOVE = range(13)
+        (
+            KIBITZ,
+            BACKWARD,
+            BSETUP,
+            BSETUP_DONE,
+            FEN,
+            TOMOVE,
+            WCASTLE,
+            BCASTLE,
+            WNAME,
+            BNAME,
+            REVERT,
+            WAIT,
+            MOVE,
+        ) = range(13)
 
         while True:
             try:
@@ -271,16 +293,13 @@ def start_lecture_from(filename, index=None):
                             castl = "-"
                         if not ep:
                             ep = "-"
-                        fen = "%s %s %s %s 0 1" % (pieces, color, castl, ep)
+                        fen = "{} {} {} {} 0 1".format(pieces, color, castl, ep)
 
                         curplayer = gamemodel.curplayer
                         gamemodel.status = RUNNING
                         gamemodel.loadAndStart(
-                            StringIO(fen),
-                            fen_loader,
-                            0,
-                            -1,
-                            first_time=False)
+                            StringIO(fen), fen_loader, 0, -1, first_time=False
+                        )
                         curplayer.move_queue.put_nowait("int")
                         gamemodel.emit("game_started")
                         moves_played = 0

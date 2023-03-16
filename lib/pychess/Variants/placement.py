@@ -9,7 +9,9 @@ PLACEMENTSTART = "8/pppppppp/8/8/8/8/PPPPPPPP/8/nnbbrrqkNNBBRRQK w - - 0 1"
 
 class PlacementBoard(Board):
     variant = PLACEMENTCHESS
-    __desc__ = _("Pre-chess: https://en.wikipedia.org/wiki/List_of_chess_variants#Different_starting_position")
+    __desc__ = _(
+        "Pre-chess: https://en.wikipedia.org/wiki/List_of_chess_variants#Different_starting_position"
+    )
     name = _("Placement")
     cecp_name = "placement"
     need_initial_board = True

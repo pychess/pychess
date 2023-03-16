@@ -1,9 +1,24 @@
-# -*- coding: UTF-8 -*-
-
 import unittest
 
-from pychess.Utils.const import SCHESS, A1, C1, E1, H1, G1, F3, BLACK, WHITE, ROOK, HAWK, ELEPHANT, \
-    HAWK_GATE, ELEPHANT_GATE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK, QUEEN_CASTLE
+from pychess.Utils.const import (
+    SCHESS,
+    A1,
+    C1,
+    E1,
+    H1,
+    G1,
+    F3,
+    BLACK,
+    WHITE,
+    ROOK,
+    HAWK,
+    ELEPHANT,
+    HAWK_GATE,
+    ELEPHANT_GATE,
+    HAWK_GATE_AT_ROOK,
+    ELEPHANT_GATE_AT_ROOK,
+    QUEEN_CASTLE,
+)
 from pychess.Utils import Move
 from pychess.Utils.lutils.bitboard import toString
 from pychess.Utils.lutils.LBoard import LBoard
@@ -56,14 +71,16 @@ class SchessTestCase(unittest.TestCase):
         self.assertIn("f7g8=E", moves)
 
     def test_board(self):
-        FEN = "r2qk2r/pppbbppp/4pn2/1N1p4/1n1P4/4PN2/PPPBBPPP/R2QK2R[heHE] w KQkq - 10 8"
+        FEN = (
+            "r2qk2r/pppbbppp/4pn2/1N1p4/1n1P4/4PN2/PPPBBPPP/R2QK2R[heHE] w KQkq - 10 8"
+        )
         board = SchessBoard(setup=FEN)
         # print("--------")
         # print(board)
         self.assertEqual(board.data[0][7].color, WHITE)
         self.assertEqual(board.data[0][7].piece, ROOK)
 
-        board = board.move(Move.Move(parseSAN(board.board, 'O-O/Hh1')))
+        board = board.move(Move.Move(parseSAN(board.board, "O-O/Hh1")))
         # board.printPieces()
 
         self.assertEqual(board.data[0][7].color, WHITE)
@@ -84,8 +101,8 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(SCHESSSTART)
 
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nf3/H'))), 'g1f3h')
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nf3/E'))), 'g1f3e')
+        self.assertEqual(repr(Move.Move(parseSAN(board, "Nf3/H"))), "g1f3h")
+        self.assertEqual(repr(Move.Move(parseSAN(board, "Nf3/E"))), "g1f3e")
 
         self.assertEqual(toSAN(board, newMove(G1, F3, HAWK_GATE)), "Nf3/H")
         self.assertEqual(toSAN(board, newMove(G1, F3, ELEPHANT_GATE)), "Nf3/E")
@@ -94,7 +111,9 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(SCHESSSTART)
 
-        for move in "e2e3 e7e5 d1h5 d8e7 h5g4 b8c6 g1f3 d7d5 g4h4 e7c5 h4a4 e5e4 d2d4 c5e7 f3d2 e7b4 a4b4 c6b4".split():
+        for (
+            move
+        ) in "e2e3 e7e5 d1h5 d8e7 h5g4 b8c6 g1f3 d7d5 g4h4 e7c5 h4a4 e5e4 d2d4 c5e7 f3d2 e7b4 a4b4 c6b4".split():
             board.applyMove(parseAN(board, move))
         print("--------")
         print(board)
@@ -112,7 +131,10 @@ class SchessTestCase(unittest.TestCase):
         print("e1d1e")
         print(board)
 
-        self.assertEqual(placement(board.asFen()), "r1b1kbnr/ppp2ppp/8/3p4/1n1Pp3/4P3/PPPN1PPP/RNBKEB1R[heH]")
+        self.assertEqual(
+            placement(board.asFen()),
+            "r1b1kbnr/ppp2ppp/8/3p4/1n1Pp3/4P3/PPPN1PPP/RNBKEB1R[heH]",
+        )
 
         board.popMove()
         self.assertEqual(placement(board.asFen()), placement(fen))
@@ -121,7 +143,9 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(SCHESSSTART)
 
-        for move in "e2e4 d7d6 d1e2 c8d7 g1f3 g8f6 e4e5 f6d5 e2e4 d5b6 d2d3 d7c6 e4f5 c6d7 f5g5 g7g6 f3d4 h7h5 g5f4 d6e5 f4h4 f8g7 d4f3 d7g4 b1c3 f7f6 c3e4 d8d5 e4c3 d5c5 c1e3 c5d6 h2h3 g4f3 g2f3 e8g8h".split():
+        for (
+            move
+        ) in "e2e4 d7d6 d1e2 c8d7 g1f3 g8f6 e4e5 f6d5 e2e4 d5b6 d2d3 d7c6 e4f5 c6d7 f5g5 g7g6 f3d4 h7h5 g5f4 d6e5 f4h4 f8g7 d4f3 d7g4 b1c3 f7f6 c3e4 d8d5 e4c3 d5c5 c1e3 c5d6 h2h3 g4f3 g2f3 e8g8h".split():
             board.applyMove(parseAN(board, move))
 
         moves = set()
@@ -139,7 +163,10 @@ class SchessTestCase(unittest.TestCase):
         print("a1e1e")
         print(board)
 
-        self.assertEqual(placement(board.asFen()), "rn2hrk1/ppp1p1b1/1n1q1pp1/4p2p/7Q/2NPBP1P/PPP2P2/E1KR1B1R[eH]")
+        self.assertEqual(
+            placement(board.asFen()),
+            "rn2hrk1/ppp1p1b1/1n1q1pp1/4p2p/7Q/2NPBP1P/PPP2P2/E1KR1B1R[eH]",
+        )
 
         board.popMove()
         self.assertEqual(placement(board.asFen()), placement(fen))
@@ -148,7 +175,9 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(SCHESSSTART)
 
-        for move in "e2e3 e7e6 g1f3 c7c6 c2c3 d7d5 d2d4 g8f6 h2h3 f6e4 d1c2 b8d7 f1d3 f7f5 e1g1e d8c7 e1e2 f8e7 c2d1".split():
+        for (
+            move
+        ) in "e2e3 e7e6 g1f3 c7c6 c2c3 d7d5 d2d4 g8f6 h2h3 f6e4 d1c2 b8d7 f1d3 f7f5 e1g1e d8c7 e1e2 f8e7 c2d1".split():
             board.applyMove(parseAN(board, move))
 
         moves = set()
@@ -166,13 +195,18 @@ class SchessTestCase(unittest.TestCase):
         print("h8e8e")
         print(board)
 
-        self.assertEqual(placement(board.asFen()), "r1b2rkh/ppqnb1pp/2p1p3/3p1p2/3Pn3/2PBPN1P/PP2EPP1/RNBQ1RK1[eH]")
+        self.assertEqual(
+            placement(board.asFen()),
+            "r1b2rkh/ppqnb1pp/2p1p3/3p1p2/3Pn3/2PBPN1P/PP2EPP1/RNBQ1RK1[eH]",
+        )
 
         board.popMove()
         self.assertEqual(placement(board.asFen()), placement(fen))
 
     def test_gating_castle_at_rook_wOO(self):
-        FEN = "r2qk2r/pppbbppp/4pn2/1N1p4/1n1P4/4PN2/PPPBBPPP/R2QK2R[heHE] w KQkq - 10 8"
+        FEN = (
+            "r2qk2r/pppbbppp/4pn2/1N1p4/1n1P4/4PN2/PPPBBPPP/R2QK2R[heHE] w KQkq - 10 8"
+        )
         board = LBoard(SCHESS)
         board.applyFen(FEN)
 
@@ -185,11 +219,13 @@ class SchessTestCase(unittest.TestCase):
         self.assertIn("h1e1h", moves)
         self.assertIn("h1e1e", moves)
 
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'O-O/Hh1'))), 'h1e1h')
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'O-O/Eh1'))), 'h1e1e')
+        self.assertEqual(repr(Move.Move(parseSAN(board, "O-O/Hh1"))), "h1e1h")
+        self.assertEqual(repr(Move.Move(parseSAN(board, "O-O/Eh1"))), "h1e1e")
 
         self.assertEqual(toSAN(board, newMove(H1, E1, HAWK_GATE_AT_ROOK)), "O-O/Hh1")
-        self.assertEqual(toSAN(board, newMove(H1, E1, ELEPHANT_GATE_AT_ROOK)), "O-O/Eh1")
+        self.assertEqual(
+            toSAN(board, newMove(H1, E1, ELEPHANT_GATE_AT_ROOK)), "O-O/Eh1"
+        )
 
         fen = board.asFen()
         move = parseAN(board, "h1e1e")
@@ -197,7 +233,10 @@ class SchessTestCase(unittest.TestCase):
         print("h1e1e")
         print(board)
 
-        self.assertEqual(placement(board.asFen()), "r2qk2r/pppbbppp/4pn2/1N1p4/1n1P4/4PN2/PPPBBPPP/R2Q1RKE[heH]")
+        self.assertEqual(
+            placement(board.asFen()),
+            "r2qk2r/pppbbppp/4pn2/1N1p4/1n1P4/4PN2/PPPBBPPP/R2Q1RKE[heH]",
+        )
 
         board.popMove()
         self.assertEqual(placement(board.asFen()), placement(fen))
@@ -220,10 +259,10 @@ class SchessTestCase(unittest.TestCase):
         self.assertIn("b8d7h", moves)
         self.assertIn("b8d7e", moves)
 
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nfd7'))), 'f6d7')
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nbd7'))), 'b8d7')
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nbd7/H'))), 'b8d7h')
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'Nbd7/E'))), 'b8d7e')
+        self.assertEqual(repr(Move.Move(parseSAN(board, "Nfd7"))), "f6d7")
+        self.assertEqual(repr(Move.Move(parseSAN(board, "Nbd7"))), "b8d7")
+        self.assertEqual(repr(Move.Move(parseSAN(board, "Nbd7/H"))), "b8d7h")
+        self.assertEqual(repr(Move.Move(parseSAN(board, "Nbd7/E"))), "b8d7e")
 
     def test_default_gating_avail(self):
         board = LBoard(SCHESS)
@@ -256,14 +295,16 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(FEN)
 
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'O-O-O'))), 'e1c1')
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'O-O-O/Ea1'))), 'a1e1e')
-        self.assertEqual(repr(Move.Move(parseSAN(board, 'O-O-O/Ee1'))), 'e1c1e')
+        self.assertEqual(repr(Move.Move(parseSAN(board, "O-O-O"))), "e1c1")
+        self.assertEqual(repr(Move.Move(parseSAN(board, "O-O-O/Ea1"))), "a1e1e")
+        self.assertEqual(repr(Move.Move(parseSAN(board, "O-O-O/Ee1"))), "e1c1e")
 
         self.assertEqual(toSAN(board, newMove(E1, C1, QUEEN_CASTLE)), "O-O-O")
-        self.assertEqual(toSAN(board, newMove(A1, E1, ELEPHANT_GATE_AT_ROOK)), "O-O-O/Ea1")
+        self.assertEqual(
+            toSAN(board, newMove(A1, E1, ELEPHANT_GATE_AT_ROOK)), "O-O-O/Ea1"
+        )
         self.assertEqual(toSAN(board, newMove(E1, C1, ELEPHANT_GATE)), "O-O-O/Ee1")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

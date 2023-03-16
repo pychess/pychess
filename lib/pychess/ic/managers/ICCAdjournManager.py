@@ -1,4 +1,3 @@
-
 import datetime
 
 from gi.repository import GObject
@@ -7,10 +6,29 @@ from pychess.ic import GAME_TYPES_BY_FICS_NAME
 from pychess.ic.icc import DG_GAMELIST_BEGIN, DG_GAMELIST_ITEM, DG_RATING_TYPE_KEY
 from pychess.ic.managers.AdjournManager import AdjournManager
 from pychess.ic.FICSObjects import FICSAdjournedGame, FICSHistoryGame, FICSJournalGame
-from pychess.Utils.const import WON_ADJUDICATION, DRAW_AGREE, WON_DISCONNECTION, WON_CALLFLAG, \
-    WON_MATE, DRAW_INSUFFICIENT, DRAW_REPETITION, WON_RESIGN, DRAW_STALEMATE, \
-    DRAW_BLACKINSUFFICIENTANDWHITETIME, UNKNOWN_REASON, DRAW_50MOVES, WHITEWON, DRAW, \
-    BLACKWON, ADJOURNED, DRAW_CALLFLAG, DRAW_ADJUDICATION, ABORTED, WHITE, BLACK
+from pychess.Utils.const import (
+    WON_ADJUDICATION,
+    DRAW_AGREE,
+    WON_DISCONNECTION,
+    WON_CALLFLAG,
+    WON_MATE,
+    DRAW_INSUFFICIENT,
+    DRAW_REPETITION,
+    WON_RESIGN,
+    DRAW_STALEMATE,
+    DRAW_BLACKINSUFFICIENTANDWHITETIME,
+    UNKNOWN_REASON,
+    DRAW_50MOVES,
+    WHITEWON,
+    DRAW,
+    BLACKWON,
+    ADJOURNED,
+    DRAW_CALLFLAG,
+    DRAW_ADJUDICATION,
+    ABORTED,
+    WHITE,
+    BLACK,
+)
 
 won_reasons_dict = {
     "0": WON_RESIGN,
@@ -99,8 +117,29 @@ class ICCAdjournManager(AdjournManager):
         # rating_type: 0=wild, 1=blitz, 2=standard, bullet, 4=bughouse see DG_RATING_TYPE_KEY
         # 99 1731753309 ? 2016.12.08 15:07:53 gbtami 1538 konechno 1644 1 11 0 3 0 3 0 A00 0 1 1 {} 0
         # 98 1731751094 ? 2016.12.08 14:34:37 gbtami 1550 espilva 1484 1 11 0 3 0 3 0 A00 1 0 5 {} 0
-        idx, gid, event, date, time, wname, wrating, bname, brating, rated, rating_type, \
-            wild, wtime, winc, btime, binc, eco, status, color, mode, rest = data.split(" ", 20)
+        (
+            idx,
+            gid,
+            event,
+            date,
+            time,
+            wname,
+            wrating,
+            bname,
+            brating,
+            rated,
+            rating_type,
+            wild,
+            wtime,
+            winc,
+            btime,
+            binc,
+            eco,
+            status,
+            color,
+            mode,
+            rest,
+        ) = data.split(" ", 20)
 
         if status == "0":
             result = WHITEWON if color == "0" else BLACKWON
@@ -125,7 +164,9 @@ class ICCAdjournManager(AdjournManager):
 
         year, month, day = date.split(".")
         hour, minute, sec = time.split(":")
-        gametime = datetime.datetime(int(year), int(month), int(day), int(hour), int(minute), int(sec))
+        gametime = datetime.datetime(
+            int(year), int(month), int(day), int(hour), int(minute), int(sec)
+        )
         rated = rated == "1"
         fics_name = self.RATING_TYPES[rating_type]
         gametype = GAME_TYPES_BY_FICS_NAME[fics_name]
@@ -144,7 +185,8 @@ class ICCAdjournManager(AdjournManager):
                 rated=rated,
                 our_color=WHITE if wname == self.connection.username else BLACK,
                 minutes=minutes,
-                inc=gain)
+                inc=gain,
+            )
 
             if game.opponent.adjournment is False:
                 game.opponent.adjournment = True
@@ -162,7 +204,8 @@ class ICCAdjournManager(AdjournManager):
                 time=gametime,
                 reason=reason,
                 history_no=idx,
-                result=result)
+                result=result,
+            )
 
         elif self.gamelist_command == "liblist":
             game = FICSJournalGame(
@@ -177,7 +220,8 @@ class ICCAdjournManager(AdjournManager):
                 time=gametime,
                 reason=reason,
                 journal_no=idx,
-                result=result)
+                result=result,
+            )
 
         if game not in self.connection.games:
             game = self.connection.games.get(game, emit=False)
@@ -197,11 +241,14 @@ class ICCAdjournManager(AdjournManager):
     def queryMoves(self, game):
         self.connection.query_game = game
         if isinstance(game, FICSHistoryGame):
-            self.connection.client.run_command("spgn %s %s" % (
-                self.connection.history_owner, game.history_no))
+            self.connection.client.run_command(
+                "spgn {} {}".format(self.connection.history_owner, game.history_no)
+            )
         elif isinstance(game, FICSJournalGame):
-            self.connection.client.run_command("spgn %s %%%s" % (
-                self.connection.journal_owner, game.journal_no))
+            self.connection.client.run_command(
+                "spgn {} %{}".format(self.connection.journal_owner, game.journal_no)
+            )
         else:
-            self.connection.client.run_command("spgn %s %s" % (
-                self.connection.stored_owner, game.opponent.name))
+            self.connection.client.run_command(
+                "spgn {} {}".format(self.connection.stored_owner, game.opponent.name)
+            )

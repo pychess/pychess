@@ -16,7 +16,7 @@ class RecentChooserMenu(Gtk.RecentChooserMenu):
                 urlopen(unquote(uri)).close()
                 perspective = perspective_manager.get_perspective("database")
                 perspective.open_chessfile(self.get_current_uri())
-            except (IOError, OSError):
+            except OSError:
                 # shomething wrong whit the uri
                 recent_manager.remove_item(uri)
 
