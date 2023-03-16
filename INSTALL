@@ -49,6 +49,8 @@ gir1.2-gstreamer-1.0
 gir1.2-gst-plugins-base-1.0
 (If you have no sound in pychess try to install gstreamer1.0-pulseaudio)
 
+(Creating .rpm packages needs rpm, creating .deb needs python3-stdeb)
+
 --------------------------------------------
 Dependencies for CentOS/RHEL7 and Fedora 20:
 stockfish
