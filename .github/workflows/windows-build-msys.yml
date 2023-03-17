@@ -45,6 +45,14 @@ jobs:
       run: |
         pip3 install websockets
 
+    - name: Install build dependencies (Stockfish)
+      uses: robinraju/release-downloader@v1.7
+      with:
+        repository: fairy-stockfish/Fairy-Stockfish
+        latest: true
+        fileName: fairy-stockfish_x86-64.exe
+        out-file-path: engines
+
     - name: Build
       run: |-
         set -x
