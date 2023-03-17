@@ -9,7 +9,6 @@ pexpect==4.8.0
 pluggy==1.0.0
 psutil==5.9.4
 ptyprocess==0.7.0
-py==1.11.0
 pycairo==1.23.0
 PyGObject==3.42.2
 PyOgg==0.6.14a1
