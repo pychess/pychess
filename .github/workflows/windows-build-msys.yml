@@ -23,7 +23,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install build dependencies
+    - name: Install build dependencies (MSYS)
       uses: msys2/setup-msys2@v2
       with:
         update: true
@@ -41,7 +41,7 @@ jobs:
           mingw-w64-x86_64-python-pip
           mingw-w64-x86_64-toolchain
 
-    - name: Install websockets from pypi
+    - name: Install build dependencies (PyPI)
       run: |
         pip3 install websockets
 
