@@ -22,7 +22,7 @@ class NewsManager(GObject.GObject):
         self.connection = connection
         self.news = {}
         self.connection.expect_line(
-            self.onNewsItem, fr"(\d+) \({days}, {months} +(\d+)\) (.+)"
+            self.onNewsItem, rf"(\d+) \({days}, {months} +(\d+)\) (.+)"
         )
         self.connection.client.run_command("news")
 

@@ -774,9 +774,7 @@ class PyChess(Gtk.Application):
                     .decode()
                     .strip()
                 )
-                self.aboutdialog.set_version(
-                    f"{VERSION_NAME} Git {self.git_rev}"
-                )
+                self.aboutdialog.set_version(f"{VERSION_NAME} Git {self.git_rev}")
             except subprocess.CalledProcessError:
                 pass
         self.aboutdialog.set_comments(self.aboutdialog.get_comments())

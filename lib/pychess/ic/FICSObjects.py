@@ -1237,7 +1237,7 @@ class FICSGames(GObject.GObject):
         if key != value:
             raise Exception(f"Not the same: {repr(key)} {repr(value)}")
         if hash(value) in self.games:
-            raise Exception("{} already exists in {}".format(repr(value), repr(self)))
+            raise Exception(f"{repr(value)} already exists in {repr(self)}")
         self.games[hash(value)] = value
         self.games_by_gameno[value.gameno] = value
         if isinstance(value, FICSAdjournedGame):

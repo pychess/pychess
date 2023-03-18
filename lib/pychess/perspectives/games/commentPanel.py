@@ -190,7 +190,9 @@ class Sidepanel:
         for message in getMessages("offencive_moves") + getMessages("defencive_moves"):
             if prefix:
                 strings.append(
-                    "{} {} {} {}".format(reprColor[color], prefix, _("and") + "\n", message)
+                    "{} {} {} {}".format(
+                        reprColor[color], prefix, _("and") + "\n", message
+                    )
                 )
                 prefix = ""
             else:

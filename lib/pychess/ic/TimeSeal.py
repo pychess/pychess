@@ -207,7 +207,7 @@ class ICSTelnet:
                         startupinfo = None
                     create = asyncio.create_subprocess_exec(
                         *["%s" % timestamp_path, "-p", "%s" % self.port],
-                        startupinfo=startupinfo
+                        startupinfo=startupinfo,
                     )
                     self.timestamp_proc = await create
                     log.info("%s started OK" % timestamp_path)

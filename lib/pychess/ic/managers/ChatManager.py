@@ -62,10 +62,11 @@ class ChatManager(GObject.GObject):
         )
         self.connection.expect_line(self.onShoutMessage, r"--> %s(\*)?:? (.*)" % names)
         self.connection.expect_line(
-            self.onKibitzMessage, r"{}{}\[(\d+)\] kibitzes: (.*)".format(names, ratings)
+            self.onKibitzMessage, rf"{names}{ratings}\[(\d+)\] kibitzes: (.*)"
         )
         self.connection.expect_line(
-            self.onWhisperMessage, r"{}{}\[(\d+)\] whispers: (.*)".format(names, ratings)
+            self.onWhisperMessage,
+            rf"{names}{ratings}\[(\d+)\] whispers: (.*)",
         )
 
         self.connection.expect_line(
@@ -392,7 +393,7 @@ class ChatManager(GObject.GObject):
         elif channel == CHANNEL_CSHOUT:
             self.connection.client.run_command("cshout %s" % message)
         else:
-            self.connection.client.run_command("tell {} {}".format(channel, message))
+            self.connection.client.run_command(f"tell {channel} {message}")
 
     def tellAll(self, message):
         message = self.entityEncode(message)

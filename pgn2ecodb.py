@@ -32,11 +32,13 @@ from pychess.Variants.fischerandom import FischerandomBoard
 path = os.path.join(addDataPrefix("eco.db"))
 conn = sqlite3.connect(path)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Creating the database")
     c = conn.cursor()
     c.execute("drop table if exists openings")
-    c.execute("create table openings (hash text, hkey integer, mainline integer, endline integer, eco text, lang text, opening text, variation text, fen text)")
+    c.execute(
+        "create table openings (hash text, hkey integer, mainline integer, endline integer, eco text, lang text, opening text, variation text, fen text)"
+    )
     c.execute("create index if not exists openings_index on openings (hkey)")
 
     def feed(pgnfile, lang):
@@ -45,7 +47,7 @@ if __name__ == '__main__':
             return
 
         # Load the ECO file first
-        print('  - Parsing')
+        print("  - Parsing")
         cf = load(protoopen(pgnfile))
         cf.limit = 5000
         cf.init_tag_database()
@@ -57,60 +59,86 @@ if __name__ == '__main__':
         old_eco = ""
         for rec in records:
             model = cf.loadToModel(rec)
-            eco = '' if rec['ECO'] is None else rec['ECO']
-            entry = {'h': [],                                               # Hashes
-                     'f': '',                                               # Final hash of the line
-                     'n': [],                                               # FENs
-                     'm': old_eco != eco,                                   # Main line = shortest sequence of moves for the ECO code. The 'EN' ECO file is specially crafted
-                     'e': eco,                                              # ECO
-                     'o': '' if rec['White'] is None else rec['White'],     # Opening
-                     'v': '' if rec['Black'] is None else rec['Black'],     # Variation
-                     'p': len(model.moves)}                                 # Number of plies
-            plyMax = max(plyMax, entry['p'])
+            eco = "" if rec["ECO"] is None else rec["ECO"]
+            entry = {
+                "h": [],  # Hashes
+                "f": "",  # Final hash of the line
+                "n": [],  # FENs
+                "m": old_eco
+                != eco,  # Main line = shortest sequence of moves for the ECO code. The 'EN' ECO file is specially crafted
+                "e": eco,  # ECO
+                "o": "" if rec["White"] is None else rec["White"],  # Opening
+                "v": "" if rec["Black"] is None else rec["Black"],  # Variation
+                "p": len(model.moves),
+            }  # Number of plies
+            plyMax = max(plyMax, entry["p"])
 
             # No move means that we are translating the name of the ECO code, so we need to find all the related positions from another language
-            if entry['p'] == 0:
+            if entry["p"] == 0:
                 if lang == ECO_MAIN_LANG:
                     continue
-                c.execute("select hash, endline, fen from openings where eco=? and lang=? and mainline=1", (eco, ECO_MAIN_LANG))
+                c.execute(
+                    "select hash, endline, fen from openings where eco=? and lang=? and mainline=1",
+                    (eco, ECO_MAIN_LANG),
+                )
                 rows = c.fetchall()
                 for row in rows:
-                    entry['h'].append(row[0])
-                    if (row[1] == int(True)):
-                        entry['f'] = row[0]
-                    entry['n'].append(row[2])
+                    entry["h"].append(row[0])
+                    if row[1] == int(True):
+                        entry["f"] = row[0]
+                    entry["n"].append(row[2])
             else:
                 # Find the Polyglot hash for each position of the opening
-                for i in range(entry['p']):
+                for i in range(entry["p"]):
                     nextboard = model.getBoardAtPly(i, 0).board.next
                     h = hex(nextboard.hash)[2:]
-                    entry['h'].append(h)
-                    entry['f'] = h
-                    entry['n'].append(nextboard.asFen())
+                    entry["h"].append(h)
+                    entry["f"] = h
+                    entry["n"].append(nextboard.asFen())
             entries.append(entry)
-            old_eco = entry['e']
-        print('  - Max ply : %d' % plyMax)
+            old_eco = entry["e"]
+        print("  - Max ply : %d" % plyMax)
 
         # Process all the data in reverse order
         for depth in reversed(range(plyMax + 1)):
             sys.stdout.write("\r  - Loading into the database (%d remaining)  " % depth)
             sys.stdout.flush()
-            for i in reversed(range(len(entries))):  # Long lines are overwritten by short lines
+            for i in reversed(
+                range(len(entries))
+            ):  # Long lines are overwritten by short lines
                 entry = entries[i]
-                if entry['p'] != depth:
+                if entry["p"] != depth:
                     continue
-                for i in range(len(entry['h'])):
-                    h = entry['h'][i]
+                for i in range(len(entry["h"])):
+                    h = entry["h"][i]
                     hkey = int(h[-2:], 16)
-                    c.execute("select endline from openings where hash=? and hkey=? and lang=?", (h, hkey, lang))
+                    c.execute(
+                        "select endline from openings where hash=? and hkey=? and lang=?",
+                        (h, hkey, lang),
+                    )
                     r = c.fetchone()
                     if r is not None and r[0] == int(True):
                         continue
-                    c.execute("delete from openings where hash=? and hkey=? and lang=?", (h, hkey, lang))
-                    c.execute("insert into openings (hash, hkey, mainline, endline, eco, lang, opening, variation, fen) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                              (h, hkey, int(entry['m']), int(h == entry['f']), entry['e'], lang, entry['o'], entry['v'], entry['n'][i]))
+                    c.execute(
+                        "delete from openings where hash=? and hkey=? and lang=?",
+                        (h, hkey, lang),
+                    )
+                    c.execute(
+                        "insert into openings (hash, hkey, mainline, endline, eco, lang, opening, variation, fen) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (
+                            h,
+                            hkey,
+                            int(entry["m"]),
+                            int(h == entry["f"]),
+                            entry["e"],
+                            lang,
+                            entry["o"],
+                            entry["v"],
+                            entry["n"][i],
+                        ),
+                    )
         conn.commit()
-        print('\n  - Processed %d openings' % len(entries))
+        print("\n  - Processed %d openings" % len(entries))
 
     # Several eco lists contain only eco+name pairs
     # We use the base ECO line positions from EN/eco.pgn
@@ -123,9 +151,13 @@ if __name__ == '__main__':
     print("Processing Chess960")
     chess960 = FischerandomBoard()
     for i in range(960):
-        c.execute("insert into openings (mainline, endline, eco, lang, opening, fen) values (?, '1', '960', ?, ?, ?)",
-                  ('1' if i == 518 else '0',
-                   ECO_MAIN_LANG,
-                   'Chess%.3d' % (i + 1),
-                   chess960.getFrcFen(i + 1)))
+        c.execute(
+            "insert into openings (mainline, endline, eco, lang, opening, fen) values (?, '1', '960', ?, ?, ?)",
+            (
+                "1" if i == 518 else "0",
+                ECO_MAIN_LANG,
+                "Chess%.3d" % (i + 1),
+                chess960.getFrcFen(i + 1),
+            ),
+        )
     conn.close()

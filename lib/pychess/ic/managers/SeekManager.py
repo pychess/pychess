@@ -116,9 +116,7 @@ class SeekManager(GObject.GObject):
         self.connection.client.run_command(s, show_reply=True)
 
     def assess(self, player1, player2, type):
-        self.connection.client.run_command(
-            "assess {} {} /{}".format(player1, player2, type)
-        )
+        self.connection.client.run_command(f"assess {player1} {player2} /{type}")
 
     def on_assess(self, matchlist):
         assess = {}

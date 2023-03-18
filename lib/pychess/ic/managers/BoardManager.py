@@ -703,9 +703,7 @@ class BoardManager(GObject.GObject):
             else:
                 # In some cases (like lost on time) the last move is resent by FICS
                 # but game was already removed from self.connection.games
-                log.debug(
-                    f"Got {style12} but {gameno} not in connection.games"
-                )
+                log.debug(f"Got {style12} but {gameno} not in connection.games")
 
     def onExamineGameCreated(self, matchlist):
         style12 = matchlist[-1].groups()[0]
@@ -1168,7 +1166,7 @@ class BoardManager(GObject.GObject):
             del self.queuedStyle12s[gameno]
 
         pgnHead = [
-            ("Event", "FICS {} {} game".format(rated.lower(), game_type.fics_name)),
+            ("Event", f"FICS {rated.lower()} {game_type.fics_name} game"),
             ("Site", "freechess.org"),
             ("White", wname),
             ("Black", bname),

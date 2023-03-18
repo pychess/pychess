@@ -60,7 +60,7 @@ class SubProcess(GObject.GObject):
             stdout=asyncio.subprocess.PIPE,
             startupinfo=startupinfo,
             env=self.env,
-            cwd=self.cwd
+            cwd=self.cwd,
         )
         try:
             self.proc = await asyncio.wait_for(create, TIME_OUT_SECOND)

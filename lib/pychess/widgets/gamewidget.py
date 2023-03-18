@@ -907,9 +907,7 @@ class GameWidget(GObject.GObject):
         if view.arrows:
             cal = []
             for arrow in view.arrows:
-                cal.append(
-                    f"{arrow[0].color}{repr(arrow[0])}{repr(arrow[1])}"
-                )
+                cal.append(f"{arrow[0].color}{repr(arrow[0])}{repr(arrow[1])}")
             shown_board.board.children = [
                 "[%%cal %s]" % ",".join(cal)
             ] + shown_board.board.children
@@ -938,7 +936,9 @@ class GameWidget(GObject.GObject):
     def setLocked(self, locked):
         """Makes the board insensitive and turns off the tab ready indicator"""
         log.debug(
-            "GameWidget.setLocked: {} locked={}".format(self.gamemodel.players, str(locked))
+            "GameWidget.setLocked: {} locked={}".format(
+                self.gamemodel.players, str(locked)
+            )
         )
         self.board.setLocked(locked)
         if not self.tabcontent.get_children():

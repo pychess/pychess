@@ -450,9 +450,7 @@ class PgnImport:
                     with protosave(
                         self.chessfile.path, self.append_pgn
                     ) as self.db_handle:
-                        log.info(
-                            f"Append from {pgnfile} to {self.chessfile.path}"
-                        )
+                        log.info(f"Append from {pgnfile} to {self.chessfile.path}")
                         handle.seek(0)
                         self.db_handle.writelines(handle)
                         handle.close()

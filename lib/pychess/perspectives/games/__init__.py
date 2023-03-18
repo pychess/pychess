@@ -89,9 +89,7 @@ class Games(GObject.GObject, Perspective):
         The position from where to start the game)
         """
 
-        log.debug(
-            "Games.generalStart: {}\n {}\n {}".format(gamemodel, player0tup, player1tup)
-        )
+        log.debug(f"Games.generalStart: {gamemodel}\n {player0tup}\n {player1tup}")
         gmwidg = gamewidget.GameWidget(gamemodel, self)
         self.gamewidgets.add(gmwidg)
         self.gmwidg_cids[gmwidg] = gmwidg.connect("game_close_clicked", self.closeGame)

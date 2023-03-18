@@ -474,7 +474,7 @@ class GameModel(GObject.GObject):
         try:
             return self.players[self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("{} {}".format(self.players, self.getBoardAtPly(self.ply).color))
+            log.error(f"{self.players} {self.getBoardAtPly(self.ply).color}")
             raise
 
     curplayer = property(_get_curplayer)
@@ -483,7 +483,7 @@ class GameModel(GObject.GObject):
         try:
             return self.players[1 - self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("{} {}".format(self.players, 1 - self.getBoardAtPly(self.ply).color))
+            log.error(f"{self.players} {1 - self.getBoardAtPly(self.ply).color}")
             raise
 
     waitingplayer = property(_get_waitingplayer)
@@ -586,7 +586,7 @@ class GameModel(GObject.GObject):
     # Offer management
 
     def offerReceived(self, player, offer):
-        log.debug("GameModel.offerReceived: offerer={} {}".format(repr(player), offer))
+        log.debug(f"GameModel.offerReceived: offerer={repr(player)} {offer}")
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         elif player == self.players[BLACK]:
@@ -650,9 +650,7 @@ class GameModel(GObject.GObject):
                     del self.offers[offer_]
 
     def withdrawReceived(self, player, offer):
-        log.debug(
-            f"GameModel.withdrawReceived: withdrawer={repr(player)} {offer}"
-        )
+        log.debug(f"GameModel.withdrawReceived: withdrawer={repr(player)} {offer}")
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else:
@@ -665,9 +663,7 @@ class GameModel(GObject.GObject):
             player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
 
     def declineReceived(self, player, offer):
-        log.debug(
-            f"GameModel.declineReceived: decliner={repr(player)} {offer}"
-        )
+        log.debug(f"GameModel.declineReceived: decliner={repr(player)} {offer}")
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else:
@@ -681,9 +677,7 @@ class GameModel(GObject.GObject):
             player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
 
     def acceptReceived(self, player, offer):
-        log.debug(
-            f"GameModel.acceptReceived: accepter={repr(player)} {offer}"
-        )
+        log.debug(f"GameModel.acceptReceived: accepter={repr(player)} {offer}")
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else:

@@ -206,7 +206,7 @@ class EmittingTestCase(unittest.TestCase):
         self.assertNotEqual(
             self.args,
             None,
-            "no '{}' property change notification for {}".format(prop, repr(obj)),
+            f"no '{prop}' property change notification for {repr(obj)}",
         )
         self.assertEqual(self.prop_value, expectedResults)
 

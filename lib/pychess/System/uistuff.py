@@ -348,19 +348,19 @@ def keepWindowSize(key, window, defaultSize=None, defaultPosition=POSITION_NONE)
         if conf.hasKey(key + "_width") and conf.hasKey(key + "_height"):
             width = conf.get(key + "_width")
             height = conf.get(key + "_height")
-            log.debug("Resizing window to width={} height={}".format(width, height))
+            log.debug(f"Resizing window to width={width} height={height}")
             window.resize(width, height)
 
         elif defaultSize:
             width, height = defaultSize
-            log.debug("Resizing window to width={} height={}".format(width, height))
+            log.debug(f"Resizing window to width={width} height={height}")
             window.resize(width, height)
 
         elif key == "mainwindow":
             monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
             width = int(monitor_width / 2)
             height = int(monitor_height / 4) * 3
-            log.debug("Resizing window to width={} height={}".format(width, height))
+            log.debug(f"Resizing window to width={width} height={height}")
             window.resize(width, height)
 
         elif key == "preferencesdialogwindow":

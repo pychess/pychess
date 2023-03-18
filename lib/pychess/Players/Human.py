@@ -186,16 +186,12 @@ class Human(Player):
             else:
                 if player.color != self.color:
                     return
-        log.debug(
-            f"Human.emit_action: self.name={self.name}, action={action}"
-        )
+        log.debug(f"Human.emit_action: self.name={self.name}, action={action}")
         self.emit("offer", Offer(action, param=param))
 
     # Send the player move updates
     async def makeMove(self, board1, move, board2):
-        log.debug(
-            f"Human.makeMove: move={move}, board1={board1} board2={board2}"
-        )
+        log.debug(f"Human.makeMove: move={move}, board1={board1} board2={board2}")
         if (
             self.board.view.premove_piece
             and self.board.view.premove0
@@ -384,7 +380,7 @@ class Human(Player):
         self.gmwidg.showMessage(message)
 
     def offerError(self, offer, error):
-        log.debug("Human.offerError: self={} error={} {}".format(self, error, offer))
+        log.debug(f"Human.offerError: self={self} error={error} {offer}")
         assert offer.type in ACTION_NAMES
         actionName = ACTION_NAMES[offer.type]
         if error == ACTION_ERROR_NONE_TO_ACCEPT:

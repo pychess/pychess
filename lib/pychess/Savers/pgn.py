@@ -721,9 +721,7 @@ class PGNFile(ChessFile):
         create where clause we will use to query header tag .sqlite database
         """
         if self.fen:
-            move_stat = self.chess_db.find(
-                f"limit {self.limit} skip {skip} {self.fen}"
-            )
+            move_stat = self.chess_db.find(f"limit {self.limit} skip {skip} {self.fen}")
 
             offsets = []
             for mstat in move_stat["moves"]:
