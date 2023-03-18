@@ -10,6 +10,7 @@ repos:
     hooks:
       - id: black
         args: ['--target-version', 'py37']
+        exclude: 'doc/createDoc'
 
   - repo: https://github.com/pycqa/flake8
     rev: 6.0.0
