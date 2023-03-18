@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 '''
     PyChess arena tournament script.
@@ -71,7 +70,7 @@ def start(discoverer):
     print("Your installed engines are:")
     for i, engine in enumerate(engines):
         name = discoverer.getName(engine)
-        print("[%s] %s" % (name[:3], name))
+        print("[{}] {}".format(name[:3], name))
     print("The total amount of fights will be %d" % (n*(n-1)))
     print()
     minutes = int(input("Please enter the clock minutes for each game [n]: "))

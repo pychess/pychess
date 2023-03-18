@@ -28,7 +28,7 @@ themes += [d.capitalize() for d in listdir(pieces) if isdir(os.path.join(pieces,
 themes.sort()
 
 for theme in themes:
-    pngfile = "%s/%s.png" % (pieces, theme)
+    pngfile = "{}/{}.png".format(pieces, theme)
     print('Creating %s' % pngfile)
 
     Pieces.set_piece_theme(theme)

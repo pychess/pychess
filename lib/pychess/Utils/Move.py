@@ -45,7 +45,7 @@ class Move:
         else:
             assert (
                 cord0 is not None and cord1 is not None
-            ), "cord0={}, cord1={}, board={}".format(cord0, cord1, board)
+            ), f"cord0={cord0}, cord1={cord1}, board={board}"
             assert board[cord0] is not None, "cord0={}, cord1={}, board={}".format(
                 cord0, cord1, board
             )

@@ -293,7 +293,7 @@ def start_lecture_from(filename, index=None):
                             castl = "-"
                         if not ep:
                             ep = "-"
-                        fen = "{} {} {} {} 0 1".format(pieces, color, castl, ep)
+                        fen = f"{pieces} {color} {castl} {ep} 0 1"
 
                         curplayer = gamemodel.curplayer
                         gamemodel.status = RUNNING

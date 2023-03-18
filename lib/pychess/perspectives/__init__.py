@@ -44,12 +44,12 @@ class Perspective:
                 ]
             self.sidePanels = [importer.load_module(name) for name in names]
         else:
-            path = "{}/{}".format(os.path.dirname(__file__), name)
+            path = f"{os.path.dirname(__file__)}/{name}"
             ext = ".pyc" if getattr(sys, "frozen", False) and MSYS2 else ".py"
             postfix = "Panel%s" % ext
             files = [f[: -len(ext)] for f in os.listdir(path) if f.endswith(postfix)]
             self.sidePanels = [
-                importlib.import_module("pychess.perspectives.{}.{}".format(name, f))
+                importlib.import_module(f"pychess.perspectives.{name}.{f}")
                 for f in files
             ]
 
@@ -150,7 +150,7 @@ class Perspective:
                     stringio = StringIO()
                     traceback.print_exc(file=stringio)
                     error = stringio.getvalue()
-                    log.error("Dock loading error: {}\n{}".format(e, error))
+                    log.error(f"Dock loading error: {e}\n{error}")
                     msg_dia = Gtk.MessageDialog(
                         mainwindow(),
                         type=Gtk.MessageType.ERROR,

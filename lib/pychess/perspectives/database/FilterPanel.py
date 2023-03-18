@@ -652,20 +652,20 @@ class FilterPanel(Gtk.TreeView):
 
         if w_material or b_material:
             if self.widgets["imbalance"].get_active():
-                material_query["imbalance"] = "{}v{}".format(w_material, b_material)
+                material_query["imbalance"] = f"{w_material}v{b_material}"
 
                 if self.widgets["ignore_material_colors"].get_active():
                     material_query["imbalance"] = [
-                        "{}v{}".format(w_material, b_material),
-                        "{}v{}".format(b_material, w_material),
+                        f"{w_material}v{b_material}",
+                        f"{b_material}v{w_material}",
                     ]
             else:
-                material_query["material"] = "K{}K{}".format(w_material, b_material)
+                material_query["material"] = f"K{w_material}K{b_material}"
 
                 if self.widgets["ignore_material_colors"].get_active():
                     material_query["material"] = [
-                        "K{}K{}".format(w_material, b_material),
-                        "K{}K{}".format(b_material, w_material),
+                        f"K{w_material}K{b_material}",
+                        f"K{b_material}K{w_material}",
                     ]
 
         if self.widgets["white_move"].get_text():

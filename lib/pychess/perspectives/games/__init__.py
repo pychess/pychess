@@ -90,7 +90,7 @@ class Games(GObject.GObject, Perspective):
         """
 
         log.debug(
-            "Games.generalStart: %s\n %s\n %s" % (gamemodel, player0tup, player1tup)
+            "Games.generalStart: {}\n {}\n {}".format(gamemodel, player0tup, player1tup)
         )
         gmwidg = gamewidget.GameWidget(gamemodel, self)
         self.gamewidgets.add(gmwidg)
@@ -268,7 +268,7 @@ class Games(GObject.GObject, Perspective):
         title = _("Save Game") if not export else _("Export position")
         savedialog.set_title(title)
         while True:
-            filename = "{}-{}".format(game.players[0], game.players[1])
+            filename = f"{game.players[0]}-{game.players[1]}"
             savedialog.set_current_name(filename.replace(" ", "_"))
 
             res = savedialog.run()

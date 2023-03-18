@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 # http://es.wikipedia.org/wiki/Anexo:Aperturas_de_ajedrez
 
 import xml.etree.ElementTree as ET
@@ -48,7 +46,7 @@ if __name__ == '__main__':
 
         if data:
             print('[ECO "%s"]' % data[0], file=ecofile)
-            print('[Opening "%s"]' % data[1].replace(u"\u2026", "...").encode("latin_1"), file=ecofile)
+            print('[Opening "%s"]' % data[1].replace("\u2026", "...").encode("latin_1"), file=ecofile)
             print(file=ecofile)
             print('*', file=ecofile)
             print(file=ecofile)

@@ -24,7 +24,7 @@ class Sidepanel:
     def onNewsItem(self, nm, news):
         weekday, month, day, title, details = news
 
-        dtitle = "{}, {} {}: {}".format(weekday, month, day, title)
+        dtitle = f"{weekday}, {month} {day}: {title}"
         label = Gtk.Label(label=dtitle)
         label.props.width_request = 300
         label.props.xalign = 0

@@ -38,7 +38,7 @@ loaded_from = r"(?: Loaded from (wild[/\w]*))?"
 adjourned = r"(?: (\(adjourned\)))?"
 
 matchreUntimed = re.compile(
-    r"(\w+) %s %s ?(\w+) %s %s (untimed)\s*" % (ratings, colors, ratings, rated)
+    r"(\w+) {} {} ?(\w+) {} {} (untimed)\s*".format(ratings, colors, ratings, rated)
 )
 matchre = re.compile(
     r"(\w+) %s %s ?(\w+) %s %s (\w+) (\d+) (\d+)%s%s"

@@ -6,7 +6,7 @@ def get_message_content(heading_text, message_text, image_stock_id):
     label.props.xalign = 0
     label.props.justify = Gtk.Justification.LEFT
     label.props.wrap = True
-    label.set_text("{} {}".format(heading_text, message_text))
+    label.set_text(f"{heading_text} {message_text}")
     return label
 
 

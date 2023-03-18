@@ -290,7 +290,7 @@ class FICSPlayer(GObject.GObject):
             rep += ", game=None"
         for rating_type in RATING_TYPES:
             if rating_type in self.ratings:
-                rep += ", %s=%s" % (
+                rep += ", {}={}".format(
                     GAME_TYPES_BY_RATING_TYPE[rating_type].display_text,
                     repr(self.ratings[rating_type]),
                 )
@@ -584,7 +584,7 @@ class FICSMatch(GObject.GObject):
         self.game_type = game_type
 
     def __repr__(self):
-        text = "{} {}".format(self.minutes, self.inc)
+        text = f"{self.minutes} {self.inc}"
         text += " %s" % ("rated" if self.rated else "unrated")
         text += " %s" % self.game_type.display_text
         return text
@@ -617,7 +617,7 @@ def get_soughtmatch_tooltip_text(sought):
     text += "%s" % sought.player.display_titles(long=True)
     if not sought.player.isGuest():
         text += " (%d)" % sought.player_rating
-    text += "\n{} {}".format(sought.display_rated, sought.game_type.display_text)
+    text += f"\n{sought.display_rated} {sought.game_type.display_text}"
     text += "\n" + sought.display_timecontrol
     if sought.color:
         text += "\n" + _("%(player)s plays %(color)s") % {
@@ -882,7 +882,7 @@ class FICSBoard:
         self.pgn = pgn
 
     def __repr__(self):
-        rep = "wms={}\nbms={}\npgn={}".format(self.wms, self.bms, self.pgn)
+        rep = f"wms={self.wms}\nbms={self.bms}\npgn={self.pgn}"
         return rep
 
 
@@ -940,7 +940,7 @@ class FICSGame(FICSMatch):
             return False
 
     def __repr__(self):
-        rep = "<FICSGame wplayer=%s, bplayer=%s" % (
+        rep = "<FICSGame wplayer={}, bplayer={}".format(
             repr(self.wplayer),
             repr(self.bplayer),
         )
@@ -1235,9 +1235,9 @@ class FICSGames(GObject.GObject):
         if not isinstance(value, FICSGame):
             raise TypeError
         if key != value:
-            raise Exception("Not the same: {} {}".format(repr(key), repr(value)))
+            raise Exception(f"Not the same: {repr(key)} {repr(value)}")
         if hash(value) in self.games:
-            raise Exception("%s already exists in %s" % (repr(value), repr(self)))
+            raise Exception("{} already exists in {}".format(repr(value), repr(self)))
         self.games[hash(value)] = value
         self.games_by_gameno[value.gameno] = value
         if isinstance(value, FICSAdjournedGame):

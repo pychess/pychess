@@ -163,7 +163,7 @@ class InternetGameInterface:
             e = urlparse(link)
             if e.netloc == "":
                 if e.path.startswith("/"):
-                    link = "{}://{}{}".format(base.scheme, base.netloc, e.path)
+                    link = f"{base.scheme}://{base.netloc}{e.path}"
                 else:
                     link = "{}://{}{}/{}".format(
                         base.scheme,
@@ -261,7 +261,7 @@ class InternetGameInterface:
         pgn = ""
         for e in game:
             if e[:1] != "_" and game[e] not in [None, ""]:
-                pgn += '[{} "{}"]\n'.format(e, game[e])
+                pgn += f'[{e} "{game[e]}"]\n'
         if pgn == "":
             pgn = '[Annotator "PyChess %s"]\n' % VERSION
         pgn += "\n"
@@ -424,7 +424,7 @@ class InternetGameLichess(InternetGameInterface):
     def query_api(self, path):
         response = urlopen(
             Request(
-                "https://lichess.{}{}".format(self.url_tld, path),
+                f"https://lichess.{self.url_tld}{path}",
                 headers={
                     "X-Requested-With": "XMLHttpRequest",
                     "Accept": "application/vnd.lichess.v4+json",
@@ -492,7 +492,7 @@ class InternetGameLichess(InternetGameInterface):
 
         # Logic for the studies
         elif self.url_type == TYPE_STUDY:
-            url = "https://lichess.{}/study/{}.pgn".format(self.url_tld, self.id)
+            url = f"https://lichess.{self.url_tld}/study/{self.id}.pgn"
             return self.download(url, userAgent=True)
 
         # Logic for the puzzles
@@ -501,7 +501,7 @@ class InternetGameLichess(InternetGameInterface):
             # chessgame = self.query_api('/training/%s/load' % self.id)
 
             # Fetch the puzzle
-            url = "https://lichess.{}/training/{}".format(self.url_tld, self.id)
+            url = f"https://lichess.{self.url_tld}/training/{self.id}"
             page = self.download(url)
             if page is None:
                 return None
@@ -1223,7 +1223,7 @@ class InternetGameChessOrg(InternetGameInterface):
                 data = await ws.recv()
                 if data == "o":  # Open
                     # Client: I am XXX, please open the game YYY
-                    await ws.send('["{} {}"]'.format(name, self.id))
+                    await ws.send(f'["{name} {self.id}"]')
                     data = await ws.recv()
 
                     # Server: some data
@@ -1276,7 +1276,7 @@ class InternetGameChessOrg(InternetGameInterface):
         time = self.json_field(chessgame, "timeLimitSecs")
         inc = self.json_field(chessgame, "timeBonusSecs")
         if "" not in [time, inc]:
-            game["TimeControl"] = "{}+{}".format(time, inc)
+            game["TimeControl"] = f"{time}+{inc}"
         resultTable = [
             (0, "*", "Game started"),  # ALIVE
             (1, "1-0", "White checkmated"),  # WHITE_MATE
@@ -1587,7 +1587,7 @@ class InternetGameChessCom(InternetGameInterface):
         else:
             sFrom = map[posFrom % 8] + str(posFrom // 8 + 1)
         sTo = map[posTo % 8] + str(posTo // 8 + 1)
-        return "{}{}{}{}".format(sDrop, sFrom, sTo, sPromo)
+        return f"{sDrop}{sFrom}{sTo}{sPromo}"
 
     def download_game(self):
         # Check
@@ -1679,7 +1679,7 @@ class InternetGameChessCom(InternetGameInterface):
                     return None
             else:
                 # Fetch the page
-                url = "https://www.chess.com/{}/game/{}".format(self.url_type, self.id)
+                url = f"https://www.chess.com/{self.url_type}/game/{self.id}"
                 page = self.download(url, userAgent=True)
                 if page is None:
                     return None

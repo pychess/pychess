@@ -451,7 +451,7 @@ class CECPEngine(ProtocolEngine):
         if variant in variants.values() and not variant.standard_rules:
             assert (
                 variant.cecp_name in self.features["variants"]
-            ), "{} doesn't support {} variant".format(self, variant.cecp_name)
+            ), f"{self} doesn't support {variant.cecp_name} variant"
             self.optionQueue.append("variant %s" % variant.cecp_name)
 
     #    Strength system                               #
@@ -529,7 +529,7 @@ class CECPEngine(ProtocolEngine):
         elif key.lower() == "ponder":
             self.__setPonder(value == 1)
         else:
-            self.optionQueue.append("option {}={}".format(key, value))
+            self.optionQueue.append(f"option {key}={value}")
 
     # Interacting with the player
 
@@ -928,7 +928,7 @@ class CECPEngine(ProtocolEngine):
                     "icsnoalias",
                 ):
                     log.info(
-                        "Ignoring tell %s: %s" % (parts[0][4:], " ".join(parts[1:]))
+                        "Ignoring tell {}: {}".format(parts[0][4:], " ".join(parts[1:]))
                     )
                     continue
 

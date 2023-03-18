@@ -35,7 +35,7 @@ class PgnTestCase(unittest.TestCase):
         games, plys = pgnfile.get_records()
 
         for i, game in enumerate(games):
-            print("{}/{}".format(i + 1, pgnfile.get_count()))
+            print(f"{i + 1}/{pgnfile.get_count()}")
             orig_moves_text = normalize(pgnfile.get_movetext(game))
 
             model = pgnfile.loadToModel(game)

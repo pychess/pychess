@@ -275,7 +275,7 @@ class GameModel(GObject.GObject):
         if len(self.moves) > 0:
             string += ", move=%s" % self.moves[-1]
         string += ", variant=%s" % self.variant.name.encode("utf-8")
-        string += ", status={}, reason={}".format(str(self.status), str(self.reason))
+        string += f", status={str(self.status)}, reason={str(self.reason)}"
         string += ", players=%s" % str(self.players)
         string += ", tags=%s" % str(self.tags)
         if len(self.boards) > 0:
@@ -474,7 +474,7 @@ class GameModel(GObject.GObject):
         try:
             return self.players[self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("%s %s" % (self.players, self.getBoardAtPly(self.ply).color))
+            log.error("{} {}".format(self.players, self.getBoardAtPly(self.ply).color))
             raise
 
     curplayer = property(_get_curplayer)
@@ -483,7 +483,7 @@ class GameModel(GObject.GObject):
         try:
             return self.players[1 - self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("%s %s" % (self.players, 1 - self.getBoardAtPly(self.ply).color))
+            log.error("{} {}".format(self.players, 1 - self.getBoardAtPly(self.ply).color))
             raise
 
     waitingplayer = property(_get_waitingplayer)
@@ -491,7 +491,7 @@ class GameModel(GObject.GObject):
     def _plyToIndex(self, ply):
         index = ply - self.lowply
         if index < 0:
-            raise IndexError("{} < {}\n".format(ply, self.lowply))
+            raise IndexError(f"{ply} < {self.lowply}\n")
         return index
 
     def getBoardAtPly(self, ply, variation=0):
@@ -586,7 +586,7 @@ class GameModel(GObject.GObject):
     # Offer management
 
     def offerReceived(self, player, offer):
-        log.debug("GameModel.offerReceived: offerer=%s %s" % (repr(player), offer))
+        log.debug("GameModel.offerReceived: offerer={} {}".format(repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         elif player == self.players[BLACK]:
@@ -651,7 +651,7 @@ class GameModel(GObject.GObject):
 
     def withdrawReceived(self, player, offer):
         log.debug(
-            "GameModel.withdrawReceived: withdrawer={} {}".format(repr(player), offer)
+            f"GameModel.withdrawReceived: withdrawer={repr(player)} {offer}"
         )
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
@@ -666,7 +666,7 @@ class GameModel(GObject.GObject):
 
     def declineReceived(self, player, offer):
         log.debug(
-            "GameModel.declineReceived: decliner={} {}".format(repr(player), offer)
+            f"GameModel.declineReceived: decliner={repr(player)} {offer}"
         )
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
@@ -682,7 +682,7 @@ class GameModel(GObject.GObject):
 
     def acceptReceived(self, player, offer):
         log.debug(
-            "GameModel.acceptReceived: accepter={} {}".format(repr(player), offer)
+            f"GameModel.acceptReceived: accepter={repr(player)} {offer}"
         )
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]

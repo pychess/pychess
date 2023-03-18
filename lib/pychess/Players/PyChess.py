@@ -233,7 +233,7 @@ class PyChess:
 
             pv1 = " ".join(listToSan(board, mvs))
             time_cs = int(100 * (time() - start))
-            self.print("{} {} {} {} {}".format(depth, scr, time_cs, lsearch.nodes, pv1))
+            self.print(f"{depth} {scr} {time_cs} {lsearch.nodes} {pv1}")
 
             lsearch.nodes = 0
 

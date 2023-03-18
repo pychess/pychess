@@ -30,7 +30,7 @@ def on_message(bus, message):
     if message.type == Gst.MessageType.ERROR:
         player.set_state(Gst.State.NULL)
         simpleMessage, advMessage = message.parse_error()
-        print("Gstreamer error '{}': {}".format(simpleMessage, advMessage))
+        print(f"Gstreamer error '{simpleMessage}': {advMessage}")
     elif message.type == Gst.MessageType.EOS:
         player.set_state(Gst.State.NULL)
     return True

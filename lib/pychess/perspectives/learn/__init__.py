@@ -283,14 +283,14 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
         subdir = "puzzles" if self.progress_file.endswith("puzzles.json") else "lessons"
         if filename.lower().endswith(".pgn"):
             chessfile = PGNFile(
-                protoopen(addDataPrefix("learn/{}/{}".format(subdir, filename)))
+                protoopen(addDataPrefix(f"learn/{subdir}/{filename}"))
             )
             chessfile.limit = 1000
             chessfile.init_tag_database()
         elif filename.lower().endswith(".olv"):
             chessfile = OLVFile(
                 protoopen(
-                    addDataPrefix("learn/{}/{}".format(subdir, filename)),
+                    addDataPrefix(f"learn/{subdir}/{filename}"),
                     encoding="utf-8",
                 )
             )

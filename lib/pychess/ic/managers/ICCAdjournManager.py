@@ -242,13 +242,13 @@ class ICCAdjournManager(AdjournManager):
         self.connection.query_game = game
         if isinstance(game, FICSHistoryGame):
             self.connection.client.run_command(
-                "spgn {} {}".format(self.connection.history_owner, game.history_no)
+                f"spgn {self.connection.history_owner} {game.history_no}"
             )
         elif isinstance(game, FICSJournalGame):
             self.connection.client.run_command(
-                "spgn {} %{}".format(self.connection.journal_owner, game.journal_no)
+                f"spgn {self.connection.journal_owner} %{game.journal_no}"
             )
         else:
             self.connection.client.run_command(
-                "spgn {} {}".format(self.connection.stored_owner, game.opponent.name)
+                f"spgn {self.connection.stored_owner} {game.opponent.name}"
             )

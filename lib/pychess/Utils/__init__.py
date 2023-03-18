@@ -48,7 +48,7 @@ def prettyPrintScore(s, depth, format_mate=False):
 
     # Rendering
     if s < MATE_VALUE - MATE_DEPTH:
-        return "{}{:0.2f}{}".format(pp, s / 100.0, depth)
+        return f"{pp}{s / 100.0:0.2f}{depth}"
     else:
         mate_in = int(MATE_VALUE - s)
         if format_mate:
@@ -56,7 +56,7 @@ def prettyPrintScore(s, depth, format_mate=False):
                 return _("Mate")
             return "%s #%s%d" % (_("Mate"), mp, mate_in)
         else:
-            return "{}#{:.0f}".format(pp, s)  # Sign before sharp to be parsed in PGN
+            return f"{pp}#{s:.0f}"  # Sign before sharp to be parsed in PGN
 
 
 def createStoryTextAppEvent(text):

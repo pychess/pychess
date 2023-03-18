@@ -440,7 +440,7 @@ class Sidepanel:
                     ("$6", _("Suspicious move")),
                     ("$7", _("Forced move")),
                 ):
-                    menuitem = Gtk.MenuItem("{} {}".format(nag2symbol(nag), menutext))
+                    menuitem = Gtk.MenuItem(f"{nag2symbol(nag)} {menutext}")
                     menuitem.connect("activate", self.menu_move_attribute, board, nag)
                     symbol_menu1.append(menuitem)
 
@@ -464,7 +464,7 @@ class Sidepanel:
                     ("$132", _("Counterplay")),
                     ("$138", _("Time pressure")),
                 ):
-                    menuitem = Gtk.MenuItem("{} {}".format(nag2symbol(nag), menutext))
+                    menuitem = Gtk.MenuItem(f"{nag2symbol(nag)} {menutext}")
                     menuitem.connect(
                         "activate", self.menu_position_attribute, board, nag
                     )

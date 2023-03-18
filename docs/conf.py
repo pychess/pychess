@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import sys
 import os
@@ -7,10 +6,7 @@ import os
 # mocking C extension modules we use in pychess
 # Currently looks like unittest.mock is broken in python 3.5
 # had to 'pip install -U mock' to get this to work
-if sys.version_info < (3, 5):
-    from unittest.mock import MagicMock
-else:
-    from mock import Mock as MagicMock
+from unittest.mock import Mock as MagicMock
 
 
 class GObjectMock(MagicMock):

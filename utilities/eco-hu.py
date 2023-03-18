@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 # http://hu.wikipedia.org/wiki/Sakkmegnyit%C3%A1sok_list%C3%A1ja
 
 import xml.etree.ElementTree as ET
@@ -48,7 +46,7 @@ if __name__ == '__main__':
 
         if data:
             print('[ECO "%s"]' % data[0], file=ecofile)
-            print('[Opening "%s"]' % data[1].replace(u"\u2026", "...").replace(u"ő", u"ö").encode("latin_1"), file=ecofile)
+            print('[Opening "%s"]' % data[1].replace("\u2026", "...").replace("ő", "ö").encode("latin_1"), file=ecofile)
             print(file=ecofile)
             print('*', file=ecofile)
             print(file=ecofile)

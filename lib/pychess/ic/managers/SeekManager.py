@@ -117,7 +117,7 @@ class SeekManager(GObject.GObject):
 
     def assess(self, player1, player2, type):
         self.connection.client.run_command(
-            "assess %s %s /%s" % (player1, player2, type)
+            "assess {} {} /{}".format(player1, player2, type)
         )
 
     def on_assess(self, matchlist):
@@ -165,7 +165,7 @@ class SeekManager(GObject.GObject):
             elif seek["c"] == "B":
                 color = "black"
         except KeyError as e:
-            log.warning("on_seek_add: KeyError: {} {}".format(repr(e), repr(seek)))
+            log.warning(f"on_seek_add: KeyError: {repr(e)} {repr(seek)}")
             return
 
         try:

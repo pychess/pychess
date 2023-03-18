@@ -377,7 +377,7 @@ class ICGameModel(GameModel):
     ############################################################################
 
     def offerReceived(self, player, offer):
-        log.debug("ICGameModel.offerReceived: offerer=%s %s" % (repr(player), offer))
+        log.debug("ICGameModel.offerReceived: offerer={} {}".format(repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else:
@@ -392,7 +392,7 @@ class ICGameModel(GameModel):
         elif offer.type in OFFERS:
             if offer not in self.offers:
                 log.debug(
-                    "ICGameModel.offerReceived: %s.offer(%s)" % (repr(opPlayer), offer)
+                    "ICGameModel.offerReceived: {}.offer({})".format(repr(opPlayer), offer)
                 )
                 self.offers[offer] = player
                 opPlayer.offer(offer)
@@ -403,7 +403,7 @@ class ICGameModel(GameModel):
                     del self.offers[offer_]
 
     def acceptReceived(self, player, offer):
-        log.debug("ICGameModel.acceptReceived: accepter=%s %s" % (repr(player), offer))
+        log.debug("ICGameModel.acceptReceived: accepter={} {}".format(repr(player), offer))
         if player.__type__ == LOCAL:
             if offer not in self.offers or self.offers[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)

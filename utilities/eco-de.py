@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 # http://de.wikipedia.org/wiki/ECO-Code
 
 import xml.etree.ElementTree as ET
@@ -92,7 +90,7 @@ if __name__ == '__main__':
 
             if data:
                 print('[ECO "%s"]' % data[0], file=ecofile)
-                print('[Opening "%s"]' % data[2].replace(u"\u2026", "...").encode("latin_1"), file=ecofile)
+                print('[Opening "%s"]' % data[2].replace("\u2026", "...").encode("latin_1"), file=ecofile)
                 print(file=ecofile)
                 print('%s' % local2eng(data[1]), file=ecofile)
                 print(file=ecofile)

@@ -401,7 +401,7 @@ class PgnImport:
                                 ),
                             )
                         else:
-                            log.info("From {} imported {}".format(pgnfile, i))
+                            log.info(f"From {pgnfile} imported {i}")
 
                 if self.event_data:
                     self.conn.execute(self.ins_event, self.event_data)
@@ -441,7 +441,7 @@ class PgnImport:
                         ),
                     )
                 else:
-                    log.info("From {} imported {}".format(pgnfile, i))
+                    log.info(f"From {pgnfile} imported {i}")
                 self.conn.commit()
 
                 if self.append_pgn:
@@ -451,7 +451,7 @@ class PgnImport:
                         self.chessfile.path, self.append_pgn
                     ) as self.db_handle:
                         log.info(
-                            "Append from {} to {}".format(pgnfile, self.chessfile.path)
+                            f"Append from {pgnfile} to {self.chessfile.path}"
                         )
                         handle.seek(0)
                         self.db_handle.writelines(handle)
@@ -479,7 +479,7 @@ class PgnImport:
                 self.chessfile.handle = protoopen(self.chessfile.path)
 
             except SQLAlchemyError as e:
-                log.error("Importing {} failed! \n{}".format(pgnfile, e))
+                log.error(f"Importing {pgnfile} failed! \n{e}")
                 self.conn.rollback()
 
 

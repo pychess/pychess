@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-# -*- coding: UTF-8 -*-
 
 from glob import glob
 from os import listdir
@@ -180,19 +179,19 @@ if sys.platform == "win32":
     argv0_path = os.path.dirname(os.path.abspath(sys.executable))
     if pychess.MSYS2:
         major, minor, micro, releaselevel, serial = sys.version_info
-        msgfmt_path = argv0_path + "/../lib/python%s.%s/tools/i18n/" % (major, minor)
+        msgfmt_path = argv0_path + "/../lib/python{}.{}/tools/i18n/".format(major, minor)
     else:
         msgfmt_path = argv0_path + "/tools/i18n/"
-    msgfmt = "%s %smsgfmt.py" % (os.path.abspath(sys.executable), msgfmt_path)
+    msgfmt = "{} {}msgfmt.py".format(os.path.abspath(sys.executable), msgfmt_path)
 else:
     msgfmt = "msgfmt"
 
 pychess_langs = []
 for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
     if sys.platform == "win32":
-        command = "%s lang/%s/%s.po" % (msgfmt, dir, pofile)
+        command = "{} lang/{}/{}.po".format(msgfmt, dir, pofile)
     else:
-        command = "%s lang/%s/%s.po -o lang/%s/%s.mo" % (msgfmt, dir, pofile, dir, pofile)
+        command = "{} lang/{}/{}.po -o lang/{}/{}.mo".format(msgfmt, dir, pofile, dir, pofile)
     subprocess.call(command.split())
     DATA_FILES += [("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])]
     pychess_langs.append(dir)

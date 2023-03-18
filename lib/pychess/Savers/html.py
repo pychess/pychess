@@ -168,7 +168,7 @@ def save(file, model, position=None, flip=False):
                     piece_fan = FAN_PIECES[BLACK][piece.piece]
                 else:
                     piece_fan = FAN_PIECES[WHITE][piece.piece]
-                board += "<div class='{}'>{}</div>".format(color, piece_fan)
+                board += f"<div class='{color}'>{piece_fan}</div>"
             else:
                 board += "<div class='%s'></div>" % color
         if show_cords:

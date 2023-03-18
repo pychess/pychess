@@ -92,7 +92,7 @@ class ListAndVarManager:
             return []
 
     def addToList(self, list_name, value):
-        self.connection.client.run_command("+{} {}".format(list_name, value))
+        self.connection.client.run_command(f"+{list_name} {value}")
 
     def removeFromList(self, list_name, value):
-        self.connection.client.run_command("-{} {}".format(list_name, value))
+        self.connection.client.run_command(f"-{list_name} {value}")

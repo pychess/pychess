@@ -204,7 +204,7 @@ class Sidepanel(ParrentListSection):
 
     def online_changed(self, player, prop, game):
         log.debug(
-            "AdjournedTabSection.online_changed: %s %s" % (repr(player), repr(game))
+            "AdjournedTabSection.online_changed: {} {}".format(repr(player), repr(game))
         )
         partner = game.bplayer if game.wplayer.name == player.name else game.wplayer
         result = (
@@ -234,7 +234,7 @@ class Sidepanel(ParrentListSection):
 
     def status_changed(self, player, prop, game):
         log.debug(
-            "AdjournedTabSection.status_changed: %s %s" % (repr(player), repr(game))
+            "AdjournedTabSection.status_changed: {} {}".format(repr(player), repr(game))
         )
         try:
             message = self.messages[player]

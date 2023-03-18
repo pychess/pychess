@@ -105,7 +105,7 @@ def get_svg_pieces(svgdir):
 
     if all_in_one:
         rsvg_handles = Rsvg.Handle.new_from_file(
-            addDataPrefix("pieces/{}/{}.svg".format(svgdir, svgdir))
+            addDataPrefix(f"pieces/{svgdir}/{svgdir}.svg")
         )
     else:
         rsvg_handles = [[None] * 9, [None] * 9]

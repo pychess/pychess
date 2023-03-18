@@ -70,7 +70,7 @@ class HelperManager(GObject.GObject):
 
         if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.expect_line(
-                self.on_player_who, r"%s(?:\s{2,}%s)+" % (whomatch, whomatch)
+                self.on_player_who, r"{}(?:\s{{2,}}{})+".format(whomatch, whomatch)
             )
             self.helperconn.expect_line(
                 self.on_player_connect, r"\[([A-Za-z]+) has connected\.\]"
