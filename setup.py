@@ -40,10 +40,10 @@ if sys.platform == "win32":
 import importlib.util
 import importlib.machinery
 spec = importlib.machinery.PathFinder().find_spec("pychess", ["lib"])
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
+pychess = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(pychess)
 
-VERSION = module.VERSION
+VERSION = pychess.VERSION
 
 NAME = "pychess"
 
