@@ -1,3 +1,4 @@
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Python-CI](https://github.com/pychess/pychess/actions/workflows/run-tests.yml/badge.svg)](https://github.com/pychess/pychess/actions/workflows/run-tests.yml)
 [![codecov](https://codecov.io/gh/pychess/pychess/branch/master/graph/badge.svg)](https://codecov.io/gh/pychess/pychess)
 [![Documentation Status](https://readthedocs.org/projects/pychess/badge/?version=latest)](http://pychess.readthedocs.org/en/latest/?badge=latest)
