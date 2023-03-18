@@ -37,8 +37,11 @@ if sys.platform == "win32":
         print('Installing from http://sourceforge.net/projects/pygobjectwin32')
         sys.exit(1)
 
-from imp import load_module, find_module
-pychess = load_module("pychess", *find_module("pychess", ["lib"]))
+import importlib.util
+import importlib.machinery
+spec = importlib.machinery.PathFinder().find_spec("pychess", ["lib"])
+pychess = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(pychess)
 
 VERSION = pychess.VERSION
 
