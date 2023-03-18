@@ -144,7 +144,7 @@ class UserInfoSection:
             link = (
                 "http://ficsgames.org/cgi-bin/search.cgi?player=%s" % finger.getName()
             )
-            llabel.set_markup('<a href="{}">{}</a>'.format(link, link))
+            llabel.set_markup(f'<a href="{link}">{link}</a>')
             table.attach(llabel, 1, cols, row, row + 1)
             row += 1
 
@@ -169,7 +169,7 @@ class UserInfoSection:
 
             def callback(pinger, pingtime):
                 log.debug(
-                    "'{}' '{}'".format(str(self.pinger), str(pingtime)),
+                    f"'{str(self.pinger)}' '{str(pingtime)}'",
                     extra={"task": (self.connection.username, "UIS.oF.callback")},
                 )
                 if isinstance(pingtime, str):
@@ -228,7 +228,7 @@ class UserInfoSection:
                     + "a registered user. To register an account, go to "
                 )
 
-            label0.set_markup('{} <a href="{}">{}</a>.'.format(txt, reg, reg))
+            label0.set_markup(f'{txt} <a href="{reg}">{reg}</a>.')
             vbox.add(label0)
 
         if self.dock.get_children():

@@ -124,7 +124,7 @@ chess_file = sys.argv[1] if len(sys.argv) > 1 else None
 ics_host = None
 ics_port = None
 
-version = "{} ({})".format(pychess.VERSION, pychess.VERSION_NAME)
+version = f"{pychess.VERSION} ({pychess.VERSION_NAME})"
 description = "The PyChess chess client, version %s." % version
 
 parser = argparse.ArgumentParser(description=description)

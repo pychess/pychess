@@ -575,7 +575,7 @@ class PanelTab:
         for panel in sidePanels:
             checked = True if not xmlOK else panel.__name__ in saved_panels
             panel_icon = get_pixbuf(panel.__icon__, 32)
-            text = "<b>{}</b>\n{}".format(panel.__title__, panel.__desc__)
+            text = f"<b>{panel.__title__}</b>\n{panel.__desc__}"
             store.append((checked, panel_icon, text, panel))
 
         self.tv = widgets["panels_treeview"]

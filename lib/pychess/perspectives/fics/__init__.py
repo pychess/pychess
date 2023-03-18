@@ -741,7 +741,7 @@ class FICS(GObject.GObject, Perspective):
 
     def _replace_notification_message(self, obj, prop, rating_type, player):
         log.debug(
-            "{} {}".format(repr(obj), player),
+            f"{repr(obj)} {player}",
             extra={"task": (self.connection.username, "_replace_notification_message")},
         )
         for message in self.messages:

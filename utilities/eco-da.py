@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 # http://da.wikipedia.org/wiki/Skak%C3%A5bninger
 
 import xml.etree.ElementTree as ET
@@ -10,8 +8,8 @@ def local2eng(text):
     text = text.replace("T", "R").replace("D", "Q").replace("S", "N").replace("L", "B")
     return text
 
-if __name__ == '__main__':
 
+if __name__ == "__main__":
     xhtml = "eco-da.html"
     tree = ET.parse(xhtml)
 
@@ -28,7 +26,7 @@ if __name__ == '__main__':
     print('[ECO "A00"]', file=ecofile)
     print('[Opening "Irregulære åbninger"]', file=ecofile)
     print(file=ecofile)
-    print('*', file=ecofile)
+    print("*", file=ecofile)
     print(file=ecofile)
 
     eco_count += 1
@@ -51,16 +49,18 @@ if __name__ == '__main__':
             names.append(ref.text)
             if ref.tail:
                 names.append(ref.tail)
-        data.append(''.join(names))
-
+        data.append("".join(names))
 
         print(data)
 
         if data:
             print('[ECO "%s"]' % data[0], file=ecofile)
-            print('[Opening "%s"]' % data[1].replace(u"\u2026", "...").encode("latin_1"), file=ecofile)
+            print(
+                '[Opening "%s"]' % data[1].replace("\u2026", "...").encode("latin_1"),
+                file=ecofile,
+            )
             print(file=ecofile)
-            print('*', file=ecofile)
+            print("*", file=ecofile)
             print(file=ecofile)
 
             eco_count += 1
@@ -70,7 +70,7 @@ if __name__ == '__main__':
             print('[ECO "C11"]', file=ecofile)
             print('[Opening "Fransk forsvar"]', file=ecofile)
             print(file=ecofile)
-            print('*', file=ecofile)
+            print("*", file=ecofile)
             print(file=ecofile)
 
             eco_count += 1

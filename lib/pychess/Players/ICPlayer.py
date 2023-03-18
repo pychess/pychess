@@ -273,14 +273,12 @@ class ICPlayer(Player):
         )
 
     def offer(self, offer):
-        log.debug("ICPlayer.offer: self={} {}".format(repr(self), offer))
+        log.debug(f"ICPlayer.offer: self={repr(self)} {offer}")
         if offer.type == TAKEBACK_OFFER:
             # only 1 outstanding takeback offer allowed on FICS, so remove any of ours
             for index in list(self.offers.keys()):
                 if self.offers[index].type == TAKEBACK_OFFER:
-                    log.debug(
-                        "ICPlayer.offer: del self.offers[{}] {}".format(index, offer)
-                    )
+                    log.debug(f"ICPlayer.offer: del self.offers[{index}] {offer}")
                     del self.offers[index]
         self.connection.om.offer(offer)
 

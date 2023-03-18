@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 # http://hu.wikipedia.org/wiki/Sakkmegnyit%C3%A1sok_list%C3%A1ja
 
 import xml.etree.ElementTree as ET
@@ -10,8 +8,8 @@ def local2eng(text):
     text = text.replace("B", "R").replace("V", "Q").replace("H", "N").replace("F", "B")
     return text
 
-if __name__ == '__main__':
 
+if __name__ == "__main__":
     xhtml = "eco-hu.html"
     tree = ET.parse(xhtml)
 
@@ -41,16 +39,19 @@ if __name__ == '__main__':
             names.append(ref.text)
             if ref.tail:
                 names.append(ref.tail)
-        data.append(''.join(names))
-
+        data.append("".join(names))
 
         print(data)
 
         if data:
             print('[ECO "%s"]' % data[0], file=ecofile)
-            print('[Opening "%s"]' % data[1].replace(u"\u2026", "...").replace(u"ő", u"ö").encode("latin_1"), file=ecofile)
+            print(
+                '[Opening "%s"]'
+                % data[1].replace("\u2026", "...").replace("ő", "ö").encode("latin_1"),
+                file=ecofile,
+            )
             print(file=ecofile)
-            print('*', file=ecofile)
+            print("*", file=ecofile)
             print(file=ecofile)
 
             eco_count += 1

@@ -409,7 +409,7 @@ class Board:
 
         flag = FLAG(move.move)
         if flag != DROP:
-            assert self[move.cord0], "{} {}".format(move, self.asFen())
+            assert self[move.cord0], f"{move} {self.asFen()}"
 
         newBoard = self.clone(lboard=lboard)
         if lboard is None:

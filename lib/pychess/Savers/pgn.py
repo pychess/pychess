@@ -177,10 +177,10 @@ def save(handle, model, position=None, flip=False):
             pval = str(value)
             pval = pval.replace("\\", "\\\\")
             pval = pval.replace('"', '\\"')
-            print('[{} "{}"]'.format(tag, pval), file=handle)
+            print(f'[{tag} "{pval}"]', file=handle)
         except UnicodeEncodeError:
             pval = bytes(pval, "utf-8").decode(PGN_ENCODING, errors="ignore")
-            print('[{} "{}"]'.format(tag, pval), file=handle)
+            print(f'[{tag} "{pval}"]', file=handle)
         processed_tags = processed_tags + [tag]
 
     # Mandatory ordered seven-tag roster
@@ -192,7 +192,7 @@ def save(handle, model, position=None, flip=False):
             y = "%04d" % y if y is not None else "????"
             m = "%02d" % m if m is not None else "??"
             d = "%02d" % d if d is not None else "??"
-            value = "{}.{}.{}".format(y, m, d)
+            value = f"{y}.{m}.{d}"
         elif value == "":
             value = "?"
         write_tag(tag, value, roster=True)
@@ -346,7 +346,7 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
         if node.prev is None:
             for child in node.children:
                 if isinstance(child, str):
-                    result.append("{{{}}}{}".format(child, os.linesep))
+                    result.append(f"{{{child}}}{os.linesep}")
             node = node.next
             continue
 
@@ -369,7 +369,7 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
                     moves, score, depth = model.scores[node.plyCount]
                     if node.color == BLACK:
                         score = -score
-                    emt_eval += "[%eval {:0.2f}/{}]".format(score / 100.0, depth)
+                    emt_eval += f"[%eval {score / 100.0:0.2f}/{depth}]"
                 if emt_eval:
                     result.append("{%s}" % emt_eval)
 
@@ -487,7 +487,7 @@ class PGNFile(ChessFile):
 
             self.games, self.offs_ply = self.get_records(0)
             log.info(
-                "{} contains {} game(s)".format(self.path, self.count),
+                f"{self.path} contains {self.count} game(s)",
                 extra={"task": "SQL"},
             )
 
@@ -610,7 +610,7 @@ class PGNFile(ChessFile):
         """Get move-games-win-loss-draw stat of fen position"""
         rows = []
         if self.chess_db is not None:
-            move_stat = self.chess_db.find("limit {} skip {} {}".format(1, 0, fen))
+            move_stat = self.chess_db.find(f"limit {1} skip {0} {fen}")
             for mstat in move_stat["moves"]:
                 rows.append(
                     (
@@ -626,7 +626,7 @@ class PGNFile(ChessFile):
     def has_position(self, fen):
         # ChessDB (prioritary)
         if self.chess_db is not None:
-            ret = self.chess_db.find("limit {} skip {} {}".format(1, 0, fen))
+            ret = self.chess_db.find(f"limit {1} skip {0} {fen}")
             if len(ret["moves"]) > 0:
                 return TOOL_CHESSDB, True
         # Scoutfish (alternate by approximation)
@@ -721,9 +721,7 @@ class PGNFile(ChessFile):
         create where clause we will use to query header tag .sqlite database
         """
         if self.fen:
-            move_stat = self.chess_db.find(
-                "limit {} skip {} {}".format(self.limit, skip, self.fen)
-            )
+            move_stat = self.chess_db.find(f"limit {self.limit} skip {skip} {self.fen}")
 
             offsets = []
             for mstat in move_stat["moves"]:
@@ -925,7 +923,7 @@ class PGNFile(ChessFile):
                 except Exception:
                     raise LoadingError(
                         _("Invalid move."),
-                        "{}{}".format(move_count(node, black_periods=True), move),
+                        f"{move_count(node, black_periods=True)}{move}",
                     )
 
             return board

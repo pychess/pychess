@@ -106,7 +106,7 @@ months = [
 ]
 
 # "Thu Oct 14, 20:36 PDT 2010"
-dates = r"(%s)\s+(%s)\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{4})" % (
+dates = r"({})\s+({})\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{{4}})".format(
     "|".join(weekdays),
     "|".join(months),
 )
@@ -703,9 +703,7 @@ class BoardManager(GObject.GObject):
             else:
                 # In some cases (like lost on time) the last move is resent by FICS
                 # but game was already removed from self.connection.games
-                log.debug(
-                    "Got {} but {} not in connection.games".format(style12, gameno)
-                )
+                log.debug(f"Got {style12} but {gameno} not in connection.games")
 
     def onExamineGameCreated(self, matchlist):
         style12 = matchlist[-1].groups()[0]
@@ -1168,7 +1166,7 @@ class BoardManager(GObject.GObject):
             del self.queuedStyle12s[gameno]
 
         pgnHead = [
-            ("Event", "FICS %s %s game" % (rated.lower(), game_type.fics_name)),
+            ("Event", f"FICS {rated.lower()} {game_type.fics_name} game"),
             ("Site", "freechess.org"),
             ("White", wname),
             ("Black", bname),
@@ -1212,7 +1210,7 @@ class BoardManager(GObject.GObject):
             if ply % 2 == 0:
                 pgn += "%d. " % (ply // 2 + 1)
             time = times[ply]
-            pgn += "{} {{[%emt {}]}} ".format(move, time)
+            pgn += f"{move} {{[%emt {time}]}} "
         pgn += "*\n"
 
         wplayer = self.connection.players.get(wname)
@@ -1324,7 +1322,7 @@ class BoardManager(GObject.GObject):
 
         if relation == IC_POS_OBSERVING_EXAMINATION:
             pgnHead = [
-                ("Event", "FICS {} {} game".format(rated, game_type.fics_name)),
+                ("Event", f"FICS {rated} {game_type.fics_name} game"),
                 ("Site", "freechess.org"),
                 ("White", wname),
                 ("Black", bname),

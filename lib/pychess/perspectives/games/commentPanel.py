@@ -159,7 +159,7 @@ class Sidepanel:
 
         messages = getMessages("final")
         if messages:
-            return "{} {}".format(reprColor[color], messages[0])
+            return f"{reprColor[color]} {messages[0]}"
 
         # ---
 
@@ -171,7 +171,7 @@ class Sidepanel:
 
         messages = getMessages("attack")
         for message in messages:
-            strings.append("{} {}".format(reprColor[color], message))
+            strings.append(f"{reprColor[color]} {message}")
 
         # ----------------------------------------------------------------------
         # Check for prefixes
@@ -190,11 +190,13 @@ class Sidepanel:
         for message in getMessages("offencive_moves") + getMessages("defencive_moves"):
             if prefix:
                 strings.append(
-                    "%s %s %s %s" % (reprColor[color], prefix, _("and") + "\n", message)
+                    "{} {} {} {}".format(
+                        reprColor[color], prefix, _("and") + "\n", message
+                    )
                 )
                 prefix = ""
             else:
-                strings.append("{} {}".format(reprColor[color], message))
+                strings.append(f"{reprColor[color]} {message}")
 
         # ----------------------------------------------------------------------
         # Simple
@@ -220,7 +222,7 @@ class Sidepanel:
         # There was nothing to apply the prefix to, so we just post it here
         # before the states and tips
         if prefix:
-            strings.append("{} {}".format(reprColor[color], prefix))
+            strings.append(f"{reprColor[color]} {prefix}")
             prefix = ""
 
         # ----------------------------------------------------------------------

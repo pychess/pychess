@@ -269,7 +269,7 @@ class Sidepanel(ParrentListSection):
 
     def elo_changed(self, rating, prop, rating_type, player):
         log.debug(
-            "{} {}".format(rating, player),
+            f"{rating} {player}",
             extra={"task": (self.connection.username, "PTS_changed")},
         )
 

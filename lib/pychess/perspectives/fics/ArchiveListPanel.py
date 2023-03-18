@@ -203,9 +203,7 @@ class Sidepanel(ParrentListSection):
         return cmp(minute0, minute1)
 
     def online_changed(self, player, prop, game):
-        log.debug(
-            "AdjournedTabSection.online_changed: %s %s" % (repr(player), repr(game))
-        )
+        log.debug(f"AdjournedTabSection.online_changed: {repr(player)} {repr(game)}")
         partner = game.bplayer if game.wplayer.name == player.name else game.wplayer
         result = (
             "▷"
@@ -233,9 +231,7 @@ class Sidepanel(ParrentListSection):
         return False
 
     def status_changed(self, player, prop, game):
-        log.debug(
-            "AdjournedTabSection.status_changed: %s %s" % (repr(player), repr(game))
-        )
+        log.debug(f"AdjournedTabSection.status_changed: {repr(player)} {repr(game)}")
         try:
             message = self.messages[player]
         except KeyError:

@@ -348,19 +348,19 @@ def keepWindowSize(key, window, defaultSize=None, defaultPosition=POSITION_NONE)
         if conf.hasKey(key + "_width") and conf.hasKey(key + "_height"):
             width = conf.get(key + "_width")
             height = conf.get(key + "_height")
-            log.debug("Resizing window to width=%s height=%s" % (width, height))
+            log.debug(f"Resizing window to width={width} height={height}")
             window.resize(width, height)
 
         elif defaultSize:
             width, height = defaultSize
-            log.debug("Resizing window to width=%s height=%s" % (width, height))
+            log.debug(f"Resizing window to width={width} height={height}")
             window.resize(width, height)
 
         elif key == "mainwindow":
             monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
             width = int(monitor_width / 2)
             height = int(monitor_height / 4) * 3
-            log.debug("Resizing window to width=%s height=%s" % (width, height))
+            log.debug(f"Resizing window to width={width} height={height}")
             window.resize(width, height)
 
         elif key == "preferencesdialogwindow":
@@ -376,7 +376,7 @@ def keepWindowSize(key, window, defaultSize=None, defaultPosition=POSITION_NONE)
         if conf.hasKey(key + "_x") and conf.hasKey(key + "_y"):
             x = max(0, conf.get(key + "_x"))
             y = max(0, conf.get(key + "_y"))
-            log.debug("Moving window to x={} y={}".format(x, y))
+            log.debug(f"Moving window to x={x} y={y}")
             window.move(x, y)
 
         elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
@@ -387,7 +387,7 @@ def keepWindowSize(key, window, defaultSize=None, defaultPosition=POSITION_NONE)
             else:
                 # Place the window on the upper golden ratio line
                 y_loc = int(monitor_height / 2.618 - height / 2) + monitor_y
-            log.debug("Moving window to x={} y={}".format(x_loc, y_loc))
+            log.debug(f"Moving window to x={x_loc} y={y_loc}")
             window.move(x_loc, y_loc)
 
     loadPosition(window)

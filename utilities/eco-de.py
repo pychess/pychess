@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 # http://de.wikipedia.org/wiki/ECO-Code
 
 import xml.etree.ElementTree as ET
@@ -10,8 +8,8 @@ def local2eng(text):
     text = text.replace("S", "N").replace("L", "B").replace("T", "R").replace("D", "Q")
     return text
 
-if __name__ == '__main__':
 
+if __name__ == "__main__":
     xhtml = "eco-de.html"
     tree = ET.parse(xhtml)
 
@@ -20,7 +18,9 @@ if __name__ == '__main__':
 
     ecofile = open("eco.pgn", "w")
 
-    tables = [c for c in tree.findall(".//%stable" % ns) if c.get("class") == "prettytable"]
+    tables = [
+        c for c in tree.findall(".//%stable" % ns) if c.get("class") == "prettytable"
+    ]
 
     eco_count = 0
     for table in tables:
@@ -47,7 +47,7 @@ if __name__ == '__main__':
                     par = col.findall("%sp" % ns)
                     for p in par:
                         moves.append(p.text)
-                    data.append(''.join(moves))
+                    data.append("".join(moves))
 
                 else:
                     names = []
@@ -62,7 +62,7 @@ if __name__ == '__main__':
                     for p in par:
                         if p.text:
                             names.append(p.text)
-                    data.append(''.join(names))
+                    data.append("".join(names))
 
             # fix some incorrect lines
             if data and data[0] == "A65":
@@ -80,11 +80,17 @@ if __name__ == '__main__':
             elif data and data[0] == "E06":
                 data[1] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3"
             elif data and data[0] == "E07":
-                data[1] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7"
+                data[
+                    1
+                ] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7"
             elif data and data[0] == "E08":
-                data[1] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7 7. Qc2"
+                data[
+                    1
+                ] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7 7. Qc2"
             elif data and data[0] == "E09":
-                data[1] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7 7. Qc2 c6 8. Nbd2"
+                data[
+                    1
+                ] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7 7. Qc2 c6 8. Nbd2"
             elif data and data[0] == "E32":
                 data[1] = "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2"
 
@@ -92,9 +98,13 @@ if __name__ == '__main__':
 
             if data:
                 print('[ECO "%s"]' % data[0], file=ecofile)
-                print('[Opening "%s"]' % data[2].replace(u"\u2026", "...").encode("latin_1"), file=ecofile)
+                print(
+                    '[Opening "%s"]'
+                    % data[2].replace("\u2026", "...").encode("latin_1"),
+                    file=ecofile,
+                )
                 print(file=ecofile)
-                print('%s' % local2eng(data[1]), file=ecofile)
+                print("%s" % local2eng(data[1]), file=ecofile)
                 print(file=ecofile)
 
                 eco_count += 1

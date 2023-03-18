@@ -711,7 +711,7 @@ async def init_engine(analyzer_type, gamemodel, force_engine=None):
             analyzer = await discoverer.initAnalyzerEngine(
                 engine, mode, gamemodel.variant
             )
-            log.debug("{} analyzer: {}".format(analyzer_type, repr(analyzer)))
+            log.debug(f"{analyzer_type} analyzer: {repr(analyzer)}")
 
     return analyzer
 

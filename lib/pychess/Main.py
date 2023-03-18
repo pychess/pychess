@@ -67,7 +67,7 @@ class GladeHandlers:
         self.app = app
 
     def on_window_key_press(self, window, event):
-        log.debug("on_window_key_press: {} {}".format(window.get_title(), event))
+        log.debug(f"on_window_key_press: {window.get_title()} {event}")
 
         # debug leaking memory
         if Gdk.keyval_name(event.keyval) == "F12":
@@ -605,7 +605,7 @@ class PyChess(Gtk.Application):
         self.saved_cids = {}
         self.terminated_cids = {}
 
-        log.info("PyChess {} {} git {}".format(VERSION_NAME, VERSION, self.git_rev))
+        log.info(f"PyChess {VERSION_NAME} {VERSION} git {self.git_rev}")
         log.info("Command line args: '%s'" % self.chess_file)
         log.info("Platform: %s" % platform.platform())
         log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
@@ -774,9 +774,7 @@ class PyChess(Gtk.Application):
                     .decode()
                     .strip()
                 )
-                self.aboutdialog.set_version(
-                    "{} Git {}".format(VERSION_NAME, self.git_rev)
-                )
+                self.aboutdialog.set_version(f"{VERSION_NAME} Git {self.git_rev}")
             except subprocess.CalledProcessError:
                 pass
         self.aboutdialog.set_comments(self.aboutdialog.get_comments())

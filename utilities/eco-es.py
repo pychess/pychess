@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 # http://es.wikipedia.org/wiki/Anexo:Aperturas_de_ajedrez
 
 import xml.etree.ElementTree as ET
@@ -7,11 +5,17 @@ import xml.etree.ElementTree as ET
 
 def local2eng(text):
     text = text.replace("0-0-0", "O-O-O").replace("0-0", "O-O")
-    text = text.replace("R", "K").replace("T", "R").replace("D", "Q").replace("C", "N").replace("A", "B")
+    text = (
+        text.replace("R", "K")
+        .replace("T", "R")
+        .replace("D", "Q")
+        .replace("C", "N")
+        .replace("A", "B")
+    )
     return text
 
-if __name__ == '__main__':
 
+if __name__ == "__main__":
     xhtml = "eco-es.html"
     tree = ET.parse(xhtml)
 
@@ -41,16 +45,18 @@ if __name__ == '__main__':
             names.append(ref.text)
             if ref.tail:
                 names.append(ref.tail)
-        data.append(''.join(names))
-
+        data.append("".join(names))
 
         print(data)
 
         if data:
             print('[ECO "%s"]' % data[0], file=ecofile)
-            print('[Opening "%s"]' % data[1].replace(u"\u2026", "...").encode("latin_1"), file=ecofile)
+            print(
+                '[Opening "%s"]' % data[1].replace("\u2026", "...").encode("latin_1"),
+                file=ecofile,
+            )
             print(file=ecofile)
-            print('*', file=ecofile)
+            print("*", file=ecofile)
             print(file=ecofile)
 
             eco_count += 1
@@ -60,7 +66,7 @@ if __name__ == '__main__':
             print('[ECO "B50"]', file=ecofile)
             print('[Opening "Siciliana"]', file=ecofile)
             print(file=ecofile)
-            print('*', file=ecofile)
+            print("*", file=ecofile)
             print(file=ecofile)
 
             eco_count += 1

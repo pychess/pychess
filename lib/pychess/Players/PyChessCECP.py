@@ -103,7 +103,9 @@ class PyChessCECP(PyChess):
         }
         python = sys.executable.split("/")[-1]
         python_version = "%s.%s.%s" % sys.version_info[0:3]
-        self.print("# %s [%s %s]" % (self.features["myname"], python, python_version))
+        self.print(
+            "# {} [{} {}]".format(self.features["myname"], python, python_version)
+        )
 
     def handle_sigterm(self, *args):
         self.__stopSearching()

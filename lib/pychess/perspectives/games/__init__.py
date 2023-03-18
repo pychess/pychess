@@ -89,9 +89,7 @@ class Games(GObject.GObject, Perspective):
         The position from where to start the game)
         """
 
-        log.debug(
-            "Games.generalStart: %s\n %s\n %s" % (gamemodel, player0tup, player1tup)
-        )
+        log.debug(f"Games.generalStart: {gamemodel}\n {player0tup}\n {player1tup}")
         gmwidg = gamewidget.GameWidget(gamemodel, self)
         self.gamewidgets.add(gmwidg)
         self.gmwidg_cids[gmwidg] = gmwidg.connect("game_close_clicked", self.closeGame)
@@ -268,7 +266,7 @@ class Games(GObject.GObject, Perspective):
         title = _("Save Game") if not export else _("Export position")
         savedialog.set_title(title)
         while True:
-            filename = "{}-{}".format(game.players[0], game.players[1])
+            filename = f"{game.players[0]}-{game.players[1]}"
             savedialog.set_current_name(filename.replace(" ", "_"))
 
             res = savedialog.run()

@@ -124,7 +124,7 @@ class PyDockLeaf(TabReceiver):
             if widget_ == widget:
                 break
         else:
-            raise KeyError("No {} in {}".format(widget, self))
+            raise KeyError(f"No {widget} in {self}")
         del self.panels[i]
 
         if self.book.get_n_pages() == 0:

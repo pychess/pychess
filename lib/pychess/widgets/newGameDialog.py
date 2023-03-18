@@ -1071,13 +1071,13 @@ class EnterNotationExtension(_GameInitializationMode):
                 player0 = player0combo.get_active()
                 if player0 == 0 and '[White "' not in text:
                     name = '[White "%s"]' % conf.get("firstName")
-                    text = "{}\n{}".format(name, text)
+                    text = f"{name}\n{text}"
 
                 player1combo = cls.widgets["blackPlayerCombobox"]
                 player1 = player1combo.get_active()
                 if player1 == 0 and '[Black "' not in text:
                     name = '[Black "%s"]' % conf.get("secondName")
-                    text = "{}\n{}".format(name, text)
+                    text = f"{name}\n{text}"
 
                 loadType = pgn
 

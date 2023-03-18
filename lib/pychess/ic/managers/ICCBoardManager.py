@@ -498,7 +498,7 @@ class ICCBoardManager(BoardManager):
                 gameno_, san_move, alg_move, time, clock = send_moves.split()
                 if ply % 2 == 0:
                     pgn += "%d. " % (ply // 2 + 1)
-                pgn += "{} {{[%emt {}]}} ".format(san_move, time)
+                pgn += f"{san_move} {{[%emt {time}]}} "
                 ply += 1
             pgn += "*\n"
             del self.queued_send_moves[gameno]

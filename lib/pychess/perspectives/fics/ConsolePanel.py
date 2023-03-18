@@ -139,7 +139,7 @@ class ConsoleView(Gtk.Box):
                 entry.set_position(-1)
                 return True
             elif len(parts) == 2:
-                entry.set_text("{} {}".format(parts[0], modelstr))
+                entry.set_text(f"{parts[0]} {modelstr}")
                 entry.set_position(-1)
                 return True
 

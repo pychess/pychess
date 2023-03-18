@@ -295,7 +295,7 @@ class PyChessFICS(PyChess):
 
         else:
             if self.ownerOnline:
-                self.tellHome("{} told me '{}'".format(name, text))
+                self.tellHome(f"{name} told me '{text}'")
             else:
 
                 def onlineanswer(message):

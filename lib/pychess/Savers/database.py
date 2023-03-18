@@ -253,7 +253,7 @@ class TagDatabase:
                 y = "%04d" % y if y is not None else "????"
                 m = "%02d" % m if m is not None else "??"
                 d = "%02d" % d if d is not None else "??"
-                date_to = "{}.{}.{}".format(y, m, d)
+                date_to = f"{y}.{m}.{d}"
 
                 tags.append(game.c.date <= date_to)
 

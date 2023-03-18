@@ -125,7 +125,7 @@ class UCIEngine(ProtocolEngine):
             if isinstance(value, bool):
                 value = str(value).lower()
             print(
-                "setoption name {} value {}".format(option, str(value)),
+                f"setoption name {option} value {str(value)}",
                 file=self.engine,
             )
 
@@ -319,7 +319,7 @@ class UCIEngine(ProtocolEngine):
 
     def setOptionInitialBoard(self, model):
         log.debug(
-            "setOptionInitialBoard: self={}, model={}".format(self, model),
+            f"setOptionInitialBoard: self={self}, model={model}",
             extra={"task": self.defname},
         )
         self._recordMoveList(model)

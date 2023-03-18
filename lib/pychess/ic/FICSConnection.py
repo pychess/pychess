@@ -448,7 +448,7 @@ class FICSMainConnection(FICSConnection):
             self.notify_users.extend(notify_users.groups()[0].split())
 
     def _start_managers(self, lines):
-        self.client.run_command("set interface %s %s" % (NAME, pychess.VERSION))
+        self.client.run_command(f"set interface {NAME} {pychess.VERSION}")
 
         # FIXME: Some managers use each other to avoid regexp collapse. To
         # avoid having to init the in a specific order, connect calls should

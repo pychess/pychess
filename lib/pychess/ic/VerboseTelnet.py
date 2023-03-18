@@ -212,7 +212,7 @@ class TelnetLines:
                     if line.startswith(DTGR_START):
                         code, data = line[2:-2].split(" ", 1)
                         log.debug(
-                            "{} {}".format(code, data),
+                            f"{code} {data}",
                             extra={"task": (self.telnet.name, "datagram")},
                         )
                         lines.append(TelnetLine(data, int(code), DG))
@@ -350,13 +350,13 @@ class PredictionsTelnet:
         if self.lines.block_mode:
             # TODO: reuse id after command reply handled
             self.__command_id += 1
-            text = "{} {}".format(self.__command_id, text)
+            text = f"{self.__command_id} {text}"
             if show_reply:
                 self.show_reply.add(self.__command_id)
             self.telnet.write(text)
         elif self.lines.datagram_mode:
             if show_reply:
-                text = "`{}`{}".format(MY_ICC_PREFIX, text)
+                text = f"`{MY_ICC_PREFIX}`{text}"
             self.telnet.write("%s" % text)
         else:
             self.telnet.write("%s" % text)

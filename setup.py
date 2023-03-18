@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-# -*- coding: UTF-8 -*-
 
 from glob import glob
 from os import listdir
@@ -17,6 +16,7 @@ msi = False
 if "bdist_msi" in sys.argv[1:]:
     try:
         from cx_Freeze import setup, Executable
+
         msi = True
     except ImportError:
         print("ERROR: can't import cx_Freeze!")
@@ -25,20 +25,25 @@ else:
     from setuptools import setup
 
 if sys.version_info < (3, 7, 0):
-    print('ERROR: PyChess requires Python >= 3.7.0')
+    print("ERROR: PyChess requires Python >= 3.7.0")
     sys.exit(1)
 
 if sys.platform == "win32":
     try:
         from gi.repository import Gtk
-        print("Gtk verion is %s.%s.%s", (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION, Gtk.MICRO_VERSION))
+
+        print(
+            "Gtk verion is %s.%s.%s",
+            (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION, Gtk.MICRO_VERSION),
+        )
     except ImportError:
-        print('ERROR: PyChess in Windows Platform requires to install PyGObject.')
-        print('Installing from http://sourceforge.net/projects/pygobjectwin32')
+        print("ERROR: PyChess in Windows Platform requires to install PyGObject.")
+        print("Installing from http://sourceforge.net/projects/pygobjectwin32")
         sys.exit(1)
 
 import importlib.util
 import importlib.machinery
+
 spec = importlib.machinery.PathFinder().find_spec("pychess", ["lib"])
 pychess = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(pychess)
@@ -85,18 +90,19 @@ PyChess has many other features including:
 - Easy to use and intuitive look and feel"""
 
 CLASSIFIERS = [
-    'Development Status :: 3 - Alpha',
-    'Environment :: X11 Applications :: GTK',
-    'Intended Audience :: End Users/Desktop',
-    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-    'Operating System :: POSIX',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'Topic :: Games/Entertainment :: Board Games']
+    "Development Status :: 3 - Alpha",
+    "Environment :: X11 Applications :: GTK",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Games/Entertainment :: Board Games",
+]
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
@@ -105,74 +111,97 @@ stderr = sys.stderr
 stdout = sys.stdout
 
 if not isfile("eco.db"):
-    print("ERROR: File 'eco.db' is missing, please generate using command:\n"
-          "       # PYTHONPATH=lib python3 pgn2ecodb.py", file=sys.stderr)
+    print(
+        "ERROR: File 'eco.db' is missing, please generate using command:\n"
+        "       # PYTHONPATH=lib python3 pgn2ecodb.py",
+        file=sys.stderr,
+    )
     sys.exit(1)
 
 if not isfile(os.path.abspath("pieces/Spatial.png")):
-    print("ERROR: Preview images of pieces themes are missing, please generate using command:\n"
-          "       # PYTHONPATH=lib python3 create_theme_preview.py", file=sys.stderr)
+    print(
+        "ERROR: Preview images of pieces themes are missing, please generate using command:\n"
+        "       # PYTHONPATH=lib python3 create_theme_preview.py",
+        file=sys.stderr,
+    )
     sys.exit(1)
 
 # restore
 sys.stderr = stderr
 sys.stdout = stdout
 
-DATA_FILES = [("share/pychess",
-               ["README.md", "AUTHORS", "ARTISTS", "DOCUMENTERS",
-                "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
+DATA_FILES = [
+    (
+        "share/pychess",
+        [
+            "README.md",
+            "AUTHORS",
+            "ARTISTS",
+            "DOCUMENTERS",
+            "LICENSE",
+            "TRANSLATORS",
+            "pychess_book.bin",
+            "eco.db",
+        ],
+    )
+]
 
 # UI
-DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
-DATA_FILES += [("share/pychess/glade", ['glade/background.jpg'])]
-DATA_FILES += [("share/pychess/glade", glob('glade/*.png'))]
-DATA_FILES += [("share/pychess/glade/16x16", glob('glade/16x16/*.png'))]
-DATA_FILES += [("share/pychess/glade/48x48", glob('glade/48x48/*.png'))]
-DATA_FILES += [("share/pychess/glade", glob('glade/*.svg'))]
-DATA_FILES += [("share/pychess/flags", glob('flags/*.png'))]
-DATA_FILES += [("share/pychess/boards", glob('boards/*.png'))]
+DATA_FILES += [("share/pychess/glade", glob("glade/*.glade"))]
+DATA_FILES += [("share/pychess/glade", ["glade/background.jpg"])]
+DATA_FILES += [("share/pychess/glade", glob("glade/*.png"))]
+DATA_FILES += [("share/pychess/glade/16x16", glob("glade/16x16/*.png"))]
+DATA_FILES += [("share/pychess/glade/48x48", glob("glade/48x48/*.png"))]
+DATA_FILES += [("share/pychess/glade", glob("glade/*.svg"))]
+DATA_FILES += [("share/pychess/flags", glob("flags/*.png"))]
+DATA_FILES += [("share/pychess/boards", glob("boards/*.png"))]
 
 # Data
-DATA_FILES += [('share/mime/packages', ['pychess.xml'])]
-DATA_FILES += [('share/metainfo', ['pychess.metainfo.xml'])]
-DATA_FILES += [('share/applications', ['pychess.desktop'])]
-DATA_FILES += [('share/icons/hicolor/scalable/apps', ['pychess.svg'])]
+DATA_FILES += [("share/mime/packages", ["pychess.xml"])]
+DATA_FILES += [("share/metainfo", ["pychess.metainfo.xml"])]
+DATA_FILES += [("share/applications", ["pychess.desktop"])]
+DATA_FILES += [("share/icons/hicolor/scalable/apps", ["pychess.svg"])]
 if sys.platform == "win32":
-    DATA_FILES += [("share/pychess/sounds", glob('sounds/*.wav'))]
-    DATA_FILES += [("share/pychess/engines", glob('engines/*.*'))]
+    DATA_FILES += [("share/pychess/sounds", glob("sounds/*.wav"))]
+    DATA_FILES += [("share/pychess/engines", glob("engines/*.*"))]
 else:
-    DATA_FILES += [("share/pychess/sounds", glob('sounds/*.ogg'))]
-DATA_FILES += [('share/icons/hicolor/24x24/apps', ['pychess.png'])]
-DATA_FILES += [('share/gtksourceview-3.0/language-specs', ['gtksourceview-3.0/language-specs/pgn.lang'])]
+    DATA_FILES += [("share/pychess/sounds", glob("sounds/*.ogg"))]
+DATA_FILES += [("share/icons/hicolor/24x24/apps", ["pychess.png"])]
+DATA_FILES += [
+    (
+        "share/gtksourceview-3.0/language-specs",
+        ["gtksourceview-3.0/language-specs/pgn.lang"],
+    )
+]
 
 # Piece sets
-DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
+DATA_FILES += [("share/pychess/pieces", glob("pieces/*.png"))]
 
 if not isfile(os.path.abspath("learn/puzzles/mate_in_4.sqlite")):
     from pychess.Savers.pgn import PGNFile
     from pychess.System.protoopen import protoopen
 
     # Lectures, puzzles, lessons
-    for filename in glob('learn/puzzles/*.pgn'):
+    for filename in glob("learn/puzzles/*.pgn"):
         chessfile = PGNFile(protoopen(filename))
         chessfile.init_tag_database()
 
-    for filename in glob('learn/lessons/*.pgn'):
+    for filename in glob("learn/lessons/*.pgn"):
         chessfile = PGNFile(protoopen(filename))
         chessfile.init_tag_database()
 
-DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.olv'))]
-DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.pgn'))]
-DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.sqlite'))]
-DATA_FILES += [("share/pychess/learn/lessons", glob('learn/lessons/*.pgn'))]
-DATA_FILES += [("share/pychess/learn/lessons", glob('learn/lessons/*.sqlite'))]
-DATA_FILES += [("share/pychess/learn/lectures", glob('learn/lectures/*.txt'))]
+DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.olv"))]
+DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.pgn"))]
+DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.sqlite"))]
+DATA_FILES += [("share/pychess/learn/lessons", glob("learn/lessons/*.pgn"))]
+DATA_FILES += [("share/pychess/learn/lessons", glob("learn/lessons/*.sqlite"))]
+DATA_FILES += [("share/pychess/learn/lectures", glob("learn/lectures/*.txt"))]
 
-for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d))]:
-    DATA_FILES += [("share/pychess/pieces/" + dir, glob('pieces/' + dir + '/*.svg'))]
+for dir in [d for d in listdir("pieces") if isdir(os.path.join("pieces", d))]:
+    DATA_FILES += [("share/pychess/pieces/" + dir, glob("pieces/" + dir + "/*.svg"))]
 
 # Manpages
-DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
+DATA_FILES += [("share/man/man1", ["manpages/pychess.1.gz"])]
 
 # Language
 pofile = "LC_MESSAGES/pychess"
@@ -180,21 +209,27 @@ if sys.platform == "win32":
     argv0_path = os.path.dirname(os.path.abspath(sys.executable))
     if pychess.MSYS2:
         major, minor, micro, releaselevel, serial = sys.version_info
-        msgfmt_path = argv0_path + "/../lib/python%s.%s/tools/i18n/" % (major, minor)
+        msgfmt_path = argv0_path + "/../lib/python{}.{}/tools/i18n/".format(
+            major, minor
+        )
     else:
         msgfmt_path = argv0_path + "/tools/i18n/"
-    msgfmt = "%s %smsgfmt.py" % (os.path.abspath(sys.executable), msgfmt_path)
+    msgfmt = f"{os.path.abspath(sys.executable)} {msgfmt_path}msgfmt.py"
 else:
     msgfmt = "msgfmt"
 
 pychess_langs = []
 for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
     if sys.platform == "win32":
-        command = "%s lang/%s/%s.po" % (msgfmt, dir, pofile)
+        command = f"{msgfmt} lang/{dir}/{pofile}.po"
     else:
-        command = "%s lang/%s/%s.po -o lang/%s/%s.mo" % (msgfmt, dir, pofile, dir, pofile)
+        command = "{} lang/{}/{}.po -o lang/{}/{}.mo".format(
+            msgfmt, dir, pofile, dir, pofile
+        )
     subprocess.call(command.split())
-    DATA_FILES += [("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])]
+    DATA_FILES += [
+        ("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])
+    ]
     pychess_langs.append(dir)
 
 PACKAGES = []
@@ -213,25 +248,30 @@ if msi:
         lang_path = os.path.join(site_dir, "gnome", "share", "locale")
 
     # gtk3.0 .mo files
-    gtk_mo = [f + "/LC_MESSAGES/gtk30.mo" for f in os.listdir(lang_path) if f in pychess_langs]
+    gtk_mo = [
+        f + "/LC_MESSAGES/gtk30.mo" for f in os.listdir(lang_path) if f in pychess_langs
+    ]
 
     # Collect the list of missing dll when cx_freeze builds the app
-    gtk_exec = ['libgtksourceview-3.0-1.dll',
-                'libjpeg-8.dll',
-                'librsvg-2-2.dll',
-                'libwinpthread-1.dll',
-                ]
+    gtk_exec = [
+        "libgtksourceview-3.0-1.dll",
+        "libjpeg-8.dll",
+        "librsvg-2-2.dll",
+        "libwinpthread-1.dll",
+    ]
 
     # We need to add all the libraries too (for themes, etc..)
-    gtk_data = ['etc',
-                'lib/gdk-pixbuf-2.0',
-                'lib/girepository-1.0',
-                'share/icons/adwaita/icon-theme.cache',
-                'share/icons/adwaita/index.theme',
-                'share/icons/adwaita/16x16',
-                'share/icons/adwaita/24x24',
-                'share/icons/adwaita/48x48',
-                'share/glib-2.0']
+    gtk_data = [
+        "etc",
+        "lib/gdk-pixbuf-2.0",
+        "lib/girepository-1.0",
+        "share/icons/adwaita/icon-theme.cache",
+        "share/icons/adwaita/index.theme",
+        "share/icons/adwaita/16x16",
+        "share/icons/adwaita/24x24",
+        "share/icons/adwaita/48x48",
+        "share/glib-2.0",
+    ]
 
     # Create the list of includes as cx_freeze likes
     include_files = []
@@ -252,18 +292,23 @@ if msi:
     if sys.platform == "win32":
         base = "Win32GUI"
 
-    executables = [Executable("pychess",
-                              base=base,
-                              icon="pychess.ico",
-                              shortcut_name="PyChess",
-                              shortcut_dir="DesktopFolder"),
-                   Executable(script="lib/__main__.py",
-                              target_name="pychess-engine.exe",
-                              base=base)]
+    executables = [
+        Executable(
+            "pychess",
+            base=base,
+            icon="pychess.ico",
+            shortcut_name="PyChess",
+            shortcut_dir="DesktopFolder",
+        ),
+        Executable(
+            script="lib/__main__.py", target_name="pychess-engine.exe", base=base
+        ),
+    ]
 
     bdist_msi_options = {
         "upgrade_code": "{5167584f-c196-428f-be40-4c861025e90a}",
-        "add_to_path": False}
+        "add_to_path": False,
+    }
 
     perspectives = ["pychess.perspectives"]
     for persp in ("welcome", "games", "fics", "database", "learn"):
@@ -272,22 +317,45 @@ if msi:
     build_exe_options = {
         "path": sys.path + ["lib"],
         "includes": ["gi"],
-        "packages": ["asyncio", "gi", "sqlalchemy.dialects.sqlite", "sqlalchemy.sql.default_comparator", "pexpect", "pychess"] + perspectives,
-        "include_files": include_files}
+        "packages": [
+            "asyncio",
+            "gi",
+            "sqlalchemy.dialects.sqlite",
+            "sqlalchemy.sql.default_comparator",
+            "pexpect",
+            "pychess",
+        ]
+        + perspectives,
+        "include_files": include_files,
+    }
     if pychess.MSYS2:
         build_exe_options["excludes"] = ["tkinter"]
     else:
         build_exe_options["include_msvcr"] = True
 
 else:
-    PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
-                "pychess.Players", "pychess.Savers", "pychess.System",
-                "pychess.Utils", "pychess.Utils.lutils", "pychess.Variants",
-                "pychess.Database", "pychess.widgets", "pychess.widgets.pydock",
-                "pychess.perspectives", "pychess.perspectives.welcome",
-                "pychess.perspectives.games", "pychess.perspectives.fics",
-                "pychess.perspectives.database", "pychess.perspectives.learn",
-                "pychess.external"]
+    PACKAGES = [
+        "pychess",
+        "pychess.gfx",
+        "pychess.ic",
+        "pychess.ic.managers",
+        "pychess.Players",
+        "pychess.Savers",
+        "pychess.System",
+        "pychess.Utils",
+        "pychess.Utils.lutils",
+        "pychess.Variants",
+        "pychess.Database",
+        "pychess.widgets",
+        "pychess.widgets.pydock",
+        "pychess.perspectives",
+        "pychess.perspectives.welcome",
+        "pychess.perspectives.games",
+        "pychess.perspectives.fics",
+        "pychess.perspectives.database",
+        "pychess.perspectives.learn",
+        "pychess.external",
+    ]
 
     build_exe_options = {}
     bdist_msi_options = {}
@@ -296,21 +364,20 @@ else:
 setup(
     name=NAME,
     version=VERSION,
-    author='Pychess team',
-    author_email='pychess-people@googlegroups.com',
-    maintainer='Thomas Dybdahl Ahle',
+    author="Pychess team",
+    author_email="pychess-people@googlegroups.com",
+    maintainer="Thomas Dybdahl Ahle",
     classifiers=CLASSIFIERS,
-    keywords='python gtk chess xboard gnuchess game pgn epd board linux',
+    keywords="python gtk chess xboard gnuchess game pgn epd board linux",
     description=DESC,
     long_description=LONG_DESC,
-    license='GPL3',
-    url='https://pychess.github.io/',
-    download_url='https://github.com/pychess/pychess/releases',
-    package_dir={'': 'lib'},
+    license="GPL3",
+    url="https://pychess.github.io/",
+    download_url="https://github.com/pychess/pychess/releases",
+    package_dir={"": "lib"},
     packages=PACKAGES,
     data_files=DATA_FILES,
-    scripts=['pychess'],
-    options={"build_exe": build_exe_options,
-             "bdist_msi": bdist_msi_options},
-    executables=executables
+    scripts=["pychess"],
+    options={"build_exe": build_exe_options, "bdist_msi": bdist_msi_options},
+    executables=executables,
 )

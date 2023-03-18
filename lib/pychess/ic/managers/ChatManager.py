@@ -62,10 +62,11 @@ class ChatManager(GObject.GObject):
         )
         self.connection.expect_line(self.onShoutMessage, r"--> %s(\*)?:? (.*)" % names)
         self.connection.expect_line(
-            self.onKibitzMessage, r"%s%s\[(\d+)\] kibitzes: (.*)" % (names, ratings)
+            self.onKibitzMessage, rf"{names}{ratings}\[(\d+)\] kibitzes: (.*)"
         )
         self.connection.expect_line(
-            self.onWhisperMessage, r"%s%s\[(\d+)\] whispers: (.*)" % (names, ratings)
+            self.onWhisperMessage,
+            rf"{names}{ratings}\[(\d+)\] whispers: (.*)",
         )
 
         self.connection.expect_line(
@@ -188,7 +189,7 @@ class ChatManager(GObject.GObject):
             if rating == 0:
                 obs_str += "%s " % player  # Don't print ratings for guest accounts
             else:
-                obs_str += "{}({}) ".format(player, rating)
+                obs_str += f"{player}({rating}) "
         self.emit("observers_received", gameno, obs_str)
 
     get_allob_list.BLKCMD = BLKCMD_ALLOBSERVERS
@@ -383,7 +384,7 @@ class ChatManager(GObject.GObject):
 
     def tellPlayer(self, player, message):
         message = self.entityEncode(message)
-        self.connection.client.run_command("tell {} {}".format(player, message))
+        self.connection.client.run_command(f"tell {player} {message}")
 
     def tellChannel(self, channel, message):
         message = self.entityEncode(message)
@@ -392,7 +393,7 @@ class ChatManager(GObject.GObject):
         elif channel == CHANNEL_CSHOUT:
             self.connection.client.run_command("cshout %s" % message)
         else:
-            self.connection.client.run_command("tell %s %s" % (channel, message))
+            self.connection.client.run_command(f"tell {channel} {message}")
 
     def tellAll(self, message):
         message = self.entityEncode(message)
@@ -400,7 +401,7 @@ class ChatManager(GObject.GObject):
 
     def tellGame(self, gameno, message):
         message = self.entityEncode(message)
-        self.connection.client.run_command("xkibitz {} {}".format(gameno, message))
+        self.connection.client.run_command(f"xkibitz {gameno} {message}")
 
     def tellOpponent(self, message):
         message = self.entityEncode(message)

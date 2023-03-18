@@ -737,7 +737,7 @@ class Database(GObject.GObject, Perspective):
 
         name, ext = os.path.splitext(chessfile.path)
         basename = os.path.basename(name)
-        info = "{}.{}".format(basename, ext[1:])
+        info = f"{basename}.{ext[1:]}"
         tooltip = _("%(path)s\ncontaining %(count)s games") % (
             {"path": chessfile.path, "count": chessfile.count}
         )

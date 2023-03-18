@@ -268,9 +268,9 @@ def toSAN(board, move, localRepr=False):
             flag in (HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK) and fcord - tcord < 0
         )
         if kcastle:
-            return "O-O/{}{}{}".format(gate_piece, reprCord[fcord], check_or_mate())
+            return f"O-O/{gate_piece}{reprCord[fcord]}{check_or_mate()}"
         elif qcastle:
-            return "O-O-O/{}{}{}".format(gate_piece, reprCord[fcord], check_or_mate())
+            return f"O-O-O/{gate_piece}{reprCord[fcord]}{check_or_mate()}"
 
     part0 = ""
     part1 = ""
@@ -288,7 +288,7 @@ def toSAN(board, move, localRepr=False):
     part1 = reprCord[tcord]
 
     if flag == DROP:
-        return "{}@{}{}".format(part0, part1, check_or_mate())
+        return f"{part0}@{part1}{check_or_mate()}"
 
     if fpiece != PAWN or (board.variant == SITTUYINCHESS and flag in PROMOTIONS):
         xs = []
@@ -345,7 +345,7 @@ def toSAN(board, move, localRepr=False):
     if flag in GATINGS:
         notat += "/" + reprSign[GATE_PIECE(flag)]
 
-    return "{}{}".format(notat, check_or_mate())
+    return f"{notat}{check_or_mate()}"
 
 
 ################################################################################
@@ -716,9 +716,9 @@ def toAN(board, move, short=False, castleNotation=CASTLE_SAN):
 
     if flag == DROP:
         if board.variant == SITTUYINCHESS:
-            s = "{}@{}".format(reprSignSittuyin[fcord], reprCord[tcord])
+            s = f"{reprSignSittuyin[fcord]}@{reprCord[tcord]}"
         else:
-            s = "{}@{}".format(reprSign[fcord], reprCord[tcord])
+            s = f"{reprSign[fcord]}@{reprCord[tcord]}"
     else:
         s = reprCord[fcord] + reprCord[tcord]
 

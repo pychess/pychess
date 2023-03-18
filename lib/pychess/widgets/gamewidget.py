@@ -124,7 +124,7 @@ class GameWidget(GObject.GObject):
         if self.gamemodel.display_text:
             if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno"):
                 self.game_info_label.set_text(
-                    "{} [{}]".format(self.display_text, self.gamemodel.ficsgame.gameno)
+                    f"{self.display_text} [{self.gamemodel.ficsgame.gameno}]"
                 )
             else:
                 self.game_info_label.set_text(self.display_text)
@@ -898,7 +898,7 @@ class GameWidget(GObject.GObject):
         if view.circles:
             csl = []
             for circle in view.circles:
-                csl.append("{}{}".format(circle.color, repr(circle)))
+                csl.append(f"{circle.color}{repr(circle)}")
             shown_board.board.children = [
                 "[%%csl %s]" % ",".join(csl)
             ] + shown_board.board.children
@@ -907,9 +907,7 @@ class GameWidget(GObject.GObject):
         if view.arrows:
             cal = []
             for arrow in view.arrows:
-                cal.append(
-                    "{}{}{}".format(arrow[0].color, repr(arrow[0]), repr(arrow[1]))
-                )
+                cal.append(f"{arrow[0].color}{repr(arrow[0])}{repr(arrow[1])}")
             shown_board.board.children = [
                 "[%%cal %s]" % ",".join(cal)
             ] + shown_board.board.children
@@ -938,7 +936,9 @@ class GameWidget(GObject.GObject):
     def setLocked(self, locked):
         """Makes the board insensitive and turns off the tab ready indicator"""
         log.debug(
-            "GameWidget.setLocked: %s locked=%s" % (self.gamemodel.players, str(locked))
+            "GameWidget.setLocked: {} locked={}".format(
+                self.gamemodel.players, str(locked)
+            )
         )
         self.board.setLocked(locked)
         if not self.tabcontent.get_children():
