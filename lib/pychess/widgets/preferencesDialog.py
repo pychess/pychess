@@ -544,7 +544,7 @@ class SoundTab:
             self.useSounds = conf.get("useSounds")
 
         conf.notify_add("useSounds", checkCallBack)
-        widgets["useSounds"].set_active(True)
+        widgets["useSounds"].set_active(self.useSounds)
         uistuff.keep(widgets["useSounds"], "useSounds")
         checkCallBack()
 
