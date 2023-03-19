@@ -92,7 +92,7 @@ def start(discoverer):
 # Run games
 def runGame():
     a, b = findMatch()
-    if a == None:
+    if a is None:
         print("All games have now been played. Here are the final scores:")
         printResults()
         mainloop.quit()
@@ -200,7 +200,7 @@ def findMatch():
         (i, j)
         for i in range(len(engines))
         for j in range(len(engines))
-        if i != j and results[i][j] == None
+        if i != j and results[i][j] is None
     ]
     # pos = [(i,j) for i,j in pos if
     #       "pychess" in discoverer.getName(engines[i]).lower() or
