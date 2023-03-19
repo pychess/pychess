@@ -413,7 +413,6 @@ class SoundTab:
     }
 
     _player = None
-    useSounds = conf.get("useSounds")
 
     soundcombo = []
     sounduri = []
@@ -429,7 +428,7 @@ class SoundTab:
 
     @classmethod
     def playAction(cls, action):
-        if not cls.useSounds:
+        if not conf.get("useSounds"):
             return
 
         if isinstance(action, str):
@@ -541,10 +540,9 @@ class SoundTab:
         def checkCallBack(*args):
             checkbox = widgets["useSounds"]
             widgets["sounds_frame"].set_property("sensitive", checkbox.get_active())
-            self.useSounds = conf.get("useSounds")
 
         conf.notify_add("useSounds", checkCallBack)
-        widgets["useSounds"].set_active(self.useSounds)
+        widgets["useSounds"].set_active(conf.get("useSounds"))
         uistuff.keep(widgets["useSounds"], "useSounds")
         checkCallBack()
 
