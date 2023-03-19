@@ -1,18 +1,14 @@
 import os
 
 from os import listdir
-from os.path import isdir, isfile, splitext
+from os.path import isdir
 
-import gi
-
-gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk
 import cairo
 
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece
 from pychess.gfx import Pieces
-from pychess.System.prefix import addDataPrefix, getUserDataPrefix
+from pychess.System.prefix import addDataPrefix
 
 
 SQUARE = 39
