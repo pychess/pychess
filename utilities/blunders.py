@@ -186,7 +186,7 @@ def onAnalyze(analyzer, analysis):
         pv, score, depth = analysis[0]
         sys.stdout.write(".")
         sys.stdout.flush()
-        if score != None:
+        if score is not None:
             values[game.ply] = (pv, score * (-1) ** game.ply)
 
 
