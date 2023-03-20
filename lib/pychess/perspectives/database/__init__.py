@@ -376,7 +376,7 @@ class Database(GObject.GObject, Perspective):
         if LATEST is None:
             return
 
-        html = "http://www.theweekinchess.com/html/twic%s.html"
+        html = "https://theweekinchess.com/html/twic%s.html"
         twic = []
 
         pgn = "https://raw.githubusercontent.com/rozim/ChessData/master/Twic/fix-twic%s.pgn"
@@ -384,7 +384,7 @@ class Database(GObject.GObject, Perspective):
         for i in range(210, 920):
             twic.append((html % i, pgn % i))
 
-        pgn = "http://www.theweekinchess.com/zips/twic%sg.zip"
+        pgn = "https://theweekinchess.com/zips/twic%sg.zip"
         # pgn = "/home/tamas/PGN/twic/twic%sg.zip"
         for i in range(920, LATEST + 1):
             twic.append((html % i, pgn % i))
@@ -752,13 +752,13 @@ class Database(GObject.GObject, Perspective):
 
 
 def get_latest_twic():
-    filename = download_file("http://www.theweekinchess.com/twic")
+    filename = download_file("https://theweekinchess.com/twic")
     latest = None
 
     if filename is None:
         return latest
 
-    PREFIX = 'href="http://www.theweekinchess.com/html/twic'
+    PREFIX = 'href="https://theweekinchess.com/html/twic'
     with open(filename) as f:
         for line in f:
             position = line.find(PREFIX)
