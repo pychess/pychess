@@ -10,7 +10,7 @@ pluggy==1.0.0
 psutil==5.9.4
 ptyprocess==0.7.0
 pycairo==1.23.0
-PyGObject==3.42.2
+PyGObject==3.44.0
 PyOgg==0.6.14a1
 PyOpenAL==0.7.11a1
 pyparsing==3.0.9
