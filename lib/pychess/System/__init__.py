@@ -8,7 +8,7 @@ import ssl
 import tempfile
 from timeit import default_timer
 from urllib.error import HTTPError, URLError
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 from pychess import MSYS2
 
@@ -35,7 +35,10 @@ def download_file(url, progressbar=None):
             GLib.idle_add(progressbar.set_text, "Downloading %s ..." % url)
         else:
             print("Downloading %s ..." % url)
-        f = urlopen(url)
+
+        header = {"User-Agent": "Mozilla/5.0 (compatible)"}
+        req = Request(url, headers=header)
+        f = urlopen(req)
 
         temp_file = os.path.join(tempfile.gettempdir(), os.path.basename(url))
         with open(temp_file, "wb") as local_file:
