@@ -181,6 +181,8 @@ PREVENTED = _(
     "Due to abuse problems, guest connections have been prevented.\n"
     + "You can still register on http://www.freechess.org"
 )
+TOOSHORT = _("A name should be at least three characters long!")
+LETTERSONLY = _("Sorry, names can only consist of lower and upper case letters.")
 
 
 class FICSConnection(Connection):
@@ -246,13 +248,19 @@ class FICSConnection(Connection):
                     "Press return",
                     "You are connected as a guest",
                     "If it is yours, type the password.",
+                    "A name should be at least three characters long!",
+                    "Sorry, names can only consist of lower and upper case letters.",
                     "guest connections have been prevented",
                     "nobody from your site may login without an account.",
                 )
                 # got = 3
                 if got == 2:
                     raise LogOnException(REGISTERED % self.username)
-                elif got == 3 or got == 4:
+                elif got == 3:
+                    raise LogOnException(TOOSHORT)
+                elif got == 4:
+                    raise LogOnException(LETTERSONLY)
+                elif got == 5 or got == 6:
                     raise LogOnException(PREVENTED)
                 self.client.write("")
 
