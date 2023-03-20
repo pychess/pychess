@@ -860,7 +860,7 @@ class GameModel(GObject.GObject):
                     )
 
                     move = None
-                    # if the current player is a bot
+                    # if the current player is a bot, get a move from the book
                     if (
                         curPlayer.__type__ == ARTIFICIAL
                         and book_depth_max > 0
@@ -874,7 +874,7 @@ class GameModel(GObject.GObject):
                         )
                         if move is not None:
                             curPlayer.set_board(self.boards[-1].move(move))
-                    # if the current player is not a bot
+                    # if no move exists yet (i.e., the book did not return a move or the player is human)
                     if move is None:
                         if self.ply > self.lowply:
                             move = await curPlayer.makeMove(
