@@ -333,6 +333,11 @@ if msi:
     else:
         build_exe_options["include_msvcr"] = True
 
+    kwargs = dict(
+        options={"build_exe": build_exe_options, "bdist_msi": bdist_msi_options},
+        executables=executables,
+    )
+
 else:
     PACKAGES = [
         "pychess",
@@ -357,9 +362,7 @@ else:
         "pychess.external",
     ]
 
-    build_exe_options = {}
-    bdist_msi_options = {}
-    executables = {}
+    kwargs = {}
 
 setup(
     name=NAME,
@@ -378,6 +381,5 @@ setup(
     packages=PACKAGES,
     data_files=DATA_FILES,
     scripts=["pychess"],
-    options={"build_exe": build_exe_options, "bdist_msi": bdist_msi_options},
-    executables=executables,
+    **kwargs,
 )
