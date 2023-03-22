@@ -1,0 +1,73 @@
+# Copyright (C) 2023 Sebastian Pipping <sebastian@pipping.org>
+# Licensed under GPL v3 or later
+
+name: Build DEB package for Linux
+
+# Drop permissions to minimum for security
+permissions:
+  contents: read
+
+on:
+  pull_request:
+  push:
+  schedule:
+    - cron: '0 2 * * 5'  # Every Friday at 2am
+
+jobs:
+  build-deb:
+    name: Build DEB package for Linux
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        set -x
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends --yes -V \
+            debhelper \
+            dh-python \
+            gettext \
+            gir1.2-gdkpixbuf-2.0 \
+            gir1.2-glib-2.0 \
+            gir1.2-gstreamer-1.0 \
+            gir1.2-gtk-3.0 \
+            gir1.2-gtksource-3.0 \
+            gir1.2-pango-1.0 \
+            gir1.2-rsvg-2.0 \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            libgirepository1.0-dev \
+            python3-all \
+            python3-stdeb
+
+    - name: Install from sources
+      run: |
+        set -x
+        python3 --version
+        python3 -m venv venv
+        source venv/bin/activate
+
+        pip3 install -U pip setuptools wheel
+        pip3 install -r requirements.txt
+        diff -u0 requirements.txt <(pip3 freeze)  # enforces complete pinning
+
+        time PYTHONPATH=lib python3 pgn2ecodb.py
+        time PYTHONPATH=lib python3 create_theme_preview.py
+
+        pip3 install -e .
+
+        pychess --help  # smoke test
+
+    - name: "Build DEB package"
+      run: |
+        set -x
+        bash -x create_deb.sh
+        rm -Rf deb_dist/pychess-*/
+
+    - name: Store DEB artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: pychess_deb_${{ github.sha }}
+        path: deb_dist/
+        if-no-files-found: error
