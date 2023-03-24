@@ -159,9 +159,7 @@ parser.add_argument(
     help="a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format",
 )
 parser.add_argument(
-    "--gbulb-loop",
-    action="store_true",
-    help="use gbulb event loop based on GLib"
+    "--gbulb-loop", action="store_true", help="use gbulb event loop based on GLib"
 )
 parser.add_argument(
     "--no-version-check", action="store_true", help="disable online version check"
@@ -181,6 +179,7 @@ gbulb_loop = args.gbulb_loop
 if gbulb_loop:
     try:
         import gbulb
+
         gbulb.install(gtk=True)
     except ImportError:
         print("ERROR: PyChess requires gbulb to be installed.")
