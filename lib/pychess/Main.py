@@ -387,7 +387,7 @@ class GladeHandlers:
             Gtk.ResponseType.YES,
         ):
             ICLogon.stop()
-            self.app.loop.stop()
+            asyncio.get_running_loop().stop()
             self.app.quit()
         else:
             return True
@@ -562,14 +562,12 @@ class PyChess(Gtk.Application):
         chess_file,
         ics_host,
         ics_port,
-        loop,
         splash,
         version_check,
     ):
         Gtk.Application.__init__(
             self, application_id="org.pychess", flags=Gio.ApplicationFlags.NON_UNIQUE
         )
-        self.loop = loop
 
         if ics_host:
             ICLogon.host = ics_host

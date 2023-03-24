@@ -1,5 +1,6 @@
 attrs==22.2.0
 exceptiongroup==1.1.1
+gbulb==0.6.4
 greenlet==2.0.2
 importlib-metadata==6.1.0
 iniconfig==2.0.0

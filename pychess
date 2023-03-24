@@ -159,6 +159,11 @@ parser.add_argument(
     help="a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format",
 )
 parser.add_argument(
+    "--gbulb-loop",
+    action="store_true",
+    help="use gbulb event loop based on GLib"
+)
+parser.add_argument(
     "--no-version-check", action="store_true", help="disable online version check"
 )
 
@@ -171,6 +176,15 @@ chess_file = args.chess_file
 ics_host = args.ics_host
 ics_port = args.ics_port
 version_check = not args.no_version_check
+
+gbulb_loop = args.gbulb_loop
+if gbulb_loop:
+    try:
+        import gbulb
+        gbulb.install(gtk=True)
+    except ImportError:
+        print("ERROR: PyChess requires gbulb to be installed.")
+        sys.exit(1)
 
 # Set sqlite temp dir path
 os.environ["SQLITE_TMPDIR"] = os.path.expanduser("~")
@@ -253,6 +267,7 @@ while lel_oldlogs > conf.get("max_log_files"):
 
 
 async def start(gtk_app):
+    # give chence to the splash screen to appear
     await asyncio.sleep(0)
     gtk_app.register()
     gtk_app.activate()
@@ -264,14 +279,8 @@ def glib_update(main_context, loop):
     loop.call_later(0.01, glib_update, main_context, loop)
 
 
-if sys.platform == "win32":
-    from asyncio.windows_events import ProactorEventLoop
-
-    loop = ProactorEventLoop()
-    asyncio.set_event_loop(loop)
-else:
-    loop = asyncio.SelectorEventLoop()
-    asyncio.set_event_loop(loop)
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
 gtk_app = PyChess(
     log_viewer,
@@ -279,7 +288,6 @@ gtk_app = PyChess(
     chess_file,
     ics_host,
     ics_port,
-    loop,
     splash,
     version_check,
 )
@@ -287,10 +295,15 @@ gtk_app = PyChess(
 if log_debug:
     loop.set_debug(enabled=True)
 
+log.debug(loop)
+
 try:
-    main_context = GLib.MainContext.default()
-    loop.create_task(start(gtk_app))
-    glib_update(main_context, loop)
-    loop.run_forever()
+    if gbulb_loop:
+        loop.run_forever(application=gtk_app)
+    else:
+        main_context = GLib.MainContext.default()
+        loop.create_task(start(gtk_app))
+        glib_update(main_context, loop)
+        loop.run_forever()
 finally:
     loop.close()
