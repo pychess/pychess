@@ -265,11 +265,11 @@ if msi:
         "etc",
         "lib/gdk-pixbuf-2.0",
         "lib/girepository-1.0",
-        "share/icons/adwaita/icon-theme.cache",
-        "share/icons/adwaita/index.theme",
-        "share/icons/adwaita/16x16",
-        "share/icons/adwaita/24x24",
-        "share/icons/adwaita/48x48",
+        "share/icons/Adwaita/icon-theme.cache",
+        "share/icons/Adwaita/index.theme",
+        "share/icons/Adwaita/16x16",
+        "share/icons/Adwaita/32x32",
+        "share/icons/Adwaita/scalable",
         "share/glib-2.0",
     ]
 
