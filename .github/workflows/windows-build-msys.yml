@@ -29,6 +29,7 @@ jobs:
         update: true
         msystem: MINGW64
         install: |
+          mingw-w64-x86_64-adwaita-icon-theme
           mingw-w64-x86_64-gtk3
           mingw-w64-x86_64-gtksourceview3
           mingw-w64-x86_64-python
