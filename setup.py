@@ -30,6 +30,9 @@ if sys.version_info < (3, 7, 0):
 
 if sys.platform == "win32":
     try:
+        import gi
+
+        gi.require_version("Gtk", "3.0")
         from gi.repository import Gtk
 
         print(
