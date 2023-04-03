@@ -21,5 +21,5 @@ SQLAlchemy==2.0.8
 tomli==2.0.1
 typing_extensions==4.5.0
 wcwidth==0.2.6
-websockets==10.4
+websockets==11.0
 zipp==3.15.0
