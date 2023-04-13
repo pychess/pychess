@@ -16,7 +16,7 @@ if getattr(sys, "frozen", False):
     _installed = True
 else:
     home_local = os.path.expanduser("~") + "/.local"
-    if sys.prefix in __file__:
+    if sys.prefix in __file__ and not sys.prefix in home_local:
         for sub in (
             "share",
             "games",
