@@ -21,10 +21,10 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab  # v3.5.2
 
     - name: Install build dependencies (MSYS)
-      uses: msys2/setup-msys2@v2
+      uses: msys2/setup-msys2@7efe20baefed56359985e327d329042cde2434ff  # v2
       with:
         update: true
         msystem: MINGW64
@@ -47,7 +47,7 @@ jobs:
         pip3 install websockets
 
     - name: Install build dependencies (Stockfish)
-      uses: robinraju/release-downloader@v1.7
+      uses: robinraju/release-downloader@768b85c8d69164800db5fc00337ab917daf3ce68  # v1.7
       with:
         repository: fairy-stockfish/Fairy-Stockfish
         latest: true
@@ -63,7 +63,7 @@ jobs:
         python3 setup.py bdist_msi
 
     - name: Store Windows binaries
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce  # v3.1.2
       with:
         name: pychess_win64_msi_${{ github.sha }}
         path: dist/*.msi
