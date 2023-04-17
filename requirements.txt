@@ -15,7 +15,7 @@ PyGObject==3.44.1
 PyOgg==0.6.14a1
 PyOpenAL==0.7.11a1
 pyparsing==3.0.9
-pytest==7.3.0
+pytest==7.3.1
 six==1.16.0
 SQLAlchemy==2.0.9
 tomli==2.0.1
