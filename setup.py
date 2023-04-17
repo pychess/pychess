@@ -380,6 +380,20 @@ setup(
     license="GPL3",
     url="https://pychess.github.io/",
     download_url="https://github.com/pychess/pychess/releases",
+    python_requires=">=3.7",
+    install_requires=[
+        "pexpect",
+        "psutil",
+        "pycairo",
+        "PyGObject",
+        "SQLAlchemy>=2",
+        "websockets",
+    ],
+    extras_require={
+        "gbulb": [
+            "gbulb",
+        ],
+    },
     package_dir={"": "lib"},
     packages=PACKAGES,
     data_files=DATA_FILES,
