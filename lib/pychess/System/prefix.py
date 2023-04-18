@@ -10,13 +10,26 @@ import sys
 # Locate files in system space                                                 #
 ################################################################################
 
+
+def _path_is_child_of(parent_path: str, candidate_child_path: str) -> bool:
+    real_parent_path = os.path.realpath(parent_path)
+    real_candidate_child_path = os.path.realpath(candidate_child_path)
+    try:
+        return (
+            os.path.commonpath([real_parent_path, real_candidate_child_path])
+            == real_parent_path
+        )
+    except ValueError:  # e.g. "Paths don't have the same drive" on Windows
+        return False
+
+
 # Test if we are installed on the system, frozen or are being run from tar/svn
 if getattr(sys, "frozen", False):
     _prefix = os.path.join(os.path.dirname(sys.executable), "share", "pychess")
     _installed = True
 else:
     home_local = os.path.expanduser("~") + "/.local"
-    if sys.prefix in __file__:
+    if _path_is_child_of(sys.prefix, __file__):
         for sub in (
             "share",
             "games",
@@ -31,7 +44,7 @@ else:
                 break
         else:
             raise Exception("can't find the pychess data directory")
-    elif home_local in __file__:
+    elif _path_is_child_of(home_local, __file__):
         _prefix = os.path.join(home_local, "share", "pychess")
         if os.path.isdir(os.path.join(_prefix, "pieces")):
             _installed = True
