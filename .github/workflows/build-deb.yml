@@ -27,6 +27,7 @@ jobs:
         sudo apt-get install --no-install-recommends --yes -V \
             debhelper \
             dh-python \
+            file \
             gettext \
             gir1.2-gdkpixbuf-2.0 \
             gir1.2-glib-2.0 \
@@ -64,6 +65,30 @@ jobs:
         set -x
         bash -x create_deb.sh
         rm -Rf deb_dist/pychess-*/
+
+    - name: "Re-compress DEB package"
+      run: |
+        summarize_deb_file() {
+            local filename="$1"
+            ls -lh "${filename}"
+            file "${filename}"
+        }
+
+        recompress_deb_file() {
+            # NOTE: The idea is to get rid of zstd compression
+            #       because e.g. Debian bullseye cannot yet handle it
+            #       https://github.com/pychess/pychess/issues/2049
+            local filename="$1"
+            local tempdir="$(mktemp -d)"
+            sudo dpkg-deb --raw-extract "${filename}" "${tempdir}"
+            sudo dpkg-deb --build -Zxz "${tempdir}" "${filename}"
+            sudo rm -Rf "${tempdir}"
+        }
+
+        set -x
+        summarize_deb_file deb_dist/*.deb
+        recompress_deb_file deb_dist/*.deb
+        summarize_deb_file deb_dist/*.deb
 
     - name: Store DEB artifacts
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce  # v3.1.2
