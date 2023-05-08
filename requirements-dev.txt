@@ -1,4 +1,4 @@
 black==23.3.0
 flake8==6.0.0
-pyupgrade==3.3.2
+pyupgrade==3.4.0
 pre-commit
