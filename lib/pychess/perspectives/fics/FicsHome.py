@@ -72,7 +72,7 @@ class UserInfoSection:
             else:
                 headers = (
                     _("Rating"),
-                    _("Need") if self.connection.ICC else "RD",
+                    _("Need") if self.connection.ICC else _("RD"),
                     _("Win"),
                     _("Draw"),
                     _("Loss"),
