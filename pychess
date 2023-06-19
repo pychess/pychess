@@ -4,8 +4,8 @@ import os
 import sys
 
 # Check Python version
-if sys.version_info < (3, 7, 0):
-    print("ERROR: PyChess requires Python >= 3.7.0")
+if sys.version_info < (3, 8, 0):
+    print("ERROR: PyChess requires Python >= 3.8.0")
     sys.exit(1)
 
 # Fix environment to let pychess run in place

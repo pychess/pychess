@@ -3,13 +3,13 @@ repos:
     rev: v3.6.0
     hooks:
     -  id: pyupgrade
-       args: ['--py37-plus']
+       args: ['--py38-plus']
 
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
       - id: black
-        args: ['--target-version', 'py37']
+        args: ['--target-version', 'py38']
         exclude: 'doc/createDoc'
 
   - repo: https://github.com/pycqa/flake8

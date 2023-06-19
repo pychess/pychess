@@ -18,7 +18,7 @@ jobs:
     name: Run the test suite
     strategy:
       matrix:
-        python-version: [3.7, 3.11]  # no particular need for in-between versions
+        python-version: [3.8, 3.11]  # no particular need for in-between versions
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9  # v3.5.3
