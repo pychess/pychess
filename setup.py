@@ -24,8 +24,8 @@ if "bdist_msi" in sys.argv[1:]:
 else:
     from setuptools import setup
 
-if sys.version_info < (3, 7, 0):
-    print("ERROR: PyChess requires Python >= 3.7.0")
+if sys.version_info < (3, 8, 0):
+    print("ERROR: PyChess requires Python >= 3.8.0")
     sys.exit(1)
 
 if sys.platform == "win32":
@@ -99,7 +99,6 @@ CLASSIFIERS = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: POSIX",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -380,7 +379,7 @@ setup(
     license="GPL3",
     url="https://pychess.github.io/",
     download_url="https://github.com/pychess/pychess/releases",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
         "pexpect",
         "psutil",
