@@ -30,23 +30,23 @@ msgstr "_Chơi ván mới"
 
 #: glade/PyChess.glade:249
 msgid "From _Default Start Position"
-msgstr ""
+msgstr "Từ _Vị trí bắt đầu mặc định"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr ""
+msgstr "Từ _Vị trí tùy chỉnh"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"
-msgstr ""
+msgstr "Từ _Kí hiệu trò chơi"
 
 #: glade/PyChess.glade:277
 msgid "From Cli_pboard"
-msgstr ""
+msgstr "Từ bảng nhớ tạm"
 
 #: glade/PyChess.glade:288
 msgid "Play _Internet Chess"
-msgstr ""
+msgstr "Chơi _Cờ trên mạng"
 
 #: glade/PyChess.glade:307
 msgid "_Load Game"
@@ -54,15 +54,15 @@ msgstr "_Tải ván cờ"
 
 #: glade/PyChess.glade:323
 msgid "Load _Recent Game"
-msgstr "Tải_Trò chơi Hiện thời"
+msgstr "Tải_Trò chơi gần đây"
 
 #: glade/PyChess.glade:329
 msgid "Load Re_mote Game"
-msgstr ""
+msgstr Tải lại _trò chơi từ xa""
 
 #: glade/PyChess.glade:347
 msgid "_Save Game"
-msgstr "_Lưu lại ván cờ"
+msgstr "_Lưu ván cờ"
 
 #: glade/PyChess.glade:361
 msgid "Save Game _As"
@@ -74,31 +74,31 @@ msgstr ""
 
 #: glade/PyChess.glade:392
 msgid "Share _Game"
-msgstr ""
+msgstr "Chia sẻ _Ván cờ"
 
 #: glade/PyChess.glade:420
 msgid "Player _Rating"
-msgstr "Điểm của người chơi"
+msgstr "Hệ số của người chơi"
 
 #: glade/PyChess.glade:427
 msgid "_Analyze Game"
-msgstr ""
+msgstr "Phân tích ván cờ"
 
 #: glade/PyChess.glade:477
 msgid "_Edit"
-msgstr ""
+msgstr "Chỉnh sửa"
 
 #: glade/PyChess.glade:488
 msgid "_Copy PGN"
-msgstr ""
+msgstr "Sao PGN"
 
 #: glade/PyChess.glade:500
 msgid "_Copy FEN"
-msgstr ""
+msgstr "Sao FEN"
 
 #: glade/PyChess.glade:517
 msgid "_Engines"
-msgstr ""
+msgstr "_Động cơ"
 
 #: glade/PyChess.glade:527
 msgid "Externals"
@@ -106,7 +106,7 @@ msgstr ""
 
 #: glade/PyChess.glade:553
 msgid "_Actions"
-msgstr ""
+msgstr "_Hành động"
 
 #: glade/PyChess.glade:564
 msgid "Offer _Abort"
@@ -114,7 +114,7 @@ msgstr ""
 
 #: glade/PyChess.glade:574
 msgid "Offer Ad_journment"
-msgstr ""
+msgstr "Đề nghị hoăn lại"
 
 #: glade/PyChess.glade:584 glade/fics_lounge.glade:1927
 msgid "Offer _Draw"
@@ -122,7 +122,7 @@ msgstr "Đề nghị _Hòa"
 
 #: glade/PyChess.glade:595
 msgid "Offer _Pause"
-msgstr ""
+msgstr "Đề nghị _dừng"
 
 #: glade/PyChess.glade:605 glade/fics_lounge.glade:1825
 msgid "Offer _Resume"
@@ -138,11 +138,11 @@ msgstr ""
 
 #: glade/PyChess.glade:644 glade/fics_lounge.glade:1883
 msgid "R_esign"
-msgstr ""
+msgstr "Chịu thua"
 
 #: glade/PyChess.glade:654
 msgid "Ask to _Move"
-msgstr ""
+msgstr "Hãy _Di chuyển"
 
 #: glade/PyChess.glade:669
 msgid "Auto Call _Flag"
@@ -158,23 +158,23 @@ msgstr "_Xoay bàn cờ"
 
 #: glade/PyChess.glade:703
 msgid "_Fullscreen"
-msgstr "_Đầy màn hình"
+msgstr "_Toàn màn hình"
 
 #: glade/PyChess.glade:716
 msgid "Leave _Fullscreen"
-msgstr "Thoát_Đầy màn hình"
+msgstr "Thoát_Toàn màn hình"
 
 #: glade/PyChess.glade:733
 msgid "_Show Sidepanels"
-msgstr ""
+msgstr "_Hiển thị bảng điều khiển"
 
 #: glade/PyChess.glade:744
 msgid "_Log Viewer"
-msgstr "Xem _nhật trình"
+msgstr "Xem _nhật ký"
 
 #: glade/PyChess.glade:761
 msgid "_Hint arrow"
-msgstr ""
+msgstr "Mũi tên gợi ý"
 
 #: glade/PyChess.glade:773
 msgid "Sp_y arrow"
@@ -186,7 +186,7 @@ msgstr "Cơ sỡ dữ liệu"
 
 #: glade/PyChess.glade:794
 msgid "New _Database"
-msgstr "Mới_dữ liệu"
+msgstr "Cơ sở dữ liệu mới"
 
 #: glade/PyChess.glade:806
 msgid "Save database as"
@@ -194,7 +194,7 @@ msgstr "Lưu dữ liệu là"
 
 #: glade/PyChess.glade:822
 msgid "Create polyglot opening book"
-msgstr ""
+msgstr "Tạo sách khai cuộc đa ngôn ngữ"
 
 #: glade/PyChess.glade:834
 msgid "Import chessfile"
@@ -214,23 +214,23 @@ msgstr "_Trợ giúp"
 
 #: glade/PyChess.glade:884
 msgid "About Chess"
-msgstr "Giới thiệu Chess"
+msgstr "Giới thiệu về Cờ vua"
 
 #: glade/PyChess.glade:893
 msgid "How to Play"
-msgstr ""
+msgstr "Cách chơi"
 
 #: glade/PyChess.glade:905
 msgid "Tip of the Day"
-msgstr ""
+msgstr "Mẹo của ngày"
 
 #: glade/PyChess.glade:919
 msgid "Translate PyChess"
-msgstr ""
+msgstr "Dịch PyChess"
 
 #: glade/PyChess.glade:928
 msgid "Report an issue"
-msgstr ""
+msgstr "Báo cáo một vấn đề"
 
 #: glade/PyChess.glade:1021
 msgid "Chess client"
@@ -242,7 +242,7 @@ msgstr "Tùy chọn"
 
 #: glade/PyChess.glade:1093
 msgid "The displayed name of the first human player, e.g., John."
-msgstr ""
+msgstr "Tên hiển thị của người chơi đầu tiên, VD: John"
 
 #: glade/PyChess.glade:1105
 msgid "<b>Name of _first human player:</b>"
@@ -6314,50 +6314,50 @@ msgstr ""
 
 #: lib/pychess/perspectives/games/annotationPanel.py:416
 msgid "Comment"
-msgstr ""
+msgstr "Bình luận"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:420
 msgid "Symbols"
-msgstr ""
+msgstr "Các kí hiệu"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:424
 msgid "All the evaluations"
-msgstr ""
+msgstr "Tất cả đánh giá"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:428
 msgid "Remove"
-msgstr ""
+msgstr "Xóa bỏ"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1066
 msgid "No time control"
-msgstr ""
+msgstr "Không kiểm soát thời gian"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1074
 msgid "mins"
-msgstr ""
+msgstr "phút"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1078
 #: lib/pychess/perspectives/games/annotationPanel.py:1085
 msgid "secs"
-msgstr ""
+msgstr "giây"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1081
 #, python-format
 msgid "%(time)s for %(count)d moves"
-msgstr ""
+msgstr "%(time)s cho %(count)d nước đi"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1085
 msgid "move"
-msgstr ""
+msgstr "nước đi"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1103
 #, python-format
 msgid "round %s"
-msgstr ""
+msgstr "vòng %s"
 
 #: lib/pychess/perspectives/games/bookPanel.py:21
 msgid "Hints"
-msgstr ""
+msgstr "Gợi ý"
 
 #: lib/pychess/perspectives/games/bookPanel.py:26
 msgid ""
@@ -6381,7 +6381,7 @@ msgstr ""
 #: lib/pychess/perspectives/games/bookPanel.py:155
 #, python-format
 msgid "Analysis by %s"
-msgstr ""
+msgstr "Phân tích bởi"
 
 #: lib/pychess/perspectives/games/bookPanel.py:157
 #, python-format
@@ -6392,7 +6392,7 @@ msgstr ""
 #: lib/pychess/perspectives/games/bookPanel.py:159
 #, python-format
 msgid "Threat analysis by %s"
-msgstr ""
+msgstr "Phân tích mối đe dọa theo %s"
 
 #: lib/pychess/perspectives/games/bookPanel.py:162
 #, python-format
@@ -6404,7 +6404,7 @@ msgstr ""
 #: lib/pychess/perspectives/games/bookPanel.py:189
 #: lib/pychess/perspectives/games/bookPanel.py:299
 msgid "Calculating..."
-msgstr ""
+msgstr "Đang tính..."
 
 #: lib/pychess/perspectives/games/bookPanel.py:335
 msgid ""
@@ -6421,7 +6421,7 @@ msgstr ""
 
 #: lib/pychess/perspectives/games/bookPanel.py:344
 msgid "Endgame Table"
-msgstr ""
+msgstr "Bảng kết thúc"
 
 #: lib/pychess/perspectives/games/bookPanel.py:354
 msgid ""
@@ -6433,7 +6433,7 @@ msgstr ""
 #: lib/pychess/perspectives/games/bookPanel.py:405
 #, python-format
 msgid "Mate in %d"
-msgstr ""
+msgstr "Chiếu hết trong %d"
 
 #: lib/pychess/perspectives/games/bookPanel.py:654
 msgid ""
@@ -6453,7 +6453,7 @@ msgstr "Bình luận"
 
 #: lib/pychess/perspectives/games/commentPanel.py:17
 msgid "The comments panel will try to analyze and explain the moves played"
-msgstr ""
+msgstr "Ban bình luận sẽ cố gắng phân tích và giải thích các nước đi đã chơi"
 
 #: lib/pychess/perspectives/games/commentPanel.py:126
 msgid "Initial position"
@@ -6466,7 +6466,7 @@ msgstr ""
 
 #: lib/pychess/perspectives/games/engineOutputPanel.py:11
 msgid "Engines"
-msgstr ""
+msgstr "Động cơ"
 
 #: lib/pychess/perspectives/games/engineOutputPanel.py:17
 msgid ""
@@ -6476,7 +6476,7 @@ msgstr ""
 
 #: lib/pychess/perspectives/games/engineOutputPanel.py:41
 msgid "No chess engines (computer players) are participating in this game."
-msgstr ""
+msgstr "Không có động cơ cờ vua (người chơi máy tính) đang tham gia trò chơi này."
 
 #: lib/pychess/perspectives/games/historyPanel.py:9
 msgid "Move History"
@@ -6500,13 +6500,13 @@ msgstr ""
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:25
 msgid "Practice endgames with computer"
-msgstr ""
+msgstr "Thực hành tàn cuộc với máy tính"
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:64
 #: lib/pychess/perspectives/learn/LecturesPanel.py:67
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:27
 msgid "Title"
-msgstr ""
+msgstr "Tiêu đề"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:21
 msgid "Study FICS lectures offline"
@@ -6514,7 +6514,7 @@ msgstr ""
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:71
 msgid "Author"
-msgstr ""
+msgstr "Tác giả"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:22
 msgid "Guided interactive lessons in \"guess the move\" style"
@@ -6526,23 +6526,23 @@ msgstr ""
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:45
 msgid "others"
-msgstr ""
+msgstr "khác"
 
 #: lib/pychess/perspectives/learn/__init__.py:24
 msgid "Learn"
-msgstr ""
+msgstr "Học"
 
 #: lib/pychess/perspectives/learn/__init__.py:35
 msgid "Quit Learning"
-msgstr ""
+msgstr "Bỏ học"
 
 #: lib/pychess/perspectives/learn/__init__.py:108
 msgid "lichess"
-msgstr ""
+msgstr "lichess"
 
 #: lib/pychess/perspectives/learn/__init__.py:108
 msgid "wtharvey"
-msgstr ""
+msgstr "vượt qua"
 
 #: lib/pychess/perspectives/learn/__init__.py:108
 msgid "yacpdb"
@@ -6550,28 +6550,28 @@ msgstr ""
 
 #: lib/pychess/perspectives/learn/__init__.py:108
 msgid "lessons"
-msgstr ""
+msgstr "bài học"
 
 #: lib/pychess/perspectives/learn/__init__.py:130
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:35
 msgid "Progress"
-msgstr ""
+msgstr "Tiến trình"
 
 #: lib/pychess/perspectives/learn/__init__.py:135
 msgid "Reset my progress"
-msgstr ""
+msgstr "Đặt lại tiến trình của tôi"
 
 #: lib/pychess/perspectives/learn/__init__.py:141
 msgid "You will lose all your progress data!"
-msgstr ""
+msgstr "Bạn sẽ mất tất cả dữ liệu tiến trình của mình!"
 
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:31
 msgid "Source"
-msgstr ""
+msgstr "Nguồn"
 
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:40
 msgid "Reset"
-msgstr ""
+msgstr "Đặt lại"
 
 #: lib/pychess/perspectives/learn/generateLessonsSidepanel.py:107
 #, python-brace-format
