@@ -111,7 +111,7 @@ ENGINES_LIST = [
     ENGINE("bobcat", "uci", "nl", 3057, AUTO_DETECT, None),
     ENGINE("amoeba", "uci", "fr", 3102, AUTO_DETECT, None),
     ENGINE("smarthink", "uci", "ru", 3043, AUTO_DETECT, None),  # Allows XB
-    ENGINE("spike", "uci", "de", 3040, AUTO_DETECT, None),  # Allows XB
+    ENGINE("spike", "uci", "de", 3040, NO_AUTO_DETECT, None),  # Allows XB
     ENGINE("alfil", "uci", "es", 3031, AUTO_DETECT, None),
     ENGINE("igel", "uci", "ch", 3187, NO_AUTO_DETECT, None),
     ENGINE("minic", "xboard", "fr", 3138, NO_AUTO_DETECT, None),
