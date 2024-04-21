@@ -89,6 +89,8 @@ class GameList(Gtk.TreeView):
 
         for i, title in enumerate(titles):
             r = Gtk.CellRendererText()
+            if i in (0, 2, 4, 9, 10, 12):
+                r.set_alignment(1.0, 0.5) # set alignment to the right for numeric values
             column = Gtk.TreeViewColumn(title, r, text=i)
             column.set_resizable(True)
             column.set_reorderable(True)
