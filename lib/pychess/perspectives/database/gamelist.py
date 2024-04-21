@@ -60,6 +60,8 @@ class GameList(Gtk.TreeView):
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
         self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.modelsort.set_sort_func(2, self.compare_elo, 2)
+        self.modelsort.set_sort_func(4, self.compare_elo, 4)
         self.modelsort.connect("sort-column-changed", self.sort_column_changed)
         self.set_model(self.modelsort)
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -153,6 +155,25 @@ class GameList(Gtk.TreeView):
         if text is not None:
             self.persp.chessfile.limit = int(text)
             self.load_games(direction=FIRST_PAGE)
+
+    def compare_elo(self, treesortable, iter0, iter1, column):
+        """Adapted sort : int values are not sorted in lexicographic order"""
+        elo0 = treesortable.get_value(iter0, column)
+        elo1 = treesortable.get_value(iter1, column)
+
+        isnum0 = elo0.isdigit()
+        isnum1 = elo1.isdigit()
+
+        if isnum0 and isnum1:
+            num0 = int(elo0)
+            num1 = int(elo1)
+            return (num0 > num1) - (num0 < num1)
+        elif isnum0:
+            return 1
+        elif isnum1:
+            return -1
+        else:
+            return (elo0 > elo1) - (elo0 < elo1)
 
     def sort_column_changed(self, treesortable):
         sort_column_id, order = treesortable.get_sort_column_id()
