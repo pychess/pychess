@@ -270,7 +270,6 @@ if msi:
         "share/icons/Adwaita/icon-theme.cache",
         "share/icons/Adwaita/index.theme",
         "share/icons/Adwaita/16x16",
-        "share/icons/Adwaita/32x32",
         "share/icons/Adwaita/scalable",
         "share/glib-2.0",
     ]
