@@ -55,7 +55,7 @@ jobs:
 
         pip3 install -U pip setuptools wheel
         pip3 install -r requirements.txt
-        diff -u0 <(sed -e 's,#.*,,' -e '/^$/d' < requirements.txt | sort -f) <(pip3 freeze | sort -f)  # enforces complete pinning
+        diff -u0 <(sed -e 's,#.*,,' -e '/^$/d' < requirements.txt | sort -f) <(pip3 freeze | sed -e '/^setuptools==/d' -e '/^wheel==/d' | sort -f)  # enforces complete pinning
 
         time PYTHONPATH=lib python3 pgn2ecodb.py
         time PYTHONPATH=lib python3 create_theme_preview.py
