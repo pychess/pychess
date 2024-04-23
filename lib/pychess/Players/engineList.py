@@ -200,7 +200,7 @@ ENGINES_LIST = [
     ENGINE("dorky", "xboard", "us", 2653, NO_AUTO_DETECT, None),
     ENGINE("naraku", "uci", "it", 2653, NO_AUTO_DETECT, None),
     ENGINE("nebula", "uci", "rs", 2653, NO_AUTO_DETECT, None),
-    ENGINE("phalanx", "xboard1", "cz", 2655, NO_AUTO_DETECT, None),
+    ENGINE("phalanx", "xboard2", "cz", 2655, NO_AUTO_DETECT, None),
     ENGINE("colossus", "uci", "gb", 2641, NO_AUTO_DETECT, None),
     ENGINE("cyrano", "uci", "no", 2641, NO_AUTO_DETECT, None),
     ENGINE("sjakk", "uci", "no", 2637, NO_AUTO_DETECT, None),
