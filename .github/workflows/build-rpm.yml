@@ -18,7 +18,7 @@ jobs:
     name: Build RPM package for Linux
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', 3.11]
+        python-version: [3.8, 3.9, '3.10', 3.11, 3.12]
     runs-on: ubuntu-22.04
     env:
       PYVER: ${{ matrix.python-version }}
@@ -70,7 +70,11 @@ jobs:
             sudo ln -s python${PYVER} /usr/bin/python
             sudo ln -s python${PYVER} /usr/bin/python3
             sudo ln -s python${PYVER}-config /usr/bin/python3-config
+
+            sudo python3 -m ensurepip --upgrade
         fi
+
+        sudo python3 -m pip install -U pip setuptools wheel
 
         sed 's,:,\n,g' <<<"${PATH}"
 
@@ -96,7 +100,7 @@ jobs:
 
         pip3 install -U pip setuptools wheel
         pip3 install -r requirements.txt
-        diff -u0 <(sed -e 's,#.*,,' -e '/^$/d' < requirements.txt | sort -f) <(pip3 freeze | sort -f)  # enforces complete pinning
+        diff -u0 <(sed -e 's,#.*,,' -e '/^$/d' < requirements.txt | sort -f) <(pip3 freeze | sed -e '/^setuptools==/d' -e '/^wheel==/d' | sort -f)  # enforces complete pinning
 
         time PYTHONPATH=lib python3 pgn2ecodb.py
         time PYTHONPATH=lib python3 create_theme_preview.py

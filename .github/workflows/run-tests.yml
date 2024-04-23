@@ -18,7 +18,7 @@ jobs:
     name: Run the test suite
     strategy:
       matrix:
-        python-version: [3.8, 3.11]  # no particular need for in-between versions
+        python-version: [3.8, 3.12]  # no particular need for in-between versions
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f  # v4.1.3
@@ -55,7 +55,7 @@ jobs:
 
         pip3 install -U pip setuptools wheel
         pip3 install -r requirements.txt
-        diff -u0 <(sed -e 's,#.*,,' -e '/^$/d' < requirements.txt | sort -f) <(pip3 freeze | sort -f)  # enforces complete pinning
+        diff -u0 <(sed -e 's,#.*,,' -e '/^$/d' < requirements.txt | sort -f) <(pip3 freeze | sed -e '/^setuptools==/d' -e '/^wheel==/d' | sort -f)  # enforces complete pinning
 
         time PYTHONPATH=lib python3 pgn2ecodb.py
         time PYTHONPATH=lib python3 create_theme_preview.py

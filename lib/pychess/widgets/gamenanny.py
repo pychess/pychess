@@ -149,7 +149,6 @@ class GameNanny:
         content = InfoBar.get_message_content(msg_one, msg_two, Gtk.STOCK_DIALOG_INFO)
         message = InfoBarMessage(Gtk.MessageType.INFO, content, None)
 
-        callback = None
         if isinstance(gamemodel, ICGameModel):
             if gamemodel.hasLocalPlayer() and not gamemodel.examined:
 

@@ -24,10 +24,6 @@ if "bdist_msi" in sys.argv[1:]:
 else:
     from setuptools import setup
 
-if sys.version_info < (3, 8, 0):
-    print("ERROR: PyChess requires Python >= 3.8.0")
-    sys.exit(1)
-
 if sys.platform == "win32":
     try:
         import gi
@@ -103,6 +99,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Games/Entertainment :: Board Games",
 ]
 
