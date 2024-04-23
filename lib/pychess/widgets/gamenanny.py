@@ -171,7 +171,7 @@ class GameNanny:
                 message.add_button(InfoBarMessageButton(_("Offer Rematch"), 0))
                 message.add_button(
                     InfoBarMessageButton(
-                        _("Observe %s" % gamemodel.remote_ficsplayer.name), 1
+                        _("Observe %s") % gamemodel.remote_ficsplayer.name, 1
                     )
                 )
                 status_changed(gamemodel.remote_ficsplayer, None, message)
