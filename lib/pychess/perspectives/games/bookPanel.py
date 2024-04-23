@@ -314,9 +314,11 @@ class EngineAdvisor(Advisor):
                     "%s%s"
                     % (
                         mvcount,
-                        toFAN(board, pvmove)
-                        if self.figuresInNotation
-                        else toSAN(board, pvmove, True),
+                        (
+                            toFAN(board, pvmove)
+                            if self.figuresInNotation
+                            else toSAN(board, pvmove, True)
+                        ),
                     )
                 )
                 board = board.move(pvmove)

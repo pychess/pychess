@@ -766,9 +766,11 @@ class InternetGameChesstempo(InternetGameInterface):
                                 if data["enc"]:
                                     data = "".join(
                                         map(
-                                            lambda v: v
-                                            if v < "0" or v > "9"
-                                            else str((9 + int(v)) % 10),
+                                            lambda v: (
+                                                v
+                                                if v < "0" or v > "9"
+                                                else str((9 + int(v)) % 10)
+                                            ),
                                             list(data["data"]),
                                         )
                                     )

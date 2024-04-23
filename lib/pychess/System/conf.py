@@ -1,6 +1,7 @@
 """ The task of this module is to provide easy saving/loading of configurations
     It also supports gconf like connection, so you get notices when a property
     has changed. """
+
 import sys
 import os
 import atexit

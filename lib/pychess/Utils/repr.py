@@ -57,8 +57,8 @@ from .const import (
 
 if "_" not in builtins.__dict__:
     builtins.__dict__["_"] = lambda s: s
-    builtins.__dict__["ngettext"] = (
-        lambda singular, plural, n: singular if n == 1 else plural
+    builtins.__dict__["ngettext"] = lambda singular, plural, n: (
+        singular if n == 1 else plural
     )
 
 reprColor = [_("White"), _("Black")]

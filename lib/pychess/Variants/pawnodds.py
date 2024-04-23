@@ -1,4 +1,5 @@
 """ Pawn Odds Variant"""
+
 from pychess.Utils.const import PAWNODDSCHESS, VARIANTS_ODDS
 from pychess.Utils.Board import Board
 

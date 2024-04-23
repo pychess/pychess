@@ -497,9 +497,11 @@ class EngineDiscoverer(GObject.GObject):
                     "recheck": True,
                     "country": engine.country,
                     "comment": "",
-                    "level": ENGINE_DEFAULT_LEVEL
-                    if engine.defaultLevel is None
-                    else engine.defaultLevel,
+                    "level": (
+                        ENGINE_DEFAULT_LEVEL
+                        if engine.defaultLevel is None
+                        else engine.defaultLevel
+                    ),
                 }
                 if "/" in name or "\\" in name:
                     result["command"] = name

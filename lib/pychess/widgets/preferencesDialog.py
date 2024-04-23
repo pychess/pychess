@@ -90,9 +90,11 @@ def initialize(widgets):
     widgets["preferences_dialog"].connect("delete-event", delete_event)
     widgets["preferences_dialog"].connect(
         "key-press-event",
-        lambda w, e: w.event(Gdk.Event(Gdk.EventType.DELETE))
-        if e.keyval == Gdk.KEY_Escape
-        else None,
+        lambda w, e: (
+            w.event(Gdk.Event(Gdk.EventType.DELETE))
+            if e.keyval == Gdk.KEY_Escape
+            else None
+        ),
     )
 
 

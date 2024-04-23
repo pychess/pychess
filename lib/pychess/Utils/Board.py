@@ -490,9 +490,9 @@ class Board:
                 piece = self[move.cord0].piece
                 new_piece = Piece(self.color, piece, captured=True)
                 nth[1 - self.color] += 1
-                newBoard[
-                    self.newHoldingCord(1 - self.color, nth[1 - self.color])
-                ] = new_piece
+                newBoard[self.newHoldingCord(1 - self.color, nth[1 - self.color])] = (
+                    new_piece
+                )
                 newBoard[cord1] = None
             else:
                 if kcastle or qcastle:

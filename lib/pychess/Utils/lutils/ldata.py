@@ -378,9 +378,9 @@ for fcord in range(64):
 
         # Knight
         field = (7 - frank + trank) * 15 + 7 - ffile + tfile
-        distance[KNIGHT][tcord][fcord] = distance[KNIGHT][fcord][
-            tcord
-        ] = knightDistance[field]
+        distance[KNIGHT][tcord][fcord] = distance[KNIGHT][fcord][tcord] = (
+            knightDistance[field]
+        )
 
         # Rook
         if frank == trank or ffile == tfile:
