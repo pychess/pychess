@@ -255,7 +255,7 @@ class BoardControl(Gtk.EventBox):
                 for i, vari in enumerate(board.board.next.children):
                     for node in vari:
                         if (
-                            type(node) != str
+                            not isinstance(node, str)
                             and node.lastMove == move.move
                             and node.plyCount == board.ply + 1
                         ):
