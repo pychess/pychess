@@ -20,4 +20,4 @@ pluggy==1.4.0
 ptyprocess==0.7.0
 tomli==2.0.1
 typing_extensions==4.11.0
-zipp==3.17.0
+zipp==3.18.1
