@@ -15,7 +15,7 @@ exceptiongroup==1.2.0
 greenlet==3.0.3
 importlib-metadata==7.0.1
 iniconfig==2.0.0
-packaging==23.2
+packaging==24.0
 pluggy==1.4.0
 ptyprocess==0.7.0
 tomli==2.0.1
