@@ -1113,9 +1113,11 @@ class LBoard:
                 holding = self.holding[color]
                 b += "\n# [%s]" % "".join(
                     [
-                        reprSign[piece]
-                        if ascii
-                        else FAN_PIECES[color][piece] * holding[piece]
+                        (
+                            reprSign[piece]
+                            if ascii
+                            else FAN_PIECES[color][piece] * holding[piece]
+                        )
                         for piece in holding
                         if holding[piece] > 0
                     ]

@@ -163,10 +163,10 @@ class GameNanny:
                         gamemodel.remote_player.observe()
                     return False
 
-                gmwidg.cids[
-                    gamemodel.remote_ficsplayer
-                ] = gamemodel.remote_ficsplayer.connect(
-                    "notify::status", status_changed, message
+                gmwidg.cids[gamemodel.remote_ficsplayer] = (
+                    gamemodel.remote_ficsplayer.connect(
+                        "notify::status", status_changed, message
+                    )
                 )
                 message.add_button(InfoBarMessageButton(_("Offer Rematch"), 0))
                 message.add_button(

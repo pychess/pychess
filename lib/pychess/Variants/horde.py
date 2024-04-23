@@ -1,4 +1,5 @@
 """ Horde Variant"""
+
 from pychess.Utils.const import HORDECHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board
 

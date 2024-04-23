@@ -80,17 +80,17 @@ if __name__ == "__main__":
             elif data and data[0] == "E06":
                 data[1] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3"
             elif data and data[0] == "E07":
-                data[
-                    1
-                ] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7"
+                data[1] = (
+                    "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7"
+                )
             elif data and data[0] == "E08":
-                data[
-                    1
-                ] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7 7. Qc2"
+                data[1] = (
+                    "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7 7. Qc2"
+                )
             elif data and data[0] == "E09":
-                data[
-                    1
-                ] = "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7 7. Qc2 c6 8. Nbd2"
+                data[1] = (
+                    "1. d4 Nf6 2. c4 e6 3. g3 d5 4. Bg2 Be7 5. Nf3 O-O 6. O-O Nbd7 7. Qc2 c6 8. Nbd2"
+                )
             elif data and data[0] == "E32":
                 data[1] = "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2"
 

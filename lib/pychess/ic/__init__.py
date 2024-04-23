@@ -257,15 +257,15 @@ for key in GAME_TYPES:
 
 GAME_TYPES_BY_RATING_TYPE = {}
 for key in GAME_TYPES_BY_SHORT_FICS_NAME:
-    GAME_TYPES_BY_RATING_TYPE[
-        GAME_TYPES_BY_SHORT_FICS_NAME[key].rating_type
-    ] = GAME_TYPES_BY_SHORT_FICS_NAME[key]
+    GAME_TYPES_BY_RATING_TYPE[GAME_TYPES_BY_SHORT_FICS_NAME[key].rating_type] = (
+        GAME_TYPES_BY_SHORT_FICS_NAME[key]
+    )
 
 GAME_TYPES_BY_FICS_NAME = {}
 for key in GAME_TYPES_BY_SHORT_FICS_NAME:
-    GAME_TYPES_BY_FICS_NAME[
-        GAME_TYPES_BY_SHORT_FICS_NAME[key].fics_name
-    ] = GAME_TYPES_BY_SHORT_FICS_NAME[key]
+    GAME_TYPES_BY_FICS_NAME[GAME_TYPES_BY_SHORT_FICS_NAME[key].fics_name] = (
+        GAME_TYPES_BY_SHORT_FICS_NAME[key]
+    )
 
 
 # Finally add conflicting ICC game type

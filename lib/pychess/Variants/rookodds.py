@@ -1,4 +1,5 @@
 """ Rook Odds Variant"""
+
 from pychess.Utils.const import ROOKODDSCHESS, VARIANTS_ODDS
 from pychess.Utils.Board import Board
 
