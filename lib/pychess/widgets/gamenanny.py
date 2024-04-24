@@ -223,6 +223,8 @@ class GameNanny:
                     message.add_button(InfoBarMessageButton(_("Undo one move"), 2))
                 elif gamemodel.ply > 1:
                     message.add_button(InfoBarMessageButton(_("Undo two moves"), 2))
+        else:
+            callback = None
 
         message.callback = callback
         gmwidg.game_ended_message = message
