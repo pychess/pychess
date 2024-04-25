@@ -24,7 +24,7 @@ jobs:
     - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f  # v4.1.3
 
     - name: Install build dependencies (MSYS)
-      uses: msys2/setup-msys2@7efe20baefed56359985e327d329042cde2434ff  # v2
+      uses: msys2/setup-msys2@cc11e9188b693c2b100158c3322424c4cc1dadea  # v2.22.0
       with:
         update: true
         msystem: MINGW64
