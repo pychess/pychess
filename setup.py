@@ -32,7 +32,7 @@ if sys.platform == "win32":
         from gi.repository import Gtk
 
         print(
-            "Gtk verion is %s.%s.%s",
+            "Gtk version is %s.%s.%s" %
             (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION, Gtk.MICRO_VERSION),
         )
     except ImportError:
