@@ -1,5 +1,5 @@
 # Direct dependencies
-gbulb==0.6.4
+gbulb==0.6.5
 pexpect==4.9.0
 psutil==5.9.8
 pycairo==1.26.0
