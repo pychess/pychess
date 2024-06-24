@@ -13,7 +13,7 @@ pytest==8.2.2
 # Indirect dependencies
 exceptiongroup==1.2.1
 greenlet==3.0.3
-importlib_metadata==7.2.0
+importlib_metadata==7.2.1
 iniconfig==2.0.0
 packaging==24.1
 pluggy==1.5.0
