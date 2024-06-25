@@ -1,6 +1,5 @@
 import asyncio
 import sys
-import telnetlib
 import random
 import time
 import platform
@@ -23,7 +22,9 @@ ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
 G_RESPONSE = "\x029"
 FILLER = b"1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-IAC_WONT_ECHO = b"".join([telnetlib.IAC, telnetlib.WONT, telnetlib.ECHO])
+# was: b"".join([telnetlib.IAC, telnetlib.WONT, telnetlib.ECHO])
+# but telnetlib was removed in Python 3.13
+IAC_WONT_ECHO = b"\xff\xfc\x01"
 
 _DEFAULT_LIMIT = 2**16
 
