@@ -95,7 +95,6 @@ CLASSIFIERS = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: POSIX",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -375,7 +374,7 @@ setup(
     license="GPL3",
     url="https://pychess.github.io/",
     download_url="https://github.com/pychess/pychess/releases",
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "pexpect",
         "psutil",
