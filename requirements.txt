@@ -18,6 +18,6 @@ iniconfig==2.0.0
 packaging==24.1
 pluggy==1.5.0
 ptyprocess==0.7.0
-tomli==2.0.1
+tomli==2.0.2
 typing_extensions==4.12.2
 zipp==3.20.2
