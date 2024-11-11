@@ -5,7 +5,7 @@ psutil==6.1.0
 pycairo==1.27.0
 PyGObject==3.50.0
 SQLAlchemy==2.0.36
-websockets==13.1
+websockets==14.0
 
 # Test-only dependencies
 pytest==8.3.3
