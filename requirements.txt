@@ -8,7 +8,7 @@ SQLAlchemy==2.0.36
 websockets==14.1
 
 # Test-only dependencies
-pytest==8.3.3
+pytest==8.3.4
 
 # Indirect dependencies
 exceptiongroup==1.2.2
