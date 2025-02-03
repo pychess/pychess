@@ -34,7 +34,7 @@ jobs:
           mingw-w64-x86_64-gtksourceview3
           mingw-w64-x86_64-python
           mingw-w64-x86_64-python-cairo
-          mingw-w64-x86_64-python-cx_Freeze
+          mingw-w64-x86_64-python-cx-freeze
           mingw-w64-x86_64-python-gobject
           mingw-w64-x86_64-python-pexpect
           mingw-w64-x86_64-python-psutil
