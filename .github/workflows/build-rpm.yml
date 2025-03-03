@@ -112,6 +112,9 @@ jobs:
     - name: "Build RPM package"
       run: |
         set -x -u
+        # https://github.com/pypa/setuptools/issues/4483
+        # https://github.com/pypa/packaging/commit/e99b37eae68da4016d8d015452a3c031e5d75e5d
+        sudo pip3 install -U 'packaging>=22'
         bash -x "create_rpm_py${PYVER/./}.sh"
 
     - name: Store RPM artifacts
