@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.9, '3.10', 3.11, 3.12]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       PYVER: ${{ matrix.python-version }}
     steps:
@@ -51,7 +51,10 @@ jobs:
             gir1.2-rsvg-2.0 \
             gstreamer1.0-plugins-base \
             gstreamer1.0-plugins-good \
-            libgirepository1.0-dev
+            libcairo2-dev \
+            libgdk-pixbuf-2.0-dev \
+            libgirepository-2.0-dev \
+            librsvg2-common
 
         if ${use_deadsnakes}; then
             sudo apt-get install --no-install-recommends --yes -V \
@@ -74,8 +77,6 @@ jobs:
 
             sudo python3 -m ensurepip --upgrade
         fi
-
-        sudo python3 -m pip install -U pip setuptools wheel
 
         sed 's,:,\n,g' <<<"${PATH}"
 
@@ -113,9 +114,6 @@ jobs:
     - name: "Build RPM package"
       run: |
         set -x -u
-        # https://github.com/pypa/setuptools/issues/4483
-        # https://github.com/pypa/packaging/commit/e99b37eae68da4016d8d015452a3c031e5d75e5d
-        sudo pip3 install -U 'packaging>=22'
         bash -x "create_rpm_py${PYVER/./}.sh"
 
     - name: Store RPM artifacts
