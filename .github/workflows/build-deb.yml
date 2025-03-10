@@ -25,6 +25,7 @@ jobs:
         set -x
         sudo apt-get update
         sudo apt-get install --no-install-recommends --yes -V \
+            build-essential \
             debhelper \
             dh-python \
             file \
