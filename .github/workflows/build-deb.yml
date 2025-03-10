@@ -42,6 +42,12 @@ jobs:
             python3-all \
             python3-stdeb
 
+        # Fix python3-stdeb for Python 3.12
+        sudo sed \
+                -e 's,SafeConfigParser,ConfigParser,g' \
+                -e 's,cfg\.readfp,cfg.read_file,' \
+                -i /usr/lib/python3/dist-packages/stdeb/util.py
+
     - name: Install from sources
       run: |
         set -x
