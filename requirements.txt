@@ -3,7 +3,7 @@ gbulb==0.6.5
 pexpect==4.9.0
 psutil==7.0.0
 pycairo==1.27.0
-PyGObject==3.52.2
+PyGObject==3.52.3
 SQLAlchemy==2.0.39
 websockets==15.0.1
 
