@@ -21,4 +21,4 @@ ptyprocess==0.7.0
 Pygments==2.19.1
 tomli==2.2.1
 typing_extensions==4.13.2
-zipp==3.22.0
+zipp==3.23.0
