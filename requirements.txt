@@ -18,7 +18,7 @@ iniconfig==2.1.0
 packaging==25.0
 pluggy==1.6.0
 ptyprocess==0.7.0
-Pygments==2.19.1
+Pygments==2.19.2
 tomli==2.2.1
 typing_extensions==4.14.0
 zipp==3.23.0
