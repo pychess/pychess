@@ -77,6 +77,8 @@ jobs:
         xvfb_pid=$!
 
         cd testing
-        ./run3 run_tests.py
+        ./run3 run_tests.py || touch FAILED
 
         kill -s SIGTERM "${xvfb_pid}"
+        [ -f FAILED ] && exit 1
+        exit 0

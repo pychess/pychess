@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 modules_to_test = (
@@ -45,4 +46,7 @@ def suite():
 
 
 if __name__ == "__main__":
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    ret = unittest.TextTestRunner(verbosity=2).run(suite())
+    if ret.wasSuccessful():
+        sys.exit(0)
+    sys.exit(1)
