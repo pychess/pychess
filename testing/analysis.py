@@ -78,7 +78,11 @@ class CECPTests(EmittingTestCase):
         self.assertEqual(results, ([(ply, moves, score, depth, nps)],))
 
     def setUp(self):
-        self.loop = asyncio.get_event_loop()
+        try:
+            self.loop = asyncio.get_event_loop()
+        except RuntimeError:
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
 
         self.engineA, self.analyzerA = self._setupengine(ANALYZING)
         self.engineI, self.analyzerI = self._setupengine(INVERSE_ANALYZING)
