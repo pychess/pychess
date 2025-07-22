@@ -161,7 +161,7 @@ def start_endgame_from(pieces):
     gamemodel.connect("game_started", on_game_started)
 
     perspective = perspective_manager.get_perspective("games")
-    asyncio.create_task(
+    asyncio.get_event_loop().create_task(
         perspective.generalStart(
             gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)
         )

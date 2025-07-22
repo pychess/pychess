@@ -171,7 +171,9 @@ class CECPEngine(ProtocolEngine):
         self.lastpong = 0
 
         self.queue = asyncio.Queue()
-        self.parse_line_task = asyncio.create_task(self.parseLine(self.engine))
+        self.parse_line_task = asyncio.get_event_loop().create_task(
+            self.parseLine(self.engine)
+        )
         self.died_cid = self.engine.connect(
             "died", lambda e: self.queue.put_nowait("die")
         )
@@ -204,7 +206,7 @@ class CECPEngine(ProtocolEngine):
             # we will do it after feature accept/reject is completed.
 
     def start(self, event, is_dead):
-        asyncio.create_task(self.__startBlocking(event, is_dead))
+        asyncio.get_event_loop().create_task(self.__startBlocking(event, is_dead))
 
     async def __startBlocking(self, event, is_dead):
         if self.protover == 1:

@@ -43,7 +43,7 @@ class LearnTests(unittest.TestCase):
         perspective_manager.current_perspective = self.learn_persp
 
         dd = DiscovererDialog(discoverer)
-        self.dd_task = asyncio.create_task(dd.start())
+        self.dd_task = asyncio.get_event_loop().create_task(dd.start())
 
     def test0(self):
         """Init layout"""

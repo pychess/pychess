@@ -360,7 +360,7 @@ class ICGameModel(GameModel):
                 return
             self.emit("message_received", name, text)
 
-        self.kibitz_task = asyncio.create_task(coro())
+        self.kibitz_task = asyncio.get_event_loop().create_task(coro())
 
     def onWhisperMessage(self, cm, name, gameno, text):
         if gameno != self.ficsgame.gameno:
