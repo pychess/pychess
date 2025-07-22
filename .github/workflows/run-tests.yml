@@ -17,6 +17,7 @@ jobs:
   run-tests:
     name: Run the test suite
     strategy:
+      fail-fast: false
       matrix:
         python-version: [3.9, 3.12]  # no particular need for in-between versions
     runs-on: ubuntu-24.04
