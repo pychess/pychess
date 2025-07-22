@@ -54,7 +54,11 @@ class DatabaseTests(unittest.TestCase):
     def test1(self):
         """Play and save Human-Human 1 min game"""
 
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
         loop.set_debug(enabled=True)
 
         async def coro():

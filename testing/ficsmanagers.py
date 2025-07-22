@@ -139,7 +139,11 @@ class EmittingTestCase(unittest.TestCase):
     Warning: Strong connection to fics managers"""
 
     def setUp(self):
-        self.loop = asyncio.get_event_loop()
+        try:
+            self.loop = asyncio.get_event_loop()
+        except RuntimeError:
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
 
         self.connection = DummyConnection()
         self.connection.players = FICSPlayers(self.connection)
