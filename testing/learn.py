@@ -23,12 +23,6 @@ discoverer.pre_discover()
 
 class LearnTests(unittest.TestCase):
     def setUp(self):
-        try:
-            self.loop = asyncio.get_event_loop()
-        except RuntimeError:
-            self.loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(self.loop)
-
         widgets = uistuff.GladeWidgets("PyChess.glade")
         gamewidget.setWidgets(widgets)
         perspective_manager.set_widgets(widgets)

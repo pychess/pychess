@@ -157,11 +157,7 @@ class PolyglotTestCase(unittest.TestCase):
 
             await event.wait()
 
-        try:
-            loop = asyncio.get_event_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
+        loop = asyncio.get_event_loop()
         loop.set_debug(enabled=True)
 
         loop.run_until_complete(coro())
