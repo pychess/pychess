@@ -304,16 +304,29 @@ class InternetGameTasker(Gtk.Alignment):
         if ICLogon.dialog is None:
             ICLogon.dialog = ICLogon.ICLogon()
 
-        liststore = Gtk.ListStore(str)
-        liststore.append(["FICS"])
-        liststore.append(["ICC"])
+        liststore = Gtk.ListStore(str, bool)
+        liststore.append(["FICS", True])
+        liststore.append(["ICC", False])
         self.ics_combo = self.widgets["ics_combo"]
         self.ics_combo.set_model(liststore)
         renderer_text = Gtk.CellRendererText()
         self.ics_combo.pack_start(renderer_text, True)
         self.ics_combo.add_attribute(renderer_text, "text", 0)
+
+        # ICC doesn't support telnet connection any more
+        # See https://github.com/pychess/pychess/issues/2315
+
+        def cell_data_func(combo, cell, model, iter_, data):
+            """Customize cell rendering based on the 'enabled' column."""
+            is_enabled = model[iter_][1]
+            cell.set_property("sensitive", is_enabled)  # Gray out if disabled
+
+        self.ics_combo.set_cell_data_func(renderer_text, cell_data_func, None)
+
         self.ics_combo.connect("changed", ICLogon.dialog.on_ics_combo_changed)
-        self.ics_combo.set_active(conf.get("ics_combo"))
+
+        # self.ics_combo.set_active(conf.get("ics_combo"))
+        self.ics_combo.set_active(0)  # select FICS
 
         self.widgets["connectButton"].connect("clicked", self.connectClicked)
         self.widgets["opendialog2"].connect("clicked", self.openDialogClicked)

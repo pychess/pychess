@@ -161,6 +161,11 @@ class ICLogon:
         tree_iter = combo.get_active_iter()
         if tree_iter is not None:
             model = combo.get_model()
+            is_enabled = model[tree_iter][1]  # Check the 'enabled' column
+            if not is_enabled:
+                combo.set_active(0)
+                return
+
             self.ics = model[tree_iter][0]
             # print("Selected: %s" % self.ics)
             self.widgets["logOnAsGuest"].set_active(
