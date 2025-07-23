@@ -90,7 +90,7 @@ class ICSStreamReaderProtocol(asyncio.StreamReaderProtocol):
 
             if self.timeseal:
                 for i in range(g_count):
-                    self._stream_reader.writer.write(
+                    self._stream_reader.stream_writer.write(
                         self.encode(bytearray(G_RESPONSE, "utf-8")) + b"\n"
                     )
         return data
