@@ -5,7 +5,7 @@ import stat
 
 from gi.repository import Gtk
 
-from pychess.ic import TimeSeal
+# from pychess.ic import TimeSeal
 from pychess.Savers import pgn
 from pychess.System import conf
 from pychess.System import uistuff
@@ -72,7 +72,7 @@ class ExternalsDialog:
         # check_button = Gtk.CheckButton(_("ICC lag compensation needs timestamp"))
         # check_button.set_active(conf.get("download_timestamp"))
         # check_button.connect(
-            # "toggled", lambda w: conf.set("download_timestamp", w.get_active())
+        # "toggled", lambda w: conf.set("download_timestamp", w.get_active())
         # )
         # box.add(check_button)
         # link = "http://download.chessclub.com/timestamp/"
@@ -128,17 +128,17 @@ class ExternalsDialog:
             # See https://github.com/pychess/pychess/issues/2315
 
             # if TimeSeal.timestamp_path is None and conf.get("download_timestamp"):
-                # binary = (
-                    # "http://download.chessclub.com.s3.amazonaws.com/timestamp/%s"
-                    # % TimeSeal.timestamp
-                # )
-                # filename = await download_file_async(binary)
-                # if filename is not None:
-                    # dest = shutil.move(
-                        # filename, os.path.join(altpath, TimeSeal.timestamp)
-                    # )
-                    # os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
-                    # TimeSeal.timestamp_path = dest
+            # binary = (
+            # "http://download.chessclub.com.s3.amazonaws.com/timestamp/%s"
+            # % TimeSeal.timestamp
+            # )
+            # filename = await download_file_async(binary)
+            # if filename is not None:
+            # dest = shutil.move(
+            # filename, os.path.join(altpath, TimeSeal.timestamp)
+            # )
+            # os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+            # TimeSeal.timestamp_path = dest
 
         asyncio.create_task(coro())
 
