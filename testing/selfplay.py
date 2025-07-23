@@ -78,12 +78,10 @@ class CECPTests(unittest.TestCase):
             from asyncio.windows_events import ProactorEventLoop
 
             loop = ProactorEventLoop()
-            asyncio.set_event_loop(loop)
         else:
             loop = asyncio.SelectorEventLoop()
-            asyncio.set_event_loop(loop)
 
-        loop = asyncio.get_event_loop()
+        asyncio.set_event_loop(loop)
         loop.set_debug(enabled=True)
 
         for vari in PYCHESS_VARIANTS:

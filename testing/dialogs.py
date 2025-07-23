@@ -27,12 +27,11 @@ class DialogTests(unittest.TestCase):
             from asyncio.windows_events import ProactorEventLoop
 
             loop = ProactorEventLoop()
-            asyncio.set_event_loop(loop)
         else:
             loop = asyncio.SelectorEventLoop()
-            asyncio.set_event_loop(loop)
 
-        self.loop = asyncio.get_event_loop()
+        asyncio.set_event_loop(loop)
+        self.loop = loop
         self.loop.set_debug(enabled=True)
 
         widgets = uistuff.GladeWidgets("PyChess.glade")

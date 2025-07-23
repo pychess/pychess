@@ -23,12 +23,6 @@ discoverer.pre_discover()
 
 class LearnTests(unittest.TestCase):
     def setUp(self):
-        try:
-            self.loop = asyncio.get_event_loop()
-        except RuntimeError:
-            self.loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(self.loop)
-
         widgets = uistuff.GladeWidgets("PyChess.glade")
         gamewidget.setWidgets(widgets)
         perspective_manager.set_widgets(widgets)
@@ -43,7 +37,7 @@ class LearnTests(unittest.TestCase):
         perspective_manager.current_perspective = self.learn_persp
 
         dd = DiscovererDialog(discoverer)
-        self.dd_task = asyncio.create_task(dd.start())
+        self.dd_task = asyncio.get_event_loop().create_task(dd.start())
 
     def test0(self):
         """Init layout"""

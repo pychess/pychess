@@ -80,7 +80,7 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
                     )
                     await asyncio.sleep(0)
 
-            asyncio.create_task(coro())
+            asyncio.get_event_loop().create_task(coro())
 
             self.tv.set_model(self.store)
             self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
