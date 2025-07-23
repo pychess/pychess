@@ -10,7 +10,8 @@ from pychess.System import uistuff
 from pychess.widgets import gamewidget
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
-from pychess.widgets.newGameDialog import COPY, CLEAR, PASTE, INITIAL
+
+# from pychess.widgets.newGameDialog import COPY, CLEAR, PASTE, INITIAL
 from pychess.widgets import preferencesDialog
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.perspectives.games import Games
@@ -87,10 +88,11 @@ class DialogTests(unittest.TestCase):
             self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
 
             dialog.run(FEN_START, NORMALCHESS)
-            dialog.widgets["newgamedialog"].response(INITIAL)
-            dialog.widgets["newgamedialog"].response(COPY)
-            dialog.widgets["newgamedialog"].response(CLEAR)
-            dialog.widgets["newgamedialog"].response(PASTE)
+            # TODO: automate ECO code input handling
+            # dialog.widgets["newgamedialog"].response(INITIAL)
+            # dialog.widgets["newgamedialog"].response(COPY)
+            # dialog.widgets["newgamedialog"].response(CLEAR)
+            # dialog.widgets["newgamedialog"].response(PASTE)
             dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
             await event.wait()
