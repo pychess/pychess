@@ -1456,7 +1456,7 @@ class BoardManager(GObject.GObject):
         log.debug("BM.onGameEnd: %s" % game)
         if game == self.theGameImPlaying:
             # if game.gameno in self.gamemodelStartedEvents:
-                # await self.gamemodelStartedEvents[game.gameno].wait()
+            # await self.gamemodelStartedEvents[game.gameno].wait()
             self.emit("curGameEnded", game)
             self.theGameImPlaying = None
             if game.gameno in self.gamemodelStartedEvents:
@@ -1471,7 +1471,7 @@ class BoardManager(GObject.GObject):
                 )
             else:
                 # if game.gameno in self.gamemodelStartedEvents:
-                    # await self.gamemodelStartedEvents[game.gameno].wait()
+                # await self.gamemodelStartedEvents[game.gameno].wait()
                 del self.gamesImObserving[game]
                 self.emit("obsGameEnded", game)
 
@@ -1484,7 +1484,7 @@ class BoardManager(GObject.GObject):
             )
         else:
             # if gameno in self.gamemodelStartedEvents:
-                # await self.gamemodelStartedEvents[gameno].wait()
+            # await self.gamemodelStartedEvents[gameno].wait()
             self.emit("gamePaused", gameno, state == "paused")
 
     def onUnobserveGame(self, match):
