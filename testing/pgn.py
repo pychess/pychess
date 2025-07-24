@@ -31,7 +31,7 @@ class PgnRegexpTestCase(unittest.TestCase):
 class PgnTestCase(unittest.TestCase):
     def pgn_test(self, name):
         curdir = os.path.dirname(__file__)
-        pgnfile = load(protoopen("{}/gamefiles/{}.pgn".format(curdir, name)))
+        pgnfile = load(protoopen("%s/gamefiles/%s.pgn" % (curdir, name)))
         pgnfile.limit = 1000
         pgnfile.init_tag_database()
         games, plys = pgnfile.get_records()
