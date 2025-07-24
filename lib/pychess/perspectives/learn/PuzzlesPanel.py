@@ -181,7 +181,7 @@ def start_puzzle_game(gamemodel, filename, records, index, rec, from_lesson=Fals
     gamemodel.status = WAITING_TO_START
 
     perspective = perspective_manager.get_perspective("games")
-    asyncio.get_event_loop().create_task(perspective.generalStart(gamemodel, p0, p1))
+    asyncio.create_task(perspective.generalStart(gamemodel, p0, p1))
 
 
 # Sidepanel is a class

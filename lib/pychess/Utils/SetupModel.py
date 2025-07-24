@@ -108,4 +108,4 @@ class SetupModel(GObject.GObject):
                     # print("CLOSE")
                     break
 
-        asyncio.get_event_loop().create_task(coro())
+        asyncio.create_task(coro())
