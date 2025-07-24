@@ -1,4 +1,5 @@
 import collections
+import inspect
 import re
 
 from pychess.System.Log import log
@@ -46,11 +47,13 @@ class LinePrediction(Prediction):
     def __init__(self, callback, regexp):
         Prediction.__init__(self, callback, regexp)
 
-    def handle(self, line):
+    async def handle(self, line):
         match = self.regexps[0].match(line)
         if match:
             self.matches = (match.string,)
-            self.callback(match)
+            obj = self.callback(match)
+            if inspect.isawaitable(obj):
+                await obj
             return RETURN_MATCH
         return RETURN_NO_MATCH
 
@@ -65,14 +68,16 @@ class NLinesPrediction(MultipleLinesPrediction):
     def __init__(self, callback, *regexps):
         MultipleLinesPrediction.__init__(self, callback, *regexps)
 
-    def handle(self, line):
+    async def handle(self, line):
         regexp = self.regexps[len(self.matchlist)]
         match = regexp.match(line)
         if match:
             self.matchlist.append(match)
             if len(self.matchlist) == len(self.regexps):
                 self.matches = [m.string for m in self.matchlist]
-                self.callback(self.matchlist)
+                obj = self.callback(self.matchlist)
+                if inspect.isawaitable(obj):
+                    await obj
                 del self.matchlist[:]
                 return RETURN_MATCH
             return RETURN_NEED_MORE
@@ -84,7 +89,7 @@ class FromPlusPrediction(MultipleLinesPrediction):
     def __init__(self, callback, regexp0, regexp1):
         MultipleLinesPrediction.__init__(self, callback, regexp0, regexp1)
 
-    def handle(self, line):
+    async def handle(self, line):
         if not self.matchlist:
             match = self.regexps[0].match(line)
             if match:
@@ -97,7 +102,9 @@ class FromPlusPrediction(MultipleLinesPrediction):
                 return RETURN_NEED_MORE
             else:
                 self.matches = [m.string for m in self.matchlist]
-                self.callback(self.matchlist)
+                obj = self.callback(self.matchlist)
+                if inspect.isawaitable(obj):
+                    await obj
                 del self.matchlist[:]
                 return RETURN_MATCH_END
         del self.matchlist[:]
@@ -108,7 +115,7 @@ class FromABPlusPrediction(MultipleLinesPrediction):
     def __init__(self, callback, regexp0, regexp1, regexp2):
         MultipleLinesPrediction.__init__(self, callback, regexp0, regexp1, regexp2)
 
-    def handle(self, line):
+    async def handle(self, line):
         if not self.matchlist:
             match = self.regexps[0].match(line)
             if match:
@@ -126,7 +133,9 @@ class FromABPlusPrediction(MultipleLinesPrediction):
                 return RETURN_NEED_MORE
             else:
                 self.matches = [m.string for m in self.matchlist]
-                self.callback(self.matchlist)
+                obj = self.callback(self.matchlist)
+                if inspect.isawaitable(obj):
+                    await obj
                 del self.matchlist[:]
                 return RETURN_MATCH_END
         del self.matchlist[:]
@@ -137,7 +146,7 @@ class FromToPrediction(MultipleLinesPrediction):
     def __init__(self, callback, regexp0, regexp1):
         MultipleLinesPrediction.__init__(self, callback, regexp0, regexp1)
 
-    def handle(self, line):
+    async def handle(self, line):
         if not self.matchlist:
             match = self.regexps[0].match(line)
             if match:
@@ -150,7 +159,9 @@ class FromToPrediction(MultipleLinesPrediction):
                 self.matches = [
                     m if isinstance(m, str) else m.string for m in self.matchlist
                 ]
-                self.callback(self.matchlist)
+                obj = self.callback(self.matchlist)
+                if inspect.isawaitable(obj):
+                    await obj
                 del self.matchlist[:]
                 return RETURN_MATCH
             else:
@@ -331,11 +342,11 @@ class PredictionsTelnet:
 
     async def test_prediction(self, prediction, line):
         lines = []
-        answer = prediction.handle(line.line)
+        answer = await prediction.handle(line.line)
         while answer is RETURN_NEED_MORE:
             line = await self.lines.popleft()
             lines.append(line)
-            answer = prediction.handle(line.line)
+            answer = await prediction.handle(line.line)
 
         if lines and answer not in (RETURN_MATCH, RETURN_MATCH_END):
             self.lines.extendleft(reversed(lines))

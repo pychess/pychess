@@ -1,4 +1,4 @@
-"""  Upside-down Chess variant"""
+"""Upside-down Chess variant"""
 
 from pychess.Utils.const import UPSIDEDOWNCHESS, VARIANTS_OTHER
 from pychess.Utils.Board import Board

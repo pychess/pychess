@@ -1,4 +1,4 @@
-""" The Racing Kings Variation"""
+"""The Racing Kings Variation"""
 
 from pychess.Utils.const import (
     RACINGKINGSCHESS,

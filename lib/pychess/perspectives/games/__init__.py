@@ -1,4 +1,4 @@
-""" The task of this perspective, is to save, load and init new games """
+"""The task of this perspective, is to save, load and init new games"""
 
 import os
 import subprocess

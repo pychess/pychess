@@ -1,3 +1,4 @@
+import os.path
 import unittest
 
 from pychess.System import uistuff
@@ -22,7 +23,8 @@ class DatabaseTests(unittest.TestCase):
 
     def test1(self):
         """Open a .pgn database"""
-        filename = "gamefiles/world_matches.pgn"
+        curdir = os.path.dirname(__file__)
+        filename = "%s/gamefiles/world_matches.pgn" % curdir
         self.database_persp.open_chessfile(filename)
 
 

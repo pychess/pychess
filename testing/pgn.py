@@ -1,3 +1,4 @@
+import os.path
 import unittest
 
 from pychess.Savers.pgn import load, walk, pattern, MOVE
@@ -29,7 +30,8 @@ class PgnRegexpTestCase(unittest.TestCase):
 
 class PgnTestCase(unittest.TestCase):
     def pgn_test(self, name):
-        pgnfile = load(protoopen("gamefiles/%s.pgn" % name))
+        curdir = os.path.dirname(__file__)
+        pgnfile = load(protoopen(f"{curdir}/gamefiles/{name}.pgn"))
         pgnfile.limit = 1000
         pgnfile.init_tag_database()
         games, plys = pgnfile.get_records()

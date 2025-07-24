@@ -1,6 +1,6 @@
-""" This module intends to work as glue between the gamemodel and the gamewidget
-    taking care of stuff that is neither very offscreen nor very onscreen
-    like bringing up dialogs and """
+"""This module intends to work as glue between the gamemodel and the gamewidget
+taking care of stuff that is neither very offscreen nor very onscreen
+like bringing up dialogs and"""
 
 import asyncio
 import math

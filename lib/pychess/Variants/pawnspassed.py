@@ -1,4 +1,4 @@
-""" Pawns Passed Chess """
+"""Pawns Passed Chess"""
 
 from pychess.Utils.const import PAWNSPASSEDCHESS, VARIANTS_OTHER
 from pychess.Utils.Board import Board

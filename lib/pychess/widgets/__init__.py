@@ -1,3 +1,6 @@
+import gi
+
+gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 from pychess.Utils.IconLoader import get_pixbuf, load_icon

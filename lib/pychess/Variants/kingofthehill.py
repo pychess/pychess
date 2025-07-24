@@ -1,4 +1,4 @@
-""" The King of the Hill Variation"""
+"""The King of the Hill Variation"""
 
 from pychess.Utils.const import (
     KINGOFTHEHILLCHESS,

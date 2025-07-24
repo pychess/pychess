@@ -1,4 +1,4 @@
-""" Random Chess """
+"""Random Chess"""
 
 import random
 

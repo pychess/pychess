@@ -1,14 +1,14 @@
 import asyncio
 import unittest
 
+from gi.repository import GObject
+
 from pychess.Utils.const import WHITE, ANALYZING, INVERSE_ANALYZING
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.Board import Board
 from pychess.Players.CECPEngine import CECPEngine
 
 from queue import Queue
-
-from gi.repository import GObject
 
 
 class DummyCECPAnalyzerEngine(GObject.GObject):

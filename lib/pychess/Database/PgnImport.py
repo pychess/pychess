@@ -469,9 +469,10 @@ class PgnImport:
                             old_scout = self.chessfile.scoutfish.db
                             new_scout = os.path.splitext(pgnfile)[0] + ".scout"
 
-                            with open(old_scout, "ab") as file1, open(
-                                new_scout, "rb"
-                            ) as file2:
+                            with (
+                                open(old_scout, "ab") as file1,
+                                open(new_scout, "rb") as file2,
+                            ):
                                 file1.write(file2.read())
 
                 self.chessfile.handle = protoopen(self.chessfile.path)

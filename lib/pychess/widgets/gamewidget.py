@@ -1,4 +1,4 @@
-""" This module handles the tabbed layout in PyChess """
+"""This module handles the tabbed layout in PyChess"""
 
 import sys
 from collections import defaultdict
