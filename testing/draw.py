@@ -1,3 +1,4 @@
+import os.path
 import unittest
 
 from pychess.Savers import pgn
@@ -8,15 +9,17 @@ from pychess.System.protoopen import protoopen
 class DrawTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.f1 = protoopen("gamefiles/3fold.pgn")
+        curdir = os.path.dirname(__file__)
+
+        cls.f1 = protoopen("%s/gamefiles/3fold.pgn" % curdir)
         cls.PgnFile1 = pgn.load(cls.f1)
         cls.PgnFile1.get_records()
 
-        cls.f2 = protoopen("gamefiles/bilbao.pgn")
+        cls.f2 = protoopen("%s/gamefiles/bilbao.pgn" % curdir)
         cls.PgnFile2 = pgn.load(cls.f2)
         cls.PgnFile2.get_records()
 
-        cls.f3 = protoopen("gamefiles/material.pgn")
+        cls.f3 = protoopen("%s/gamefiles/material.pgn" % curdir)
         cls.PgnFile3 = pgn.load(cls.f3)
         cls.PgnFile3.get_records()
 

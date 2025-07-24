@@ -1,3 +1,4 @@
+import os.path
 import unittest
 
 from pychess import MSYS2
@@ -62,7 +63,8 @@ class FRCFindMovesTestCase(unittest.TestCase):
         print()
         self.MAXDEPTH = 3
         positions = []
-        with open("gamefiles/perftsuite.epd") as f:
+        curdir = os.path.dirname(__file__)
+        with open("%s/gamefiles/perftsuite.epd" % curdir) as f:
             for line in f:
                 parts = line.split(";")
                 depths = [int(s[3:].rstrip()) for s in parts[1:]]
@@ -75,7 +77,8 @@ class FRCFindMovesTestCase(unittest.TestCase):
         print()
         self.MAXDEPTH = 3
         positions = []
-        with open("gamefiles/frc_perftsuite.epd") as f:
+        curdir = os.path.dirname(__file__)
+        with open("%s/gamefiles/frc_perftsuite.epd" % curdir) as f:
             for line in f:
                 parts = line.split(";")
                 depths = [int(s[3:].rstrip()) for s in parts[1:]]

@@ -1,3 +1,4 @@
+import os.path
 import unittest
 
 from pychess import MSYS2
@@ -121,7 +122,8 @@ class FindMovesTestCase(unittest.TestCase):
         # return
         self.MAXDEPTH = 3
         positions = []
-        with open("gamefiles/perftsuite.epd") as f:
+        curdir = os.path.dirname(__file__)
+        with open("%s/gamefiles/perftsuite.epd" % curdir) as f:
             for line in f:
                 if line.startswith("#"):
                     continue
@@ -141,7 +143,8 @@ class FindMovesTestCase(unittest.TestCase):
         return
         self.MAXDEPTH = 7
         positions = []
-        with open("gamefiles/perftsuite2.epd") as f:
+        curdir = os.path.dirname(__file__)
+        with open("%s/gamefiles/perftsuite2.epd" % curdir) as f:
             for line in f:
                 if line.startswith("#"):
                     continue

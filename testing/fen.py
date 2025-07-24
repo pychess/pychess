@@ -1,3 +1,4 @@
+import os.path
 import unittest
 
 from pychess.Utils.lutils.LBoard import LBoard
@@ -8,7 +9,8 @@ class FenTestCase(unittest.TestCase):
         """Testing board-FEN conversion with several positions"""
 
         positions = []
-        with open("gamefiles/perftsuite.epd") as f:
+        curdir = os.path.dirname(__file__)
+        with open("%s/gamefiles/perftsuite.epd" % curdir) as f:
             for line in f:
                 semi = line.find(" ;")
                 positions.append(line[:semi])
