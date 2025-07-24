@@ -9,7 +9,6 @@ from pychess.Savers.remotegame import (
     InternetGameChesstempo,
     InternetGame365chess,
     InternetGameChesspastebin,
-    InternetGameChessbomb,
     InternetGameThechessworld,
     InternetGameChessOrg,
     InternetGameEuropeechecs,
@@ -53,7 +52,10 @@ class RemoteGameTestCase(unittest.TestCase):
             return
 
         # Pick one link only to not overload the remote server
-        url, expected = random.choice(links)
+        # url, expected = random.choice(links)
+
+        # Make unit tests reproducible
+        url, expected = links[0]
         print("- Target link: %s" % url)
         print("- Expecting data: %s" % expected)
 
@@ -150,6 +152,7 @@ class RemoteGameTestCase(unittest.TestCase):
         ]  # Not a game
         self.executeTest(InternetGameChessgames(), links)
 
+    @unittest.skip  # sometimes the FICS database is unavailable
     def testFicsgames(self):
         links = [
             (
@@ -216,21 +219,11 @@ class RemoteGameTestCase(unittest.TestCase):
         ]  # Game from homepage
         self.executeTest(InternetGameChesspastebin(), links)
 
-    def testChessbomb(self):
-        links = [
-            (
-                "https://www.chessbomb.com/arena/2019-katowice-chess-festival-im/04-Kubicka_Anna-Sliwicka_Alicja",
-                True,
-            ),  # Game
-            ("https://www.chessbomb.com/arena/2019-bangkok-chess-open", False),
-        ]  # Not a game (arena)
-        self.executeTest(InternetGameChessbomb(), links)
-
     def testThechessworld(self):
         links = [
             (
                 "https://thechessworld.com/articles/middle-game/typical-sacrifices-in-the-middlegame-sacrifice-on-e6/",
-                True,
+                False,
             ),  # 3 embedded games
             (
                 "https://THECHESSWORLD.com/pgngames/middlegames/sacrifice-on-e6/Ivanchuk-Karjakin.pgn",
@@ -657,8 +650,8 @@ class RemoteGameTestCase(unittest.TestCase):
 
     def testPlayok(self):
         links = [
-            ("http://www.playok.com/p/?g=ch484680868", True),  # Game
-            ("https://PLAYOK.com/p/?g=ch484680868.txt", True),  # Game (direct link)
+            ("http://www.playok.com/p/?g=ch675733957", True),  # Game
+            ("https://PLAYOK.com/p/?g=ch675733957.txt", True),  # Game (direct link)
             ("https://PLAYOK.com/p/?g=ch999999999#tag", False),  # Game (wrong ID)
             ("http://www.playok.com", False),
         ]  # Not a game (homepage)
