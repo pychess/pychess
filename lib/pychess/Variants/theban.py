@@ -1,4 +1,4 @@
-"""  Theban Chess Variant """
+"""Theban Chess Variant"""
 
 from pychess.Utils.const import THEBANCHESS, VARIANTS_OTHER
 from pychess.Utils.Board import Board

@@ -1,4 +1,4 @@
-""" Monkey patching asyncio.StreamReader to add readuntil() from Python 3.5.2"""
+"""Monkey patching asyncio.StreamReader to add readuntil() from Python 3.5.2"""
 
 import asyncio
 

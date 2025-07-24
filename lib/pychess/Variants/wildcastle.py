@@ -1,4 +1,4 @@
-""" Wildcastle Chess variant """
+"""Wildcastle Chess variant"""
 
 from pychess.Utils.const import WILDCASTLECHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board

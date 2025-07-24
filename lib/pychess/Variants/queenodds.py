@@ -1,4 +1,4 @@
-""" Queen Odds Variant"""
+"""Queen Odds Variant"""
 
 from pychess.Utils.const import QUEENODDSCHESS, VARIANTS_ODDS
 from pychess.Utils.Board import Board

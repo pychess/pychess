@@ -1,4 +1,4 @@
-""" Standard Chess game"""
+"""Standard Chess game"""
 
 from pychess.Utils.Board import Board
 

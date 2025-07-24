@@ -1,4 +1,4 @@
-""" Giveaway Variant"""
+"""Giveaway Variant"""
 
 from pychess.Utils.const import GIVEAWAYCHESS
 from .suicide import SuicideBoard

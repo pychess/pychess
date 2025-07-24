@@ -1,4 +1,4 @@
-""" Light Brigade Chess Variant """
+"""Light Brigade Chess Variant"""
 
 from pychess.Utils.const import (
     QUEEN_PROMOTION,

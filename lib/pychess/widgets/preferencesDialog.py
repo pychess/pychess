@@ -1,8 +1,8 @@
-""" :Description: This module facilitates configurable object that the end user can
-    customise such as which chess setor board colours to use or the ability to turn on/off
-    various sidepanel facilities such as hints, comments engine analysis etc. It also allows
-    the user to setup and use customised sounds or no sounds at all for a variety of in game
-    events such as running out of time or piece movement events etc.
+""":Description: This module facilitates configurable object that the end user can
+customise such as which chess setor board colours to use or the ability to turn on/off
+various sidepanel facilities such as hints, comments engine analysis etc. It also allows
+the user to setup and use customised sounds or no sounds at all for a variety of in game
+events such as running out of time or piece movement events etc.
 """
 
 import asyncio

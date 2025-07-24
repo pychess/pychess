@@ -1,8 +1,8 @@
 """
-    This module differs from leval in that it is not optimized for speed.
-    It checks differences between last and current board, and returns not
-    scores, but strings describing the differences.
-    Can be used for commenting on board changes.
+This module differs from leval in that it is not optimized for speed.
+It checks differences between last and current board, and returns not
+scores, but strings describing the differences.
+Can be used for commenting on board changes.
 """
 
 from .ldata import (

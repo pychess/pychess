@@ -1,4 +1,4 @@
-""" Knightodds variant """
+"""Knightodds variant"""
 
 from pychess.Utils.const import KNIGHTODDSCHESS, VARIANTS_ODDS
 from pychess.Utils.Board import Board

@@ -1,5 +1,6 @@
 import unittest
-import random
+
+# import random
 
 from pychess.Savers.remotegame import (
     get_internet_game_providers,

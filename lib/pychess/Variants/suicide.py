@@ -1,4 +1,4 @@
-""" Suicide Variation"""
+"""Suicide Variation"""
 
 from pychess.Utils.const import (
     SUICIDECHESS,

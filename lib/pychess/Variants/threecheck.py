@@ -1,4 +1,4 @@
-""" Three-check Chess Variant """
+"""Three-check Chess Variant"""
 
 from pychess.Utils.const import THREECHECKCHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board

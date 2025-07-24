@@ -1,4 +1,4 @@
-""" Losers Variant"""
+"""Losers Variant"""
 
 from pychess.Utils.const import LOSERSCHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board

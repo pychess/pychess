@@ -1,4 +1,4 @@
-""" Sets the application background image """
+"""Sets the application background image"""
 
 from os import path
 

@@ -1,4 +1,4 @@
-""" Shuffle Variant"""
+"""Shuffle Variant"""
 
 import random
 

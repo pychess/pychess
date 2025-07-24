@@ -1,4 +1,4 @@
-""" Wildcastle shuffle Chess """
+"""Wildcastle shuffle Chess"""
 
 import random
 
