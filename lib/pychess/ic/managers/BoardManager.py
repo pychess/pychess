@@ -539,7 +539,7 @@ class BoardManager(GObject.GObject):
             fen,
         )
 
-    def onStyle12(self, match):
+    async def onStyle12(self, match):
         style12 = match.groups()[0]
         log.debug("onStyle12: %s" % style12)
         gameno = int(style12.split()[15])
@@ -548,7 +548,7 @@ class BoardManager(GObject.GObject):
             return
 
         try:
-            self.gamemodelStartedEvents[gameno].wait()
+            await self.gamemodelStartedEvents[gameno].wait()
         except KeyError:
             pass
 
@@ -653,7 +653,7 @@ class BoardManager(GObject.GObject):
                     extra={"task": (self.connection.username, "BM.onStyle12")},
                 )
                 self.emit("exGameCreated", game)
-                self.gamemodelStartedEvents[game.gameno].wait()
+                await self.gamemodelStartedEvents[game.gameno].wait()
             else:
                 log.debug(
                     "send 'smoves' command",
@@ -705,7 +705,7 @@ class BoardManager(GObject.GObject):
                 # but game was already removed from self.connection.games
                 log.debug(f"Got {style12} but {gameno} not in connection.games")
 
-    def onExamineGameCreated(self, matchlist):
+    async def onExamineGameCreated(self, matchlist):
         style12 = matchlist[-1].groups()[0]
         gameno = int(style12.split()[15])
 
@@ -766,7 +766,7 @@ class BoardManager(GObject.GObject):
             extra={"task": (self.connection.username, "BM.onExamineGameCreated")},
         )
         self.emit("exGameCreated", game)
-        self.gamemodelStartedEvents[game.gameno].wait()
+        await self.gamemodelStartedEvents[game.gameno].wait()
 
     def onGameModelStarted(self, gameno):
         self.gamemodelStartedEvents[gameno].set()
@@ -1273,7 +1273,7 @@ class BoardManager(GObject.GObject):
         wplayer.game = None
         bplayer.game = None
 
-    def onObserveGameCreated(self, matchlist):
+    async def onObserveGameCreated(self, matchlist):
         log.debug(
             "'%s'" % (matchlist[1].string),
             extra={"task": (self.connection.username, "BM.onObserveGameCreated")},
@@ -1365,7 +1365,7 @@ class BoardManager(GObject.GObject):
             # puzzlebot sometimes creates next puzzle with same wplayer,bplayer,gameno
             game.move_queue = asyncio.Queue()
             self.emit("obsGameCreated", game)
-            self.gamemodelStartedEvents[game.gameno].wait()
+            await self.gamemodelStartedEvents[game.gameno].wait()
         else:
             game = FICSGame(
                 wplayer,
@@ -1399,7 +1399,7 @@ class BoardManager(GObject.GObject):
 
     onObserveGameCreated.BLKCMD = BLKCMD_OBSERVE
 
-    def onObserveGameMovesReceived(self, matchlist):
+    async def onObserveGameMovesReceived(self, matchlist):
         log.debug(
             "'%s'" % (matchlist[0].string),
             extra={"task": (self.connection.username, "BM.onObserveGameMovesReceived")},
@@ -1411,7 +1411,7 @@ class BoardManager(GObject.GObject):
             return
         self.emit("obsGameCreated", game)
         try:
-            self.gamemodelStartedEvents[game.gameno].wait()
+            await self.gamemodelStartedEvents[game.gameno].wait()
         except KeyError:
             pass
 
@@ -1424,7 +1424,7 @@ class BoardManager(GObject.GObject):
 
     onObserveGameMovesReceived.BLKCMD = BLKCMD_MOVES
 
-    def onArchiveGameSMovesReceived(self, matchlist):
+    async def onArchiveGameSMovesReceived(self, matchlist):
         log.debug(
             "'%s'" % (matchlist[0].string),
             extra={
@@ -1446,7 +1446,7 @@ class BoardManager(GObject.GObject):
         game.game_type = GAME_TYPES["examined"]
         self.emit("exGameCreated", game)
         try:
-            self.gamemodelStartedEvents[game.gameno].wait()
+            await self.gamemodelStartedEvents[game.gameno].wait()
         except KeyError:
             pass
 
@@ -1455,8 +1455,8 @@ class BoardManager(GObject.GObject):
     def onGameEnd(self, games, game):
         log.debug("BM.onGameEnd: %s" % game)
         if game == self.theGameImPlaying:
-            if game.gameno in self.gamemodelStartedEvents:
-                self.gamemodelStartedEvents[game.gameno].wait()
+            # if game.gameno in self.gamemodelStartedEvents:
+                # await self.gamemodelStartedEvents[game.gameno].wait()
             self.emit("curGameEnded", game)
             self.theGameImPlaying = None
             if game.gameno in self.gamemodelStartedEvents:
@@ -1470,8 +1470,8 @@ class BoardManager(GObject.GObject):
                     lambda: self.emit("obsGameEnded", game)
                 )
             else:
-                if game.gameno in self.gamemodelStartedEvents:
-                    self.gamemodelStartedEvents[game.gameno].wait()
+                # if game.gameno in self.gamemodelStartedEvents:
+                    # await self.gamemodelStartedEvents[game.gameno].wait()
                 del self.gamesImObserving[game]
                 self.emit("obsGameEnded", game)
 
@@ -1483,8 +1483,8 @@ class BoardManager(GObject.GObject):
                 lambda: self.emit("gamePaused", gameno, state == "paused")
             )
         else:
-            if gameno in self.gamemodelStartedEvents:
-                self.gamemodelStartedEvents[gameno].wait()
+            # if gameno in self.gamemodelStartedEvents:
+                # await self.gamemodelStartedEvents[gameno].wait()
             self.emit("gamePaused", gameno, state == "paused")
 
     def onUnobserveGame(self, match):
