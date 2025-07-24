@@ -1,19 +1,19 @@
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.2
+    rev: v3.20.0
     hooks:
     -  id: pyupgrade
-       args: ['--py38-plus']
+       args: ['--py39-plus']
 
   - repo: https://github.com/psf/black
-    rev: 24.4.0
+    rev: 25.1.0
     hooks:
       - id: black
-        args: ['--target-version', 'py38']
+        args: ['--target-version', 'py39']
         exclude: 'doc/createDoc'
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
+    rev: 7.3.0
     hooks:
       - id: flake8
         exclude: 'doc/createDoc'

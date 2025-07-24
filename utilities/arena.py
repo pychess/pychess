@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 """
-    PyChess arena tournament script.
-    This script executes a tournament between the engines installed on your
-    system. The script is executed from a terminal with the usual environment.
+PyChess arena tournament script.
+This script executes a tournament between the engines installed on your
+system. The script is executed from a terminal with the usual environment.
 """
 
 import os

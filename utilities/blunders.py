@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
 """
-    PyChess blunder finder script.
-    This scripts allows you to analyze a played pgn file for blunders, using
-    the engine of your choice.
+PyChess blunder finder script.
+This scripts allows you to analyze a played pgn file for blunders, using
+the engine of your choice.
 
-    PYTHONPATH=lib/ python blunders.py game.pgn
+PYTHONPATH=lib/ python blunders.py game.pgn
 """
 
 ###############################################################################
