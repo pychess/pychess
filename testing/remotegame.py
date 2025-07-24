@@ -7,7 +7,6 @@ from pychess.Savers.remotegame import (
     InternetGameChessgames,
     InternetGameFicsgames,
     InternetGameChesstempo,
-    InternetGameChess24,
     InternetGame365chess,
     InternetGameChesspastebin,
     InternetGameChessbomb,
@@ -184,12 +183,6 @@ class RemoteGameTestCase(unittest.TestCase):
             ("http://chesstempo.com/faq.html", False),
         ]  # Not a game
         self.executeTest(InternetGameChesstempo(), links)
-
-    def testChess24(self):
-        links = [
-            ("https://chess24.com/en/game/DQhOOrJaQKS31LOiOmrqPg#anchor", True)
-        ]  # Game with anchor
-        self.executeTest(InternetGameChess24(), links)
 
     def test365chess(self):
         links = [
