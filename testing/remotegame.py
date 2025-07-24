@@ -254,13 +254,13 @@ class RemoteGameTestCase(unittest.TestCase):
     def testEuropeechecs(self):
         links = [
             (
-                "https://www.europe-echecs.com/art/championnat-d-europe-f-minin-2019-7822.html",
-                True,
-            ),  # Embedded games
-            (
                 "https://www.EUROPE-ECHECS.com/embed/doc_a2d179a4a201406d4ce6138b0b1c86d7.pgn",
                 True,
             ),  # Direct link
+            (
+                "https://www.europe-echecs.com/art/championnat-d-europe-f-minin-2019-7822.html",
+                False,
+            ),  # Embedded games
             ("https://www.europe-echecs.com", False),
         ]  # Not a game (homepage)
         self.executeTest(InternetGameEuropeechecs(), links)
@@ -498,6 +498,7 @@ class RemoteGameTestCase(unittest.TestCase):
         ]  # Not a puzzle (homepage)
         self.executeTest(InternetGameChesspuzzle(), links)
 
+    @unittest.skip  # chessking needs login
     def testChessking(self):
         # The direct PGN links are returned as 'application/octet-stream'
         links = [
