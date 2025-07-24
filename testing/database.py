@@ -1,3 +1,4 @@
+from os.path import isfile
 import unittest
 
 from pychess.System import uistuff
@@ -23,6 +24,8 @@ class DatabaseTests(unittest.TestCase):
     def test1(self):
         """Open a .pgn database"""
         filename = "gamefiles/world_matches.pgn"
+        if not isfile(filename):
+            filename = "testing/gamefiles/world_matches.pgn"
         self.database_persp.open_chessfile(filename)
 
 
