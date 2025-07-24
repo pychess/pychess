@@ -10,7 +10,6 @@ from gi.repository import Gtk, GObject
 from pychess.Utils import wait_signal
 from pychess.System import conf
 from pychess.System.Log import log
-from pychess.widgets import mainwindow
 from pychess.Utils.Move import Move
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
@@ -894,6 +893,7 @@ class CECPEngine(ProtocolEngine):
                     if "8/8/8/8/8/8/8/8" in "".join(parts[1:]):
                         continue
                     # Create a non-modal non-blocking message dialog with the error:
+                    from pychess.widgets import mainwindow
                     dlg = Gtk.MessageDialog(
                         mainwindow(),
                         flags=0,

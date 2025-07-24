@@ -21,8 +21,8 @@ if "/usr/games" not in os.environ["PATH"]:
 discoverer.pre_discover()
 
 
-class LearnTests(unittest.TestCase):
-    def setUp(self):
+class LearnTests(unittest.IsolatedAsyncioTestCase):
+    async def asyncSetUp(self):
         widgets = uistuff.GladeWidgets("PyChess.glade")
         gamewidget.setWidgets(widgets)
         perspective_manager.set_widgets(widgets)
@@ -39,27 +39,28 @@ class LearnTests(unittest.TestCase):
         dd = DiscovererDialog(discoverer)
         self.dd_task = asyncio.create_task(dd.start())
 
-    def test0(self):
+    async def test0(self):
         """Init layout"""
         self.learn_persp.activate()
         self.assertEqual(len(self.learn_persp.store), 1)
 
-    def test1(self):
+    async def test1(self):
         """Start next endgame"""
+        self.learn_persp.activate()
         pieces = ENDGAMES[0][0].lower()
         start_endgame_from(pieces)
 
-    def test2(self):
+    async def test2(self):
         """Start next lecture"""
         filename = LECTURES[0][0]
         start_lecture_from(filename)
 
-    def test3(self):
+    async def test3(self):
         """Start next lesson"""
         filename = LESSONS[0][0]
         start_lesson_from(filename)
 
-    def test4(self):
+    async def test4(self):
         """Start next puzzle"""
         filename = PUZZLES[0][0]
         start_puzzle_from(filename)

@@ -4,7 +4,6 @@ import datetime
 from gi.repository import GLib, GObject
 
 from pychess.System.Log import log
-from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.const import ADJOURNED, WHITE, BLACK, UNSUPPORTED
 
 from pychess.ic import (
@@ -340,6 +339,7 @@ class FICSPlayer(GObject.GObject):
 
     @classmethod
     def getIconByRating(cls, rating, size=16):
+        from pychess.Utils.IconLoader import get_pixbuf
         assert isinstance(rating, int), "rating not an int: %s" % str(rating)
         if rating >= 1900:
             return get_pixbuf("glade/16x16/weather-storm.png")
@@ -353,6 +353,7 @@ class FICSPlayer(GObject.GObject):
             return get_pixbuf("glade/16x16/weather-clear.png")
 
     def getIcon(self, size=16, gametype=None):
+        from pychess.Utils.IconLoader import load_icon
         assert isinstance(size, int), "size not an int: %s" % str(size)
         if self.isGuest():
             return load_icon(size, "stock_people", "system-users")

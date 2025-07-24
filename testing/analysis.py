@@ -37,9 +37,9 @@ class DummyCECPAnalyzerEngine(GObject.GObject):
         return self.Q.get()
 
 
-class EmittingTestCase(unittest.TestCase):
+class EmittingTestCase(unittest.IsolatedAsyncioTestCase):
     def __init__(self, methodName="runTest"):
-        unittest.TestCase.__init__(self, methodName)
+        unittest.IsolatedAsyncioTestCase.__init__(self, methodName)
         self.args = {}
 
     def traceSignal(self, object, signal):
@@ -71,88 +71,81 @@ class CECPTests(EmittingTestCase):
     async def _testLine(
         self, engine, analyzer, board, analine, ply, moves, score, depth, nps
     ):
+        print("testline", ply, moves, score, depth, nps)
         self.traceSignal(analyzer, "analyze")
         await engine.putline(analine)
         results = self.getSignalResults(analyzer)
         self.assertNotEqual(results, None, "signal wasn't sent")
         self.assertEqual(results, ([(ply, moves, score, depth, nps)],))
 
-    def setUp(self):
-        self.loop = asyncio.get_event_loop()
-
+    async def asyncSetUp(self):
         self.engineA, self.analyzerA = self._setupengine(ANALYZING)
         self.engineI, self.analyzerI = self._setupengine(INVERSE_ANALYZING)
 
-    def test1(self):
+    async def test1(self):
         """Test analyzing in forced mate situations"""
 
         board = Board("B1n1n1KR/1r5B/6R1/2b1p1p1/2P1k1P1/1p2P2p/1P2P2P/3N1N2 w - - 0 1")
         self.analyzerA.setBoardList([board], [])
         self.analyzerI.setBoardList([board], [])
 
-        async def coro():
-            await self._testLine(
-                self.engineA,
-                self.analyzerA,
-                board,
-                "1. Mat1 0 1     Bxb7#",
-                0,
-                ["Bxb7#"],
-                MATE_VALUE,
-                "1.",
-                "",
-            )
+        await self._testLine(
+            self.engineA,
+            self.analyzerA,
+            board,
+            "1. Mat1 0 1     Bxb7#",
+            0,
+            ["Bxb7#"],
+            MATE_VALUE,
+            "1.",
+            "",
+        )
 
-            # Notice, in the opposite situation there is no forced mate. Black can
-            # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
-            # recognizing this.
-            await self._testLine(
-                self.engineI,
-                self.analyzerI,
-                board.switchColor(),
-                "10. -Mat 2 35 64989837     Bd4 Bxb7#",
-                0,
-                ["Bd4", "Bxb7#"],
-                -MATE_VALUE,
-                "10.",
-                "185685248",
-            )
+        # Notice, in the opposite situation there is no forced mate. Black can
+        # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
+        # recognizing this.
+        await self._testLine(
+            self.engineI,
+            self.analyzerI,
+            board.switchColor(),
+            "10. -Mat 2 35 64989837     Bd4 Bxb7#",
+            0,
+            ["Bd4", "Bxb7#"],
+            -MATE_VALUE,
+            "10.",
+            "185685248",
+        )
 
-        self.loop.run_until_complete(coro())
-
-    def test2(self):
+    async def test2(self):
         """Test analyzing in promotion situations"""
 
         board = Board("5k2/PK6/8/8/8/6P1/6P1/8 w - - 1 48")
         self.analyzerA.setBoardList([board], [])
         self.analyzerI.setBoardList([board], [])
 
-        async def coro():
-            await self._testLine(
-                self.engineA,
-                self.analyzerA,
-                board,
-                "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",
-                94,
-                ["a8=Q+", "Kf7", "Qa2+", "Kf6", "Qd2", "Kf5", "g4+"],
-                1833,
-                "9.",
-                "190750365",
-            )
+        await self._testLine(
+            self.engineA,
+            self.analyzerA,
+            board,
+            "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",
+            94,
+            ["a8=Q+", "Kf7", "Qa2+", "Kf6", "Qd2", "Kf5", "g4+"],
+            1833,
+            "9.",
+            "190750365",
+        )
 
-            await self._testLine(
-                self.engineI,
-                self.analyzerI,
-                board.switchColor(),
-                "10. -1883 59 107386433     Kf7 a8=Q Ke6 Qa6+ Ke5 Qd6+ Kf5",
-                94,
-                ["Kf7", "a8=Q", "Ke6", "Qa6+", "Ke5", "Qd6+", "Kf5"],
-                -1883,
-                "10.",
-                "182010903",
-            )
-
-        self.loop.run_until_complete(coro())
+        await self._testLine(
+            self.engineI,
+            self.analyzerI,
+            board.switchColor(),
+            "10. -1883 59 107386433     Kf7 a8=Q Ke6 Qa6+ Ke5 Qd6+ Kf5",
+            94,
+            ["Kf7", "a8=Q", "Ke6", "Qa6+", "Ke5", "Qd6+", "Kf5"],
+            -1883,
+            "10.",
+            "182010903",
+        )
 
 
 if __name__ == "__main__":
