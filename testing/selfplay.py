@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import unittest
-import sys
 from io import StringIO
 
 from pychess.Savers.pgn import save
@@ -67,31 +66,23 @@ PYCHESS_VARIANTS = (
 )
 
 
-class CECPTests(unittest.TestCase):
+class CECPTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.engine = discoverer.getEngineByName("PyChess.py")
 
-    def test(self):
+    async def asyncTearDown(self):
+        # To prevent RuntimeError: Event loop is closed
+        # see https://github.com/python/cpython/issues/114177
+        await asyncio.sleep(0.1)
+
+    async def test(self):
         """Play PyChess-PyChess 1 min variant games"""
-
-        if sys.platform == "win32":
-            from asyncio.windows_events import ProactorEventLoop
-
-            loop = ProactorEventLoop()
-        else:
-            loop = asyncio.SelectorEventLoop()
-
-        asyncio.set_event_loop(loop)
-        loop.set_debug(enabled=True)
 
         for vari in PYCHESS_VARIANTS:
             variant = variants[vari]
 
-            async def coro():
-                self.p0 = await discoverer.initEngine(self.engine, WHITE, False)
-                self.p1 = await discoverer.initEngine(self.engine, BLACK, False)
-
-            loop.run_until_complete(coro())
+            self.p0 = await discoverer.initEngine(self.engine, WHITE, False)
+            self.p1 = await discoverer.initEngine(self.engine, BLACK, False)
 
             def optionsCallback(engine):
                 engine.setOptionVariant(variant)
@@ -101,35 +92,32 @@ class CECPTests(unittest.TestCase):
             self.p0.connect("readyForOptions", optionsCallback)
             self.p1.connect("readyForOptions", optionsCallback)
 
-            async def coro(variant):
-                self.game = GameModel(TimeModel(60, 0), variant)
-                self.game.setPlayers([self.p0, self.p1])
+            self.game = GameModel(TimeModel(60, 0), variant)
+            self.game.setPlayers([self.p0, self.p1])
 
-                def on_game_end(game, state, event):
-                    event.set()
+            def on_game_end(game, state, event):
+                event.set()
 
-                event = asyncio.Event()
-                self.game.connect("game_ended", on_game_end, event)
+            event = asyncio.Event()
+            self.game.connect("game_ended", on_game_end, event)
 
-                self.p0.prestart()
-                self.p1.prestart()
+            self.p0.prestart()
+            self.p1.prestart()
 
-                if self.game.variant.need_initial_board:
-                    for player in self.game.players:
-                        player.setOptionInitialBoard(self.game)
+            if self.game.variant.need_initial_board:
+                for player in self.game.players:
+                    player.setOptionInitialBoard(self.game)
 
-                print(variant.name)
-                self.game.start()
+            print(variant.name)
+            self.game.start()
 
-                await event.wait()
+            await event.wait()
 
-                pgn = StringIO()
-                print(save(pgn, self.game))
+            pgn = StringIO()
+            print(save(pgn, self.game))
 
-                self.assertIsNone(self.p0.invalid_move)
-                self.assertIsNone(self.p1.invalid_move)
-
-            loop.run_until_complete(coro(variant))
+            self.assertIsNone(self.p0.invalid_move)
+            self.assertIsNone(self.p1.invalid_move)
 
 
 if __name__ == "__main__":
