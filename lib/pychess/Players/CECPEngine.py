@@ -894,6 +894,7 @@ class CECPEngine(ProtocolEngine):
                         continue
                     # Create a non-modal non-blocking message dialog with the error:
                     from pychess.widgets import mainwindow
+
                     dlg = Gtk.MessageDialog(
                         mainwindow(),
                         flags=0,

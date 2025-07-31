@@ -41,7 +41,11 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         self.games_persp.gamewidgets.clear()
 
         loop = asyncio.get_event_loop()
-        tasks = [task for task in asyncio.all_tasks(loop) if task is not asyncio.current_task()]
+        tasks = [
+            task
+            for task in asyncio.all_tasks(loop)
+            if task is not asyncio.current_task()
+        ]
         for task in tasks:
             task.cancel()
             try:
@@ -173,9 +177,7 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
             event.set()
 
         event = asyncio.Event()
-        discoverer.connect(
-            "all_engines_discovered", on_all_engines_discovered, event
-        )
+        discoverer.connect("all_engines_discovered", on_all_engines_discovered, event)
 
         await dd.start()
 

@@ -168,7 +168,11 @@ class EmittingTestCase(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         loop = asyncio.get_event_loop()
-        tasks = [task for task in asyncio.all_tasks(loop) if task is not asyncio.current_task()]
+        tasks = [
+            task
+            for task in asyncio.all_tasks(loop)
+            if task is not asyncio.current_task()
+        ]
         for task in tasks:
             task.cancel()
             try:

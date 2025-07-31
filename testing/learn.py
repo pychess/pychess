@@ -43,9 +43,7 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
             event.set()
 
         event = asyncio.Event()
-        discoverer.connect(
-            "all_engines_discovered", on_all_engines_discovered, event
-        )
+        discoverer.connect("all_engines_discovered", on_all_engines_discovered, event)
 
         await dd.start()
 

@@ -57,7 +57,11 @@ class DatabaseTests(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         """Prevent waiting for failed analyzer start in case of local testing"""
         loop = asyncio.get_event_loop()
-        tasks = [task for task in asyncio.all_tasks(loop) if task is not asyncio.current_task()]
+        tasks = [
+            task
+            for task in asyncio.all_tasks(loop)
+            if task is not asyncio.current_task()
+        ]
         for task in tasks:
             task.cancel()
             try:
@@ -109,7 +113,11 @@ class DatabaseTests(unittest.IsolatedAsyncioTestCase):
 
             curdir = os.path.dirname(__file__)
             filename = "%s/gamefiles/world_matches.pgn" % curdir
-            self.database_persp.importing([filename,])
+            self.database_persp.importing(
+                [
+                    filename,
+                ]
+            )
 
         def on_chessfile_imported(persp, cf):
             # We saved 1 game in test1 and world_matches.pgn has 580 games
