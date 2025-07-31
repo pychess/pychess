@@ -1,3 +1,4 @@
+import asyncio
 import unittest
 import logging
 
@@ -17,15 +18,15 @@ from pychess.perspectives import perspective_manager
 from pychess.perspectives.fics import FICS
 from pychess.perspectives.games import Games
 from ficsmanagers import EmittingTestCase
+from pychess.Players.ICPlayer import ICPlayer
 from pychess.System.Log import log
 
 log.logger.setLevel(logging.DEBUG)
 
 
 class ExamineGameTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
-        self.loop.set_debug(enabled=True)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
 
         self.manager = self.connection.bm
 
@@ -47,8 +48,7 @@ class ExamineGameTests(EmittingTestCase):
             "exGameCreated", self.fics_persp.onObserveGameCreated
         )
 
-    @unittest.skip  # TODO: why this test is waiting forever ???
-    def test1(self):
+    async def test1(self):
         """Test puzzlebot starting a new mate in 2 puzzle"""
 
         # tell puzzlebot gm2
@@ -83,9 +83,22 @@ class ExamineGameTests(EmittingTestCase):
         )
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        def on_gmwidg_created(persp, gmwidg, event):
+            event.set()
+
+        event = asyncio.Event()
+        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+        await event.wait()
+
+        gamemodel = self.games_persp.cur_gmwidg().gamemodel
+        print(gamemodel)
+
+        p0, p1 = gamemodel.players
+        assert isinstance(p0, ICPlayer)
+        assert isinstance(p1, ICPlayer)
 
         lines = [
             "Removing game 127 from observation list." "",
@@ -99,10 +112,7 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         # check that our relation has changed as expected
         self.assertEqual(game.relation, IC_POS_EXAMINATING)
@@ -119,17 +129,17 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         game = self.connection.games.get(game)
-        self.assertEqual(game.move_queue.qsize(), 0)
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 1)
+        print(gamemodel.boards[-1])
+
+        self.assertEqual(gamemodel.ply, 1)
 
         # puzzlebot just backs up our move and sends the puzzle starting position again
         lines = [
@@ -154,16 +164,16 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        print(gamemodel.boards[-1])
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 0)
+        self.assertEqual(gamemodel.ply, 0)
 
         # now we take the good move: b5a7
         lines = [
@@ -177,16 +187,16 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        print(gamemodel.boards[-1])
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 1)
+        self.assertEqual(gamemodel.ply, 1)
 
         # puzzlebot moves
         lines = [
@@ -207,17 +217,16 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
-        print(self.games_persp.cur_gmwidg().gamemodel.moves)
+        print(gamemodel.boards[-1])
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 2)
+        self.assertEqual(gamemodel.ply, 2)
 
         # we make the mating move: d3b5
         lines = [
@@ -238,16 +247,16 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        print(gamemodel.boards[-1])
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 3)
+        self.assertEqual(gamemodel.ply, 3)
 
         ########################################################################
         # now start another mate in 2 puzzle
@@ -280,9 +289,18 @@ class ExamineGameTests(EmittingTestCase):
         )
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        def on_gmwidg_created(persp, gmwidg, event):
+            event.set()
+
+        event = asyncio.Event()
+        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+        await event.wait()
+
+        gamemodel = self.games_persp.cur_gmwidg().gamemodel
+        print(gamemodel)
 
         lines = [
             "Removing game 127 from observation list." "",
@@ -296,10 +314,7 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         # check that our relation has changed as expected
         self.assertEqual(game.relation, IC_POS_EXAMINATING)
@@ -316,16 +331,16 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        print(gamemodel.boards[-1])
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 2)
+        self.assertEqual(gamemodel.ply, 2)
 
         # puzzlebot moves
         lines = [
@@ -346,16 +361,16 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        print(gamemodel.boards[-1])
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 3)
+        self.assertEqual(gamemodel.ply, 3)
 
         # we make the mating move: e1h1
         lines = [
@@ -376,16 +391,16 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        self.assertEqual(gamemodel.ply, 4)
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 4)
+        print(gamemodel.boards[-1])
 
 
 if __name__ == "__main__":

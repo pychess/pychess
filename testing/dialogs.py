@@ -1,5 +1,6 @@
 import asyncio
 import unittest
+import os
 import sys
 
 import gi
@@ -13,8 +14,7 @@ from pychess.System import uistuff
 from pychess.widgets import gamewidget
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
-
-# from pychess.widgets.newGameDialog import COPY, CLEAR, PASTE, INITIAL
+from pychess.widgets.newGameDialog import COPY, CLEAR, PASTE, INITIAL
 from pychess.widgets import preferencesDialog
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.perspectives.games import Games
@@ -40,13 +40,25 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         self.games_persp.gamewidgets.clear()
 
+        loop = asyncio.get_event_loop()
+        tasks = [task for task in asyncio.all_tasks(loop) if task is not asyncio.current_task()]
+        for task in tasks:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                print("task cancelled", task)
+
     async def test0(self):
         """Open engines dialogs"""
 
         # engines dialog
-        enginesDialog.run(gamewidget.getWidgets())
+        widgets = gamewidget.getWidgets()
+        enginesDialog.run(widgets)
         engines = [item[1] for item in enginesDialog.engine_dialog.allstore]
         self.assertTrue("PyChess.py" in engines)
+
+        widgets["manage_engines_dialog"].hide()
 
     async def test1(self):
         """Open new game dialog"""
@@ -64,6 +76,8 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
 
         await event.wait()
 
+        newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
+
     async def test2(self):
         """Open setup position dialog"""
 
@@ -75,15 +89,17 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         event = asyncio.Event()
         self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
 
+        os.environ["PYCHESS_UNITTEST"] = "True"
         dialog.run(FEN_START, NORMALCHESS)
-        # TODO: automate ECO code input handling
-        # dialog.widgets["newgamedialog"].response(INITIAL)
-        # dialog.widgets["newgamedialog"].response(COPY)
-        # dialog.widgets["newgamedialog"].response(CLEAR)
-        # dialog.widgets["newgamedialog"].response(PASTE)
+        dialog.widgets["newgamedialog"].response(INITIAL)
+        dialog.widgets["newgamedialog"].response(COPY)
+        dialog.widgets["newgamedialog"].response(CLEAR)
+        dialog.widgets["newgamedialog"].response(PASTE)
         dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
         await event.wait()
+
+        newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
 
     @unittest.skipIf(
         sys.platform == "win32",
@@ -123,6 +139,8 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
 
         await event.wait()
 
+        newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
+
     async def test4(self):
         """Open preferences dialog"""
 
@@ -144,11 +162,14 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         notebook.next_page()
         self.assertIsNotNone(preferencesDialog.save_tab)
 
+        widgets["preferences_dialog"].hide()
+
     async def test5(self):
         """Open engine discoverer dialog"""
         dd = DiscovererDialog(discoverer)
 
         def on_all_engines_discovered(discoverer, event):
+            print("on_all_engines_discovered() OK")
             event.set()
 
         event = asyncio.Event()
@@ -156,9 +177,11 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
             "all_engines_discovered", on_all_engines_discovered, event
         )
 
-        asyncio.create_task(dd.start())
+        await dd.start()
 
         await event.wait()
+
+        dd.close()
 
 
 if __name__ == "__main__":

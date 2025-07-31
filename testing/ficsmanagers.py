@@ -139,6 +139,9 @@ class EmittingTestCase(unittest.IsolatedAsyncioTestCase):
     Warning: Strong connection to fics managers"""
 
     async def asyncSetUp(self):
+        loop = asyncio.get_event_loop()
+        loop.set_debug(enabled=True)
+
         self.connection = DummyConnection()
         self.connection.players = FICSPlayers(self.connection)
         self.connection.games = FICSGames(self.connection)
@@ -162,6 +165,16 @@ class EmittingTestCase(unittest.IsolatedAsyncioTestCase):
         self.connection.games.start()
         self.connection.seeks.start()
         self.connection.challenges.start()
+
+    async def asyncTearDown(self):
+        loop = asyncio.get_event_loop()
+        tasks = [task for task in asyncio.all_tasks(loop) if task is not asyncio.current_task()]
+        for task in tasks:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                print("Task cancelled", task)
 
     async def runAndAssertEquals(self, signal, lines, expectedResults):
         self.args = None

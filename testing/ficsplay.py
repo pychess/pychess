@@ -14,12 +14,15 @@ from pychess.perspectives.welcome import Welcome
 from pychess.ic.FICSObjects import (
     FICSBoard,
     FICSGame,
+    FICSPlayer,
     GAME_TYPES,
     TYPE_BLITZ,
     TYPE_LIGHTNING,
 )
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 from ficsmanagers import EmittingTestCase
+from pychess.Players.Human import Human
+from pychess.Players.ICPlayer import ICPlayer
 from pychess.System.Log import log
 
 log.logger.setLevel(logging.DEBUG)
@@ -48,11 +51,11 @@ log.logger.setLevel(logging.DEBUG)
 
 
 class PlayGameTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.manager = self.connection.bm
 
-    def test1(self):
+    async def test1(self):
         """From gbtami (player accepting a challenge) point of view"""
         lines = [
             "Challenge: ggbtami (----) gbtami (1708) unrated blitz 5 0.",
@@ -91,7 +94,7 @@ class PlayGameTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
 
         lines = [
             BLOCK_START + "58" + BLOCK_SEPARATOR + "1" + BLOCK_SEPARATOR,
@@ -113,15 +116,12 @@ class PlayGameTests(EmittingTestCase):
 
         game = self.connection.games[game]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertEqual(game.move_queue.qsize(), 4)
         self.assertEqual(game.reason, WON_MATE)
 
-    def test2(self):
+    async def test2(self):
         """From ggbtami (player sending a challenge) point of view"""
         lines = [
             BLOCK_START + "54" + BLOCK_SEPARATOR + "73" + BLOCK_SEPARATOR,
@@ -158,7 +158,7 @@ class PlayGameTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
 
         lines = [
             "<12> rnbqkbnr pppppppp -------- -------- -------- -----P-- PPPPP-PP RNBQKBNR B -1 1 1 1 1 0 107 gbtami ggbtami -1 5 0 39 39 300000 300000 1 P/f2-f3 (0:00.000) f3 0 0 0",
@@ -179,20 +179,13 @@ class PlayGameTests(EmittingTestCase):
 
         game = self.connection.games[game]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertEqual(game.move_queue.qsize(), 4)
         self.assertEqual(game.reason, WON_MATE)
 
-    def test3(self):
+    async def test3(self):
         """Accepting a seek"""
-
-        loop = asyncio.get_event_loop()
-        loop.set_debug(enabled=True)
-
         widgets = uistuff.GladeWidgets("PyChess.glade")
         gamewidget.setWidgets(widgets)
         perspective_manager.set_widgets(widgets)
@@ -225,8 +218,10 @@ class PlayGameTests(EmittingTestCase):
         ]
 
         me = self.connection.players.get("gbtami")
+        assert isinstance(me, FICSPlayer)
         me.ratings[TYPE_LIGHTNING] = 1771
         opponent = self.connection.players.get("WLTL")
+        assert isinstance(opponent, FICSPlayer)
         opponent.ratings[TYPE_LIGHTNING] = 2030
         game = FICSGame(
             opponent,
@@ -241,15 +236,15 @@ class PlayGameTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
 
-        gamemodel = self.games_persp.cur_gmwidg().gamemodel
+        def on_gmwidg_created(persp, gmwidg, event):
+            event.set()
 
-        def on_game_started(game):
-            p1 = gamemodel.players[1]
-            p1.move_queue.put_nowait(Move(newMove(G8, F6)))
+        event = asyncio.Event()
+        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
 
-        gamemodel.connect("game_started", on_game_started)
+        await event.wait()
 
         lines = [
             "<12> rnbqkbnr pppppppp -------- -------- -------- -P------ P-PPPPPP RNBQKBNR B -1 1 1 1 1 0 85 WLTL gbtami 1 1 0 39 39 60000 60000 1 P/b2-b3 (0:00.000) b3 1 0 0",
@@ -258,12 +253,9 @@ class PlayGameTests(EmittingTestCase):
 
         game = self.connection.games[game]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
-
-        self.assertEqual(game.move_queue.qsize(), 0)
+        self.assertEqual(game.move_queue.qsize(), 1)
 
         lines = [
             BLOCK_START + "59" + BLOCK_SEPARATOR + "1" + BLOCK_SEPARATOR,
@@ -274,15 +266,32 @@ class PlayGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 3)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        gamemodel = self.games_persp.cur_gmwidg().gamemodel
+
+        def on_game_started(game):
+            p0, p1 = gamemodel.players
+            p1.move_queue.put_nowait(Move(newMove(G8, F6)))
+
+            # My opp is an ICPlayer and his move_queue is gamemodel.ficsgame.move_queue
+            # BoardManager fed it with all the moves via onStyle12
+            assert isinstance(p0, ICPlayer)
+            self.assertEqual(p0.move_queue.qsize(), 3)
+
+            assert isinstance(p1, Human)
+            self.assertEqual(p1.move_queue.qsize(), 1)
+
+        gamemodel.connect("game_started", on_game_started)
+
+        # let the game model process the moves
+        await asyncio.sleep(0)
+
         self.assertEqual(gamemodel.ply, 3)
         print(gamemodel.boards[-1])
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)

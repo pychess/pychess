@@ -1,3 +1,4 @@
+import asyncio
 import unittest
 
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
@@ -64,8 +65,8 @@ from ficsmanagers import EmittingTestCase
 
 
 class ObserveGameTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.manager = self.connection.bm
 
         widgets = uistuff.GladeWidgets("PyChess.glade")
@@ -83,7 +84,7 @@ class ObserveGameTests(EmittingTestCase):
             "obsGameCreated", self.fics_persp.onObserveGameCreated
         )
 
-    def test1(self):
+    async def test1(self):
         """Test observing game"""
 
         lines = [
@@ -96,10 +97,7 @@ class ObserveGameTests(EmittingTestCase):
             BLOCK_END,
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertEqual(self.connection.client.commands[-1], "moves 463")
 
@@ -154,7 +152,15 @@ class ObserveGameTests(EmittingTestCase):
         game = FICSGame(FICSPlayer("schachbjm"), FICSPlayer("Maras"), gameno=463)
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
+
+        def on_gmwidg_created(persp, gmwidg, event):
+            event.set()
+
+        event = asyncio.Event()
+        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+        await event.wait()
 
         print(self.games_persp.cur_gmwidg().gamemodel)
 
@@ -163,18 +169,18 @@ class ObserveGameTests(EmittingTestCase):
             "<12> ------r- --k----- ----p--- n-ppPb-p -----P-P -PP-K-P- PR------ ------R- W -1 0 0 0 0 11 463 schachbjm Maras 0 45 45 17 15 557871 274070 38 R/b8-g8 (0:10.025) Rg8 0 1 0",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 2)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 74)
 
         print(self.games_persp.cur_gmwidg().gamemodel)
 
-    def test2(self):
+    async def test2(self):
         """Test observing lecturebot"""
 
         # ♜ ♛ . . ♚ . ♞ ♜
@@ -200,7 +206,15 @@ class ObserveGameTests(EmittingTestCase):
         game = FICSGame(FICSPlayer("LectureBot"), FICSPlayer("LectureBot"), gameno=1)
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
+
+        def on_gmwidg_created(persp, gmwidg, event):
+            event.set()
+
+        event = asyncio.Event()
+        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+        await event.wait()
 
         print(self.games_persp.cur_gmwidg().gamemodel)
 
@@ -215,12 +229,12 @@ class ObserveGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 29)
 
@@ -234,12 +248,12 @@ class ObserveGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 25)
 
@@ -268,12 +282,12 @@ class ObserveGameTests(EmittingTestCase):
             "fics% ",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 3)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 28)
 

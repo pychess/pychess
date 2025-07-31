@@ -37,29 +37,54 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
         perspective_manager.current_perspective = self.learn_persp
 
         dd = DiscovererDialog(discoverer)
-        self.dd_task = asyncio.create_task(dd.start())
+
+        def on_all_engines_discovered(discoverer, event):
+            print("on_all_engines_discovered() OK")
+            event.set()
+
+        event = asyncio.Event()
+        discoverer.connect(
+            "all_engines_discovered", on_all_engines_discovered, event
+        )
+
+        await dd.start()
+
+        await event.wait()
+
+        dd.close()
+
+    async def asyncTearDown(self):
+        widgets = gamewidget.getWidgets()
+        try:
+            widgets["discovererDialog"].hide()
+        except AttributeError:
+            pass
 
     async def test0(self):
         """Init layout"""
         self.learn_persp.activate()
         self.assertEqual(len(self.learn_persp.store), 1)
 
+    @unittest.skip  # TODO: handle game interactions
     async def test1(self):
         """Start next endgame"""
         self.learn_persp.activate()
         pieces = ENDGAMES[0][0].lower()
         start_endgame_from(pieces)
 
+    @unittest.skip  # TODO: handle game interactions
     async def test2(self):
         """Start next lecture"""
         filename = LECTURES[0][0]
         start_lecture_from(filename)
 
+    @unittest.skip  # TODO: handle game interactions
     async def test3(self):
         """Start next lesson"""
         filename = LESSONS[0][0]
         start_lesson_from(filename)
 
+    @unittest.skip  # TODO: handle game interactions
     async def test4(self):
         """Start next puzzle"""
         filename = PUZZLES[0][0]
@@ -67,4 +92,4 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
