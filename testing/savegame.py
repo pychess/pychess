@@ -10,7 +10,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import WHITE, BLACK, LOCAL, F2, F3, E7, E5, G2, G4, D8, H4
 from pychess.Players.Human import Human
-from pychess.System import conf, uistuff
+from pychess.System import conf, uistuff, cancel_all_tasks
 from pychess.widgets import gamewidget
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.games import Games
@@ -55,19 +55,7 @@ class DatabaseTests(unittest.IsolatedAsyncioTestCase):
         self.database_persp.create_toolbuttons()
 
     async def asyncTearDown(self):
-        """Prevent waiting for failed analyzer start in case of local testing"""
-        loop = asyncio.get_event_loop()
-        tasks = [
-            task
-            for task in asyncio.all_tasks(loop)
-            if task is not asyncio.current_task()
-        ]
-        for task in tasks:
-            task.cancel()
-            try:
-                await task
-            except asyncio.CancelledError:
-                print("task cancelled", task)
+        await cancel_all_tasks()
 
     async def test1(self):
         """Play and save Human-Human 1 min game"""

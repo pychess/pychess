@@ -3,7 +3,7 @@ import os
 import unittest
 
 from pychess.Players.engineNest import discoverer
-from pychess.System import uistuff
+from pychess.System import uistuff, cancel_all_tasks
 from pychess.widgets import gamewidget
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.perspectives.games import Games
@@ -58,31 +58,29 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
         except AttributeError:
             pass
 
+        await cancel_all_tasks()
+
     async def test0(self):
         """Init layout"""
         self.learn_persp.activate()
         self.assertEqual(len(self.learn_persp.store), 1)
 
-    @unittest.skip  # TODO: handle game interactions
     async def test1(self):
         """Start next endgame"""
         self.learn_persp.activate()
         pieces = ENDGAMES[0][0].lower()
         start_endgame_from(pieces)
 
-    @unittest.skip  # TODO: handle game interactions
     async def test2(self):
         """Start next lecture"""
         filename = LECTURES[0][0]
         start_lecture_from(filename)
 
-    @unittest.skip  # TODO: handle game interactions
     async def test3(self):
         """Start next lesson"""
         filename = LESSONS[0][0]
         start_lesson_from(filename)
 
-    @unittest.skip  # TODO: handle game interactions
     async def test4(self):
         """Start next puzzle"""
         filename = PUZZLES[0][0]

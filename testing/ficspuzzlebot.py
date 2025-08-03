@@ -12,7 +12,7 @@ from pychess.ic import (
     IC_POS_OBSERVING_EXAMINATION,
     IC_POS_EXAMINATING,
 )
-from pychess.System import uistuff
+from pychess.System import uistuff, cancel_all_tasks
 from pychess.widgets import gamewidget
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.fics import FICS
@@ -47,6 +47,10 @@ class ExamineGameTests(EmittingTestCase):
         self.connection.bm.connect(
             "exGameCreated", self.fics_persp.onObserveGameCreated
         )
+
+    async def asyncTearDown(self):
+        await cancel_all_tasks()
+
 
     async def test1(self):
         """Test puzzlebot starting a new mate in 2 puzzle"""

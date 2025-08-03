@@ -10,7 +10,7 @@ from gi.repository import Gtk
 
 from pychess.Utils.const import FEN_START, NORMALCHESS
 from pychess.Players.engineNest import discoverer
-from pychess.System import uistuff
+from pychess.System import uistuff, cancel_all_tasks
 from pychess.widgets import gamewidget
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
@@ -39,19 +39,7 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         self.games_persp.gamewidgets.clear()
-
-        loop = asyncio.get_event_loop()
-        tasks = [
-            task
-            for task in asyncio.all_tasks(loop)
-            if task is not asyncio.current_task()
-        ]
-        for task in tasks:
-            task.cancel()
-            try:
-                await task
-            except asyncio.CancelledError:
-                print("task cancelled", task)
+        await cancel_all_tasks()
 
     async def test0(self):
         """Open engines dialogs"""
@@ -162,6 +150,9 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
 
         notebook.next_page()
         self.assertIsNotNone(preferencesDialog.sound_tab)
+
+        # stop gst_player.py subprocess
+        preferencesDialog.sound_tab._player.player.terminate()
 
         notebook.next_page()
         self.assertIsNotNone(preferencesDialog.save_tab)
