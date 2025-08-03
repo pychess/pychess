@@ -51,7 +51,6 @@ class ExamineGameTests(EmittingTestCase):
     async def asyncTearDown(self):
         await cancel_all_tasks()
 
-
     async def test1(self):
         """Test puzzlebot starting a new mate in 2 puzzle"""
 

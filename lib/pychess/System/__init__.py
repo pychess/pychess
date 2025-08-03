@@ -22,9 +22,7 @@ if MSYS2:
 async def cancel_all_tasks():
     loop = asyncio.get_event_loop()
     tasks = [
-        task
-        for task in asyncio.all_tasks(loop)
-        if task is not asyncio.current_task()
+        task for task in asyncio.all_tasks(loop) if task is not asyncio.current_task()
     ]
     for task in tasks:
         task.cancel()
