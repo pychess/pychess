@@ -1,6 +1,5 @@
 import asyncio
 import unittest
-import os
 import sys
 
 import gi
