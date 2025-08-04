@@ -77,7 +77,7 @@ jobs:
         Xvfb "${DISPLAY}" &
         xvfb_pid=$!
 
-        PYTHONPATH=lib python3 -m unittest discover -s testing -p "*.py" -v || touch FAILED
+        PYCHESS_UNITTEST=true PYTHONPATH=lib python3 -m unittest discover -s testing -p "*.py" -v || touch FAILED
 
         kill -s SIGTERM "${xvfb_pid}"
         [ -f FAILED ] && exit 1

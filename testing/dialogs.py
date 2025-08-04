@@ -81,7 +81,6 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         event = asyncio.Event()
         self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
 
-        os.environ["PYCHESS_UNITTEST"] = "True"
         dialog.run(FEN_START, NORMALCHESS)
         dialog.widgets["newgamedialog"].response(INITIAL)
         dialog.widgets["newgamedialog"].response(COPY)
@@ -150,9 +149,6 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
 
         notebook.next_page()
         self.assertIsNotNone(preferencesDialog.sound_tab)
-
-        # stop gst_player.py subprocess
-        preferencesDialog.sound_tab._player.player.terminate()
 
         notebook.next_page()
         self.assertIsNotNone(preferencesDialog.save_tab)
