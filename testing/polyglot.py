@@ -80,7 +80,7 @@ SCOUT = "polyglot.scout"
 SQLITE = "polyglot.sqlite"
 
 
-class PolyglotTestCase(unittest.TestCase):
+class PolyglotTestCase(unittest.IsolatedAsyncioTestCase):
     @classmethod
     def setUpClass(cls):
         for fi in (PGN, BIN, SCOUT, SQLITE):
@@ -113,7 +113,7 @@ class PolyglotTestCase(unittest.TestCase):
             board.applyFen(testcase[0])
             self.assertEqual(board.hash, testcase[1])
 
-    def testPolyglot_2(self):
+    async def testPolyglot_2(self):
         """Testing Polyglot book creation"""
 
         widgets = uistuff.GladeWidgets("PyChess.glade")
@@ -129,38 +129,32 @@ class PolyglotTestCase(unittest.TestCase):
 
         self.database_persp.open_chessfile(PGN)
 
-        async def coro():
-            def on_book_created(persp, event):
-                self.assertTrue(os.path.isfile(BIN))
+        def on_book_created(persp, event):
+            self.assertTrue(os.path.isfile(BIN))
 
-                testcase = testcases[0]
-                board = LBoard(Board)
-                board.applyFen(testcase[0])
-                openings = book.getOpenings(board)
-                self.assertEqual(
-                    sorted(openings),
-                    sorted([(newMove(E2, E4), 2, 0), (newMove(A2, A4), 0, 0)]),
-                )
+            testcase = testcases[0]
+            board = LBoard(Board)
+            board.applyFen(testcase[0])
+            openings = book.getOpenings(board)
+            self.assertEqual(
+                sorted(openings),
+                sorted([(newMove(E2, E4), 2, 0), (newMove(A2, A4), 0, 0)]),
+            )
 
-                testcase = testcases[-1]
-                board = LBoard(Board)
-                board.applyFen(testcase[0])
-                openings = book.getOpenings(board)
-                self.assertEqual(openings, [])
+            testcase = testcases[-1]
+            board = LBoard(Board)
+            board.applyFen(testcase[0])
+            openings = book.getOpenings(board)
+            self.assertEqual(openings, [])
 
-                event.set()
+            event.set()
 
-            event = asyncio.Event()
-            self.database_persp.connect("bookfile_created", on_book_created, event)
+        event = asyncio.Event()
+        self.database_persp.connect("bookfile_created", on_book_created, event)
 
-            self.database_persp.create_book(BIN)
+        self.database_persp.create_book(BIN)
 
-            await event.wait()
-
-        loop = asyncio.get_event_loop()
-        loop.set_debug(enabled=True)
-
-        loop.run_until_complete(coro())
+        await event.wait()
 
 
 if __name__ == "__main__":

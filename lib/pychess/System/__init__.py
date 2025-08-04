@@ -19,6 +19,19 @@ if MSYS2:
     ssl._create_default_https_context = ssl._create_unverified_context
 
 
+async def cancel_all_tasks():
+    loop = asyncio.get_event_loop()
+    tasks = [
+        task for task in asyncio.all_tasks(loop) if task is not asyncio.current_task()
+    ]
+    for task in tasks:
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            print("task cancelled", task)
+
+
 async def download_file_async(url, progressbar=None):
     loop = asyncio.get_event_loop()
     future = loop.run_in_executor(None, download_file, url)

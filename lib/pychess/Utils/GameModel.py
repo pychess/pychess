@@ -1,6 +1,7 @@
 import asyncio
 import collections
 import datetime
+import os
 import random
 import traceback
 from queue import Queue
@@ -331,7 +332,7 @@ class GameModel(GObject.GObject):
 
     async def start_analyzer(self, analyzer_type, force_engine=None):
         # Don't start regular analyzers
-        if (
+        if os.environ.get("PYCHESS_UNITTEST") or (
             (self.practice_game or self.lesson_game)
             and force_engine is None
             and not self.solved

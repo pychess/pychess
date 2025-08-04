@@ -17,7 +17,10 @@ class Player:
 
 sound_player = Player()
 
-if sys.platform == "win32":
+if os.environ.get("PYCHESS_UNITTEST"):  # prevent sounds in unittests
+    pass
+
+elif sys.platform == "win32":
     import winsound
 
     class WinsoundPlayer(Player):

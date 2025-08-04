@@ -1,3 +1,4 @@
+import asyncio
 import unittest
 import logging
 
@@ -15,9 +16,8 @@ log.logger.setLevel(logging.DEBUG)
 
 
 class ObserveGameTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
-        self.loop.set_debug(enabled=True)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
 
         self.manager = self.connection.bm
 
@@ -39,7 +39,7 @@ class ObserveGameTests(EmittingTestCase):
             "exGameCreated", self.fics_persp.onObserveGameCreated
         )
 
-    def test1(self):
+    async def test1(self):
         """Test following lecturebot starting new lecture after finishing previous one"""
 
         lines = [
@@ -62,9 +62,18 @@ class ObserveGameTests(EmittingTestCase):
         game = FICSGame(FICSPlayer("LectureBot"), FICSPlayer("LectureBot"), gameno=1)
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        def on_gmwidg_created(persp, gmwidg, event):
+            event.set()
+
+        event = asyncio.Event()
+        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+        await event.wait()
+
+        gamemodel = self.games_persp.cur_gmwidg().gamemodel
+        print(gamemodel)
 
         lines = [
             "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 1 Henley LectureBot -2 0 0 39 39 0 0 1 none (0:00.000) none 0 0 0",
@@ -74,16 +83,16 @@ class ObserveGameTests(EmittingTestCase):
             "Game 1: LectureBot moves: Nf3",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 1)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        print(gamemodel)
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 1)
+        self.assertEqual(gamemodel.ply, 1)
 
         lines = [
             "<12> rnbqkbnr pp-ppppp -------- --p----- -------- -----N-- PPPPPPPP RNBQKB-R W 2 1 1 1 1 0 1 Henley Browne -2 0 0 39 39 0 0 2 P/c7-c5 (0:00.000) c5 0 0 0",
@@ -95,18 +104,18 @@ class ObserveGameTests(EmittingTestCase):
             "fics% " "Game 1: LectureBot moves: b6",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 3)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        print(gamemodel)
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 4)
+        self.assertEqual(gamemodel.ply, 4)
 
-    def test2(self):
+    async def test2(self):
         """Test manual examine lecturebot lec2"""
 
         lines = [
@@ -124,9 +133,19 @@ class ObserveGameTests(EmittingTestCase):
         game = FICSGame(FICSPlayer("gbtami"), FICSPlayer("gbtami"), gameno=77)
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        def on_gmwidg_created(persp, gmwidg, event):
+            event.set()
+
+        event = asyncio.Event()
+        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+        await event.wait()
+
+        gamemodel = self.games_persp.cur_gmwidg().gamemodel
+
+        print(gamemodel)
 
         lines = [
             # bsetup
@@ -191,16 +210,16 @@ class ObserveGameTests(EmittingTestCase):
             BLOCK_END,
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 10)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        print(gamemodel.boards[-1])
 
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 3)
+        self.assertEqual(gamemodel.ply, 0)
 
         lines = [
             # kibitz Example 2:...
@@ -256,16 +275,13 @@ class ObserveGameTests(EmittingTestCase):
             BLOCK_END,
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
+        await self.connection.process_lines(lines)
 
-        self.loop.run_until_complete(coro())
+        self.assertEqual(game.move_queue.qsize(), 13)
 
-        self.assertEqual(game.move_queue.qsize(), 0)
+        print(gamemodel.boards[-1])
 
-        print(self.games_persp.cur_gmwidg().gamemodel.boards[1])
-
-        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 1)
+        self.assertEqual(gamemodel.ply, 0)
 
 
 if __name__ == "__main__":

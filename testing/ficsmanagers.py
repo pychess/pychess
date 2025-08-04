@@ -134,12 +134,13 @@ class DummyVarManager:
         pass
 
 
-class EmittingTestCase(unittest.TestCase):
+class EmittingTestCase(unittest.IsolatedAsyncioTestCase):
     """Helps working with unittests on emitting objects.
     Warning: Strong connection to fics managers"""
 
-    def setUp(self):
-        self.loop = asyncio.get_event_loop()
+    async def asyncSetUp(self):
+        loop = asyncio.get_event_loop()
+        loop.set_debug(enabled=True)
 
         self.connection = DummyConnection()
         self.connection.players = FICSPlayers(self.connection)
@@ -165,7 +166,21 @@ class EmittingTestCase(unittest.TestCase):
         self.connection.seeks.start()
         self.connection.challenges.start()
 
-    def runAndAssertEquals(self, signal, lines, expectedResults):
+    async def asyncTearDown(self):
+        loop = asyncio.get_event_loop()
+        tasks = [
+            task
+            for task in asyncio.all_tasks(loop)
+            if task is not asyncio.current_task()
+        ]
+        for task in tasks:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                print("Task cancelled", task)
+
+    async def runAndAssertEquals(self, signal, lines, expectedResults):
         self.args = None
 
         def handler(manager, *args):
@@ -179,15 +194,12 @@ class EmittingTestCase(unittest.TestCase):
 
         random.shuffle(self.connection.client.predictions)
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertNotEqual(self.args, None, "%s signal wasn't sent" % signal)
         self.assertEqual(self.args, expectedResults)
 
-    def runAndAssertEqualsNotify(self, obj, prop, lines, expectedResults):
+    async def runAndAssertEqualsNotify(self, obj, prop, lines, expectedResults):
         self.args = None
         self.prop_value = None
 
@@ -198,10 +210,7 @@ class EmittingTestCase(unittest.TestCase):
         obj.connect("notify::" + prop, handler)
         random.shuffle(self.connection.client.predictions)
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertNotEqual(
             self.args,
@@ -210,7 +219,7 @@ class EmittingTestCase(unittest.TestCase):
         )
         self.assertEqual(self.prop_value, expectedResults)
 
-    def runAndAssertEqualPropValue(self, signal, lines, prop, expectedResult):
+    async def runAndAssertEqualPropValue(self, signal, lines, prop, expectedResult):
         self.prop_value = None
 
         def handler(manager, arg):
@@ -219,10 +228,7 @@ class EmittingTestCase(unittest.TestCase):
         self.manager.connect(signal, handler)
         random.shuffle(self.connection.client.predictions)
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertNotEqual(self.prop_value, None, "%s signal wasn't sent" % signal)
         self.assertEqual(self.prop_value, expectedResult)
@@ -233,11 +239,11 @@ class EmittingTestCase(unittest.TestCase):
 
 
 class AdjournManagerTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.manager = self.connection.adm
 
-    def test1(self):
+    async def test1(self):
         """Testing an advanced line"""
 
         signal = "onAdjournmentsList"
@@ -266,9 +272,9 @@ class AdjournManagerTests(EmittingTestCase):
         )
         expectedResult = [game]
 
-        self.runAndAssertEquals(signal, lines, (expectedResult,))
+        await self.runAndAssertEquals(signal, lines, (expectedResult,))
 
-    def test2(self):
+    async def test2(self):
         """Testing a double line"""
 
         signal = "onAdjournmentsList"
@@ -309,12 +315,12 @@ class AdjournManagerTests(EmittingTestCase):
         )
 
         expectedResult = [game1, game2]
-        self.runAndAssertEquals(signal, lines, (expectedResult,))
+        await self.runAndAssertEquals(signal, lines, (expectedResult,))
 
-    def test3(self):
+    async def test3(self):
         """The case where player has no games in adjourned"""
 
-        self.runAndAssertEquals(
+        await self.runAndAssertEquals(
             "onAdjournmentsList",
             ["%s has no adjourned games." % self.connection.username],
             ([],),
@@ -326,11 +332,11 @@ class AdjournManagerTests(EmittingTestCase):
 
 
 class SeekManagerTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.manager = self.connection.glm
 
-    def test1(self):
+    async def test1(self):
         lines = [
             "<s> 10 w=warbly ti=00 rt=1291  t=3 i=0 r=r tp=blitz c=? rr=1200-1400 a=t f=t"
         ]
@@ -348,9 +354,9 @@ class SeekManagerTests(EmittingTestCase):
             rmax=1400,
             formula=True,
         )
-        self.runAndAssertEquals("addSeek", lines, (expectedResult,))
+        await self.runAndAssertEquals("addSeek", lines, (expectedResult,))
 
-    def test2(self):
+    async def test2(self):
         lines = [
             "<s> 124 w=leaderbeans ti=02 rt=1637E t=3 i=0 r=u tp=blitz c=B rr=0-9999 a=t f=f"
         ]
@@ -361,9 +367,9 @@ class SeekManagerTests(EmittingTestCase):
         expectedResult = FICSSeek(
             124, player, 3, 0, False, "black", GAME_TYPES["blitz"]
         )
-        self.runAndAssertEquals("addSeek", lines, (expectedResult,))
+        await self.runAndAssertEquals("addSeek", lines, (expectedResult,))
 
-    def test3(self):
+    async def test3(self):
         lines = [
             "<s> 14 w=microknight ti=00 rt=1294  t=15 i=0 r=u tp=standard c=? rr=1100-1450 a=f f=f"
         ]
@@ -381,22 +387,22 @@ class SeekManagerTests(EmittingTestCase):
             rmax=1450,
             automatic=False,
         )
-        self.runAndAssertEquals("addSeek", lines, (expectedResult,))
+        await self.runAndAssertEquals("addSeek", lines, (expectedResult,))
 
-    def test4(self):
+    async def test4(self):
         """Seek clear"""
-        self.runAndAssertEquals("clearSeeks", ["<sc>"], ())
+        await self.runAndAssertEquals("clearSeeks", ["<sc>"], ())
 
-    def test5(self):
+    async def test5(self):
         """Seek remove"""
         lines = [
             "<s> 124 w=leaderbeans ti=02 rt=1637E t=3 i=0 r=u tp=blitz c=B rr=0-9999 a=t f=f",
             "<sr> 124",
             "",
         ]
-        self.runAndAssertEquals("removeSeek", lines, (124,))
+        await self.runAndAssertEquals("removeSeek", lines, (124,))
 
-    def test6(self):
+    async def test6(self):
         """Seek add resulting from a seek command reply"""
         lines = [
             BLOCK_START + "54" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
@@ -410,9 +416,9 @@ class SeekManagerTests(EmittingTestCase):
         expectedResult = FICSSeek(
             121, player, 6, 1, True, None, GAME_TYPES["wild/4"], automatic=False
         )
-        self.runAndAssertEquals("addSeek", lines, (expectedResult,))
+        await self.runAndAssertEquals("addSeek", lines, (expectedResult,))
 
-    def test7(self):
+    async def test7(self):
         """Confirm that seeks remove resulting from an unseek command reply
         is caught by our_seeks_removed rather than on_seek_remove
         """
@@ -422,9 +428,9 @@ class SeekManagerTests(EmittingTestCase):
             "Your seeks have been removed.",
             BLOCK_END,
         ]
-        self.runAndAssertEquals("our_seeks_removed", lines, ())
+        await self.runAndAssertEquals("our_seeks_removed", lines, ())
 
-    def test8(self):
+    async def test8(self):
         lines = [
             BLOCK_START
             + "62"
@@ -440,9 +446,9 @@ class SeekManagerTests(EmittingTestCase):
             "(2 player(s) saw the seek.)",
             BLOCK_END,
         ]
-        self.runAndAssertEquals("seek_updated", lines, ("to automatic",))
+        await self.runAndAssertEquals("seek_updated", lines, ("to automatic",))
 
-    def test9(self):
+    async def test9(self):
         lines = [
             BLOCK_START
             + "62"
@@ -459,11 +465,11 @@ class SeekManagerTests(EmittingTestCase):
             "(11 player(s) saw the seek.)",
             BLOCK_END,
         ]
-        self.runAndAssertEquals(
+        await self.runAndAssertEquals(
             "seek_updated", lines, ("to manual; rating range now 0-9999",)
         )
 
-    def test10(self):
+    async def test10(self):
         """Seek add resulting from a seek matches command reply"""
         lines = [
             BLOCK_START + "66" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
@@ -494,12 +500,12 @@ class SeekManagerTests(EmittingTestCase):
         expectedResult = FICSSeek(
             46, player, 1, 0, True, None, GAME_TYPES["lightning"], automatic=False
         )
-        self.runAndAssertEquals("addSeek", lines, (expectedResult,))
+        await self.runAndAssertEquals("addSeek", lines, (expectedResult,))
 
 
 class BoardManagerTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.manager = self.connection.bm
 
         self.deleted_offers = set()
@@ -522,7 +528,7 @@ class BoardManagerTests(EmittingTestCase):
             % offer
         )
 
-    def test1(self):
+    async def test1(self):
         lines = [
             BLOCK_START + "110" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
             "Your seek matches one already posted by Thegermain.",
@@ -554,10 +560,10 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_seeks, {111, 25, 153})
 
-    def test2(self):
+    async def test2(self):
         lines = [
             BLOCK_START + "111" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
             "Your seek matches one already posted by GuestRLJC.",
@@ -586,10 +592,10 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_seeks, {135})
 
-    def test3(self):
+    async def test3(self):
         lines = [
             self.match_offer(11),
             BLOCK_START + "172" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
@@ -627,11 +633,11 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_seeks, {89, 90})
         self.assertEqual(self.deleted_offers, {11})
 
-    def test4(self):
+    async def test4(self):
         lines = [
             self.match_offer(11),
             BLOCK_START + "172" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
@@ -667,11 +673,11 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_seeks, {89})
         self.assertEqual(self.deleted_offers, {11})
 
-    def test5(self):
+    async def test5(self):
         lines = [
             self.match_offer(39),
             BLOCK_START + "213" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
@@ -706,11 +712,11 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_seeks, {6})
         self.assertEqual(self.deleted_offers, {39})
 
-    def test6(self):
+    async def test6(self):
         lines = [
             self.match_offer(53),
             BLOCK_START + "172" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
@@ -745,11 +751,11 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_seeks, {93, 71})
         self.assertEqual(self.deleted_offers, {53})
 
-    def test7(self):
+    async def test7(self):
         lines = [
             BLOCK_START + "111" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
             "Your seek qualifies for antiseptic's getgame.",
@@ -782,10 +788,10 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_seeks, {145})
 
-    def test8(self):
+    async def test8(self):
         lines = [
             BLOCK_START + "111" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
             "Your seek qualifies for opmentor's getgame.",
@@ -815,10 +821,10 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_seeks, {179, 3})
 
-    def test9(self):
+    async def test9(self):
         lines = [
             self.match_offer(6),
             BLOCK_START + "538" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
@@ -852,11 +858,11 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_offers, {6})
         self.assertEqual(self.deleted_seeks, {33})
 
-    def test10(self):
+    async def test10(self):
         lines = [
             self.match_offer(14),
             self.match_offer(9),
@@ -898,11 +904,11 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_offers, {14, 9})
         self.assertEqual(self.deleted_seeks, {68, 105, 89})
 
-    def test11(self):
+    async def test11(self):
         lines = [
             self.match_offer(12),
             BLOCK_START + "279" + BLOCK_SEPARATOR + "155" + BLOCK_SEPARATOR,
@@ -941,11 +947,11 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_offers, {12})
         self.assertEqual(self.deleted_seeks, {125, 127, 109})
 
-    def test12(self):
+    async def test12(self):
         lines = [
             self.match_offer(4),
             BLOCK_START + "321" + BLOCK_SEPARATOR + "73" + BLOCK_SEPARATOR,
@@ -978,10 +984,10 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_offers, {4})
 
-    def test13(self):
+    async def test13(self):
         lines = [
             self.match_offer(25),
             BLOCK_START + "321" + BLOCK_SEPARATOR + "73" + BLOCK_SEPARATOR,
@@ -1014,11 +1020,11 @@ class BoardManagerTests(EmittingTestCase):
         )
         me.game = game
         opponent.game = game
-        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        await self.runAndAssertEquals("playGameCreated", lines, (game,))
         self.assertEqual(self.deleted_offers, {25})
         self.assertEqual(self.deleted_seeks, {117})
 
-    def test14(self):
+    async def test14(self):
         """Make sure observe-game-created messages are caught"""
         lines = [
             "{Game 12 (electricbenj vs. antonymelvin) Creating rated wild/fr match.}",
@@ -1030,14 +1036,11 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END,
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertEqual(self.connection.client.commands[-1], "moves 12")
 
-    def test15(self):
+    async def test15(self):
         """Test acquiring preview without adjournment list"""
 
         signal = "archiveGamePreview"
@@ -1076,9 +1079,9 @@ class BoardManagerTests(EmittingTestCase):
         game.bplayer.ratings[TYPE_BLITZ] = 1336
         expectedResults = (game,)
 
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
 
-    def test16(self):
+    async def test16(self):
         """Test acquiring preview with adjournment list"""
 
         signal = "archiveGamePreview"
@@ -1118,9 +1121,9 @@ class BoardManagerTests(EmittingTestCase):
         game.wplayer.ratings[TYPE_BLITZ] = 1233
         game.bplayer.ratings[TYPE_BLITZ] = 1455
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
 
-    def test17(self):
+    async def test17(self):
         """Test observing game"""
 
         lines = [
@@ -1133,10 +1136,7 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END,
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertEqual(self.connection.client.commands[-1], "moves 463")
 
@@ -1191,19 +1191,19 @@ class BoardManagerTests(EmittingTestCase):
         game = FICSGame(FICSPlayer("schachbjm"), FICSPlayer("Maras"), gameno=463)
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
 
 
 class GamesTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         # We don't want to put HelperManager into EmittingTestCase.setUp()
         # because BoardManeger and HelperManger both register on_game_remove regexp
         # and we use only one connection in our tests
         self.connection.hm = HelperManager(self.connection, self.connection)
         self.manager = self.connection.games
 
-    def test1(self):
+    async def test1(self):
         """Make sure private game messages are caught"""
         lines = ["{Game 12 (VrtX vs. pulsoste) Creating rated crazyhouse match.}"]
         game = FICSGame(
@@ -1214,7 +1214,7 @@ class GamesTests(EmittingTestCase):
             game_type=GAME_TYPES["crazyhouse"],
             private=False,
         )
-        self.runAndAssertEquals(
+        await self.runAndAssertEquals(
             "FICSGameCreated",
             lines,
             (
@@ -1230,67 +1230,67 @@ class GamesTests(EmittingTestCase):
             BLOCK_END,
         ]
         game = self.connection.games[game]
-        self.runAndAssertEqualsNotify(game, "private", lines, True)
+        await self.runAndAssertEqualsNotify(game, "private", lines, True)
 
-    def test2(self):
+    async def test2(self):
         """Make sure the correct draw reason was caught"""
         lines = [
             "{Game 117 (Hevonen vs. narutochess) narutochess ran out of time and Hevonen has no material to mate} 1/2-1/2"
         ]
-        self.runAndAssertEqualPropValue(
+        await self.runAndAssertEqualPropValue(
             "FICSGameEnded", lines, "reason", DRAW_WHITEINSUFFICIENTANDBLACKTIME
         )
 
-    def test3(self):
+    async def test3(self):
         """Make sure the correct draw reason was caught"""
         lines = [
             "{Game 117 (Hevonen vs. narutochess) Hevonen ran out of time and narutochess has no material to mate} 1/2-1/2"
         ]
-        self.runAndAssertEqualPropValue(
+        await self.runAndAssertEqualPropValue(
             "FICSGameEnded", lines, "reason", DRAW_BLACKINSUFFICIENTANDWHITETIME
         )
 
-    def test4(self):
+    async def test4(self):
         """Make sure the correct draw reason was caught"""
         lines = [
             "{Game 117 (GuestBKKF vs. GuestTSNL) GuestBKKF ran out of time and GuestTSNL has no material to mate} 1/2-1/2"
         ]
-        self.runAndAssertEqualPropValue(
+        await self.runAndAssertEqualPropValue(
             "FICSGameEnded", lines, "reason", DRAW_BLACKINSUFFICIENTANDWHITETIME
         )
 
-    def test5(self):
+    async def test5(self):
         """Make sure the correct draw reason was caught"""
         lines = [
             "{Game 117 (GuestBKKF vs. GuestTSNL) GuestTSNL ran out of time and GuestBKKF has no material to mate} 1/2-1/2"
         ]
-        self.runAndAssertEqualPropValue(
+        await self.runAndAssertEqualPropValue(
             "FICSGameEnded", lines, "reason", DRAW_WHITEINSUFFICIENTANDBLACKTIME
         )
 
-    def test6(self):
+    async def test6(self):
         lines = [
             "{Game 84 (mgatto vs. JoseCapablanca) Game courtesyadjourned by mgatto} *"
         ]
-        self.runAndAssertEqualPropValue(
+        await self.runAndAssertEqualPropValue(
             "FICSGameEnded", lines, "reason", ADJOURNED_COURTESY_WHITE
         )
 
-    def test7(self):
+    async def test7(self):
         lines = [
             "{Game 84 (mgatto vs. JoseCapablanca) Game courtesyadjourned by JoseCapablanca} *"
         ]
-        self.runAndAssertEqualPropValue(
+        await self.runAndAssertEqualPropValue(
             "FICSGameEnded", lines, "reason", ADJOURNED_COURTESY_BLACK
         )
 
 
 class HelperManagerTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.connection.hm = HelperManager(self.connection, self.connection)
 
-    def test1(self):
+    async def test1(self):
         """Make sure ratings <1000 are caught"""
         lines = [
             "Artmachine Blitz (1276), Std ( 819), Wild (----), Light(----), Bug(----)",
@@ -1299,15 +1299,15 @@ class HelperManagerTests(EmittingTestCase):
         signal = "ratings_changed"
         player = self.connection.players.get("Artmachine")
         self.manager = player
-        self.runAndAssertEquals(signal, lines, (TYPE_STANDARD, player))
+        await self.runAndAssertEquals(signal, lines, (TYPE_STANDARD, player))
 
 
 class OfferManagerTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.manager = self.connection.om
 
-    def test1(self):
+    async def test1(self):
         lines = [
             "<pf> 59 w=antiseptic t=match p=antiseptic (1945) mgatto (1729) rated wild 6 1 Loaded from wild/4 (adjourned)"
         ]
@@ -1316,9 +1316,9 @@ class OfferManagerTests(EmittingTestCase):
         expectedResult = FICSChallenge(
             59, player, 6, 1, True, None, GAME_TYPES["wild/4"], adjourned=True
         )
-        self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
+        await self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
 
-    def test2(self):
+    async def test2(self):
         lines = [
             "<pf> 71 w=joseph t=match p=joseph (1632) mgatto (1742) rated wild 5 1 Loaded from wild/fr (adjourned)"
         ]
@@ -1327,18 +1327,18 @@ class OfferManagerTests(EmittingTestCase):
         expectedResult = FICSChallenge(
             71, player, 5, 1, True, None, GAME_TYPES["wild/fr"], adjourned=True
         )
-        self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
+        await self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
 
-    def test3(self):
+    async def test3(self):
         lines = [
             "<pf> 45 w=GuestGYXR t=match p=GuestGYXR (----) Lobais (----) unrated losers 2 12"
         ]
         expectedResult = FICSChallenge(
             45, FICSPlayer("GuestGYXR"), 2, 12, False, None, GAME_TYPES["losers"]
         )
-        self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
+        await self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
 
-    def test4(self):
+    async def test4(self):
         lines = [
             "<pf> 39 w=GuestDVXV t=match p=GuestDVXV (----) GuestNXMP (----) unrated blitz 2 12 (adjourned)"
         ]
@@ -1352,33 +1352,33 @@ class OfferManagerTests(EmittingTestCase):
             GAME_TYPES["blitz"],
             adjourned=True,
         )
-        self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
+        await self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
 
-    def test5(self):
+    async def test5(self):
         lines = [
             "<pf> 20 w=GuestFQPB t=match p=GuestFQPB (----) [white] mgatto (1322) unrated blitz 2 12"
         ]
         expectedResult = FICSChallenge(
             20, FICSPlayer("GuestFQPB"), 2, 12, False, "white", GAME_TYPES["blitz"]
         )
-        self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
+        await self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
 
-    def test6(self):
+    async def test6(self):
         lines = [
             "<pf> 7 w=GuestFQPB t=match p=GuestFQPB (----) [black] mgatto (----) unrated untimed"
         ]
         expectedResult = FICSChallenge(
             7, FICSPlayer("GuestFQPB"), 0, 0, False, "black", GAME_TYPES["untimed"]
         )
-        self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
+        await self.runAndAssertEquals("onChallengeAdd", lines, (expectedResult,))
 
 
 class ConsoleManagerTests(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.manager = self.connection.com
 
-    def test1(self):
+    async def test1(self):
         # id=0 needed here to let consolehandler work
         lines = [
             BLOCK_START + "0" + BLOCK_SEPARATOR + "37" + BLOCK_SEPARATOR,
@@ -1407,16 +1407,16 @@ class ConsoleManagerTests(EmittingTestCase):
         ]
         expected_result = [TelnetLine(line, 37, BL) for line in lines[1:-1]]
         expected_result.append(TelnetLine("", 37, BL))
-        self.runAndAssertEquals("consoleMessage", lines, (expected_result, None))
+        await self.runAndAssertEquals("consoleMessage", lines, (expected_result, None))
 
 
 class FICSObjectsCleanupTest(EmittingTestCase):
-    def setUp(self):
-        EmittingTestCase.setUp(self)
+    async def asyncSetUp(self):
+        await EmittingTestCase.asyncSetUp(self)
         self.connection.hm = HelperManager(self.connection, self.connection)
         self.manager = self.connection.bm
 
-    def test(self):
+    async def test(self):
         """FICS objects clean up"""
 
         lines = [
@@ -1427,10 +1427,7 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             "<s> 222 w=GuestRLJC ti=01 rt=0P t=5 i=0 r=u tp=blitz c=? rr=0-9999 a=t f=f",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         signal = "playGameCreated"
         lines = [
@@ -1448,16 +1445,13 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             BLOCK_END,
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         lines == []
         game = FICSGame(FICSPlayer("GuestGTFC"), FICSPlayer("GuestRLJC"), gameno=111)
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
+        await self.runAndAssertEquals(signal, lines, expectedResults)
 
         lines = [
             "{Game 111 (GuestGTFC vs. GuestRLJC) Game aborted on move 1} *",
@@ -1465,10 +1459,7 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             "<wd> GuestGTFC",
         ]
 
-        async def coro():
-            await self.connection.process_lines(lines)
-
-        self.loop.run_until_complete(coro())
+        await self.connection.process_lines(lines)
 
         self.assertEqual(self.connection.challenges.challenges, {})
         self.assertEqual(self.connection.seeks.seeks, {})
