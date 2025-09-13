@@ -24,6 +24,8 @@ from pychess.Utils.const import (
     HIDDENPAWNSCHESS,
     ALLPAWNSCHESS,
     ALLWHITEPAWNSCHESS,
+    HIDDENWHITECHESS,
+    HIDDENBLACKCHESS,
     WILDCASTLECHESS,
     WILDCASTLESHUFFLECHESS,
     THREECHECKCHESS,
@@ -73,6 +75,8 @@ from .blindfold import (
     AllWhiteBoard,
     AllPawnsBoard,
     AllWhitePawnsBoard,
+    HiddenWhiteBoard,
+    HiddenBlackBoard,
 )
 from .kingofthehill import KingOfTheHillBoard
 from .threecheck import ThreeCheckBoard
@@ -113,6 +117,8 @@ variants = {
     HIDDENPIECESCHESS: HiddenPiecesBoard,
     ALLPAWNSCHESS: AllPawnsBoard,
     ALLWHITEPAWNSCHESS: AllWhitePawnsBoard,
+    HIDDENWHITECHESS: HiddenWhiteBoard,
+    HIDDENBLACKCHESS: HiddenBlackBoard,
     WILDCASTLECHESS: WildcastleBoard,
     WILDCASTLESHUFFLECHESS: WildcastleShuffleBoard,
     KINGOFTHEHILLCHESS: KingOfTheHillBoard,
