@@ -53,6 +53,8 @@ from pychess.Variants.blindfold import (
     AllWhiteBoard,
     AllPawnsBoard,
     AllWhitePawnsBoard,
+    HiddenWhiteBoard,
+    HiddenBlackBoard,
 )
 from . import preferencesDialog
 from pychess.perspectives import perspective_manager
@@ -61,7 +63,7 @@ from pychess.widgets.preferencesDialog import board_items
 # This file contains the class that is used to draw the board
 
 
-# util functions on rectangles to redner board used by the class
+# util functions on rectangles to render board used by the class
 
 
 def intersects(r_zero, r_one):
@@ -1397,6 +1399,12 @@ class BoardView(Gtk.DrawingArea):
                 return
         elif self.model.variant == HiddenPiecesBoard:
             if piece.piece != PAWN:
+                return
+        elif self.model.variant == HiddenWhiteBoard:
+            if piece.color != BLACK:
+                return
+        elif self.model.variant == HiddenBlackBoard:
+            if piece.color == BLACK:
                 return
 
         if piece.captured and not self.showCaptured:
