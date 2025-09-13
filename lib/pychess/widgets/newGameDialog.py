@@ -21,6 +21,7 @@ try:
 
     gi.require_version("GtkSource", "4")
     from gi.repository import GtkSource
+
     GtkSource.init()
 except Exception:
     print("Failed to import required gi module version")
