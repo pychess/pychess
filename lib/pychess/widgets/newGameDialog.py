@@ -19,8 +19,9 @@ try:
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gdk, Gtk, GLib, GObject
 
-    gi.require_version("GtkSource", "3.0")
+    gi.require_version("GtkSource", "4")
     from gi.repository import GtkSource
+    GtkSource.init()
 except Exception:
     print("Failed to import required gi module version")
     sys.exit(1)
@@ -1006,7 +1007,7 @@ class EnterNotationExtension(_GameInitializationMode):
         # Init new version
         if hasattr(man.props, "search_path"):
             try:
-                path = os.path.join(getDataPrefix(), "gtksourceview-3.0/language-specs")
+                path = os.path.join(getDataPrefix(), "gtksourceview-4/language-specs")
                 man.props.search_path = man.props.search_path + [path]
                 if "pgn" in man.get_language_ids():
                     lang = man.get_language("pgn")
