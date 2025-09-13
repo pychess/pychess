@@ -169,8 +169,8 @@ else:
 DATA_FILES += [("share/icons/hicolor/24x24/apps", ["pychess.png"])]
 DATA_FILES += [
     (
-        "share/gtksourceview-3.0/language-specs",
-        ["gtksourceview-3.0/language-specs/pgn.lang"],
+        "share/gtksourceview-4/language-specs",
+        ["gtksourceview-4/language-specs/pgn.lang"],
     )
 ]
 
@@ -254,7 +254,7 @@ if msi:
 
     # Collect the list of missing dll when cx_freeze builds the app
     gtk_exec = [
-        "libgtksourceview-3.0-1.dll",
+        "libgtksourceview-4-0.dll",
         "libjpeg-8.dll",
         "librsvg-2-2.dll",
         "libwinpthread-1.dll",
