@@ -28,14 +28,6 @@ pychess.Variants.atomic module
     :undoc-members:
     :show-inheritance:
 
-pychess.Variants.blindfold module
----------------------------------
-
-.. automodule:: pychess.Variants.blindfold
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.Variants.bughouse module
 --------------------------------
 

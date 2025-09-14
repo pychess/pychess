@@ -40,15 +40,15 @@ def drawPiece(
     x,
     y,
     psize,
-    allwhite=False,
-    allpawns=False,
+    drawAsWhite=False,
+    drawAsPawn=False,
     asean=False,
     variant=None,
 ):
     """Rendering pieces using .svg chess figurines"""
 
-    color = WHITE if allwhite else piece.color
-    sign = PAWN if allpawns else piece.sign
+    color = WHITE if drawAsWhite else piece.color
+    sign = PAWN if drawAsPawn else piece.sign
     if variant is not None and variant == SITTUYINCHESS:
         image = sittuyin_svg_pieces[color][sign]
         w, h = image.props.width, image.props.height

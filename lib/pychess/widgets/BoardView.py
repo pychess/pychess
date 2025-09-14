@@ -46,16 +46,6 @@ from pychess.Utils.const import (
     SITTUYINCHESS,
     BLACK,
 )
-from pychess.Variants.blindfold import (
-    BlindfoldBoard,
-    HiddenPawnsBoard,
-    HiddenPiecesBoard,
-    AllWhiteBoard,
-    AllPawnsBoard,
-    AllWhitePawnsBoard,
-    HiddenWhiteBoard,
-    HiddenBlackBoard,
-)
 from . import preferencesDialog
 from pychess.perspectives import perspective_manager
 from pychess.widgets.preferencesDialog import board_items
@@ -209,13 +199,6 @@ class BoardView(Gtk.DrawingArea):
         if gamemodel is None:
             gamemodel = GameModel()
         self.model = gamemodel
-
-        self.allwhite = (self.model.variant == AllWhiteBoard) or (
-            self.model.variant == AllWhitePawnsBoard
-        )
-        self.allpawns = (self.model.variant == AllPawnsBoard) or (
-            self.model.variant == AllWhitePawnsBoard
-        )
         self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
         self.setup_position = setup_position
@@ -1473,8 +1456,8 @@ class BoardView(Gtk.DrawingArea):
             cx_loc + CORD_PADDING,
             cy_loc + CORD_PADDING,
             side - CORD_PADDING * 2,
-            allwhite=self.drawAsWhite,
-            allpawns=self.drawAsPawns,
+            drawAsWhite=self.drawAsWhite,
+            drawAsPawn=self.drawAsPawns,
             asean=self.asean,
             variant=self.model.variant.variant,
         )

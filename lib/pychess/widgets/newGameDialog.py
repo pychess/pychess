@@ -33,7 +33,6 @@ from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import (
     NORMALCHESS,
-    VARIANTS_BLINDFOLD,
     FISCHERRANDOMCHESS,
     VARIANTS_ODDS,
     VARIANTS_SHUFFLE,
@@ -469,7 +468,6 @@ class _GameInitializationMode:
         ImageMenu.switchWithImage(configImage, alignment)
 
         groupNames = {
-            VARIANTS_BLINDFOLD: _("Blindfold"),
             VARIANTS_ODDS: _("Odds"),
             VARIANTS_SHUFFLE: _("Shuffle"),
             VARIANTS_OTHER: _("Other (standard rules)"),
