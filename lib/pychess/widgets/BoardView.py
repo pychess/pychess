@@ -278,6 +278,12 @@ class BoardView(Gtk.DrawingArea):
         self._show_cords = False
         self.show_cords = conf.get("showCords")
 
+        self._drawWhitePawns = True
+        self._drawWhitePieces = True
+        self._drawBlackPawns = True
+        self._drawBlackPieces = True
+        self._drawAsPawns = False
+        self._drawAsWhite = False
         self.drawWhitePawns = conf.get("drawWhitePawns")
         self.drawWhitePieces = conf.get("drawWhitePieces")
         self.drawBlackPawns = conf.get("drawBlackPawns")
@@ -2161,10 +2167,59 @@ class BoardView(Gtk.DrawingArea):
         self._show_cords = show_cords
         self.redrawCanvas()
 
+    def _setDrawWhitePawns(self, drawWhitePawns):
+        self._drawWhitePawns = drawWhitePawns
+        self.redrawCanvas()
+
+    def _setDrawWhitePieces(self, drawWhitePieces):
+        self._drawWhitePieces = drawWhitePieces
+        self.redrawCanvas()
+
+    def _setDrawBlackPawns(self, drawBlackPawns):
+        self._drawBlackPawns = drawBlackPawns
+        self.redrawCanvas()
+
+    def _setDrawBlackPieces(self, drawBlackPieces):
+        self._drawBlackPieces = drawBlackPieces
+        self.redrawCanvas()
+
+    def _setDrawAsPawns(self, drawAsPawns):
+        self._drawAsPawns = drawAsPawns
+        self.redrawCanvas()
+
+    def _setDrawAsWhite(self, drawAsWhite):
+        self._drawAsWhite = drawAsWhite
+        self.redrawCanvas()
+
     def _getShowCords(self):
         return self._show_cords
 
+    def _getDrawWhitePawns(self):
+        return self._drawWhitePawns
+
+    def _getDrawWhitePieces(self):
+        return self._drawWhitePieces
+
+    def _getDrawBlackPawns(self):
+        return self._drawBlackPawns
+
+    def _getDrawBlackPieces(self):
+        return self._drawBlackPieces
+
+    def _getDrawAsPawns(self):
+        return self._drawAsPawns
+
+    def _getDrawAsWhite(self):
+        return self._drawAsWhite
+
     show_cords = property(_getShowCords, _setShowCords)
+
+    drawWhitePawns = property(_getDrawWhitePawns, _setDrawWhitePawns)
+    drawWhitePieces = property(_getDrawWhitePieces, _setDrawWhitePieces)
+    drawBlackPawns = property(_getDrawBlackPawns, _setDrawBlackPawns)
+    drawBlackPieces = property(_getDrawBlackPieces, _setDrawBlackPieces)
+    drawAsPawns = property(_getDrawAsPawns, _setDrawAsPawns)
+    drawAsWhite = property(_getDrawAsWhite, _setDrawAsWhite)
 
     def _setShowCaptured(self, show_captured, force_restore=False):
         self._show_captured = (
