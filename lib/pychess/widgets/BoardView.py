@@ -46,16 +46,6 @@ from pychess.Utils.const import (
     SITTUYINCHESS,
     BLACK,
 )
-from pychess.Variants.blindfold import (
-    BlindfoldBoard,
-    HiddenPawnsBoard,
-    HiddenPiecesBoard,
-    AllWhiteBoard,
-    AllPawnsBoard,
-    AllWhitePawnsBoard,
-    HiddenWhiteBoard,
-    HiddenBlackBoard,
-)
 from . import preferencesDialog
 from pychess.perspectives import perspective_manager
 from pychess.widgets.preferencesDialog import board_items
@@ -209,13 +199,6 @@ class BoardView(Gtk.DrawingArea):
         if gamemodel is None:
             gamemodel = GameModel()
         self.model = gamemodel
-
-        self.allwhite = (self.model.variant == AllWhiteBoard) or (
-            self.model.variant == AllWhitePawnsBoard
-        )
-        self.allpawns = (self.model.variant == AllPawnsBoard) or (
-            self.model.variant == AllWhitePawnsBoard
-        )
         self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
         self.setup_position = setup_position
@@ -241,6 +224,12 @@ class BoardView(Gtk.DrawingArea):
         self.notify_cids = [
             conf.notify_add("drawGrid", self.onDrawGrid),
             conf.notify_add("showCords", self.onShowCords),
+            conf.notify_add("drawWhitePawns", self.onDrawWhitePawns),
+            conf.notify_add("drawWhitePieces", self.onDrawWhitePieces),
+            conf.notify_add("drawBlackPawns", self.onDrawBlackPawns),
+            conf.notify_add("drawBlackPieces", self.onDrawBlackPieces),
+            conf.notify_add("drawAsPawns", self.onDrawAsPawns),
+            conf.notify_add("drawAsWhite", self.onDrawAsWhite),
             conf.notify_add("showCaptured", self.onShowCaptured),
             conf.notify_add("faceToFace", self.onFaceToFace),
             conf.notify_add("noAnimation", self.onNoAnimation),
@@ -288,6 +277,19 @@ class BoardView(Gtk.DrawingArea):
         self.no_frame = False
         self._show_cords = False
         self.show_cords = conf.get("showCords")
+
+        self._drawWhitePawns = True
+        self._drawWhitePieces = True
+        self._drawBlackPawns = True
+        self._drawBlackPieces = True
+        self._drawAsPawns = False
+        self._drawAsWhite = False
+        self.drawWhitePawns = conf.get("drawWhitePawns")
+        self.drawWhitePieces = conf.get("drawWhitePieces")
+        self.drawBlackPawns = conf.get("drawBlackPawns")
+        self.drawBlackPieces = conf.get("drawBlackPieces")
+        self.drawAsPawns = conf.get("drawAsPawns")
+        self.drawAsWhite = conf.get("drawAsWhite")
 
         self._draw_grid = False
         self.draw_grid = conf.get("drawGrid")
@@ -478,6 +480,42 @@ class BoardView(Gtk.DrawingArea):
         co-ordinates should be displayed.
         """
         self.show_cords = conf.get("showCords")
+
+    def onDrawWhitePawns(self, *args):
+        """Checks the configuration / preferences to see if white
+        pawns should be displayed.
+        """
+        self.drawWhitePawns = conf.get("drawWhitePawns")
+
+    def onDrawWhitePieces(self, *args):
+        """Checks the configuration / preferences to see if white
+        pieces should be displayed.
+        """
+        self.drawWhitePieces = conf.get("drawWhitePieces")
+
+    def onDrawBlackPawns(self, *args):
+        """Checks the configuration / preferences to see if black
+        pawns should be displayed.
+        """
+        self.drawBlackPawns = conf.get("drawBlackPawns")
+
+    def onDrawBlackPieces(self, *args):
+        """Checks the configuration / preferences to see if black
+        pieces should be displayed.
+        """
+        self.drawBlackPieces = conf.get("drawBlackPieces")
+
+    def onDrawAsPawns(self, *args):
+        """Checks the configuration / preferences to see if all
+        figurines should be drawn as pawns.
+        """
+        self.drawAsPawns = conf.get("drawAsPawns")
+
+    def onDrawAsWhite(self, *args):
+        """Checks the configuration / preferences to see if all
+        figurines should be drawn as white.
+        """
+        self.drawAsWhite = conf.get("drawAsWhite")
 
     def onShowCaptured(self, *args):
         """Check the configuration / preferences to see if
@@ -1042,7 +1080,7 @@ class BoardView(Gtk.DrawingArea):
     #            draw             #
     ###############################
 
-    # draw called each time we hover on a case. WARNING it only redraw the case
+    # draw called each time we hover on a case. WARNING it only redraws the case
     def draw(self, context, r):
         # context.set_antialias(cairo.ANTIALIAS_NONE)
         if self.shown < self.model.lowply:
@@ -1392,20 +1430,14 @@ class BoardView(Gtk.DrawingArea):
         if piece is None:
             print("Trying to draw a None piece")
             return
-        if self.model.variant == BlindfoldBoard:
+        elif not self.drawWhitePawns and piece.piece == PAWN and piece.color != BLACK:
             return
-        elif self.model.variant == HiddenPawnsBoard:
-            if piece.piece == PAWN:
-                return
-        elif self.model.variant == HiddenPiecesBoard:
-            if piece.piece != PAWN:
-                return
-        elif self.model.variant == HiddenWhiteBoard:
-            if piece.color != BLACK:
-                return
-        elif self.model.variant == HiddenBlackBoard:
-            if piece.color == BLACK:
-                return
+        elif not self.drawWhitePieces and piece.piece != PAWN and piece.color != BLACK:
+            return
+        elif not self.drawBlackPawns and piece.piece == PAWN and piece.color == BLACK:
+            return
+        elif not self.drawBlackPieces and piece.piece != PAWN and piece.color == BLACK:
+            return
 
         if piece.captured and not self.showCaptured:
             return
@@ -1430,8 +1462,8 @@ class BoardView(Gtk.DrawingArea):
             cx_loc + CORD_PADDING,
             cy_loc + CORD_PADDING,
             side - CORD_PADDING * 2,
-            allwhite=self.allwhite,
-            allpawns=self.allpawns,
+            drawAsWhite=self.drawAsWhite,
+            drawAsPawn=self.drawAsPawns,
             asean=self.asean,
             variant=self.model.variant.variant,
         )
@@ -2135,10 +2167,59 @@ class BoardView(Gtk.DrawingArea):
         self._show_cords = show_cords
         self.redrawCanvas()
 
+    def _setDrawWhitePawns(self, drawWhitePawns):
+        self._drawWhitePawns = drawWhitePawns
+        self.redrawCanvas()
+
+    def _setDrawWhitePieces(self, drawWhitePieces):
+        self._drawWhitePieces = drawWhitePieces
+        self.redrawCanvas()
+
+    def _setDrawBlackPawns(self, drawBlackPawns):
+        self._drawBlackPawns = drawBlackPawns
+        self.redrawCanvas()
+
+    def _setDrawBlackPieces(self, drawBlackPieces):
+        self._drawBlackPieces = drawBlackPieces
+        self.redrawCanvas()
+
+    def _setDrawAsPawns(self, drawAsPawns):
+        self._drawAsPawns = drawAsPawns
+        self.redrawCanvas()
+
+    def _setDrawAsWhite(self, drawAsWhite):
+        self._drawAsWhite = drawAsWhite
+        self.redrawCanvas()
+
     def _getShowCords(self):
         return self._show_cords
 
+    def _getDrawWhitePawns(self):
+        return self._drawWhitePawns
+
+    def _getDrawWhitePieces(self):
+        return self._drawWhitePieces
+
+    def _getDrawBlackPawns(self):
+        return self._drawBlackPawns
+
+    def _getDrawBlackPieces(self):
+        return self._drawBlackPieces
+
+    def _getDrawAsPawns(self):
+        return self._drawAsPawns
+
+    def _getDrawAsWhite(self):
+        return self._drawAsWhite
+
     show_cords = property(_getShowCords, _setShowCords)
+
+    drawWhitePawns = property(_getDrawWhitePawns, _setDrawWhitePawns)
+    drawWhitePieces = property(_getDrawWhitePieces, _setDrawWhitePieces)
+    drawBlackPawns = property(_getDrawBlackPawns, _setDrawBlackPawns)
+    drawBlackPieces = property(_getDrawBlackPieces, _setDrawBlackPieces)
+    drawAsPawns = property(_getDrawAsPawns, _setDrawAsPawns)
+    drawAsWhite = property(_getDrawAsWhite, _setDrawAsWhite)
 
     def _setShowCaptured(self, show_captured, force_restore=False):
         self._show_captured = (

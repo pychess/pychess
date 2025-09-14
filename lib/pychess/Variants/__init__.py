@@ -18,14 +18,6 @@ from pychess.Utils.const import (
     KNIGHTODDSCHESS,
     ROOKODDSCHESS,
     QUEENODDSCHESS,
-    ALLWHITECHESS,
-    BLINDFOLDCHESS,
-    HIDDENPIECESCHESS,
-    HIDDENPAWNSCHESS,
-    ALLPAWNSCHESS,
-    ALLWHITEPAWNSCHESS,
-    HIDDENWHITECHESS,
-    HIDDENBLACKCHESS,
     WILDCASTLECHESS,
     WILDCASTLESHUFFLECHESS,
     THREECHECKCHESS,
@@ -68,16 +60,6 @@ from .rookodds import RookOddsBoard
 from .queenodds import QueenOddsBoard
 from .wildcastle import WildcastleBoard
 from .wildcastleshuffle import WildcastleShuffleBoard
-from .blindfold import (
-    BlindfoldBoard,
-    HiddenPawnsBoard,
-    HiddenPiecesBoard,
-    AllWhiteBoard,
-    AllPawnsBoard,
-    AllWhitePawnsBoard,
-    HiddenWhiteBoard,
-    HiddenBlackBoard,
-)
 from .kingofthehill import KingOfTheHillBoard
 from .threecheck import ThreeCheckBoard
 from .racingkings import RacingKingsBoard
@@ -111,14 +93,6 @@ variants = {
     KNIGHTODDSCHESS: KnightOddsBoard,
     ROOKODDSCHESS: RookOddsBoard,
     QUEENODDSCHESS: QueenOddsBoard,
-    ALLWHITECHESS: AllWhiteBoard,
-    BLINDFOLDCHESS: BlindfoldBoard,
-    HIDDENPAWNSCHESS: HiddenPawnsBoard,
-    HIDDENPIECESCHESS: HiddenPiecesBoard,
-    ALLPAWNSCHESS: AllPawnsBoard,
-    ALLWHITEPAWNSCHESS: AllWhitePawnsBoard,
-    HIDDENWHITECHESS: HiddenWhiteBoard,
-    HIDDENBLACKCHESS: HiddenBlackBoard,
     WILDCASTLECHESS: WildcastleBoard,
     WILDCASTLESHUFFLECHESS: WildcastleShuffleBoard,
     KINGOFTHEHILLCHESS: KingOfTheHillBoard,
