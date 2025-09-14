@@ -241,6 +241,12 @@ class BoardView(Gtk.DrawingArea):
         self.notify_cids = [
             conf.notify_add("drawGrid", self.onDrawGrid),
             conf.notify_add("showCords", self.onShowCords),
+            conf.notify_add("drawWhitePawns", self.onDrawWhitePawns),
+            conf.notify_add("drawWhitePieces", self.onDrawWhitePieces),
+            conf.notify_add("drawBlackPawns", self.onDrawBlackPawns),
+            conf.notify_add("drawBlackPieces", self.onDrawBlackPieces),
+            conf.notify_add("drawAsPawns", self.onDrawAsPawns),
+            conf.notify_add("drawAsWhite", self.onDrawAsWhite),
             conf.notify_add("showCaptured", self.onShowCaptured),
             conf.notify_add("faceToFace", self.onFaceToFace),
             conf.notify_add("noAnimation", self.onNoAnimation),
@@ -288,6 +294,13 @@ class BoardView(Gtk.DrawingArea):
         self.no_frame = False
         self._show_cords = False
         self.show_cords = conf.get("showCords")
+
+        self.drawWhitePawns = conf.get("drawWhitePawns")
+        self.drawWhitePieces = conf.get("drawWhitePieces")
+        self.drawBlackPawns = conf.get("drawBlackPawns")
+        self.drawBlackPieces = conf.get("drawBlackPieces")
+        self.drawAsPawns = conf.get("drawAsPawns")
+        self.drawAsWhite = conf.get("drawAsWhite")
 
         self._draw_grid = False
         self.draw_grid = conf.get("drawGrid")
@@ -478,6 +491,42 @@ class BoardView(Gtk.DrawingArea):
         co-ordinates should be displayed.
         """
         self.show_cords = conf.get("showCords")
+
+    def onDrawWhitePawns(self, *args):
+        """Checks the configuration / preferences to see if white
+        pawns should be displayed.
+        """
+        self.drawWhitePawns = conf.get("drawWhitePawns")
+
+    def onDrawWhitePieces(self, *args):
+        """Checks the configuration / preferences to see if white
+        pieces should be displayed.
+        """
+        self.drawWhitePieces = conf.get("drawWhitePieces")
+
+    def onDrawBlackPawns(self, *args):
+        """Checks the configuration / preferences to see if black
+        pawns should be displayed.
+        """
+        self.drawBlackPawns = conf.get("drawBlackPawns")
+
+    def onDrawBlackPieces(self, *args):
+        """Checks the configuration / preferences to see if black
+        pieces should be displayed.
+        """
+        self.drawBlackPieces = conf.get("drawBlackPieces")
+
+    def onDrawAsPawns(self, *args):
+        """Checks the configuration / preferences to see if all
+        figurines should be drawn as pawns.
+        """
+        self.drawAsPawns = conf.get("drawAsPawns")
+
+    def onDrawAsWhite(self, *args):
+        """Checks the configuration / preferences to see if all
+        figurines should be drawn as white.
+        """
+        self.drawAsWhite = conf.get("drawAsWhite")
 
     def onShowCaptured(self, *args):
         """Check the configuration / preferences to see if
@@ -1042,7 +1091,7 @@ class BoardView(Gtk.DrawingArea):
     #            draw             #
     ###############################
 
-    # draw called each time we hover on a case. WARNING it only redraw the case
+    # draw called each time we hover on a case. WARNING it only redraws the case
     def draw(self, context, r):
         # context.set_antialias(cairo.ANTIALIAS_NONE)
         if self.shown < self.model.lowply:
@@ -1392,19 +1441,13 @@ class BoardView(Gtk.DrawingArea):
         if piece is None:
             print("Trying to draw a None piece")
             return
-        if self.model.variant == BlindfoldBoard:
-            return
-        elif self.model.variant == HiddenPawnsBoard:
-            if piece.piece == PAWN:
+        elif not self.drawWhitePawns and piece.piece == PAWN and piece.color != BLACK:
                 return
-        elif self.model.variant == HiddenPiecesBoard:
-            if piece.piece != PAWN:
+        elif not self.drawWhitePieces and piece.piece != PAWN and piece.color != BLACK:
                 return
-        elif self.model.variant == HiddenWhiteBoard:
-            if piece.color != BLACK:
+        elif not self.drawBlackPawns and piece.piece == PAWN and piece.color == BLACK:
                 return
-        elif self.model.variant == HiddenBlackBoard:
-            if piece.color == BLACK:
+        elif not self.drawBlackPieces and piece.piece != PAWN and piece.color == BLACK:
                 return
 
         if piece.captured and not self.showCaptured:
@@ -1430,8 +1473,8 @@ class BoardView(Gtk.DrawingArea):
             cx_loc + CORD_PADDING,
             cy_loc + CORD_PADDING,
             side - CORD_PADDING * 2,
-            allwhite=self.allwhite,
-            allpawns=self.allpawns,
+            allwhite=self.drawAsWhite,
+            allpawns=self.drawAsPawns,
             asean=self.asean,
             variant=self.model.variant.variant,
         )
