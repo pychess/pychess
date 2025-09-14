@@ -1425,13 +1425,13 @@ class BoardView(Gtk.DrawingArea):
             print("Trying to draw a None piece")
             return
         elif not self.drawWhitePawns and piece.piece == PAWN and piece.color != BLACK:
-                return
+            return
         elif not self.drawWhitePieces and piece.piece != PAWN and piece.color != BLACK:
-                return
+            return
         elif not self.drawBlackPawns and piece.piece == PAWN and piece.color == BLACK:
-                return
+            return
         elif not self.drawBlackPieces and piece.piece != PAWN and piece.color == BLACK:
-                return
+            return
 
         if piece.captured and not self.showCaptured:
             return
