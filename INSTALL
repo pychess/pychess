@@ -44,7 +44,7 @@ gir1.2-gtk-3.0
 gir1.2-pango-1.0
 gir1.2-rsvg-2.0
 gir1.2-gdkpixbuf-2.0
-gir1.2-gtksource-3.0
+gir1.2-gtksource-4
 gir1.2-gstreamer-1.0
 gir1.2-gst-plugins-base-1.0
 (If you have no sound in pychess try to install gstreamer1.0-pulseaudio)
@@ -62,7 +62,7 @@ glib2
 gtk3
 pango
 gdk-pixbuf2
-gtksourceview3
+gtksourceview4
 gstreamer1
 gstreamer1-plugins-base
 python3-sqlalchemy
@@ -85,7 +85,7 @@ glib2
 gtk3
 pango
 gdk-pixbuf2
-gtksourceview3
+gtksourceview4
 gstreamer
 gst-plugins-base
 
@@ -95,7 +95,7 @@ Go to https://msys2.github.io/ and download the x86_64 installer
 In C:\msys64\mingw64.exe terminal run:
 
 pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-cairo mingw-w64-x86_64-gobject-introspection mingw-w64-x86_64-libffi
-pacman -S mingw-w64-x86_64-gtk3 mingw-w64-x86_64-python-gobject mingw-w64-x86_64-gtksourceview3 mingw-w64-x86_64-freetype
+pacman -S mingw-w64-x86_64-gtk3 mingw-w64-x86_64-python-gobject mingw-w64-x86_64-gtksourceview4 mingw-w64-x86_64-freetype
 pacman -S mingw-w64-x86_64-python-sqlalchemy mingw-w64-x86_64-python-pexpect mingw-w64-x86_64-python-psutil
 pacman -S --needed base-devel mingw-w64-x86_64-toolchain
 pacman -S mingw-w64-x86_64-python-pip git
@@ -118,7 +118,7 @@ Tested on Catalina and Python 3.7.2
 1. brew install
 brew install pygobject3 gtk+3
 brew install gst-python
-brew install gtksourceview3
+brew install gtksourceview4
 brew install librsvg
 # (optional) brew install gettext
 
