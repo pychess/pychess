@@ -1,6 +1,6 @@
 Install the following binary dependencies:
 
-brew install gtk+3 pygobject3 gtksourceview3 librsvg gst-python
+brew install gtk+3 pygobject3 gtksourceview4 librsvg gst-python
 
 
 And then install the python depdencies:
