@@ -481,7 +481,11 @@ class _GameInitializationMode:
         white_frame.set_label(_("White Time Control"))
         white_box = Gtk.VBox()
         white_box.set_spacing(6)
-        white_box.set_border_width(6)
+        # Use margins instead of deprecated set_border_width
+        white_box.set_margin_left(6)
+        white_box.set_margin_right(6)
+        white_box.set_margin_top(6)
+        white_box.set_margin_bottom(6)
         
         # Create white time controls similar to existing ones
         cls.white_min_spin = Gtk.SpinButton()
@@ -518,7 +522,11 @@ class _GameInitializationMode:
         black_frame.set_label(_("Black Time Control"))
         black_box = Gtk.VBox()
         black_box.set_spacing(6)
-        black_box.set_border_width(6)
+        # Use margins instead of deprecated set_border_width
+        black_box.set_margin_left(6)
+        black_box.set_margin_right(6)
+        black_box.set_margin_top(6)
+        black_box.set_margin_bottom(6)
         
         cls.black_min_spin = Gtk.SpinButton()
         cls.black_min_spin.set_adjustment(Gtk.Adjustment(5, 0, 240, 1))
@@ -627,17 +635,22 @@ class _GameInitializationMode:
                 # Add the asymmetric time frame
                 asym_container.pack_start(cls.asymmetricTimeFrame, False, False, 6)
                 
-                # Insert after the time control section
+                # Insert at the end, then move to appropriate position
                 main_container.pack_start(asym_container, False, False, 6)
-                main_container.reorder_child(asym_container, -2)  # Place before buttons
+                
+                # Try to position before action buttons (usually at the end)
+                children = main_container.get_children()
+                if len(children) >= 2:
+                    # Move our container to second-to-last position (before buttons)
+                    main_container.reorder_child(asym_container, len(children) - 2)
                 
                 # Show all our new widgets (except the frame which starts hidden)
                 asym_container.show_all()
                 cls.asymmetricTimeFrame.set_visible(False)  # Initially hidden
                 
         except Exception as e:
-            # If we can't add to the dialog, at least log the issue
-            print(f"Warning: Could not add asymmetric controls to dialog: {e}")
+            # Log the issue using the existing log system
+            log.warning(f"Could not add asymmetric controls to dialog: {e}")
 
     @classmethod
     def __initVariantRadio(cls, confid, radiobutton, configImage):
