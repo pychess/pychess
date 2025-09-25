@@ -467,25 +467,6 @@ class _GameInitializationMode:
         cls.asymmetricTimeCheckbox = Gtk.CheckButton(label=_("Different time controls for each player"))
         cls.asymmetricTimeCheckbox.set_active(False)
         
-        # Find the time control frame and add the checkbox
-        time_frame = None
-        for widget_name, widget in cls.widgets.items():
-            if hasattr(widget, 'get_label') and widget.get_label() == '<b>Time Control</b>':
-                time_frame = widget.get_parent()
-                break
-        
-        if time_frame:
-            # Get the parent container of the time control frame
-            parent_container = time_frame.get_parent()
-            
-            # Create a new container for the checkbox
-            checkbox_container = Gtk.HBox()
-            checkbox_container.pack_start(cls.asymmetricTimeCheckbox, False, False, 12)
-            
-            # Insert the checkbox after the time control frame
-            if hasattr(parent_container, 'pack_start'):
-                parent_container.pack_start(checkbox_container, False, False, 3)
-            
         # Create asymmetric time control panels (initially hidden)
         cls.asymmetricTimeFrame = Gtk.Frame()
         cls.asymmetricTimeFrame.set_label(_("Asymmetric Time Controls"))
@@ -500,6 +481,7 @@ class _GameInitializationMode:
         white_frame.set_label(_("White Time Control"))
         white_box = Gtk.VBox()
         white_box.set_spacing(6)
+        white_box.set_border_width(6)
         
         # Create white time controls similar to existing ones
         cls.white_min_spin = Gtk.SpinButton()
@@ -513,14 +495,22 @@ class _GameInitializationMode:
         white_table.set_row_spacings(3)
         white_table.set_col_spacings(12)
         
-        white_table.attach(Gtk.Label(label=_("Minutes:")), 0, 1, 0, 1)
+        # Left-align labels
+        min_label = Gtk.Label(label=_("Minutes:"))
+        min_label.set_alignment(0, 0.5)
+        gain_label = Gtk.Label(label=_("Gain:"))
+        gain_label.set_alignment(0, 0.5)
+        moves_label = Gtk.Label(label=_("Moves:"))
+        moves_label.set_alignment(0, 0.5)
+        
+        white_table.attach(min_label, 0, 1, 0, 1)
         white_table.attach(cls.white_min_spin, 1, 2, 0, 1)
-        white_table.attach(Gtk.Label(label=_("Gain:")), 0, 1, 1, 2)
+        white_table.attach(gain_label, 0, 1, 1, 2)
         white_table.attach(cls.white_gain_spin, 1, 2, 1, 2)
-        white_table.attach(Gtk.Label(label=_("Moves:")), 0, 1, 2, 3)
+        white_table.attach(moves_label, 0, 1, 2, 3)
         white_table.attach(cls.white_moves_spin, 1, 2, 2, 3)
         
-        white_box.pack_start(white_table, False, False, 6)
+        white_box.pack_start(white_table, False, False, 0)
         white_frame.add(white_box)
         
         # Black player controls
@@ -528,6 +518,7 @@ class _GameInitializationMode:
         black_frame.set_label(_("Black Time Control"))
         black_box = Gtk.VBox()
         black_box.set_spacing(6)
+        black_box.set_border_width(6)
         
         cls.black_min_spin = Gtk.SpinButton()
         cls.black_min_spin.set_adjustment(Gtk.Adjustment(5, 0, 240, 1))
@@ -540,24 +531,33 @@ class _GameInitializationMode:
         black_table.set_row_spacings(3)
         black_table.set_col_spacings(12)
         
-        black_table.attach(Gtk.Label(label=_("Minutes:")), 0, 1, 0, 1)
+        # Left-align labels
+        min_label2 = Gtk.Label(label=_("Minutes:"))
+        min_label2.set_alignment(0, 0.5)
+        gain_label2 = Gtk.Label(label=_("Gain:"))
+        gain_label2.set_alignment(0, 0.5)
+        moves_label2 = Gtk.Label(label=_("Moves:"))
+        moves_label2.set_alignment(0, 0.5)
+        
+        black_table.attach(min_label2, 0, 1, 0, 1)
         black_table.attach(cls.black_min_spin, 1, 2, 0, 1)
-        black_table.attach(Gtk.Label(label=_("Gain:")), 0, 1, 1, 2)
+        black_table.attach(gain_label2, 0, 1, 1, 2)
         black_table.attach(cls.black_gain_spin, 1, 2, 1, 2)
-        black_table.attach(Gtk.Label(label=_("Moves:")), 0, 1, 2, 3)
+        black_table.attach(moves_label2, 0, 1, 2, 3)
         black_table.attach(cls.black_moves_spin, 1, 2, 2, 3)
         
-        black_box.pack_start(black_table, False, False, 6)
+        black_box.pack_start(black_table, False, False, 0)
         black_frame.add(black_box)
         
-        main_box.pack_start(white_frame, True, True, 6)
-        main_box.pack_start(black_frame, True, True, 6)
+        main_box.pack_start(white_frame, True, True, 0)
+        main_box.pack_start(black_frame, True, True, 0)
         cls.asymmetricTimeFrame.add(main_box)
         
         # Connect checkbox to toggle asymmetric controls visibility
         def on_asymmetric_toggled(checkbox):
             is_active = checkbox.get_active()
             cls.asymmetricTimeFrame.set_visible(is_active)
+            
             # Sync values when switching modes
             if is_active:
                 # Copy current symmetric values to asymmetric controls
@@ -566,29 +566,78 @@ class _GameInitializationMode:
                     cls.black_min_spin.set_value(cls.ngblitz_min.get_value())
                     cls.white_gain_spin.set_value(cls.ngblitz_gain.get_value())
                     cls.black_gain_spin.set_value(cls.ngblitz_gain.get_value())
+                    cls.white_moves_spin.set_value(0)
+                    cls.black_moves_spin.set_value(0)
                 elif cls.widgets["rapidRadio"].get_active():
                     cls.white_min_spin.set_value(cls.ngrapid_min.get_value())
                     cls.black_min_spin.set_value(cls.ngrapid_min.get_value())
                     cls.white_gain_spin.set_value(cls.ngrapid_gain.get_value())
                     cls.black_gain_spin.set_value(cls.ngrapid_gain.get_value())
+                    cls.white_moves_spin.set_value(0)
+                    cls.black_moves_spin.set_value(0)
                 elif cls.widgets["normalRadio"].get_active():
                     cls.white_min_spin.set_value(cls.ngnormal_min.get_value())
                     cls.black_min_spin.set_value(cls.ngnormal_min.get_value())
                     cls.white_gain_spin.set_value(cls.ngnormal_gain.get_value())
                     cls.black_gain_spin.set_value(cls.ngnormal_gain.get_value())
+                    cls.white_moves_spin.set_value(0)
+                    cls.black_moves_spin.set_value(0)
                 elif cls.widgets["classicalRadio"].get_active():
                     cls.white_min_spin.set_value(cls.ngclassical_min.get_value())
                     cls.black_min_spin.set_value(cls.ngclassical_min.get_value())
+                    cls.white_gain_spin.set_value(0)
+                    cls.black_gain_spin.set_value(0)
                     cls.white_moves_spin.set_value(cls.ngclassical_moves.get_value())
                     cls.black_moves_spin.set_value(cls.ngclassical_moves.get_value())
         
         cls.asymmetricTimeCheckbox.connect("toggled", on_asymmetric_toggled)
         
-        # Try to add the asymmetric frame to the dialog
-        if time_frame:
-            parent_container = time_frame.get_parent()
-            if hasattr(parent_container, 'pack_start'):
-                parent_container.pack_start(cls.asymmetricTimeFrame, False, False, 6)
+        # Store references for easier access
+        cls.widgets["asymmetricTimeCheckbox"] = cls.asymmetricTimeCheckbox
+        cls.widgets["asymmetricTimeFrame"] = cls.asymmetricTimeFrame
+        
+        # Add the widgets to the dialog
+        cls.__addAsymmetricWidgetsToDialog()
+
+    @classmethod
+    def __addAsymmetricWidgetsToDialog(cls):
+        """Add asymmetric time control widgets to the dialog"""
+        try:
+            # Get the dialog's main content area
+            dialog = cls.widgets["newgamedialog"]
+            content_area = dialog.get_content_area()
+            
+            # Find the main container (usually a VBox)
+            main_container = None
+            for child in content_area.get_children():
+                if isinstance(child, (Gtk.VBox, Gtk.Box)) or hasattr(child, 'pack_start'):
+                    main_container = child
+                    break
+            
+            if main_container:
+                # Create a container for our asymmetric controls
+                asym_container = Gtk.VBox()
+                asym_container.set_spacing(6)
+                
+                # Add the checkbox first
+                checkbox_box = Gtk.HBox()
+                checkbox_box.pack_start(cls.asymmetricTimeCheckbox, False, False, 12)
+                asym_container.pack_start(checkbox_box, False, False, 3)
+                
+                # Add the asymmetric time frame
+                asym_container.pack_start(cls.asymmetricTimeFrame, False, False, 6)
+                
+                # Insert after the time control section
+                main_container.pack_start(asym_container, False, False, 6)
+                main_container.reorder_child(asym_container, -2)  # Place before buttons
+                
+                # Show all our new widgets (except the frame which starts hidden)
+                asym_container.show_all()
+                cls.asymmetricTimeFrame.set_visible(False)  # Initially hidden
+                
+        except Exception as e:
+            # If we can't add to the dialog, at least log the issue
+            print(f"Warning: Could not add asymmetric controls to dialog: {e}")
 
     @classmethod
     def __initVariantRadio(cls, confid, radiobutton, configImage):
