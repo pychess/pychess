@@ -26,7 +26,6 @@ from pychess.Savers.remotegame import (
     InternetGameIdeachess,
     InternetGameChessdb,
     InternetGameChesspro,
-    InternetGameFicgs,
     InternetGameChessbase,
     InternetGamePlayok,
     InternetGamePychess,
@@ -621,18 +620,6 @@ class RemoteGameTestCase(unittest.TestCase):
             ("https://chesspro.ru", False),
         ]  # Not a game (homepage)
         self.executeTest(InternetGameChesspro(), links)
-
-    def testFicgs(self):
-        links = [
-            ("http://FICGS.com/game_95671.html", True),  # Game
-            (
-                "http://www.ficgs.com/game_1234567890.html",
-                False,
-            ),  # Not a game (wrong ID)
-            ("http://www.ficgs.com/view_95671.html", False),  # Not a game (wrong path)
-            ("http://www.ficgs.com", False),
-        ]  # Not a game (homepage)
-        self.executeTest(InternetGameFicgs(), links)
 
     def testChessbase(self):
         links = [
