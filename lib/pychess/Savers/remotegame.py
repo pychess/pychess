@@ -2235,32 +2235,6 @@ class InternetGameChesspro(InternetGameInterface):
         return None
 
 
-# Ficgs.com
-class InternetGameFicgs(InternetGameInterface):
-    def get_identity(self):
-        return "Ficgs.com", CAT_DL
-
-    def assign_game(self, url):
-        rxp = re.compile(
-            r"^https?:\/\/(\S+\.)?ficgs\.com\/game_(\d+).html", re.IGNORECASE
-        )
-        m = rxp.match(url)
-        if m is not None:
-            gid = str(m.group(2))
-            if gid.isdigit() and gid != "0":
-                self.id = gid
-                return True
-        return False
-
-    def download_game(self):
-        # Check
-        if self.id is None:
-            return None
-
-        # Download
-        return self.download("http://www.ficgs.com/game_%s.pgn" % self.id)
-
-
 # Chessbase
 class InternetGameChessbase(InternetGameInterface):
     def get_identity(self):
@@ -2473,7 +2447,6 @@ chess_providers = [
     InternetGameIdeachess(),
     InternetGameChessdb(),
     InternetGameChesspro(),
-    InternetGameFicgs(),
     InternetGameChessbase(),
     InternetGamePlayok(),
     InternetGamePychess(),
