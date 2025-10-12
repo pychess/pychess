@@ -22,7 +22,7 @@ from sqlalchemy.exc import OperationalError
 # from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_text
 
 from pychess.System.Log import log
-from pychess.System.prefix import addUserCachePrefix
+from pychess.System.prefix import addUserConfigPrefix
 
 
 @event.listens_for(Engine, "before_cursor_execute")
@@ -241,7 +241,7 @@ def ini_schema_version(engine):
 
 
 # create an empty database to use as skeleton
-empty_db = os.path.join(addUserCachePrefix("%s.sqlite" % SCHEMA_VERSION))
+empty_db = os.path.join(addUserConfigPrefix("%s.sqlite" % SCHEMA_VERSION))
 if not os.path.isfile(empty_db):
     engine = get_engine(empty_db)
     metadata.create_all(engine)
