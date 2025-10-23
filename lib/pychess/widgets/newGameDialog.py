@@ -600,10 +600,6 @@ class _GameInitializationMode:
         
         cls.asymmetricTimeCheckbox.connect("toggled", on_asymmetric_toggled)
         
-        # Store references for easier access
-        cls.widgets["asymmetricTimeCheckbox"] = cls.asymmetricTimeCheckbox
-        cls.widgets["asymmetricTimeFrame"] = cls.asymmetricTimeFrame
-        
         # Add the widgets to the dialog
         cls.__addAsymmetricWidgetsToDialog()
 
