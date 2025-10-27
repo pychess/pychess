@@ -1,7 +1,7 @@
 # Direct dependencies
 gbulb==0.6.5
 pexpect==4.9.0
-psutil==7.1.1
+psutil==7.1.2
 pycairo==1.28.0
 PyGObject==3.54.5
 SQLAlchemy==2.0.44
