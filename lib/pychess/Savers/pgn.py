@@ -832,31 +832,70 @@ class PGNFile(ChessFile):
         else:
             variant = self.get_variant(rec)
 
-        if model.tags["TimeControl"]:
+        # Handle time controls (both symmetric and asymmetric)
+        has_asymmetric_time = "WhiteTimeControl" in model.tags or "BlackTimeControl" in model.tags
+        
+        if has_asymmetric_time:
+            # Handle asymmetric time controls
+            model.timed = True
+            
+            # Parse white time control
+            if "WhiteTimeControl" in model.tags:
+                tc = parseTimeControlTag(model.tags["WhiteTimeControl"])
+                if tc is not None:
+                    wsecs, wgain, wmoves = tc
+                    model.timemodel.intervals[WHITE][0] = wsecs
+                    model.timemodel.wgain = wgain
+                    model.timemodel.wmoves = wmoves
+            
+            # Parse black time control
+            if "BlackTimeControl" in model.tags:
+                tc = parseTimeControlTag(model.tags["BlackTimeControl"])
+                if tc is not None:
+                    bsecs, bgain, bmoves = tc
+                    model.timemodel.intervals[BLACK][0] = bsecs
+                    model.timemodel.bgain = bgain
+                    model.timemodel.bmoves = bmoves
+            
+            # Set overall values (for backward compatibility)
+            model.timemodel.secs = model.timemodel.intervals[WHITE][0]
+            model.timemodel.gain = model.timemodel.wgain
+            model.timemodel.minutes = model.timemodel.secs / 60
+            model.timemodel.moves = model.timemodel.wmoves
+            
+        elif model.tags["TimeControl"]:
+            # Handle symmetric time controls (original logic)
             tc = parseTimeControlTag(model.tags["TimeControl"])
             if tc is not None:
                 secs, gain, moves = tc
                 model.timed = True
                 model.timemodel.secs = secs
                 model.timemodel.gain = gain
+                model.timemodel.wgain = gain
+                model.timemodel.bgain = gain
                 model.timemodel.minutes = secs / 60
                 model.timemodel.moves = moves
-                for tag, color in (("WhiteClock", WHITE), ("BlackClock", BLACK)):
-                    if tag in model.tags:
-                        try:
-                            millisec = parseClockTimeTag(model.tags[tag])
-                            # We need to fix when FICS reports negative clock time like this
-                            # [TimeControl "180+0"]
-                            # [WhiteClock "0:00:15.867"]
-                            # [BlackClock "23:59:58.820"]
-                            start_sec = (
-                                (millisec - 24 * 60 * 60 * 1000) / 1000.0
-                                if millisec > 23 * 60 * 60 * 1000
-                                else millisec / 1000.0
-                            )
-                            model.timemodel.intervals[color][0] = start_sec
-                        except ValueError:
-                            raise LoadingError("Error parsing '%s'" % tag)
+                model.timemodel.wmoves = moves
+                model.timemodel.bmoves = moves
+                
+        # Handle clock times for both asymmetric and symmetric games
+        if model.timed:
+            for tag, color in (("WhiteClock", WHITE), ("BlackClock", BLACK)):
+                if tag in model.tags:
+                    try:
+                        millisec = parseClockTimeTag(model.tags[tag])
+                        # We need to fix when FICS reports negative clock time like this
+                        # [TimeControl "180+0"]
+                        # [WhiteClock "0:00:15.867"]
+                        # [BlackClock "23:59:58.820"]
+                        start_sec = (
+                            (millisec - 24 * 60 * 60 * 1000) / 1000.0
+                            if millisec > 23 * 60 * 60 * 1000
+                            else millisec / 1000.0
+                        )
+                        model.timemodel.intervals[color][0] = start_sec
+                    except ValueError:
+                        raise LoadingError("Error parsing '%s'" % tag)
         fenstr = rec["FEN"]
 
         if variant:

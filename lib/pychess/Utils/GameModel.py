@@ -201,17 +201,46 @@ class GameModel(GObject.GObject):
             self.zero_reached_cid = self.timemodel.connect(
                 "zero_reached", self.zero_reached
             )
-            if self.timemodel.moves == 0:
-                self.tags["TimeControl"] = "%d%s%d" % (
-                    self.timemodel.minutes * 60,
-                    "+" if self.timemodel.gain >= 0 else "-",
-                    abs(self.timemodel.gain),
-                )
+            
+            # Handle asymmetric time controls
+            if self.timemodel.isAsymmetric:
+                # Use separate tags for white and black time controls
+                if self.timemodel.wmoves == 0:
+                    self.tags["WhiteTimeControl"] = "%d%s%d" % (
+                        self.timemodel.intervals[WHITE][0],
+                        "+" if self.timemodel.wgain >= 0 else "-",
+                        abs(self.timemodel.wgain),
+                    )
+                else:
+                    self.tags["WhiteTimeControl"] = "%d/%d" % (
+                        self.timemodel.wmoves,
+                        self.timemodel.intervals[WHITE][0],
+                    )
+                
+                if self.timemodel.bmoves == 0:
+                    self.tags["BlackTimeControl"] = "%d%s%d" % (
+                        self.timemodel.intervals[BLACK][0],
+                        "+" if self.timemodel.bgain >= 0 else "-",
+                        abs(self.timemodel.bgain),
+                    )
+                else:
+                    self.tags["BlackTimeControl"] = "%d/%d" % (
+                        self.timemodel.bmoves,
+                        self.timemodel.intervals[BLACK][0],
+                    )
             else:
-                self.tags["TimeControl"] = "%d/%d" % (
-                    self.timemodel.moves,
-                    self.timemodel.minutes * 60,
-                )
+                # Standard symmetric time controls
+                if self.timemodel.moves == 0:
+                    self.tags["TimeControl"] = "%d%s%d" % (
+                        self.timemodel.minutes * 60,
+                        "+" if self.timemodel.gain >= 0 else "-",
+                        abs(self.timemodel.gain),
+                    )
+                else:
+                    self.tags["TimeControl"] = "%d/%d" % (
+                        self.timemodel.moves,
+                        self.timemodel.minutes * 60,
+                    )
             # Notice: tags["WhiteClock"] and tags["BlackClock"] are never set
             # on the gamemodel, but simply written or read during saving/
             # loading from pgn. If you want to know the time left for a player,
