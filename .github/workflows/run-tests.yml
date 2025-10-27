@@ -64,6 +64,8 @@ jobs:
         time PYTHONPATH=lib python3 pgn2ecodb.py
         time PYTHONPATH=lib python3 create_theme_preview.py
 
+        python3 setup.py --version  # workaround for pip >=25.3, creates file "learn/puzzles/mate_in_4.sqlite"
+
         pip3 install -e .
 
         pychess --help  # smoke test
