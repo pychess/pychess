@@ -833,12 +833,14 @@ class PGNFile(ChessFile):
             variant = self.get_variant(rec)
 
         # Handle time controls (both symmetric and asymmetric)
-        has_asymmetric_time = "WhiteTimeControl" in model.tags or "BlackTimeControl" in model.tags
-        
+        has_asymmetric_time = (
+            "WhiteTimeControl" in model.tags or "BlackTimeControl" in model.tags
+        )
+
         if has_asymmetric_time:
             # Handle asymmetric time controls
             model.timed = True
-            
+
             # Parse white time control
             if "WhiteTimeControl" in model.tags:
                 tc = parseTimeControlTag(model.tags["WhiteTimeControl"])
@@ -847,7 +849,7 @@ class PGNFile(ChessFile):
                     model.timemodel.intervals[WHITE][0] = wsecs
                     model.timemodel.wgain = wgain
                     model.timemodel.wmoves = wmoves
-            
+
             # Parse black time control
             if "BlackTimeControl" in model.tags:
                 tc = parseTimeControlTag(model.tags["BlackTimeControl"])
@@ -856,13 +858,13 @@ class PGNFile(ChessFile):
                     model.timemodel.intervals[BLACK][0] = bsecs
                     model.timemodel.bgain = bgain
                     model.timemodel.bmoves = bmoves
-            
+
             # Set overall values (for backward compatibility)
             model.timemodel.secs = model.timemodel.intervals[WHITE][0]
             model.timemodel.gain = model.timemodel.wgain
             model.timemodel.minutes = model.timemodel.secs / 60
             model.timemodel.moves = model.timemodel.wmoves
-            
+
         elif model.tags["TimeControl"]:
             # Handle symmetric time controls (original logic)
             tc = parseTimeControlTag(model.tags["TimeControl"])
@@ -877,7 +879,7 @@ class PGNFile(ChessFile):
                 model.timemodel.moves = moves
                 model.timemodel.wmoves = moves
                 model.timemodel.bmoves = moves
-                
+
         # Handle clock times for both asymmetric and symmetric games
         if model.timed:
             for tag, color in (("WhiteClock", WHITE), ("BlackClock", BLACK)):

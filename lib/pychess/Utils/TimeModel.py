@@ -18,13 +18,24 @@ class TimeModel(GObject.GObject):
     # Initing                                                                  #
     ############################################################################
 
-    def __init__(self, secs=0, gain=0, bsecs=-1, minutes=-1, moves=0, wgain=-1, wmoves=-1, bgain=-1, bmoves=-1):
+    def __init__(
+        self,
+        secs=0,
+        gain=0,
+        bsecs=-1,
+        minutes=-1,
+        moves=0,
+        wgain=-1,
+        wmoves=-1,
+        bgain=-1,
+        bmoves=-1,
+    ):
         GObject.GObject.__init__(self)
         if bsecs < 0:
             bsecs = secs
         if minutes < 0:
             minutes = secs / 60
-        
+
         # Handle asymmetric time controls
         if wgain < 0:
             wgain = gain
@@ -34,7 +45,7 @@ class TimeModel(GObject.GObject):
             bgain = gain
         if bmoves < 0:
             bmoves = moves
-            
+
         self.minutes = minutes  # The number of minutes for the original starting
         self.moves = moves
         self.wmoves = wmoves
@@ -290,7 +301,7 @@ class TimeModel(GObject.GObject):
             text = _("White: %d min") % white_mins
             if self.wgain != 0:
                 text += (" + %d " % self.wgain) + _("sec")
-            text += _(", Black: %d min") % black_mins  
+            text += _(", Black: %d min") % black_mins
             if self.bgain != 0:
                 text += (" + %d " % self.bgain) + _("sec")
             return text
@@ -324,9 +335,11 @@ class TimeModel(GObject.GObject):
     @property
     def isAsymmetric(self):
         """Check if different time controls are used for white and black players"""
-        return (self.intervals[WHITE][0] != self.intervals[BLACK][0] or 
-                self.wgain != self.bgain or 
-                self.wmoves != self.bmoves)
+        return (
+            self.intervals[WHITE][0] != self.intervals[BLACK][0]
+            or self.wgain != self.bgain
+            or self.wmoves != self.bmoves
+        )
 
     def getPlayerGain(self, color):
         """Get the gain for a specific player"""

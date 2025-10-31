@@ -201,7 +201,7 @@ class GameModel(GObject.GObject):
             self.zero_reached_cid = self.timemodel.connect(
                 "zero_reached", self.zero_reached
             )
-            
+
             # Handle asymmetric time controls
             if self.timemodel.isAsymmetric:
                 # Use separate tags for white and black time controls
@@ -216,7 +216,7 @@ class GameModel(GObject.GObject):
                         self.timemodel.wmoves,
                         self.timemodel.intervals[WHITE][0],
                     )
-                
+
                 if self.timemodel.bmoves == 0:
                     self.tags["BlackTimeControl"] = "%d%s%d" % (
                         self.timemodel.intervals[BLACK][0],
