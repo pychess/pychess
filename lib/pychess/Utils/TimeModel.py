@@ -18,22 +18,48 @@ class TimeModel(GObject.GObject):
     # Initing                                                                  #
     ############################################################################
 
-    def __init__(self, secs=0, gain=0, bsecs=-1, minutes=-1, moves=0):
+    def __init__(
+        self,
+        secs=0,
+        gain=0,
+        bsecs=-1,
+        minutes=-1,
+        moves=0,
+        wgain=-1,
+        wmoves=-1,
+        bgain=-1,
+        bmoves=-1,
+    ):
         GObject.GObject.__init__(self)
         if bsecs < 0:
             bsecs = secs
         if minutes < 0:
             minutes = secs / 60
+
+        # Handle asymmetric time controls
+        if wgain < 0:
+            wgain = gain
+        if wmoves < 0:
+            wmoves = moves
+        if bgain < 0:
+            bgain = gain
+        if bmoves < 0:
+            bmoves = moves
+
         self.minutes = minutes  # The number of minutes for the original starting
         self.moves = moves
+        self.wmoves = wmoves
+        self.bmoves = bmoves
 
         # time control (not necessarily where the game was resumed,
         # i.e. self.intervals[0][0])
         if secs == 0 and gain > 0:
-            self.intervals = [[gain], [gain]]
+            self.intervals = [[wgain], [bgain]]
         else:
             self.intervals = [[secs], [bsecs]]
         self.gain = gain
+        self.wgain = wgain
+        self.bgain = bgain
         self.secs = secs
 
         # to know if game is played on ICS or not
@@ -120,7 +146,13 @@ class TimeModel(GObject.GObject):
         if self.paused:
             return
 
-        gain = self.gain if self.handle_gain else 0
+        # Use player-specific gains for asymmetric time controls
+        if self.movingColor == WHITE:
+            gain = self.wgain if self.handle_gain else 0
+            moves = self.wmoves
+        else:
+            gain = self.bgain if self.handle_gain else 0
+            moves = self.bmoves
         ticker = self.intervals[self.movingColor][-1] + gain
         if self.started:
             if self.counter is not None:
@@ -132,10 +164,10 @@ class TimeModel(GObject.GObject):
                     self.started = True
             else:
                 self.started = True
-        if self.moves == 0:
+        if moves == 0:
             self.intervals[self.movingColor].append(ticker)
         else:
-            if len(self.intervals[self.movingColor]) % self.moves == 0:
+            if len(self.intervals[self.movingColor]) % moves == 0:
                 self.intervals[self.movingColor].append(
                     self.intervals[self.movingColor][0]
                 )
@@ -262,10 +294,23 @@ class TimeModel(GObject.GObject):
 
     @property
     def display_text(self):
-        text = ("%d " % self.minutes) + _("min")
-        if self.gain != 0:
-            text += (" + %d " % self.gain) + _("sec")
-        return text
+        if self.isAsymmetric:
+            # For asymmetric time controls, show both players' time
+            white_mins = self.intervals[WHITE][0] / 60
+            black_mins = self.intervals[BLACK][0] / 60
+            text = _("White: %d min") % white_mins
+            if self.wgain != 0:
+                text += (" + %d " % self.wgain) + _("sec")
+            text += _(", Black: %d min") % black_mins
+            if self.bgain != 0:
+                text += (" + %d " % self.bgain) + _("sec")
+            return text
+        else:
+            # Symmetric time controls
+            text = ("%d " % self.minutes) + _("min")
+            if self.gain != 0:
+                text += (" + %d " % self.gain) + _("sec")
+            return text
 
     @property
     def hasTimes(self):
@@ -286,3 +331,20 @@ class TimeModel(GObject.GObject):
         return (
             val > 0 and val <= 600
         )  # Less or equal than 10 minutes for 60 moves and for each player
+
+    @property
+    def isAsymmetric(self):
+        """Check if different time controls are used for white and black players"""
+        return (
+            self.intervals[WHITE][0] != self.intervals[BLACK][0]
+            or self.wgain != self.bgain
+            or self.wmoves != self.bmoves
+        )
+
+    def getPlayerGain(self, color):
+        """Get the gain for a specific player"""
+        return self.wgain if color == WHITE else self.bgain
+
+    def getPlayerMoves(self, color):
+        """Get the moves for a specific player"""
+        return self.wmoves if color == WHITE else self.bmoves
