@@ -1186,7 +1186,7 @@ class InternetGameEuropeechecs(InternetGameInterface):
                     )
 
         # Collect the games
-        return self.download_list(links)
+        return self.download_list(links, userAgent=True)
 
 
 # GameKnot.com
