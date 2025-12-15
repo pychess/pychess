@@ -75,7 +75,7 @@ class RemoteGameTestCase(unittest.TestCase):
         print("- Fetched data: %s" % ok)
         if ok:
             print(data)
-        self.assertEqual(ok, expected)
+        self.assertEqual(ok, expected, msg=f"{ok} != {expected} for URL {url!r}")
 
     def testLichess(self):
         links = [
