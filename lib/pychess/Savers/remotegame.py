@@ -29,7 +29,7 @@ from pychess.System.Log import log
 #     return p
 # VERSION = '1.0'
 # import ssl
-# ssl._create_default_https_context = ssl._create_unverified_context  # Chess24, ICCF
+# ssl._create_default_https_context = ssl._create_unverified_context  # Chess24
 
 
 TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE, TYPE_EVENT, TYPE_FEN = range(5)
@@ -1814,53 +1814,6 @@ class InternetGame2700chess(InternetGameInterface):
         return None
 
 
-# Iccf.com
-class InternetGameIccf(InternetGameInterface):
-    def get_identity(self):
-        return "Iccf.com", CAT_DL
-
-    def assign_game(self, url):
-        # Verify the hostname
-        parsed = urlparse(url)
-        if parsed.netloc.lower() not in ["www.iccf.com", "iccf.com"]:
-            return False
-
-        # Verify the path
-        ppl = parsed.path.lower()
-        if "/game" in ppl:
-            ttyp = TYPE_GAME
-        elif "/event" in ppl:
-            ttyp = TYPE_EVENT
-        else:
-            return False
-
-        # Read the arguments
-        args = parse_qs(parsed.query)
-        if "id" in args:
-            gid = args["id"][0]
-            if gid.isdigit() and gid != "0":
-                self.url_type = ttyp
-                self.id = gid
-                return True
-        return False
-
-    def download_game(self):
-        # Check
-        if self.url_type not in [TYPE_GAME, TYPE_EVENT] or self.id is None:
-            return None
-
-        # Download
-        if self.url_type == TYPE_GAME:
-            url = "https://www.iccf.com/GetPGN.aspx?id=%s"
-        elif self.url_type == TYPE_EVENT:
-            url = "https://www.iccf.com/GetEventPGN.aspx?id=%s"
-        pgn = self.download(url % self.id)
-        if pgn in [None, ""] or "does not exist." in pgn or "Invalid event" in pgn:
-            return None
-        else:
-            return pgn
-
-
 # SchachArena.de
 class InternetGameSchacharena(InternetGameInterface):
     def get_identity(self):
@@ -2440,7 +2393,6 @@ chess_providers = [
     InternetGameRedhotpawn(),
     InternetGameChesssamara(),
     InternetGame2700chess(),
-    InternetGameIccf(),
     InternetGameSchacharena(),
     InternetGameChesspuzzle(),
     InternetGameChessking(),

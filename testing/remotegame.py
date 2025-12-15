@@ -19,7 +19,6 @@ from pychess.Savers.remotegame import (
     InternetGameRedhotpawn,
     InternetGameChesssamara,
     InternetGame2700chess,
-    InternetGameIccf,
     InternetGameSchacharena,
     InternetGameChesspuzzle,
     InternetGameChessking,
@@ -75,7 +74,7 @@ class RemoteGameTestCase(unittest.TestCase):
         print("- Fetched data: %s" % ok)
         if ok:
             print(data)
-        self.assertEqual(ok, expected)
+        self.assertEqual(ok, expected, msg=f"{ok} != {expected} for URL {url!r}")
 
     def testLichess(self):
         links = [
@@ -453,28 +452,6 @@ class RemoteGameTestCase(unittest.TestCase):
             ("https://2700chess.com", False),
         ]  # Not a game (homepage)
         self.executeTest(InternetGame2700chess(), links)
-
-    def testIccf(self):
-        links = [
-            ("https://www.iccf.COM/game?id=154976&param=foobar", True),  # Game
-            (
-                "https://www.iccf.com/GetPGN.aspx?id=154976",
-                False,
-            ),  # Game in direct link but handled by the generic extractor
-            ("https://www.iccf.com/game?id=abc123", False),  # Not a game (wrong ID)
-            (
-                "https://www.iccf.com/officials?id=154976",
-                False,
-            ),  # Not a game (invalid path)
-            ("https://www.iccf.com", False),  # Not a game (homepage)
-            ("https://ICCF.com/event?id=13581#tag", True),  # Event
-            (
-                "https://www.iccf.com/GetEventPGN.aspx?id=13581",
-                False,
-            ),  # Event in direct link but handled by the generic extractor
-            ("https://www.iccf.com/event?id=abc123", False),
-        ]  # Not an event (wrong ID)
-        self.executeTest(InternetGameIccf(), links)
 
     def testSchacharena(self):
         self.executeTest(
