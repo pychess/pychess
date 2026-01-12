@@ -288,7 +288,7 @@ if msi:
     base = None
     # Lets not open the console while running the app
     if sys.platform == "win32":
-        base = "Win32GUI"
+        base = "gui"
 
     executables = [
         Executable(
