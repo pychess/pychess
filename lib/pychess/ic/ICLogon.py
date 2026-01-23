@@ -367,9 +367,11 @@ class ICLogon:
                 buttons=Gtk.ButtonsType.YES_NO,
             )
             dialog.set_markup(_("Guest logins disabled by FICS server"))
-            text = "PyChess can maintain users status and games list only if it changes\n\
+            text = (
+                "PyChess can maintain users status and games list only if it changes\n\
             'open', 'gin' and 'availinfo' user variables.\n\
             Do you enable to set these variables on?"
+            )
             dialog.format_secondary_text(text)
             response = dialog.run()
             dialog.destroy()

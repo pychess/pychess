@@ -54,7 +54,6 @@ from .const import (
     DRAW_KINGSINEIGHTROW,
 )
 
-
 if "_" not in builtins.__dict__:
     builtins.__dict__["_"] = lambda s: s
     builtins.__dict__["ngettext"] = lambda singular, plural, n: (

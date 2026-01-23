@@ -10,7 +10,6 @@ from pychess.perspectives.fics import FICS
 from pychess.perspectives.games import Games
 from ficsmanagers import EmittingTestCase
 
-
 """
 [Event "FICS rated standard game"]
 [Site "freechess.org"]

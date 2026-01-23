@@ -50,7 +50,6 @@ from pychess.widgets.InfoBar import (
 )
 from pychess.perspectives import perspective_manager
 
-
 light_on = get_pixbuf("glade/16x16/weather-clear.png")
 light_off = get_pixbuf("glade/16x16/weather-clear-night.png")
 

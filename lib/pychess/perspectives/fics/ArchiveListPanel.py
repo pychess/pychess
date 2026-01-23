@@ -30,7 +30,6 @@ from pychess.perspectives.fics.ParrentListSection import (
 )
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 
-
 __title__ = _("Archived")
 
 __icon__ = addDataPrefix("glade/panel_games.svg")
@@ -196,7 +195,7 @@ class Sidepanel(ParrentListSection):
             self.infobar.push_message(message)
 
     def compareFunction(self, treemodel, iter0, iter1, column):
-        (minute0, minute1) = (
+        minute0, minute1 = (
             treemodel.get_value(iter0, 10),
             treemodel.get_value(iter1, 10),
         )

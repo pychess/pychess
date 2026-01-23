@@ -28,7 +28,6 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.eco import ECO_MAIN_LANG, ECO_LANGS
 from pychess.Variants.fischerandom import FischerandomBoard
 
-
 path = os.path.join(addDataPrefix("eco.db"))
 conn = sqlite3.connect(path)
 

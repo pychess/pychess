@@ -16,7 +16,6 @@ from pychess.perspectives.fics.ParrentListSection import (
     CHALLENGE,
 )
 
-
 __title__ = _("Player List")
 
 __icon__ = addDataPrefix("glade/panel_players.svg")

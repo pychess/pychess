@@ -1,6 +1,5 @@
 from gi.repository import Gtk, GObject
 
-
 firstRun = True
 
 

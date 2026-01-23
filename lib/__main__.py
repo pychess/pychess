@@ -4,7 +4,6 @@ import sys
 from pychess.System.Log import log
 from pychess.Players.PyChessCECP import PyChessCECP
 
-
 if len(sys.argv) == 1 or sys.argv[1:] == ["debug"]:
     if "debug" in sys.argv[1:]:
         log.logger.setLevel(logging.DEBUG)

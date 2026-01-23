@@ -2,7 +2,6 @@ from collections import defaultdict
 
 from gi.repository import Gtk, GObject
 
-
 POSITIONS_COUNT = 5
 NORTH, EAST, SOUTH, WEST, CENTER = range(POSITIONS_COUNT)
 reprPos = ("NORTH", "EAST", "SOUTH", "WEST", "CENTER")
