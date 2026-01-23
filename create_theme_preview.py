@@ -10,7 +10,6 @@ from pychess.Utils.Piece import Piece
 from pychess.gfx import Pieces
 from pychess.System.prefix import addDataPrefix
 
-
 SQUARE = 39
 
 PIECES = (

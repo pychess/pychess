@@ -33,7 +33,6 @@ from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
 from pychess.perspectives import Perspective, perspective_manager, panel_name
 
-
 if not hasattr(Gtk.TreeModelFilter, "new_with_model"):
     # Fix #1811: TreeModelFilter.sort_new_with_model() is missing on some Gtk versions
     # due to API changes. Let's keep compatibility with older versions.

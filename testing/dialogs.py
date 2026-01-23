@@ -20,7 +20,6 @@ from pychess.perspectives.games import Games
 from pychess.perspectives.welcome import Welcome
 from pychess.perspectives import perspective_manager
 
-
 discoverer.pre_discover()
 
 

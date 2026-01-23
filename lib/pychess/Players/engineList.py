@@ -3,7 +3,6 @@ import sys
 from collections import namedtuple
 from pychess.System.cpu import get_cpu
 
-
 # Constants
 AUTO_DETECT = True
 NO_AUTO_DETECT = False

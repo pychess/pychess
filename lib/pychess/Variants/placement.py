@@ -1,7 +1,6 @@
 from pychess.Utils.const import PLACEMENTCHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board
 
-
 # Placement chess (Bronstein/Benko/Pre-chess)
 # http://www.quantumgambitz.com/blog/chess/cga/bronstein-chess-pre-chess-shuffle-chess
 PLACEMENTSTART = "8/pppppppp/8/8/8/8/PPPPPPPP/8/nnbbrrqkNNBBRRQK w - - 0 1"

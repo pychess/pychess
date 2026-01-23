@@ -312,10 +312,8 @@ class Games(GObject.GObject, Perspective):
                 )
                 d.set_markup(_("<big><b>Unable to save file '%s'</b></big>") % uri)
                 d.format_secondary_text(
-                    _(
-                        "You don't have the necessary rights to save the file.\n\
-    Please ensure that you have given the right path and try again."
-                    )
+                    _("You don't have the necessary rights to save the file.\n\
+    Please ensure that you have given the right path and try again.")
                 )
                 d.run()
                 d.destroy()
@@ -419,10 +417,8 @@ class Games(GObject.GObject, Perspective):
                             response = None
                             markup = (
                                 "<b><big>"
-                                + _(
-                                    "Unable to save to configured file. \
-                                                    Save the games before closing?"
-                                )
+                                + _("Unable to save to configured file. \
+                                                    Save the games before closing?")
                                 + "</big></b>"
                             )
                             break
@@ -519,10 +515,8 @@ class Games(GObject.GObject, Perspective):
                 else:
                     markup = (
                         "<b><big>"
-                        + _(
-                            "Unable to save to configured file. \
-                                            Save the current game before you close it?"
-                        )
+                        + _("Unable to save to configured file. \
+                                            Save the current game before you close it?")
                         + "</big></b>"
                     )
 

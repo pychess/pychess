@@ -23,7 +23,6 @@ from pychess.Database.model import game, event, site, pl1, pl2
 from pychess.widgets import newGameDialog
 from pychess.Savers import pgn
 
-
 cols = (
     game.c.id,
     pl1.c.name,

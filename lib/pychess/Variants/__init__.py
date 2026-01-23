@@ -70,7 +70,6 @@ from .placement import PlacementBoard
 from .seirawan import SchessBoard
 from .lightbrigade import LightbrigadeBoard
 
-
 variants = {
     NORMALCHESS: NormalBoard,
     CORNERCHESS: CornerBoard,

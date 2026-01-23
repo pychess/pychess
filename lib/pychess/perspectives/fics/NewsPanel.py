@@ -3,7 +3,6 @@ from gi.repository import Gtk, Pango
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets import insert_formatted
 
-
 __title__ = _("News")
 
 __icon__ = addDataPrefix("glade/panel_annotation.svg")

@@ -27,7 +27,6 @@ from pychess.Utils.const import (
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 
-
 piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
 pnames = ("Pawn", "Knight", "Bishop", "Rook", "Queen", "King")
 

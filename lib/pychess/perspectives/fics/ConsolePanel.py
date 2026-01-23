@@ -7,7 +7,6 @@ from pychess.System.prefix import addDataPrefix
 from pychess.widgets import insert_formatted
 from pychess.ic import FICS_COMMANDS, FICS_HELP
 
-
 __title__ = _("Console")
 
 __icon__ = addDataPrefix("glade/panel_terminal.svg")

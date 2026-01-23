@@ -25,7 +25,6 @@ from pychess.widgets.LearnInfoBar import LearnInfoBar
 from pychess.widgets import insert_formatted, preferencesDialog, mainwindow
 from pychess.widgets.Background import isDarkTheme
 
-
 # --- Constants
 
 __title__ = _("Annotation")
@@ -310,13 +309,13 @@ class Sidepanel:
 
         if event.is_hint:
             # (x, y, state) = event.window.get_pointer()
-            (ign, x, y, state) = event.window.get_pointer()
+            ign, x, y, state = event.window.get_pointer()
         else:
             x = event.x
             y = event.y
             # state = event.get_state()
 
-        (x, y) = self.textview.window_to_buffer_coords(
+        x, y = self.textview.window_to_buffer_coords(
             Gtk.TextWindowType.WIDGET, int(x), int(y)
         )
 
@@ -352,8 +351,8 @@ class Sidepanel:
         """
 
         # Detection of the node with the coordinates of the mouse
-        (wx, wy) = event.get_coords()
-        (x, y) = self.textview.window_to_buffer_coords(
+        wx, wy = event.get_coords()
+        x, y = self.textview.window_to_buffer_coords(
             Gtk.TextWindowType.WIDGET, int(wx), int(wy)
         )
         it = self.textview.get_iter_at_location(x, y)
@@ -551,7 +550,7 @@ class Sidepanel:
         if response == Gtk.ResponseType.DELETE_EVENT:  # Escape key implies Cancel
             response = Gtk.ResponseType.CANCEL
 
-        (iter_first, iter_last) = textbuffer.get_bounds()
+        iter_first, iter_last = textbuffer.get_bounds()
         comment = (
             ""
             if response == Gtk.ResponseType.REJECT

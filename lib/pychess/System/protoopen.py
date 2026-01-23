@@ -3,7 +3,6 @@ import sys
 from urllib.request import urlopen
 from urllib.parse import unquote
 
-
 PGN_ENCODING = "latin_1"
 
 

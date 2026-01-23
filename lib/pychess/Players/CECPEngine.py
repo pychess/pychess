@@ -40,7 +40,6 @@ from pychess.Variants import variants
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
 from .ProtocolEngine import ProtocolEngine, TIME_OUT_SECOND
 
-
 movere = re.compile(
     r"""
     (                   # group start

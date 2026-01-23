@@ -33,7 +33,6 @@ from pychess.widgets import mainwindow
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.Variants import variants
 
-
 RATING_SLIDER_STEP = 25
 
 

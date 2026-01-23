@@ -14,7 +14,6 @@ from pychess.Variants.fischerandom import FischerandomBoard
 
 from .ChessFile import ChessFile, LoadingError
 
-
 __label__ = _("Simple Chess Position")
 __ending__ = "fen"
 __append__ = True

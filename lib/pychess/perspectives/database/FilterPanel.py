@@ -431,7 +431,7 @@ class FilterPanel(Gtk.TreeView):
             need_update = True
 
         textbuffer = self.widgets["scout_textbuffer"]
-        (iter_first, iter_last) = textbuffer.get_bounds()
+        iter_first, iter_last = textbuffer.get_bounds()
         text = textbuffer.get_text(iter_first, iter_last, False)
         if text:
             q = ast.literal_eval(text)
