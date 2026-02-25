@@ -4,7 +4,7 @@ pexpect==4.9.0
 psutil==7.2.2
 pycairo==1.29.0
 PyGObject==3.54.5
-SQLAlchemy==2.0.46
+SQLAlchemy==2.0.47
 websockets==15.0.1
 
 # Test-only dependencies
