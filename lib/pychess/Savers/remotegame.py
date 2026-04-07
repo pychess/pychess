@@ -1731,36 +1731,6 @@ class InternetGameRedhotpawn(InternetGameInterface):
         return None
 
 
-# Chess-Samara.ru
-class InternetGameChesssamara(InternetGameInterface):
-    def get_identity(self):
-        return "Chess-Samara.ru", CAT_DL
-
-    def assign_game(self, url):
-        rxp = re.compile(
-            r"^https?:\/\/(\S+\.)?chess-samara\.ru\/(\d+)\-", re.IGNORECASE
-        )
-        m = rxp.match(url)
-        if m is not None:
-            gid = str(m.group(2))
-            if gid.isdigit() and gid != "0":
-                self.id = gid
-                return True
-        return False
-
-    def download_game(self):
-        # Check
-        if self.id is None:
-            return None
-
-        # Download
-        pgn = self.download("https://chess-samara.ru/view/pgn.html?gameid=%s" % self.id)
-        if pgn is None or len(pgn) == 0:
-            return None
-        else:
-            return pgn
-
-
 # 2700chess.com
 class InternetGame2700chess(InternetGameInterface):
     def get_identity(self):
@@ -2391,7 +2361,6 @@ chess_providers = [
     InternetGameChessCom(),
     InternetGameSchachspielen(),
     InternetGameRedhotpawn(),
-    InternetGameChesssamara(),
     InternetGame2700chess(),
     InternetGameSchacharena(),
     InternetGameChesspuzzle(),
