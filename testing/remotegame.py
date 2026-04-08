@@ -17,7 +17,6 @@ from pychess.Savers.remotegame import (
     InternetGameChessCom,
     InternetGameSchachspielen,
     InternetGameRedhotpawn,
-    InternetGameChesssamara,
     InternetGame2700chess,
     InternetGameSchacharena,
     InternetGameChesspuzzle,
@@ -415,24 +414,6 @@ class RemoteGameTestCase(unittest.TestCase):
             ),
         ]  # Not a puzzle (wrong ID)
         self.executeTest(InternetGameRedhotpawn(), links)
-
-    def testChesssamara(self):
-        links = [
-            (
-                "https://chess-SAMARA.ru/68373335-igra-Firudin1888-vs-Pizyk",
-                True,
-            ),  # Game
-            (
-                "https://chess-samara.ru/view/pgn.html?gameid=68373335",
-                False,
-            ),  # Game in direct link but handled by the generic extractor
-            (
-                "https://chess-samara.ru/1234567890123-pychess-vs-pychess",
-                False,
-            ),  # Not a game (wrong ID)
-            ("https://chess-samara.ru", False),
-        ]  # Not a game (homepage)
-        self.executeTest(InternetGameChesssamara(), links)
 
     @unittest.skip("You need to be a Premium Member to have access to this feature.")
     def test2700chess(self):
