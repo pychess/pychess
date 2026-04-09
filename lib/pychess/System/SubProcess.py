@@ -155,6 +155,7 @@ class SubProcess(GObject.GObject):
         if self.write_task is not None:
             self.write_task.cancel()
         self.read_stdout_task.cancel()
+        self.resume()
         try:
             self.proc.terminate()
             log.debug("SubProcess.terminate()", extra={"task": self.defname})
