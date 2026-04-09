@@ -4,7 +4,6 @@ import unittest
 
 from pychess.System.SubProcess import SubProcess
 
-
 HELPER_CODE = """\
 import sys
 

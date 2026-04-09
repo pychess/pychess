@@ -190,7 +190,9 @@ class SubProcess(GObject.GObject):
                 extra={"task": self.defname},
             )
             try:
-                await asyncio.wait_for(asyncio.shield(self.write_task), self.QUIT_TIMEOUT)
+                await asyncio.wait_for(
+                    asyncio.shield(self.write_task), self.QUIT_TIMEOUT
+                )
             except (
                 asyncio.TimeoutError,
                 asyncio.CancelledError,

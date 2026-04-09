@@ -242,9 +242,9 @@ class GameNanny:
             self.engineDead(gamemodel.players[1], gmwidg)
 
         if (
-            isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()
-        ) or gamemodel.isEngine2EngineGame() or (
-            isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best
+            (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame())
+            or gamemodel.isEngine2EngineGame()
+            or (isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best)
         ):
             self._start_analyzers(gamemodel)
         else:
