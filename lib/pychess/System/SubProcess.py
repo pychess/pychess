@@ -13,6 +13,10 @@ from pychess.Players.ProtocolEngine import TIME_OUT_SECOND
 
 
 class SubProcess(GObject.GObject):
+    QUIT_TIMEOUT = 0.5
+    TERM_TIMEOUT = 1.0
+    KILL_TIMEOUT = 1.0
+
     __gsignals__ = {
         "line": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
         "died": (GObject.SignalFlags.RUN_FIRST, None, ()),
@@ -41,6 +45,9 @@ class SubProcess(GObject.GObject):
 
         self.argv = [str(u) for u in [self.path] + self.args]
         self.terminated = False
+        self.read_stdout_task = None
+        self.write_task = None
+        self.terminate_task = None
 
     async def start(self):
         log.debug(
@@ -79,7 +86,6 @@ class SubProcess(GObject.GObject):
             self.read_stdout_task = asyncio.create_task(
                 self.read_stdout(self.proc.stdout)
             )
-            self.write_task = None
         except asyncio.TimeoutError:
             log.warning("TimeoutError", extra={"task": self.defname})
             raise
@@ -92,11 +98,11 @@ class SubProcess(GObject.GObject):
             raise
 
     def write(self, line):
+        if self.terminated:
+            return
         self.write_task = asyncio.create_task(self.write_stdin(self.proc.stdin, line))
 
     async def write_stdin(self, writer, line):
-        if self.terminated:
-            return
         try:
             log.debug(line, extra={"task": self.defname})
             writer.write(line.encode())
@@ -152,10 +158,57 @@ class SubProcess(GObject.GObject):
         self.terminate()
 
     def terminate(self):
-        if self.write_task is not None:
-            self.write_task.cancel()
-        self.read_stdout_task.cancel()
+        if self.terminated:
+            return
+
+        try:
+            if self.proc.returncode is not None:
+                self.terminated = True
+                return
+        except ProcessLookupError:
+            self.terminated = True
+            return
+
+        self.terminated = True
         self.resume()
+        self.terminate_task = asyncio.create_task(self._terminate())
+
+    async def _wait_for_exit(self, timeout):
+        try:
+            await asyncio.wait_for(self.proc.wait(), timeout)
+        except asyncio.TimeoutError:
+            return False
+        else:
+            return True
+
+    async def _terminate(self):
+        current = asyncio.current_task()
+
+        if self.write_task is not None and self.write_task is not current:
+            log.debug(
+                "SubProcess.terminate(): waiting for pending write",
+                extra={"task": self.defname},
+            )
+            try:
+                await asyncio.wait_for(asyncio.shield(self.write_task), self.QUIT_TIMEOUT)
+            except (
+                asyncio.TimeoutError,
+                asyncio.CancelledError,
+                BrokenPipeError,
+                ConnectionResetError,
+                GLib.GError,
+            ):
+                pass
+
+        if self.proc.stdin is not None:
+            try:
+                self.proc.stdin.close()
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+
+        if await self._wait_for_exit(self.QUIT_TIMEOUT):
+            return
+
         try:
             self.proc.terminate()
             log.debug("SubProcess.terminate()", extra={"task": self.defname})
@@ -164,8 +217,30 @@ class SubProcess(GObject.GObject):
                 "SubProcess.terminate(): ProcessLookupError",
                 extra={"task": self.defname},
             )
+            return
 
-        self.terminated = True
+        if await self._wait_for_exit(self.TERM_TIMEOUT):
+            return
+
+        try:
+            proc = psutil.Process(self.pid)
+            children = proc.children(recursive=True)
+        except psutil.Error:
+            children = []
+
+        try:
+            self.proc.kill()
+            log.debug("SubProcess.kill()", extra={"task": self.defname})
+        except ProcessLookupError:
+            return
+
+        for child in children:
+            try:
+                child.kill()
+            except psutil.Error:
+                continue
+
+        await self._wait_for_exit(self.KILL_TIMEOUT)
 
     def pause(self):
         if sys.platform != "win32":

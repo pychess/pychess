@@ -73,6 +73,9 @@ class GameNanny:
             gamemodel.connect("game_ended", self.game_ended, gmwidg)
         )
         self.model_cids[gamemodel].append(
+            gamemodel.connect("game_unended", self.game_unended, gmwidg)
+        )
+        self.model_cids[gamemodel].append(
             gamemodel.connect("game_terminated", self.on_game_terminated, gmwidg)
         )
 
@@ -239,17 +242,19 @@ class GameNanny:
             self.engineDead(gamemodel.players[1], gmwidg)
 
         if (
-            (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame())
-            or gamemodel.isEngine2EngineGame()
-            or (isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best)
+            isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()
+        ) or gamemodel.isEngine2EngineGame() or (
+            isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best
         ):
-            asyncio.create_task(gamemodel.restart_analyzer(HINT))
-            asyncio.create_task(gamemodel.restart_analyzer(SPY))
-            if not conf.get("hint_mode"):
-                gamemodel.pause_analyzer(HINT)
-            if not conf.get("spy_mode"):
-                gamemodel.pause_analyzer(SPY)
+            self._start_analyzers(gamemodel)
+        else:
+            self._stop_analyzers(gamemodel)
 
+        return False
+
+    def game_unended(self, gamemodel, gmwidg):
+        if not gamemodel.isEngine2EngineGame():
+            self._start_analyzers(gamemodel)
         return False
 
     def on_game_started(self, gamemodel, gmwidg):
@@ -282,12 +287,7 @@ class GameNanny:
 
         # Start analyzers if any
         if not gamemodel.isEngine2EngineGame():
-            asyncio.create_task(gamemodel.start_analyzer(HINT))
-            asyncio.create_task(gamemodel.start_analyzer(SPY))
-            if not conf.get("hint_mode"):
-                gamemodel.pause_analyzer(HINT)
-            if not conf.get("spy_mode"):
-                gamemodel.pause_analyzer(SPY)
+            self._start_analyzers(gamemodel)
         return False
 
     # ===============================================================================
@@ -348,6 +348,18 @@ class GameNanny:
         )
         dialog.connect("response", lambda dialog, r: dialog.hide())
         dialog.show_all()
+
+    def _start_analyzers(self, gamemodel):
+        asyncio.create_task(gamemodel.start_analyzer(HINT))
+        asyncio.create_task(gamemodel.start_analyzer(SPY))
+        if not conf.get("hint_mode"):
+            gamemodel.pause_analyzer(HINT)
+        if not conf.get("spy_mode"):
+            gamemodel.pause_analyzer(SPY)
+
+    def _stop_analyzers(self, gamemodel):
+        for analyzer_type in (HINT, SPY):
+            gamemodel.remove_analyzer(analyzer_type)
 
 
 game_nanny = GameNanny()
