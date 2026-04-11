@@ -1,19 +1,19 @@
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.2
+    rev: 75992aaa40730136014f34227e0135f63fc951b4  # frozen: v3.21.2
     hooks:
     -  id: pyupgrade
        args: ['--py310-plus']
 
   - repo: https://github.com/psf/black
-    rev: 26.3.1
+    rev: c6755bb741b6481d6b3d3bb563c83fa060db96c9  # frozen: 26.3.1
     hooks:
       - id: black
         args: ['--target-version', 'py310']
         exclude: 'doc/createDoc'
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.3.0
+    rev: c48217e1fc006c2dddd14df54e83b67da15de5cd  # frozen: 7.3.0
     hooks:
       - id: flake8
         exclude: 'doc/createDoc'
