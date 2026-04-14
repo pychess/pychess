@@ -375,7 +375,7 @@ setup(
     license="GPL3",
     url="https://pychess.github.io/",
     download_url="https://github.com/pychess/pychess/releases",
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=[
         "pexpect",
         "psutil",
