@@ -481,10 +481,14 @@ def state_pawn(model, ply, phase):
                     continue
 
             score = passedScores[color][cord >> 3] * phase
-            yield score, _("%(color)s has a new passed pawn on %(cord)s") % {
-                "color": reprColor[color],
-                "cord": reprCord[cord],
-            }
+            yield (
+                score,
+                _("%(color)s has a new passed pawn on %(cord)s")
+                % {
+                    "color": reprColor[color],
+                    "cord": reprCord[cord],
+                },
+            )
 
     # Double pawns
     found_doubles = []
@@ -558,18 +562,26 @@ def state_pawn(model, ply, phase):
         else:
             s = _("%(color)s got new double pawns %(place)s")
 
-        yield (8 + phase) * 2 * doubles_count, s % {
-            "color": reprColor[color],
-            "place": join(parts),
-        }
+        yield (
+            (8 + phase) * 2 * doubles_count,
+            s
+            % {
+                "color": reprColor[color],
+                "place": join(parts),
+            },
+        )
 
     for color_, list_ in ((WHITE, found_white_isolates), (BLACK, found_black_isolates)):
         if list_:
-            yield 20 * len(list_), ngettext(
-                "%(color)s got an isolated pawn in the %(x)s file",
-                "%(color)s got isolated pawns in the %(x)s files",
-                len(list_),
-            ) % {"color": reprColor[color_], "x": join(list_)}
+            yield (
+                20 * len(list_),
+                ngettext(
+                    "%(color)s got an isolated pawn in the %(x)s file",
+                    "%(color)s got isolated pawns in the %(x)s files",
+                    len(list_),
+                )
+                % {"color": reprColor[color_], "x": join(list_)},
+            )
 
     # Stone wall
     if (
@@ -594,9 +606,10 @@ def state_destroysCastling(model, ply, phase):
         if oldcastling & W_OO and not castling & W_OO:
             yield 900 / phase, _("%s can no longer castle") % reprColor[WHITE]
         else:
-            yield 400 / phase, _("%s can no longer castle in queenside") % reprColor[
-                WHITE
-            ]
+            yield (
+                400 / phase,
+                _("%s can no longer castle in queenside") % reprColor[WHITE],
+            )
     elif oldcastling & W_OO and not castling & W_OO:
         yield 500 / phase, _("%s can no longer castle in kingside") % reprColor[WHITE]
 
@@ -604,9 +617,10 @@ def state_destroysCastling(model, ply, phase):
         if oldcastling & B_OO and not castling & B_OO:
             yield 900 / phase, _("%s can no longer castle") % reprColor[BLACK]
         else:
-            yield 400 / phase, _("%s can no longer castle in queenside") % reprColor[
-                BLACK
-            ]
+            yield (
+                400 / phase,
+                _("%s can no longer castle in queenside") % reprColor[BLACK],
+            )
     elif oldcastling & B_OO and not castling & B_OO:
         yield 500 / phase, _("%s can no longer castle in kingside") % reprColor[BLACK]
 
@@ -642,10 +656,14 @@ def state_trappedBishops(model, ply, phase):
 
     # We have got more points -> We have trapped a bishop
     if s > olds:
-        yield 300 / phase, _("%(opcolor)s has a new trapped bishop on %(cord)s") % {
-            "opcolor": reprColor[opcolor],
-            "cord": reprCord[cord],
-        }
+        yield (
+            300 / phase,
+            _("%(opcolor)s has a new trapped bishop on %(cord)s")
+            % {
+                "opcolor": reprColor[opcolor],
+                "cord": reprCord[cord],
+            },
+        )
 
 
 def simple_tropism(model, ply, phase):
@@ -684,14 +702,20 @@ def simple_tropism(model, ply, phase):
         else:
             piece = arBoard[tcord]
         if phase >= 5 or distance[piece][fcord][opking] < distance[piece][fcord][king]:
-            yield score - oldscore, _(
-                "brings a %(piece)s closer to enemy king: %(cord)s"
-            ) % {"piece": reprPiece[piece], "cord": reprCord[tcord]}
+            yield (
+                score - oldscore,
+                _("brings a %(piece)s closer to enemy king: %(cord)s")
+                % {"piece": reprPiece[piece], "cord": reprCord[tcord]},
+            )
         else:
-            yield (score - oldscore) * 2, _("develops a %(piece)s: %(cord)s") % {
-                "piece": reprPiece[piece].lower(),
-                "cord": reprCord[tcord],
-            }
+            yield (
+                (score - oldscore) * 2,
+                _("develops a %(piece)s: %(cord)s")
+                % {
+                    "piece": reprPiece[piece].lower(),
+                    "cord": reprCord[tcord],
+                },
+            )
 
 
 def simple_activity(model, ply, phase):
@@ -707,10 +731,14 @@ def simple_activity(model, ply, phase):
     oldmoves = len([m for m in genAllMoves(oldboard) if FCORD(m) == fcord])
 
     if moves > oldmoves:
-        yield (moves - oldmoves) / 2, _("places a %(piece)s more active: %(cord)s") % {
-            "piece": reprPiece[board.arBoard[tcord]].lower(),
-            "cord": reprCord[tcord],
-        }
+        yield (
+            (moves - oldmoves) / 2,
+            _("places a %(piece)s more active: %(cord)s")
+            % {
+                "piece": reprPiece[board.arBoard[tcord]].lower(),
+                "cord": reprCord[tcord],
+            },
+        )
 
 
 def tip_pawnStorm(model, ply, phase):

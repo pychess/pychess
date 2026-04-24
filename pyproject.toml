@@ -1,0 +1,111 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pychess"
+dynamic = ["version"]
+description = "Chess client"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+authors = [
+    { name = "Pychess team", email = "pychess-people@googlegroups.com" },
+]
+maintainers = [
+    { name = "Thomas Dybdahl Ahle" },
+]
+keywords = ["python", "gtk", "chess", "xboard", "gnuchess", "game", "pgn", "epd", "board", "linux"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: X11 Applications :: GTK",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Games/Entertainment :: Board Games",
+]
+dependencies = [
+    "pexpect",
+    "psutil",
+    "pycairo",
+    "PyGObject",
+    "SQLAlchemy>=2",
+    "websockets",
+]
+
+[project.optional-dependencies]
+gbulb = ["gbulb"]
+
+[project.urls]
+Homepage = "https://pychess.github.io/"
+Download = "https://github.com/pychess/pychess/releases"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pyright",
+    "ruff",
+]
+
+[tool.setuptools]
+package-dir = { "" = "lib" }
+script-files = ["pychess"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pychess.VERSION" }
+
+[tool.setuptools.packages.find]
+where = ["lib"]
+include = ["pychess*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+src = ["lib", "testing"]
+builtins = ["_", "ngettext", "reload"]
+extend-exclude = [
+    "build",
+    "dist",
+    "doc/createDoc",
+    "lib/pychess.egg-info",
+]
+
+[tool.ruff.lint]
+select = ["E", "F"]
+# NOTE: This mirrors the old flake8 baseline. Shrink this list as the codebase
+# is cleaned up.
+ignore = [
+    "E203",
+    "E402",
+    "E501",
+    "F403",
+    "F405",
+]
+
+[tool.pyright]
+include = ["lib/pychess", "testing"]
+exclude = [
+    "build",
+    "dist",
+    "doc/createDoc",
+    "lib/pychess.egg-info",
+]
+pythonVersion = "3.10"
+pythonPlatform = "Linux"
+typeCheckingMode = "off"
+reportMissingImports = "none"
+reportMissingModuleSource = "none"
+reportUndefinedVariable = "none"
+
+[[tool.pyright.executionEnvironments]]
+root = "lib"
+extraPaths = ["lib"]
+
+[[tool.pyright.executionEnvironments]]
+root = "testing"
+extraPaths = ["lib"]

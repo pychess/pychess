@@ -228,9 +228,11 @@ class Board:
                 moved.append((self[cord0], cord0))
 
         # capture
-        if self[cord1] and not (
-            flag
-            in (QUEEN_CASTLE, KING_CASTLE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)
+        if self[cord1] and flag not in (
+            QUEEN_CASTLE,
+            KING_CASTLE,
+            HAWK_GATE_AT_ROOK,
+            ELEPHANT_GATE_AT_ROOK,
         ):
             piece = (
                 PAWN
@@ -340,9 +342,11 @@ class Board:
         )
 
         # capture
-        if board1[cord1] and not (
-            flag
-            in (QUEEN_CASTLE, KING_CASTLE, HAWK_GATE_AT_ROOK, ELEPHANT_GATE_AT_ROOK)
+        if board1[cord1] and flag not in (
+            QUEEN_CASTLE,
+            KING_CASTLE,
+            HAWK_GATE_AT_ROOK,
+            ELEPHANT_GATE_AT_ROOK,
         ):
             piece = (
                 PAWN

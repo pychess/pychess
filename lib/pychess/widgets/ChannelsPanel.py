@@ -439,6 +439,6 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         )
 
     def onPersonMessage(self, cm, name, title, isadmin, text):
-        if not self.compileId(name, TYPE_PERSONAL) in self.joinedList:
+        if self.compileId(name, TYPE_PERSONAL) not in self.joinedList:
             grp_id = self.compileId(name, TYPE_PERSONAL)
             self.onAdd(self.playersList, grp_id, name, TYPE_PERSONAL)

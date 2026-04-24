@@ -117,8 +117,10 @@ class InformationWindow:
         # Make searchEntry and "out of label" share height with the buttons
         widgets["prevButton"].connect(
             "size-allocate",
-            lambda w, alloc: widgets["searchEntry"].set_size_request(-1, alloc.height)
-            or widgets["outofLabel"].set_size_request(-1, alloc.height - 2),
+            lambda w, alloc: (
+                widgets["searchEntry"].set_size_request(-1, alloc.height)
+                or widgets["outofLabel"].set_size_request(-1, alloc.height - 2)
+            ),
         )
 
         # Make "out of label" more visually distinct
@@ -211,8 +213,9 @@ class InformationWindow:
                 if widgets["findbar"].props.visible:
                     signal = widgets["searchEntry"].connect_after(
                         "draw",
-                        lambda w, e: w.grab_focus()
-                        or widgets["searchEntry"].disconnect(signal),
+                        lambda w, e: (
+                            w.grab_focus() or widgets["searchEntry"].disconnect(signal)
+                        ),
                     )
 
     @classmethod

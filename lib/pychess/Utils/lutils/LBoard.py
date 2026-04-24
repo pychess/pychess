@@ -215,9 +215,9 @@ class LBoard:
         Pos(%d) specifying the string index of the problem.
         if an error is found, no changes will be made to the board."""
 
-        assert (
-            not self.fen_was_applied
-        ), "The applyFen() method can be used on new LBoard objects only!"
+        assert not self.fen_was_applied, (
+            "The applyFen() method can be used on new LBoard objects only!"
+        )
 
         # Set board to empty on Black's turn (which Polyglot-hashes to 0)
         self.blocker = 0
@@ -322,7 +322,7 @@ class LBoard:
                 _("Needs 7 slashes in piece placement field. \n\n%s") % fenstr
             )
 
-        if not colChr.lower() in ("w", "b"):
+        if colChr.lower() not in ("w", "b"):
             raise SyntaxError(
                 _("Active color field must be one of w or b. \n\n%s") % fenstr
             )
@@ -1089,14 +1089,14 @@ class LBoard:
             for i, piece in enumerate(row):
                 if piece != EMPTY:
                     if bitPosArray[(7 - r) * 8 + i] & self.friends[WHITE]:
-                        assert self.boards[WHITE][
-                            piece
-                        ], "self.boards doesn't match self.arBoard !!!"
+                        assert self.boards[WHITE][piece], (
+                            "self.boards doesn't match self.arBoard !!!"
+                        )
                         sign = reprSign[piece] if ascii else FAN_PIECES[WHITE][piece]
                     else:
-                        assert self.boards[BLACK][
-                            piece
-                        ], "self.boards doesn't match self.arBoard !!!"
+                        assert self.boards[BLACK][piece], (
+                            "self.boards doesn't match self.arBoard !!!"
+                        )
                         sign = (
                             reprSign[piece].lower()
                             if ascii

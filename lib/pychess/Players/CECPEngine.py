@@ -449,9 +449,9 @@ class CECPEngine(ProtocolEngine):
             return
 
         if variant in variants.values() and not variant.standard_rules:
-            assert (
-                variant.cecp_name in self.features["variants"]
-            ), f"{self} doesn't support {variant.cecp_name} variant"
+            assert variant.cecp_name in self.features["variants"], (
+                f"{self} doesn't support {variant.cecp_name} variant"
+            )
             self.optionQueue.append("variant %s" % variant.cecp_name)
 
     #    Strength system                               #

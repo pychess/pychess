@@ -186,7 +186,6 @@ DEFAULTS = {
         "show_tip_at_startup": True,
         "tips_seed": 0,
         "tips_index": 0,
-        "dont_show_externals_at_startup": False,
         "download_timestamp": False,
         "download_chess_db": False,
         "download_scoutfish": False,

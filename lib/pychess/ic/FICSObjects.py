@@ -1011,7 +1011,7 @@ class FICSGame(FICSMatch):
         if self.game_type is GAME_TYPES_BY_FICS_NAME["wild"]:
             return True
         elif self.game_type is not None and self.game_type.fics_name in GAME_TYPES:
-            return not GAME_TYPES[self.game_type.fics_name].variant_type in UNSUPPORTED
+            return GAME_TYPES[self.game_type.fics_name].variant_type not in UNSUPPORTED
         else:
             return False
 

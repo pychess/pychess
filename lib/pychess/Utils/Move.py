@@ -43,9 +43,9 @@ class Move:
             self.cord0 = None if self.flag == DROP else Cord(lmove.FCORD(self.move))
             self.cord1 = Cord(lmove.TCORD(self.move))
         else:
-            assert (
-                cord0 is not None and cord1 is not None
-            ), f"cord0={cord0}, cord1={cord1}, board={board}"
+            assert cord0 is not None and cord1 is not None, (
+                f"cord0={cord0}, cord1={cord1}, board={board}"
+            )
             assert board[cord0] is not None, "cord0={}, cord1={}, board={}".format(
                 cord0, cord1, board
             )

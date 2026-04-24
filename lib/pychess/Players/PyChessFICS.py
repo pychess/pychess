@@ -312,8 +312,9 @@ class PyChessFICS(PyChess):
                     bold_ss = "<b>DMPGirl:</b>"
                     break_es = "<br>"
                     answer = data[
-                        data.find(bold_ss)
-                        + len(bold_ss) : data.find(break_es, data.find(bold_ss))
+                        data.find(bold_ss) + len(bold_ss) : data.find(
+                            break_es, data.find(bold_ss)
+                        )
                     ]
                     chatManager.tellPlayer(name, answer)
 

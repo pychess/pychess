@@ -13,15 +13,14 @@ To run the pychess engine in text based mode
 $ PYTHONPATH=lib/ python3 lib/pychess/Players/PyChess.py
 
 To run unit tests for pychess:
-cd testing
-$ ./run3 run_tests.py
+$ uv run python -m unittest discover -s testing -p "*.py" -v
 
 --------------------------------------
-Developers shoud install some linters:
-pip install flake8
-pip install pep8-naming
-flake8 --install-hook=git
-git config flake8.strict true
+Developers should install the development tools with uv:
+$ uv sync --group dev
+$ uv run --only-group dev ruff check .
+$ uv run --only-group dev ruff format .
+$ uv run --only-group dev pyright
 
 -------------------------------
 PyChess learning modules need stockfish to be installed

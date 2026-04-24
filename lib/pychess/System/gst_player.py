@@ -16,7 +16,13 @@ except (ImportError, ValueError) as err:
     print("ERROR: Unable to import gstreamer.\n%s" % err)
     sys.exit(1)
 
-if not Gst.init_check(None):
+init_result = Gst.init_check([])
+if isinstance(init_result, tuple):
+    init_ok = init_result[0]
+else:
+    init_ok = init_result
+
+if not init_ok:
     print("ERROR: Unable to initialize gstreamer.")
     sys.exit(1)
 
