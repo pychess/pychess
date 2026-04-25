@@ -506,7 +506,7 @@ def parseSAN(board, san):
                         board.asFen(),
                     )
     else:
-        if not notat[-2:] in cordDic:
+        if notat[-2:] not in cordDic:
             raise ParsingError(
                 san, _("the end cord (%s) is incorrect") % notat[-2:], board.asFen()
             )
@@ -772,11 +772,11 @@ def parseAN(board, an):
 
     flag = NORMAL_MOVE
 
-    if length > 4 and not an[-1] in "QRBNMSFHEqrbnmsfhe":
+    if length > 4 and an[-1] not in "QRBNMSFHEqrbnmsfhe":
         if (
             (board.variant != SUICIDECHESS and board.variant != GIVEAWAYCHESS)
             or (board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS)
-            and not an[-1] in "Kk"
+            and an[-1] not in "Kk"
         ):
             raise ParsingError(an, "invalid promoted piece", board.asFen())
 

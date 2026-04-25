@@ -120,8 +120,9 @@ class Engine(Player):
             sstring = "<b>DMPGirl:</b>"
             estring = "<br>"
             answer = data[
-                data.find(sstring)
-                + len(sstring) : data.find(estring, data.find(sstring))
+                data.find(sstring) + len(sstring) : data.find(
+                    estring, data.find(sstring)
+                )
             ]
             self.emit("offer", Offer(CHAT_ACTION, answer))
 

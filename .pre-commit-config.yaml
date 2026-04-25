@@ -1,19 +1,7 @@
 repos:
-  - repo: https://github.com/asottile/pyupgrade
-    rev: 75992aaa40730136014f34227e0135f63fc951b4  # frozen: v3.21.2
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.11
     hooks:
-    -  id: pyupgrade
-       args: ['--py310-plus']
-
-  - repo: https://github.com/psf/black
-    rev: c6755bb741b6481d6b3d3bb563c83fa060db96c9  # frozen: 26.3.1
-    hooks:
-      - id: black
-        args: ['--target-version', 'py310']
-        exclude: 'doc/createDoc'
-
-  - repo: https://github.com/pycqa/flake8
-    rev: c48217e1fc006c2dddd14df54e83b67da15de5cd  # frozen: 7.3.0
-    hooks:
-      - id: flake8
-        exclude: 'doc/createDoc'
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format

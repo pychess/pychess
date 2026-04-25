@@ -111,9 +111,7 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(SCHESSSTART)
 
-        for (
-            move
-        ) in "e2e3 e7e5 d1h5 d8e7 h5g4 b8c6 g1f3 d7d5 g4h4 e7c5 h4a4 e5e4 d2d4 c5e7 f3d2 e7b4 a4b4 c6b4".split():
+        for move in "e2e3 e7e5 d1h5 d8e7 h5g4 b8c6 g1f3 d7d5 g4h4 e7c5 h4a4 e5e4 d2d4 c5e7 f3d2 e7b4 a4b4 c6b4".split():
             board.applyMove(parseAN(board, move))
         print("--------")
         print(board)
@@ -143,9 +141,7 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(SCHESSSTART)
 
-        for (
-            move
-        ) in "e2e4 d7d6 d1e2 c8d7 g1f3 g8f6 e4e5 f6d5 e2e4 d5b6 d2d3 d7c6 e4f5 c6d7 f5g5 g7g6 f3d4 h7h5 g5f4 d6e5 f4h4 f8g7 d4f3 d7g4 b1c3 f7f6 c3e4 d8d5 e4c3 d5c5 c1e3 c5d6 h2h3 g4f3 g2f3 e8g8h".split():
+        for move in "e2e4 d7d6 d1e2 c8d7 g1f3 g8f6 e4e5 f6d5 e2e4 d5b6 d2d3 d7c6 e4f5 c6d7 f5g5 g7g6 f3d4 h7h5 g5f4 d6e5 f4h4 f8g7 d4f3 d7g4 b1c3 f7f6 c3e4 d8d5 e4c3 d5c5 c1e3 c5d6 h2h3 g4f3 g2f3 e8g8h".split():
             board.applyMove(parseAN(board, move))
 
         moves = set()
@@ -175,9 +171,7 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(SCHESSSTART)
 
-        for (
-            move
-        ) in "e2e3 e7e6 g1f3 c7c6 c2c3 d7d5 d2d4 g8f6 h2h3 f6e4 d1c2 b8d7 f1d3 f7f5 e1g1e d8c7 e1e2 f8e7 c2d1".split():
+        for move in "e2e3 e7e6 g1f3 c7c6 c2c3 d7d5 d2d4 g8f6 h2h3 f6e4 d1c2 b8d7 f1d3 f7f5 e1g1e d8c7 e1e2 f8e7 c2d1".split():
             board.applyMove(parseAN(board, move))
 
         moves = set()

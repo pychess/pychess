@@ -99,9 +99,9 @@ class ObserveGameTests(EmittingTestCase):
             "fics% ",
             "Game 1: LectureBot moves: c5",
             "<12> rnbqkbnr pp-ppppp -------- --p----- -------- -----NP- PPPPPP-P RNBQKB-R B -1 1 1 1 1 0 1 Henley Browne -2 0 0 39 39 0 0 2 P/g2-g3 (0:00.000) g3 0 0 0",
-            "fics% " "Game 1: LectureBot moves: g3",
+            "fics% Game 1: LectureBot moves: g3",
             "<12> rnbqkbnr p--ppppp -p------ --p----- -------- -----NP- PPPPPP-P RNBQKB-R W -1 1 1 1 1 0 1 Henley Browne -2 0 0 39 39 0 0 3 P/b7-b6 (0:00.000) b6 0 0 0",
-            "fics% " "Game 1: LectureBot moves: b6",
+            "fics% Game 1: LectureBot moves: b6",
         ]
 
         await self.connection.process_lines(lines)

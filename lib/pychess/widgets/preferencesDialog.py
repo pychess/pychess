@@ -827,8 +827,10 @@ class ThemeTab:
                 pixbuf = get_pixbuf(pngfile)
                 store.append((pixbuf, theme))
             else:
-                print("WARNING: No piece theme preview icons found. Please run \
-                    create_theme_preview.sh !")
+                print(
+                    "WARNING: No piece theme preview icons found. Please run \
+                    create_theme_preview.sh !"
+                )
                 break
 
         self.icon_view = widgets["pieceTheme"]

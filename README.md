@@ -69,20 +69,22 @@ PyChess is an open-source project, and contributions are welcome! Whether you wa
 
 2. **Set Up Your Development Environment**
    - Ensure you have Python 3.10 or newer installed.
-   - Install the required dependencies:
+   - Install the required system GTK/GObject packages for your platform. On Debian/Ubuntu, see `INSTALL` for the full package list.
+   - Install Python dependencies with `uv`:
      ```bash
-     pip install -r requirements.txt
+     uv sync --group dev
      ```
-   - If it suits your development needs, create a virtual environment to isolate your development environment:
+   - If you prefer a plain `pip` workflow, create a virtual environment and install the pinned requirements:
      ```bash
      python -m venv venv
      source venv/bin/activate
+     pip install -r requirements.txt
      ```
 
 3. **Running PyChess Locally**
    - To launch PyChess, run the following command from the project root directory:
      ```bash
-     python pychess
+     uv run python pychess
      ```
    - Using the launched instance, you can monitor and reflect upon any changes you make.
 
@@ -97,13 +99,24 @@ PyChess is an open-source project, and contributions are welcome! Whether you wa
 
 5. **Writing and Running Tests**
    - It is imperative to test any code you intend on deploying. Be sure to take any edge cases into account!
-   - PyChess uses `pytest` for testing. To run the test suite, execute:
+   - PyChess uses `unittest` for the main test suite. To run it, execute:
      ```bash
-     pytest
+     uv run python -m unittest discover -s testing -p "*.py" -v
      ```
    - Any of the tests you use should be stored in testing/. This ensures adequate testing coverage of the entire project.
 
-6. **Submitting a Pull Request**
+6. **Linting and Type Checking**
+   - Ruff is used for linting and formatting:
+     ```bash
+     uv run --only-group dev ruff check .
+     uv run --only-group dev ruff format .
+     ```
+   - Pyright is configured as a gradual baseline:
+     ```bash
+     uv run --only-group dev pyright
+     ```
+
+7. **Submitting a Pull Request**
    - When you are finished modifying the project, you can submit a pull request!
    - Create a new branch for your changes:
      ```bash
@@ -116,7 +129,7 @@ PyChess is an open-source project, and contributions are welcome! Whether you wa
      ```
    - Push the branch to your fork and then create a pull request to the PyChess repository. Be sure to raise the PR to PyChess' main branch.
 
-7. **Review Process**
+8. **Review Process**
    - The managers of the PyChess project will review your PR and respond accordingly.
    - Please be patient and responsive to any feedback the managers respond to you with.
 

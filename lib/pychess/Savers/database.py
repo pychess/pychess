@@ -221,10 +221,10 @@ class TagDatabase:
                     tags.append(pl2.c.name.like("%%%s%%" % tag_query["black"]))
 
             if "event" in tag_query:
-                tags.append(event.c.name.like("%%%s%%" % tag_query["event"])),
+                (tags.append(event.c.name.like("%%%s%%" % tag_query["event"])),)
 
             if "site" in tag_query:
-                tags.append(site.c.name.like("%%%s%%" % tag_query["site"])),
+                (tags.append(site.c.name.like("%%%s%%" % tag_query["site"])),)
 
             if "eco_from" in tag_query:
                 tags.append(game.c.eco >= tag_query["eco_from"])
@@ -233,13 +233,13 @@ class TagDatabase:
                 tags.append(game.c.eco <= tag_query["eco_to"])
 
             if "annotator" in tag_query:
-                tags.append(annotator.c.name.like("%%%s%%" % tag_query["annotator"])),
+                (tags.append(annotator.c.name.like("%%%s%%" % tag_query["annotator"])),)
 
             if "variant" in tag_query:
-                tags.append(game.c.variant == int(tag_query["variant"])),
+                (tags.append(game.c.variant == int(tag_query["variant"])),)
 
             if "result" in tag_query:
-                tags.append(game.c.result == reprResult.index(tag_query["result"])),
+                (tags.append(game.c.result == reprResult.index(tag_query["result"])),)
 
             if "date_from" in tag_query:
                 tags.append(game.c.date >= tag_query["date_from"])

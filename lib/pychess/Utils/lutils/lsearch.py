@@ -277,7 +277,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                     # captures and promotions, as these are searched early anyways.
                     if (
                         board.arBoard[move & 63] == EMPTY
-                        and not move >> 12 in PROMOTIONS
+                        and move >> 12 not in PROMOTIONS
                     ):
                         table.addKiller(depth, move)
                         table.addButterfly(move, depth)

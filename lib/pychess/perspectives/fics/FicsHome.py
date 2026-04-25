@@ -90,8 +90,10 @@ class UserInfoSection:
                 col += 1
                 if rating_type is TYPE_WILD:
                     ratinglabel.set_tooltip_text(
-                        _('On FICS, your "Wild" rating encompasses all of the \
-                        following variants at all time controls:\n')
+                        _(
+                            'On FICS, your "Wild" rating encompasses all of the \
+                        following variants at all time controls:\n'
+                        )
                         + ", ".join(
                             [gt.display_text for gt in WildGameType.instances()]
                         )

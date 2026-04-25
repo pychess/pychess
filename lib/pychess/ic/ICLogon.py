@@ -332,7 +332,9 @@ class ICLogon:
         self.host = (
             host
             if host is not None
-            else alternate_host if alternate_host else "freechess.org"
+            else alternate_host
+            if alternate_host
+            else "freechess.org"
         )
         self.connection = FICSMainConnection(
             self.host, ports, timeseal, username, password

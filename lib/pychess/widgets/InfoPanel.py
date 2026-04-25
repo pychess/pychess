@@ -190,7 +190,9 @@ class InfoPanel(Gtk.Notebook, Panel):
             self.names = set()
             chat_view.connect("messageAdded", self.onMessageAdded)
             self.store = Gtk.ListStore(
-                object, str, bool  # (r,g,b) Color tuple  # name string  # is separator
+                object,
+                str,
+                bool,  # (r,g,b) Color tuple  # name string  # is separator
             )
 
             connection.players.connect("FICSPlayerExited", self.onPlayerRemoved)

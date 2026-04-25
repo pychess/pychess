@@ -104,7 +104,7 @@ class ExamineGameTests(EmittingTestCase):
         assert isinstance(p1, ICPlayer)
 
         lines = [
-            "Removing game 127 from observation list." "",
+            "Removing game 127 from observation list.",
             "puzzlebot has made you an examiner of game 127.",
             "",
             "<12> --kr---r pp--bppp ----bn-- -Npp---q -----B-Q ---B---- PPP--PPP -K-R---R W -1 0 0 0 0 0 127 gbtami puzzlebot 2 0 0 0 0 0 0 1 none (0:00.000) none 0 0 0",
@@ -237,7 +237,7 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
             BLOCK_START + "117" + BLOCK_SEPARATOR + "1" + BLOCK_SEPARATOR,
             "<12> ---r---r Np-kbppp ----bn-- -Bpp---q -----B-Q -------- PPP--PPP -K-R---R B -1 0 0 0 0 2 127 gbtami puzzlebot 2 0 0 34 34 0 0 2 B/d3-b5 (0:00.000) Bb5# 0 0 0",
-            "" "Game 127: gbtami moves: Bb5#",
+            "Game 127: gbtami moves: Bb5#",
             "",
             "Game 127: Black checkmated 1-0",
             BLOCK_END,
@@ -306,7 +306,7 @@ class ExamineGameTests(EmittingTestCase):
         print(gamemodel)
 
         lines = [
-            "Removing game 127 from observation list." "",
+            "Removing game 127 from observation list.",
             "puzzlebot has made you an examiner of game 127.",
             "",
             "<12> -----k-- -R------ --p--n-- -------- P-P--pr- -P---RNK -----PP- ----r--- B -1 0 0 0 0 0 127 puzzlebot gbtami 2 0 0 0 0 0 0 1 none (0:00.000) none 0 0 0",
@@ -381,7 +381,7 @@ class ExamineGameTests(EmittingTestCase):
             "fics% ",
             BLOCK_START + "150" + BLOCK_SEPARATOR + "1" + BLOCK_SEPARATOR,
             "<12> -----k-- -R------ --p--n-- -------- P-P--p-- -P---RPK ------P- -------r W -1 0 0 0 0 1 127 puzzlebot gbtami 2 0 0 253 251 0 0 3 R/e1-h1 (0:00.000) Rh1# 0 0 0",
-            "" "Game 127: gbtami moves: Rh1#",
+            "Game 127: gbtami moves: Rh1#",
             "",
             "Game 127: White checkmated 0-1",
             BLOCK_END,
