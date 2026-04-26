@@ -357,9 +357,7 @@ class CECPEngine(ProtocolEngine):
         @return: The move the engine decided to make
         """
         log.debug(
-            "makeMove: move={} self.movenext={} board1={} board2={} self.board={}".format(
-                move, self.movenext, board1, board2, self.board
-            ),
+            f"makeMove: move={move} self.movenext={self.movenext} board1={board1} board2={board2} self.board={self.board}",
             extra={"task": self.defname},
         )
         assert self.readyMoves
@@ -557,9 +555,7 @@ class CECPEngine(ProtocolEngine):
 
     def hurry(self):
         log.debug(
-            "hurry: self.waitingForMove={} self.readyForMoveNowCommand={}".format(
-                self.waitingForMove, self.readyForMoveNowCommand
-            ),
+            f"hurry: self.waitingForMove={self.waitingForMove} self.readyForMoveNowCommand={self.readyForMoveNowCommand}",
             extra={"task": self.defname},
         )
         if self.waitingForMove and self.readyForMoveNowCommand:
@@ -571,9 +567,7 @@ class CECPEngine(ProtocolEngine):
             return
 
         log.debug(
-            "spectatorUndoMoves: moves={} gamemodel.ply={} gamemodel.boards[-1]={} self.board={}".format(
-                moves, gamemodel.ply, gamemodel.boards[-1], self.board
-            ),
+            f"spectatorUndoMoves: moves={moves} gamemodel.ply={gamemodel.ply} gamemodel.boards[-1]={gamemodel.boards[-1]} self.board={self.board}",
             extra={"task": self.defname},
         )
 
@@ -758,9 +752,7 @@ class CECPEngine(ProtocolEngine):
                 # Illegal Move
                 if parts[0].lower().find("illegal") >= 0:
                     log.warning(
-                        '__parseLine: illegal move: line="{}", board={}'.format(
-                            line.strip(), self.board
-                        ),
+                        f'__parseLine: illegal move: line="{line.strip()}", board={self.board}',
                         extra={"task": self.defname},
                     )
                     if parts[-2] == "sd" and parts[-1].isdigit():

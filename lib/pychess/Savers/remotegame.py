@@ -445,9 +445,7 @@ class InternetGameLichess(InternetGameInterface):
             api = self.query_api("/import/master/%s/white" % self.id)
             game = self.json_field(api, "game")
             if "winner" in game:
-                url = "https://lichess.{}/game/export/{}?literate=1".format(
-                    self.url_tld, self.id
-                )
+                url = f"https://lichess.{self.url_tld}/game/export/{self.id}?literate=1"
                 return self.download(url)
             else:
                 if not self.allow_extra and game["rated"]:
@@ -878,9 +876,7 @@ class InternetGame365chess(InternetGameInterface):
                     if -1 not in [pos1, pos2]:
                         v = line[pos1 + 1 : pos2]
                         if tag == "Date":
-                            v = "{}.{}.{}".format(
-                                v[-4:], v[:2], v[3:5]
-                            )  # mm/dd/yyyy --> yyyy.mm.dd
+                            v = f"{v[-4:]}.{v[:2]}.{v[3:5]}"  # mm/dd/yyyy --> yyyy.mm.dd
                         game[tag] = v
 
             # Players
@@ -1979,9 +1975,7 @@ class InternetGameChessking(InternetGameInterface):
         id = self.id
         while len(id) < 9:
             id = "0%s" % id
-        url = "https://c1.chessking.com/pgn/{}/{}/{}/{}{}.pgn".format(
-            self.url_type, id[:3], id[3:6], self.url_type, id
-        )
+        url = f"https://c1.chessking.com/pgn/{self.url_type}/{id[:3]}/{id[3:6]}/{self.url_type}{id}.pgn"
         return self.download(url)
 
 
@@ -2024,9 +2018,7 @@ class InternetGameIdeachess(InternetGameInterface):
         # Fetch the puzzle
         api = "http://www.ideachess.com/com/ajax2"
         data = {
-            "message": '{{"action":100,"data":{{"problemNumber":{},"kind":"{}"}}}}'.format(
-                self.id, self.url_type
-            )
+            "message": f'{{"action":100,"data":{{"problemNumber":{self.id},"kind":"{self.url_type}"}}}}'
         }
         bourne = self.send_xhr(api, data, userAgent=True)
         chessgame = self.json_loads(bourne)

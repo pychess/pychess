@@ -214,9 +214,7 @@ class ICSTelnet:
                     log.info("%s started OK" % timestamp_path)
                 except OSError as err:
                     log.info(
-                        "Can't start {} OSError: {} {}".format(
-                            timestamp_path, err.errno, err.strerror
-                        )
+                        f"Can't start {timestamp_path} OSError: {err.errno} {err.strerror}"
                     )
                     self.port = port
                     self.host = host

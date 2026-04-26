@@ -935,9 +935,7 @@ class GameWidget(GObject.GObject):
     def setLocked(self, locked):
         """Makes the board insensitive and turns off the tab ready indicator"""
         log.debug(
-            "GameWidget.setLocked: {} locked={}".format(
-                self.gamemodel.players, str(locked)
-            )
+            f"GameWidget.setLocked: {self.gamemodel.players} locked={str(locked)}"
         )
         self.board.setLocked(locked)
         if not self.tabcontent.get_children():

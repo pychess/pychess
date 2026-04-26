@@ -76,7 +76,7 @@ extend-exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F"]
+select = ["E", "F", "UP"]
 # NOTE: This mirrors the old flake8 baseline. Shrink this list as the codebase
 # is cleaned up.
 ignore = [
@@ -85,6 +85,8 @@ ignore = [
     "E501",
     "F403",
     "F405",
+    "UP031",
+    "UP032",
 ]
 
 [tool.pyright]

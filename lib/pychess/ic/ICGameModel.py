@@ -91,9 +91,7 @@ class ICGameModel(GameModel):
         rated = "rated" if ficsgame.rated else "unrated"
         # This is in the format that ficsgames.org writes these PGN headers
         ics = "ICC" if self.connection.ICC else "FICS"
-        self.tags["Event"] = "{} {} {} game".format(
-            ics, rated, ficsgame.game_type.fics_name
-        )
+        self.tags["Event"] = f"{ics} {rated} {ficsgame.game_type.fics_name} game"
         self.tags["Site"] = "chessclub.com" if self.connection.ICC else "freechess.org"
 
     def __repr__(self):
@@ -172,11 +170,7 @@ class ICGameModel(GameModel):
             self.undoMoves(ply)
 
     def onBoardSetup(self, bm, gameno, fen, wname, bname):
-        log.debug(
-            "ICGameModel.onBoardSetup: {} {} {} {} {}".format(
-                bm, gameno, fen, wname, bname
-            )
-        )
+        log.debug(f"ICGameModel.onBoardSetup: {bm} {gameno} {fen} {wname} {bname}")
         if (
             gameno != self.ficsgame.gameno
             or len(self.players) != 2
@@ -391,11 +385,7 @@ class ICGameModel(GameModel):
 
         elif offer.type in OFFERS:
             if offer not in self.offers:
-                log.debug(
-                    "ICGameModel.offerReceived: {}.offer({})".format(
-                        repr(opPlayer), offer
-                    )
-                )
+                log.debug(f"ICGameModel.offerReceived: {repr(opPlayer)}.offer({offer})")
                 self.offers[offer] = player
                 opPlayer.offer(offer)
             # If the offer was an update to an old one, like a new takebackvalue

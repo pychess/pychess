@@ -609,11 +609,7 @@ class PyChess(Gtk.Application):
         log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
         log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
         log.info(
-            "Gtk version: {}.{}.{}".format(
-                Gtk.get_major_version(),
-                Gtk.get_minor_version(),
-                Gtk.get_micro_version(),
-            )
+            f"Gtk version: {Gtk.get_major_version()}.{Gtk.get_minor_version()}.{Gtk.get_micro_version()}"
         )
 
     async def print_tasks(self):
