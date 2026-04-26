@@ -64,7 +64,8 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         dialog.run()
         dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
-        await event.wait()
+        # await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=30)
 
         newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
 
@@ -86,7 +87,8 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         dialog.widgets["newgamedialog"].response(PASTE)
         dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
-        await event.wait()
+        # await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=30)
 
         newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
 
@@ -110,7 +112,8 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         dialog.sourcebuffer.set_text("1. f3 e5 2. g4 Qh4")
         dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
-        await event.wait()
+        # await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=30)
 
         # Show the firs move of the game
         def on_shown_changed(view, shown, event):
@@ -126,7 +129,8 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
 
         view.setShownBoard(board)
 
-        await event.wait()
+        # await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=30)
 
         newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
 
@@ -166,7 +170,8 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
 
         await dd.start()
 
-        await event.wait()
+        # await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=30)
 
         dd.close()
 
