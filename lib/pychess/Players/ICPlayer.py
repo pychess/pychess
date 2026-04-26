@@ -79,9 +79,7 @@ class ICPlayer(Player):
             and not self.gamemodel.isObservationGame()
         ):
             log.debug(
-                "ICPlayer.__onOfferAdd: emitting offer: self.gameno={} self.name={} {}".format(
-                    self.gameno, self.name, offer
-                )
+                f"ICPlayer.__onOfferAdd: emitting offer: self.gameno={self.gameno} self.name={self.name} {offer}"
             )
             self.offers[offer.index] = offer
             self.emit("offer", offer)
@@ -96,10 +94,8 @@ class ICPlayer(Player):
     def __onOfferRemove(self, om, offer):
         if offer.index in self.offers:
             log.debug(
-                "ICPlayer.__onOfferRemove: emitting withdraw: \
-                      self.gameno={} self.name={} {}".format(
-                    self.gameno, self.name, offer
-                )
+                f"ICPlayer.__onOfferRemove: emitting withdraw: \
+                      self.gameno={self.gameno} self.name={self.name} {offer}"
             )
             # self.emit("withdraw", self.offers[offer.index])
             del self.offers[offer.index]
@@ -168,11 +164,7 @@ class ICPlayer(Player):
                 raise PassInterrupt
 
             gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
-            log.debug(
-                "ICPlayer.makeMove got: {} {} {} {}".format(
-                    gameno, ply, curcol, lastmove
-                )
-            )
+            log.debug(f"ICPlayer.makeMove got: {gameno} {ply} {curcol} {lastmove}")
             self.gamemodel.update_board(
                 gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms
             )

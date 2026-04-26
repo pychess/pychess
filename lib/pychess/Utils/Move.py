@@ -46,8 +46,8 @@ class Move:
             assert cord0 is not None and cord1 is not None, (
                 f"cord0={cord0}, cord1={cord1}, board={board}"
             )
-            assert board[cord0] is not None, "cord0={}, cord1={}, board={}".format(
-                cord0, cord1, board
+            assert board[cord0] is not None, (
+                f"cord0={cord0}, cord1={cord1}, board={board}"
             )
             self.cord0 = cord0
             self.cord1 = cord1
@@ -184,9 +184,7 @@ class Move:
         )
 
     def as_uci(self):
-        move = "{}{}{}{}".format(
-            self.cord0.cx, self.cord0.cy, self.cord1.cx, self.cord1.cy
-        )
+        move = f"{self.cord0.cx}{self.cord0.cy}{self.cord1.cx}{self.cord1.cy}"
         if self.flag in PROMOTIONS:
             move += reprSign[lmove.PROMOTE_PIECE(self.flag)].lower()
         return move

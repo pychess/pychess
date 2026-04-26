@@ -70,9 +70,7 @@ class FischerandomBoard(Board):
 
         # FEN
         pieces = "".join(pieces)
-        return "{}/pppppppp/8/8/8/8/PPPPPPPP/{} w {}{} - 0 1".format(
-            pieces, pieces.upper(), castling.upper(), castling
-        )
+        return f"{pieces}/pppppppp/8/8/8/8/PPPPPPPP/{pieces.upper()} w {castling.upper()}{castling} - 0 1"
 
     def shuffle_start(self):
         return self.getFrcFen(randrange(1, 960))

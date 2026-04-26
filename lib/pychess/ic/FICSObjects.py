@@ -290,10 +290,7 @@ class FICSPlayer(GObject.GObject):
             rep += ", game=None"
         for rating_type in RATING_TYPES:
             if rating_type in self.ratings:
-                rep += ", {}={}".format(
-                    GAME_TYPES_BY_RATING_TYPE[rating_type].display_text,
-                    repr(self.ratings[rating_type]),
-                )
+                rep += f", {GAME_TYPES_BY_RATING_TYPE[rating_type].display_text}={repr(self.ratings[rating_type])}"
         return "<FICSPlayer " + rep + ">"
 
     def isAvailableForGame(self):
@@ -757,8 +754,8 @@ class FICSChallenges(GObject.GObject):
 
 
 def get_rating_range_display_text(rmin=0, rmax=9999):
-    assert isinstance(rmin, type(int())) and rmin >= 0 and rmin <= 9999, rmin
-    assert isinstance(rmax, type(int())) and rmax >= 0 and rmax <= 9999, rmax
+    assert isinstance(rmin, int) and rmin >= 0 and rmin <= 9999, rmin
+    assert isinstance(rmax, int) and rmax >= 0 and rmax <= 9999, rmax
     if rmin > 0:
         text = "%d" % rmin
         if rmax == 9999:
@@ -944,10 +941,7 @@ class FICSGame(FICSMatch):
             return False
 
     def __repr__(self):
-        rep = "<FICSGame wplayer={}, bplayer={}".format(
-            repr(self.wplayer),
-            repr(self.bplayer),
-        )
+        rep = f"<FICSGame wplayer={repr(self.wplayer)}, bplayer={repr(self.bplayer)}"
         if self.gameno is not None:
             rep += ", gameno=%d" % self.gameno
         rep += ", game_type=%s" % self.game_type

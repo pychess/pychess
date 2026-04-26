@@ -125,9 +125,7 @@ class EgtbK4kit:
                     )
             except (KeyError, ValueError):
                 log.warning(
-                    "Couldn't parse {} data for position {}.\nData was: {}".format(
-                        reprColor[color], fen, repr(data)
-                    )
+                    f"Couldn't parse {reprColor[color]} data for position {fen}.\nData was: {repr(data)}"
                 )
                 self.table[(fen, color)] = []  # Don't try again.
 

@@ -114,8 +114,8 @@ dates = r"({})\s+({})\s+(\d+),\s+(\d+):(\d+)\s+([A-Z\?]+)\s+(\d{{4}})".format(
 # "2010-10-14 20:36 UTC"
 datesFatICS = r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})\s+(UTC)"
 
-moveListHeader1Str = "{} {} vs. {} {} --- (?:{}|{})".format(
-    names, ratings, names, ratings, dates, datesFatICS
+moveListHeader1Str = (
+    f"{names} {ratings} vs. {names} {ratings} --- (?:{dates}|{datesFatICS})"
 )
 moveListHeader1 = re.compile(moveListHeader1Str)
 moveListHeader2Str = (
@@ -633,9 +633,7 @@ class BoardManager(GObject.GObject):
             else:
                 # don't start new game in puzzlebot/endgamebot when they just reuse gameno
                 log.debug(
-                    "emit('boardSetup') with {} {} {} {}".format(
-                        gameno, fen, wname, bname
-                    ),
+                    f"emit('boardSetup') with {gameno} {fen} {wname} {bname}",
                     extra={"task": (self.connection.username, "BM.onStyle12")},
                 )
                 self.emit("boardSetup", gameno, fen, wname, bname)
@@ -661,21 +659,15 @@ class BoardManager(GObject.GObject):
                 )
                 if isinstance(game, FICSHistoryGame):
                     self.connection.client.run_command(
-                        "smoves {} {}".format(
-                            self.connection.history_owner, game.history_no
-                        )
+                        f"smoves {self.connection.history_owner} {game.history_no}"
                     )
                 elif isinstance(game, FICSJournalGame):
                     self.connection.client.run_command(
-                        "smoves {} %{}".format(
-                            self.connection.journal_owner, game.journal_no
-                        )
+                        f"smoves {self.connection.journal_owner} %{game.journal_no}"
                     )
                 elif isinstance(game, FICSAdjournedGame):
                     self.connection.client.run_command(
-                        "smoves {} {}".format(
-                            self.connection.stored_owner, game.opponent.name
-                        )
+                        f"smoves {self.connection.stored_owner} {game.opponent.name}"
                     )
                 self.connection.client.run_command("forward 999")
         else:
@@ -686,9 +678,7 @@ class BoardManager(GObject.GObject):
                     return
                 if lastmove is None:
                     log.debug(
-                        "emit('boardSetup') with {} {} {} {}".format(
-                            gameno, fen, wname, bname
-                        ),
+                        f"emit('boardSetup') with {gameno} {fen} {wname} {bname}",
                         extra={"task": (self.connection.username, "BM.onStyle12")},
                     )
                     self.emit("boardSetup", gameno, fen, wname, bname)

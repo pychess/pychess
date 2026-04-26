@@ -173,9 +173,7 @@ class PyChess:
                         pv1 = " ".join(listToSan(self.board, mvs))
                         time_cs = int(100 * (time() - starttime))
                         self.print(
-                            "{} {} {} {} {}".format(
-                                depth, self.scr, time_cs, lsearch.nodes, pv1
-                            )
+                            f"{depth} {self.scr} {time_cs} {lsearch.nodes} {pv1}"
                         )
                 else:
                     # We were interrupted

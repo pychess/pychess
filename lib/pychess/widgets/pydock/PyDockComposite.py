@@ -22,11 +22,7 @@ class PyDockComposite(Gtk.Alignment):
             component._del()
 
     def __repr__(self):
-        return "composite {} ({}, {})".format(
-            reprPos[self.position],
-            repr(self.paned.get_child1()),
-            repr(self.paned.get_child2()),
-        )
+        return f"composite {reprPos[self.position]} ({repr(self.paned.get_child1())}, {repr(self.paned.get_child2())})"
 
     def dock(self, widget, position, title, id):
         assert position != CENTER, "POSITION_CENTER only makes sense for leaves"

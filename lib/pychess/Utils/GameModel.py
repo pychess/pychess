@@ -667,9 +667,7 @@ class GameModel(GObject.GObject):
         elif offer.type in OFFERS:
             if offer not in self.offers:
                 log.debug(
-                    "GameModel.offerReceived: doing {}.offer({})".format(
-                        repr(opPlayer), offer
-                    )
+                    f"GameModel.offerReceived: doing {repr(opPlayer)}.offer({offer})"
                 )
                 self.offers[offer] = player
                 opPlayer.offer(offer)
@@ -874,9 +872,7 @@ class GameModel(GObject.GObject):
 
                 if self.timed:
                     log.debug(
-                        "GameModel.run: id={}, players={}, self.ply={}: updating {}'s time".format(
-                            id(self), str(self.players), str(self.ply), str(curPlayer)
-                        )
+                        f"GameModel.run: id={id(self)}, players={str(self.players)}, self.ply={str(self.ply)}: updating {str(curPlayer)}'s time"
                     )
                     curPlayer.updateTime(
                         self.timemodel.getPlayerTime(self.curColor),
@@ -884,9 +880,7 @@ class GameModel(GObject.GObject):
                     )
                 try:
                     log.debug(
-                        "GameModel.run: id={}, players={}, self.ply={}: calling {}.makeMove()".format(
-                            id(self), str(self.players), self.ply, str(curPlayer)
-                        )
+                        f"GameModel.run: id={id(self)}, players={str(self.players)}, self.ply={self.ply}: calling {str(curPlayer)}.makeMove()"
                     )
 
                     move = None
@@ -898,9 +892,7 @@ class GameModel(GObject.GObject):
                     ):
                         move = self.get_book_move()
                         log.debug(
-                            "GameModel.run: id={}, players={}, self.ply={}: got move={} from book".format(
-                                id(self), str(self.players), self.ply, move
-                            )
+                            f"GameModel.run: id={id(self)}, players={str(self.players)}, self.ply={self.ply}: got move={move} from book"
                         )
                         if move is not None:
                             curPlayer.set_board(self.boards[-1].move(move))
@@ -913,13 +905,7 @@ class GameModel(GObject.GObject):
                         else:
                             move = await curPlayer.makeMove(self.boards[-1], None, None)
                         log.debug(
-                            "GameModel.run: id={}, players={}, self.ply={}: got move={} from {}".format(
-                                id(self),
-                                str(self.players),
-                                self.ply,
-                                move,
-                                str(curPlayer),
-                            )
+                            f"GameModel.run: id={id(self)}, players={str(self.players)}, self.ply={self.ply}: got move={move} from {str(curPlayer)}"
                         )
                 except PlayerIsDead as e:
                     if self.status in (WAITING_TO_START, PAUSED, RUNNING):
@@ -950,16 +936,12 @@ class GameModel(GObject.GObject):
                     break
                 except PassInterrupt:
                     log.debug(
-                        "GameModel.run: id={}, players={}, self.ply={}: PassInterrupt".format(
-                            id(self), str(self.players), self.ply
-                        )
+                        f"GameModel.run: id={id(self)}, players={str(self.players)}, self.ply={self.ply}: PassInterrupt"
                     )
                     continue
                 except TurnInterrupt:
                     log.debug(
-                        "GameModel.run: id={}, players={}, self.ply={}: TurnInterrupt".format(
-                            id(self), str(self.players), self.ply
-                        )
+                        f"GameModel.run: id={id(self)}, players={str(self.players)}, self.ply={self.ply}: TurnInterrupt"
                     )
                     self.curColor = self.boards[-1].color
                     continue
@@ -969,9 +951,7 @@ class GameModel(GObject.GObject):
 
                 assert isinstance(move, Move), "%s" % repr(move)
                 log.debug(
-                    "GameModel.run: id={}, players={}, self.ply={}: applying move={}".format(
-                        id(self), str(self.players), self.ply, str(move)
-                    )
+                    f"GameModel.run: id={id(self)}, players={str(self.players)}, self.ply={self.ply}: applying move={str(move)}"
                 )
                 self.needsSave = True
                 newBoard = self.boards[-1].move(move)
@@ -1191,9 +1171,7 @@ class GameModel(GObject.GObject):
             moves = 1
 
         log.debug(
-            "GameModel.undoMoves: players={}, self.ply={}, moves={}, board={}".format(
-                repr(self.players), self.ply, moves, self.boards[-1]
-            )
+            f"GameModel.undoMoves: players={repr(self.players)}, self.ply={self.ply}, moves={moves}, board={self.boards[-1]}"
         )
         self.emit("moves_undoing", moves)
         self.needsSave = True

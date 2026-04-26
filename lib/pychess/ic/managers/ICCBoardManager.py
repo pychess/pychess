@@ -205,9 +205,7 @@ class ICCBoardManager(BoardManager):
                     player.emit("ratings_changed", game_type.rating_type, player)
             except IndexError:
                 log.debug(
-                    "!!! game_type.rating_type {} is out of range in player.ratings {}".format(
-                        game_type.rating_type, player.ratings
-                    )
+                    f"!!! game_type.rating_type {game_type.rating_type} is out of range in player.ratings {player.ratings}"
                 )
 
         wms = bms = int(wmin) * 60 * 1000 + int(winc) * 1000
@@ -473,9 +471,7 @@ class ICCBoardManager(BoardManager):
             pgnHead = [
                 (
                     "Event",
-                    "ICC {} {} game".format(
-                        game.display_rated.lower(), game.game_type.fics_name
-                    ),
+                    f"ICC {game.display_rated.lower()} {game.game_type.fics_name} game",
                 ),
                 ("Site", "chessclub.com"),
                 ("White", game.wplayer.name),

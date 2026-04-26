@@ -464,9 +464,7 @@ class EndgameAdvisor(Advisor):
                 details = _("Mate in %d") % depth
 
             if m.practice_game or m.lesson_game:
-                m.hint = "{} {} {}".format(
-                    toSAN(self.board, move, True), result[0], details
-                )
+                m.hint = f"{toSAN(self.board, move, True)} {result[0]} {details}"
                 return
 
             if m.isPlayingICSGame():

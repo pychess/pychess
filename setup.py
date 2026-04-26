@@ -208,9 +208,7 @@ if sys.platform == "win32":
     argv0_path = os.path.dirname(os.path.abspath(sys.executable))
     if pychess.MSYS2:
         major, minor, micro, releaselevel, serial = sys.version_info
-        msgfmt_path = argv0_path + "/../lib/python{}.{}/tools/i18n/".format(
-            major, minor
-        )
+        msgfmt_path = argv0_path + f"/../lib/python{major}.{minor}/tools/i18n/"
     else:
         msgfmt_path = argv0_path + "/tools/i18n/"
     msgfmt = f"{os.path.abspath(sys.executable)} {msgfmt_path}msgfmt.py"
@@ -222,9 +220,7 @@ for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
     if sys.platform == "win32":
         command = f"{msgfmt} lang/{dir}/{pofile}.po"
     else:
-        command = "{} lang/{}/{}.po -o lang/{}/{}.mo".format(
-            msgfmt, dir, pofile, dir, pofile
-        )
+        command = f"{msgfmt} lang/{dir}/{pofile}.po -o lang/{dir}/{pofile}.mo"
     subprocess.call(command.split())
     DATA_FILES += [
         ("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])

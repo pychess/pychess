@@ -244,9 +244,7 @@ class UCIEngine(ProtocolEngine):
 
     def putMove(self, board1, move, board2):
         log.debug(
-            "putMove: board1={} move={} board2={} self.board={}".format(
-                board1, move, board2, self.board
-            ),
+            f"putMove: board1={board1} move={move} board2={board2} self.board={self.board}",
             extra={"task": self.defname},
         )
         if not self.readyMoves:
@@ -266,9 +264,7 @@ class UCIEngine(ProtocolEngine):
 
     async def makeMove(self, board1, move, board2):
         log.debug(
-            "makeMove: move={} self.pondermove={} board1={} board2={} self.board={}".format(
-                move, self.pondermove, board1, board2, self.board
-            ),
+            f"makeMove: move={move} self.pondermove={self.pondermove} board1={board1} board2={board2} self.board={self.board}",
             extra={"task": self.defname},
         )
         assert self.readyMoves
@@ -400,9 +396,7 @@ class UCIEngine(ProtocolEngine):
 
     def hurry(self):
         log.debug(
-            "hurry: self.waitingForMove={} self.readyForStop={}".format(
-                self.waitingForMove, self.readyForStop
-            ),
+            f"hurry: self.waitingForMove={self.waitingForMove} self.readyForStop={self.readyForStop}",
             extra={"task": self.defname},
         )
         # sending this more than once per move will crash most engines
@@ -414,12 +408,10 @@ class UCIEngine(ProtocolEngine):
 
     def playerUndoMoves(self, moves, gamemodel):
         log.debug(
-            "playerUndoMoves: moves={} \
-                  gamemodel.ply={} \
-                  gamemodel.boards[-1]={} \
-                  self.board={}".format(
-                moves, gamemodel.ply, gamemodel.boards[-1], self.board
-            ),
+            f"playerUndoMoves: moves={moves} \
+                  gamemodel.ply={gamemodel.ply} \
+                  gamemodel.boards[-1]={gamemodel.boards[-1]} \
+                  self.board={self.board}",
             extra={"task": self.defname},
         )
 
@@ -442,12 +434,10 @@ class UCIEngine(ProtocolEngine):
             return
 
         log.debug(
-            "spectatorUndoMoves: moves={} \
-                  gamemodel.ply={} \
-                  gamemodel.boards[-1]={} \
-                  self.board={}".format(
-                moves, gamemodel.ply, gamemodel.boards[-1], self.board
-            ),
+            f"spectatorUndoMoves: moves={moves} \
+                  gamemodel.ply={gamemodel.ply} \
+                  gamemodel.boards[-1]={gamemodel.boards[-1]} \
+                  self.board={self.board}",
             extra={"task": self.defname},
         )
 
@@ -492,9 +482,7 @@ class UCIEngine(ProtocolEngine):
 
     def _searchNow(self, ponderhit=False):
         log.debug(
-            "_searchNow: self.needBestmove={} ponderhit={} self.board={}".format(
-                self.needBestmove, ponderhit, self.board
-            ),
+            f"_searchNow: self.needBestmove={self.needBestmove} ponderhit={ponderhit} self.board={self.board}",
             extra={"task": self.defname},
         )
 
@@ -700,10 +688,8 @@ class UCIEngine(ProtocolEngine):
                         # This is critical. To avoid game stalls, we need to resign on
                         # behalf of the engine.
                         log.error(
-                            "__parseLine: move={} didn't validate, putting 'del' \
-                                  in returnQueue. self.board={}".format(
-                                repr(move), self.board
-                            ),
+                            f"__parseLine: move={repr(move)} didn't validate, putting 'del' \
+                                  in returnQueue. self.board={self.board}",
                             extra={"task": self.defname},
                         )
                         self.invalid_move = movestr
@@ -715,9 +701,7 @@ class UCIEngine(ProtocolEngine):
 
                     self._recordMove(self.board.move(move), move, self.board)
                     log.debug(
-                        "__parseLine: applied move={} to self.board={}".format(
-                            move, self.board
-                        ),
+                        f"__parseLine: applied move={move} to self.board={self.board}",
                         extra={"task": self.defname},
                     )
 
@@ -740,9 +724,7 @@ class UCIEngine(ProtocolEngine):
 
                     self.queue.put_nowait(move)
                     log.debug(
-                        "__parseLine: put move={} into self.queue={}".format(
-                            move, self.queue
-                        ),
+                        f"__parseLine: put move={move} into self.queue={self.queue}",
                         extra={"task": self.defname},
                     )
                     continue

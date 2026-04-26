@@ -87,12 +87,7 @@ class TimeModel(GObject.GObject):
         self.zero_listener_source = None
 
     def __repr__(self):
-        text = "<TimeModel object at {} (White: {} Black: {} ended={})>".format(
-            id(self),
-            str(self.getPlayerTime(WHITE)),
-            str(self.getPlayerTime(BLACK)),
-            self.ended,
-        )
+        text = f"<TimeModel object at {id(self)} (White: {str(self.getPlayerTime(WHITE))} Black: {str(self.getPlayerTime(BLACK))} ended={self.ended})>"
         return text
 
     def __zerolistener(self, *args):

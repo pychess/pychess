@@ -211,9 +211,7 @@ class Human(Player):
                 ),
             ):
                 log.debug(
-                    "Human.makeMove: Setting move to premove {} {}".format(
-                        self.board.view.premove0, self.board.view.premove1
-                    )
+                    f"Human.makeMove: Setting move to premove {self.board.view.premove0} {self.board.view.premove1}"
                 )
                 self.board.emit_move_signal(
                     self.board.view.premove0,

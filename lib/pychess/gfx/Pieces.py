@@ -114,9 +114,7 @@ def get_svg_pieces(svgdir):
                     continue
                 rsvg_handles[c][p] = Rsvg.Handle.new_from_file(
                     addDataPrefix(
-                        "pieces/{}/{}{}.svg".format(
-                            svgdir, color[0], reprSign[p].lower()
-                        )
+                        f"pieces/{svgdir}/{color[0]}{reprSign[p].lower()}.svg"
                     )
                 )
     return rsvg_handles
