@@ -380,11 +380,6 @@ setup(
         "SQLAlchemy>=2",
         "websockets",
     ],
-    extras_require={
-        "gbulb": [
-            "gbulb",
-        ],
-    },
     package_dir={"": "lib"},
     packages=PACKAGES,
     data_files=DATA_FILES,
