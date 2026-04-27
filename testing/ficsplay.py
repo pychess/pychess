@@ -244,7 +244,7 @@ class PlayGameTests(EmittingTestCase):
         event = asyncio.Event()
         self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
 
-        await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=5)
 
         lines = [
             "<12> rnbqkbnr pppppppp -------- -------- -------- -P------ P-PPPPPP RNBQKBNR B -1 1 1 1 1 0 85 WLTL gbtami 1 1 0 39 39 60000 60000 1 P/b2-b3 (0:00.000) b3 1 0 0",

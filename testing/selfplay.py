@@ -111,7 +111,7 @@ class CECPTests(unittest.IsolatedAsyncioTestCase):
             print(variant.name)
             self.game.start()
 
-            await event.wait()
+            await asyncio.wait_for(event.wait(), timeout=5)
 
             pgn = StringIO()
             print(save(pgn, self.game))

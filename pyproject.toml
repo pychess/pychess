@@ -38,9 +38,6 @@ dependencies = [
     "websockets",
 ]
 
-[project.optional-dependencies]
-gbulb = ["gbulb"]
-
 [project.urls]
 Homepage = "https://pychess.github.io/"
 Download = "https://github.com/pychess/pychess/releases"

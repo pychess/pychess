@@ -154,7 +154,7 @@ class PolyglotTestCase(unittest.IsolatedAsyncioTestCase):
 
         self.database_persp.create_book(BIN)
 
-        await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=5)
 
 
 if __name__ == "__main__":

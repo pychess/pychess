@@ -85,7 +85,7 @@ class DatabaseTests(unittest.IsolatedAsyncioTestCase):
         await self.games_persp.generalStart(gamemodel, player0tup, player1tup)
 
         # waiting for game end ...
-        await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=5)
 
         fen = "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3"
         self.assertEqual(gamemodel.boards[-1].board.asFen(), fen)

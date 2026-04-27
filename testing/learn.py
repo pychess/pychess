@@ -47,7 +47,7 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
 
         await dd.start()
 
-        await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=5)
 
         dd.close()
 

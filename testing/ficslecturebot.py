@@ -70,7 +70,7 @@ class ObserveGameTests(EmittingTestCase):
         event = asyncio.Event()
         self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
 
-        await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=5)
 
         gamemodel = self.games_persp.cur_gmwidg().gamemodel
         print(gamemodel)
@@ -141,7 +141,7 @@ class ObserveGameTests(EmittingTestCase):
         event = asyncio.Event()
         self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
 
-        await event.wait()
+        await asyncio.wait_for(event.wait(), timeout=5)
 
         gamemodel = self.games_persp.cur_gmwidg().gamemodel
 

@@ -73,7 +73,7 @@ try:
     gi.require_version("Pango", "1.0")
     gi.require_version("PangoCairo", "1.0")
     gi.require_version("Rsvg", "2.0")
-    from gi.repository import GLib
+    from gi.events import GLibEventLoopPolicy
 except ValueError as e:
     print("ERROR: Not all dependencies installed! You can find them in INSTALL")
     print(e)
@@ -154,9 +154,6 @@ parser.add_argument(
     help="a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format",
 )
 parser.add_argument(
-    "--gbulb-loop", action="store_true", help="use gbulb event loop based on GLib"
-)
-parser.add_argument(
     "--no-version-check", action="store_true", help="disable online version check"
 )
 
@@ -169,16 +166,6 @@ chess_file = args.chess_file
 ics_host = args.ics_host
 ics_port = args.ics_port
 version_check = not args.no_version_check
-
-gbulb_loop = args.gbulb_loop
-if gbulb_loop:
-    try:
-        import gbulb
-
-        gbulb.install(gtk=True)
-    except ImportError:
-        print("ERROR: PyChess requires gbulb to be installed.")
-        sys.exit(1)
 
 # Set sqlite temp dir path
 os.environ["SQLITE_TMPDIR"] = os.path.expanduser("~")
@@ -267,14 +254,9 @@ async def start(gtk_app):
     gtk_app.activate()
 
 
-def glib_update(main_context, loop):
-    while main_context.pending():
-        main_context.iteration(False)
-    loop.call_later(0.01, glib_update, main_context, loop)
-
-
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+policy = GLibEventLoopPolicy()
+asyncio.set_event_loop_policy(policy)
+loop = policy.get_event_loop()
 
 gtk_app = PyChess(
     log_viewer,
@@ -292,12 +274,7 @@ if log_debug:
 log.debug(loop)
 
 try:
-    if gbulb_loop:
-        loop.run_forever(application=gtk_app)
-    else:
-        main_context = GLib.MainContext.default()
-        loop.create_task(start(gtk_app))
-        glib_update(main_context, loop)
-        loop.run_forever()
+    loop.create_task(start(gtk_app))
+    loop.run_forever()
 finally:
     loop.close()
