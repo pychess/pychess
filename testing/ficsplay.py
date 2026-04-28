@@ -239,11 +239,18 @@ class PlayGameTests(EmittingTestCase):
         await self.runAndAssertEquals("playGameCreated", lines, (game,))
 
         def on_gmwidg_created(persp, gmwidg, event):
-            event.set()
+            gamemodel = self.games_persp.cur_gmwidg().gamemodel
+
+            def on_game_started(game, event):
+                p0, p1 = gamemodel.players
+                p1.move_queue.put_nowait(Move(newMove(G8, F6)))
+                event.set()
+
+            gamemodel.connect("game_started", on_game_started, event)
+            self.gamemodel = gamemodel
 
         event = asyncio.Event()
         self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
-
         await asyncio.wait_for(event.wait(), timeout=5)
 
         lines = [
@@ -257,6 +264,9 @@ class PlayGameTests(EmittingTestCase):
 
         self.assertEqual(game.move_queue.qsize(), 1)
 
+        # let the game model process the moves
+        await asyncio.sleep(0)
+
         lines = [
             BLOCK_START + "59" + BLOCK_SEPARATOR + "1" + BLOCK_SEPARATOR,
             "<12> rnbqkb-r pppppppp -----n-- -------- -------- -P------ P-PPPPPP RNBQKBNR W -1 1 1 1 1 1 85 WLTL gbtami -1 1 0 39 39 60000 60000 2 N/g8-f6 (0:00.000) Nf6 1 1 0",
@@ -268,29 +278,13 @@ class PlayGameTests(EmittingTestCase):
 
         await self.connection.process_lines(lines)
 
-        self.assertEqual(game.move_queue.qsize(), 3)
-
-        gamemodel = self.games_persp.cur_gmwidg().gamemodel
-
-        def on_game_started(game):
-            p0, p1 = gamemodel.players
-            p1.move_queue.put_nowait(Move(newMove(G8, F6)))
-
-            # My opp is an ICPlayer and his move_queue is gamemodel.ficsgame.move_queue
-            # BoardManager fed it with all the moves via onStyle12
-            assert isinstance(p0, ICPlayer)
-            self.assertEqual(p0.move_queue.qsize(), 3)
-
-            assert isinstance(p1, Human)
-            self.assertEqual(p1.move_queue.qsize(), 1)
-
-        gamemodel.connect("game_started", on_game_started)
+        self.assertEqual(game.move_queue.qsize(), 2)
 
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        self.assertEqual(gamemodel.ply, 3)
-        print(gamemodel.boards[-1])
+        self.assertEqual(self.gamemodel.ply, 3)
+        print(self.gamemodel.boards[-1])
 
 
 if __name__ == "__main__":

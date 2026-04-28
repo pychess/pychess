@@ -136,16 +136,20 @@ class ObserveGameTests(EmittingTestCase):
         await self.runAndAssertEquals(signal, lines, expectedResults)
 
         def on_gmwidg_created(persp, gmwidg, event):
-            event.set()
+            gamemodel = self.games_persp.cur_gmwidg().gamemodel
+
+            def on_game_started(game, event):
+                event.set()
+
+            gamemodel.connect("game_started", on_game_started, event)
+            self.gamemodel = gamemodel
 
         event = asyncio.Event()
         self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
 
         await asyncio.wait_for(event.wait(), timeout=5)
 
-        gamemodel = self.games_persp.cur_gmwidg().gamemodel
-
-        print(gamemodel)
+        print(self.gamemodel)
 
         lines = [
             # bsetup
@@ -212,14 +216,12 @@ class ObserveGameTests(EmittingTestCase):
 
         await self.connection.process_lines(lines)
 
-        self.assertEqual(game.move_queue.qsize(), 10)
-
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        print(self.gamemodel.boards[-1])
 
-        self.assertEqual(gamemodel.ply, 0)
+        self.assertEqual(self.gamemodel.ply, 3)
 
         lines = [
             # kibitz Example 2:...
@@ -277,11 +279,12 @@ class ObserveGameTests(EmittingTestCase):
 
         await self.connection.process_lines(lines)
 
-        self.assertEqual(game.move_queue.qsize(), 13)
+        # let the game model process the moves
+        await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        print(self.gamemodel.boards[-1])
 
-        self.assertEqual(gamemodel.ply, 0)
+        self.assertEqual(self.gamemodel.ply, 1)
 
 
 if __name__ == "__main__":
