@@ -624,10 +624,14 @@ class BoardManager(GObject.GObject):
                 if game.relation == IC_POS_OBSERVING_EXAMINATION:
                     game.relation = relation  # IC_POS_EXAMINATING
                     # print("IC_POS_OBSERVING_EXAMINATION --> IC_POS_EXAMINATING")
-                    # before this change server sent an unobserve to us
-                    # and it removed gameno from started events dict
-                    # we have to put it back...
-                    self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
+                    # The existing observed game model keeps running. FICS may
+                    # send an unobserve line first, which removes the started
+                    # marker, so restore it as already started instead of
+                    # blocking the following style12 moves forever.
+                    event = self.gamemodelStartedEvents.setdefault(
+                        game.gameno, asyncio.Event()
+                    )
+                    event.set()
                     return
 
             else:

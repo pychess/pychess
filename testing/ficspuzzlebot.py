@@ -51,6 +51,29 @@ class ExamineGameTests(EmittingTestCase):
     async def asyncTearDown(self):
         await cancel_all_tasks()
 
+    async def runAndWaitForGameStarted(self, signal, lines, expectedResults):
+        event = asyncio.Event()
+        result = {}
+
+        def on_gmwidg_created(persp, gmwidg):
+            gamemodel = gmwidg.gamemodel
+            result["gamemodel"] = gamemodel
+
+            def on_game_started(gamemodel):
+                event.set()
+
+            gamemodel.connect("game_started", on_game_started)
+
+        handler_id = self.games_persp.connect("gmwidg_created", on_gmwidg_created)
+        try:
+            await self.runAndAssertEquals(signal, lines, expectedResults)
+            await asyncio.wait_for(event.wait(), timeout=5)
+        finally:
+            if self.games_persp.handler_is_connected(handler_id):
+                self.games_persp.disconnect(handler_id)
+
+        return result["gamemodel"]
+
     async def test1(self):
         """Test puzzlebot starting a new mate in 2 puzzle"""
 
@@ -86,17 +109,7 @@ class ExamineGameTests(EmittingTestCase):
         )
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        await self.runAndAssertEquals(signal, lines, expectedResults)
-
-        def on_gmwidg_created(persp, gmwidg, event):
-            event.set()
-
-        event = asyncio.Event()
-        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
-
-        await asyncio.wait_for(event.wait(), timeout=5)
-
-        gamemodel = self.games_persp.cur_gmwidg().gamemodel
+        gamemodel = await self.runAndWaitForGameStarted(signal, lines, expectedResults)
         print(gamemodel)
 
         p0, p1 = gamemodel.players
@@ -292,17 +305,7 @@ class ExamineGameTests(EmittingTestCase):
         )
         game = self.connection.games.get(game)
         expectedResults = (game,)
-        await self.runAndAssertEquals(signal, lines, expectedResults)
-
-        def on_gmwidg_created(persp, gmwidg, event):
-            event.set()
-
-        event = asyncio.Event()
-        self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
-
-        await asyncio.wait_for(event.wait(), timeout=5)
-
-        gamemodel = self.games_persp.cur_gmwidg().gamemodel
+        gamemodel = await self.runAndWaitForGameStarted(signal, lines, expectedResults)
         print(gamemodel)
 
         lines = [

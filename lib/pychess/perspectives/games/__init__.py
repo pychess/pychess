@@ -677,7 +677,7 @@ class Games(GObject.GObject, Perspective):
             leaf = self.dock.dock(
                 self.docks["board"][1],
                 CENTER,
-                Gtk.Label(label=self.docks["board"][0]),
+                self.docks["board"][0],
                 "board",
             )
             self.docks["board"][1].show_all()
