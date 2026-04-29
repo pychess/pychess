@@ -2,7 +2,7 @@
 pexpect==4.9.0
 psutil==7.2.2
 pycairo==1.29.0
-PyGObject==3.54.5
+PyGObject==3.56.2
 SQLAlchemy==2.0.49
 websockets==16.0
 
