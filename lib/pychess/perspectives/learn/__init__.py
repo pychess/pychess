@@ -31,7 +31,7 @@ class Learn(GObject.GObject, Perspective):
         def on_exit_clicked(button):
             perspective_manager.disable_perspective("learn")
 
-        self.exit_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_QUIT)
+        self.exit_button = Gtk.ToolButton(stock_id=Gtk.STOCK_QUIT)
         self.exit_button.set_tooltip_text(_("Quit Learning"))
         self.exit_button.set_label("exit")
         self.exit_button.connect("clicked", on_exit_clicked)
@@ -171,7 +171,7 @@ class Learn(GObject.GObject, Perspective):
 
         learn_home.pack_start(box, False, False, 0)
 
-        reset = Gtk.Button(_("Reset my progress"))
+        reset = Gtk.Button(label=_("Reset my progress"))
         learn_home.pack_start(reset, False, False, 6)
 
         def on_reset_clicked(button):

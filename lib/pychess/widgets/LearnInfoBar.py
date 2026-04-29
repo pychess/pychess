@@ -73,7 +73,7 @@ class LearnInfoBar(Gtk.InfoBar):
     def your_turn(self, shown_board=None):
         self.clear()
         self.set_message_type(Gtk.MessageType.QUESTION)
-        self.content_area.add(Gtk.Label(_("Your turn.")))
+        self.content_area.add(Gtk.Label(label=_("Your turn.")))
         self.add_button(_("Hint"), HINT)
         self.add_button(_("Best move"), MOVE)
         if not self.gamemodel.end_game and self.gamemodel.current_index > 0:

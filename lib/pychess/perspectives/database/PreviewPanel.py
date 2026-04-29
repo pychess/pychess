@@ -37,7 +37,7 @@ class PreviewPanel:
         lastButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_NEXT)
         toolbar.insert(lastButton, -1)
 
-        self.filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        self.filterButton = Gtk.ToggleToolButton(stock_id=Gtk.STOCK_FIND)
         self.filterButton.set_tooltip_text(_("Filter game list by current game moves"))
         toolbar.insert(self.filterButton, -1)
 

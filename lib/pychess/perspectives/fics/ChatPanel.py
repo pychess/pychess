@@ -41,8 +41,8 @@ class Sidepanel:
         self.chatbox.add1(self.channelspanel)
 
         notebook = Gtk.Notebook()
-        notebook.append_page(self.viewspanel, Gtk.Label(_("Chat")))
-        notebook.append_page(self.infopanel, Gtk.Label(_("Info")))
+        notebook.append_page(self.viewspanel, Gtk.Label(label=_("Chat")))
+        notebook.append_page(self.infopanel, Gtk.Label(label=_("Info")))
         self.chatbox.add2(notebook)
 
         self.panels = [self.viewspanel, self.channelspanel, self.infopanel]

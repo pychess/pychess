@@ -168,15 +168,15 @@ class HintTab:
         conf.set("opening_file_entry", path)
 
         book_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select book file"),
-            mainwindow(),
-            Gtk.FileChooserAction.OPEN,
-            (
-                Gtk.STOCK_CANCEL,
-                Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN,
-                Gtk.ResponseType.OK,
-            ),
+            title=_("Select book file"),
+            transient_for=mainwindow(),
+            action=Gtk.FileChooserAction.OPEN,
+        )
+        book_chooser_dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
         )
         book_chooser_button = Gtk.FileChooserButton.new_with_dialog(book_chooser_dialog)
 
@@ -213,15 +213,15 @@ class HintTab:
         conf.set("egtb_path", egtb_path)
 
         egtb_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select Gaviota TB path"),
-            mainwindow(),
-            Gtk.FileChooserAction.SELECT_FOLDER,
-            (
-                Gtk.STOCK_CANCEL,
-                Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN,
-                Gtk.ResponseType.OK,
-            ),
+            title=_("Select Gaviota TB path"),
+            transient_for=mainwindow(),
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+        )
+        egtb_chooser_dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
         )
         egtb_chooser_button = Gtk.FileChooserButton.new_with_dialog(egtb_chooser_dialog)
         egtb_chooser_button.set_current_folder(egtb_path)
@@ -451,15 +451,15 @@ class SoundTab:
         # Init open dialog
 
         opendialog = Gtk.FileChooserDialog(
-            _("Open Sound File"),
-            mainwindow(),
-            Gtk.FileChooserAction.OPEN,
-            (
-                Gtk.STOCK_CANCEL,
-                Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN,
-                Gtk.ResponseType.ACCEPT,
-            ),
+            title=_("Open Sound File"),
+            transient_for=mainwindow(),
+            action=Gtk.FileChooserAction.OPEN,
+        )
+        opendialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.ACCEPT,
         )
 
         for dir in self.SOUND_DIRS:
@@ -718,15 +718,15 @@ class ThemeTab:
         conf.set("welcome_image", path)
 
         image_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select background image file"),
-            mainwindow(),
-            Gtk.FileChooserAction.OPEN,
-            (
-                Gtk.STOCK_CANCEL,
-                Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN,
-                Gtk.ResponseType.OK,
-            ),
+            title=_("Select background image file"),
+            transient_for=mainwindow(),
+            action=Gtk.FileChooserAction.OPEN,
+        )
+        image_chooser_dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
         )
         image_chooser_button = Gtk.FileChooserButton.new_with_dialog(
             image_chooser_dialog
@@ -922,15 +922,15 @@ class SaveTab:
         conf.set("autoSavePath", self.auto_save_path)
 
         auto_save_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select auto save path"),
-            mainwindow(),
-            Gtk.FileChooserAction.SELECT_FOLDER,
-            (
-                Gtk.STOCK_CANCEL,
-                Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN,
-                Gtk.ResponseType.OK,
-            ),
+            title=_("Select auto save path"),
+            transient_for=mainwindow(),
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+        )
+        auto_save_chooser_dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
         )
         auto_save_chooser_button = Gtk.FileChooserButton.new_with_dialog(
             auto_save_chooser_dialog

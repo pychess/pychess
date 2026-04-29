@@ -55,8 +55,9 @@ class TextImageTree(Gtk.TreeView):
 
         # Mouse
         self.pressed = None
-        self.stdcursor = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
-        self.linkcursor = Gdk.Cursor.new(Gdk.CursorType.HAND2)
+        display = Gdk.Display.get_default()
+        self.stdcursor = Gdk.Cursor.new_for_display(display, Gdk.CursorType.LEFT_PTR)
+        self.linkcursor = Gdk.Cursor.new_for_display(display, Gdk.CursorType.HAND2)
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.connect("motion_notify_event", self.motion_notify)
@@ -165,8 +166,10 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
 
         self.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         vbox = Gtk.VBox()
-        self.add_with_viewport(vbox)
-        self.get_child().set_shadow_type(Gtk.ShadowType.NONE)
+        viewport = Gtk.Viewport()
+        viewport.add(vbox)
+        viewport.set_shadow_type(Gtk.ShadowType.NONE)
+        self.add(viewport)
 
         self.joinedList = TextImageTree(remove_icon)
         self.joinedList.connect("activated", self.onRemove)

@@ -725,10 +725,12 @@ class Sidepanel:
         ):
             if self.sw.get_child() == self.tv:
                 self.sw.remove(self.tv)
-                label = Gtk.Label(_("In this position,\nthere is no legal move."))
+                label = Gtk.Label(label=_("In this position,\nthere is no legal move."))
                 label.set_property("yalign", 0.1)
-                self.sw.add_with_viewport(label)
-                self.sw.get_child().set_shadow_type(Gtk.ShadowType.NONE)
+                viewport = Gtk.Viewport()
+                viewport.add(label)
+                viewport.set_shadow_type(Gtk.ShadowType.NONE)
+                self.sw.add(viewport)
                 self.sw.show_all()
 
                 # stop egtb auto activation on mating lines

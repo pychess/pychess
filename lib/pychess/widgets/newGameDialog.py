@@ -348,19 +348,25 @@ class _GameInitializationMode:
     @classmethod
     def __initTimeRadio(cls, id, radiobutton, configImage, defmin, defgain, defmoves):
         minSpin = Gtk.SpinButton()
-        minSpin.set_adjustment(Gtk.Adjustment(1, 0, 240, 1))
+        minSpin.set_adjustment(
+            Gtk.Adjustment(value=1, lower=0, upper=240, step_increment=1)
+        )
         setattr(cls, "%s_min" % id, minSpin)
         uistuff.keep(minSpin, "%s min" % id)
         movesSpin = Gtk.SpinButton()
-        movesSpin.set_adjustment(Gtk.Adjustment(0, 0, 60, 20))
+        movesSpin.set_adjustment(
+            Gtk.Adjustment(value=0, lower=0, upper=60, step_increment=20)
+        )
         setattr(cls, "%s_moves" % id, movesSpin)
         uistuff.keep(movesSpin, "%s moves" % id)
         gainSpin = Gtk.SpinButton()
-        gainSpin.set_adjustment(Gtk.Adjustment(0, -60, 60, 1))
+        gainSpin.set_adjustment(
+            Gtk.Adjustment(value=0, lower=-60, upper=60, step_increment=1)
+        )
         setattr(cls, "%s_gain" % id, gainSpin)
         uistuff.keep(gainSpin, "%s gain" % id)
 
-        table = Gtk.Table(2, 2)
+        table = Gtk.Table(n_rows=2, n_columns=2)
         table.props.row_spacing = 3
         table.props.column_spacing = 12
         label = Gtk.Label(label=_("Minutes:"))
@@ -374,8 +380,11 @@ class _GameInitializationMode:
             table.attach(movesSpin, 1, 2, 1, 2)
         else:
             table.attach(gainSpin, 1, 2, 1, 2)
-        alignment = Gtk.Alignment.new(1, 1, 1, 1)
-        alignment.set_padding(6, 6, 12, 12)
+        alignment = Gtk.Alignment(xalign=1, yalign=1, xscale=1, yscale=1)
+        alignment.set_property("top-padding", 6)
+        alignment.set_property("bottom-padding", 6)
+        alignment.set_property("left-padding", 12)
+        alignment.set_property("right-padding", 12)
         alignment.add(table)
         ImageMenu.switchWithImage(configImage, alignment)
 
@@ -484,30 +493,36 @@ class _GameInitializationMode:
         white_box = Gtk.VBox()
         white_box.set_spacing(6)
         # Use margins instead of deprecated set_border_width
-        white_box.set_margin_left(6)
-        white_box.set_margin_right(6)
+        white_box.set_margin_start(6)
+        white_box.set_margin_end(6)
         white_box.set_margin_top(6)
         white_box.set_margin_bottom(6)
 
         # Create white time controls similar to existing ones
         cls.white_min_spin = Gtk.SpinButton()
-        cls.white_min_spin.set_adjustment(Gtk.Adjustment(5, 0, 240, 1))
+        cls.white_min_spin.set_adjustment(
+            Gtk.Adjustment(value=5, lower=0, upper=240, step_increment=1)
+        )
         cls.white_gain_spin = Gtk.SpinButton()
-        cls.white_gain_spin.set_adjustment(Gtk.Adjustment(0, -60, 60, 1))
+        cls.white_gain_spin.set_adjustment(
+            Gtk.Adjustment(value=0, lower=-60, upper=60, step_increment=1)
+        )
         cls.white_moves_spin = Gtk.SpinButton()
-        cls.white_moves_spin.set_adjustment(Gtk.Adjustment(0, 0, 60, 20))
+        cls.white_moves_spin.set_adjustment(
+            Gtk.Adjustment(value=0, lower=0, upper=60, step_increment=20)
+        )
 
-        white_table = Gtk.Table(3, 2)
-        white_table.set_row_spacings(3)
-        white_table.set_col_spacings(12)
+        white_table = Gtk.Table(n_rows=3, n_columns=2)
+        white_table.set_property("row-spacing", 3)
+        white_table.set_property("column-spacing", 12)
 
         # Left-align labels
         min_label = Gtk.Label(label=_("Minutes:"))
-        min_label.set_alignment(0, 0.5)
+        min_label.props.xalign = 0
         gain_label = Gtk.Label(label=_("Gain:"))
-        gain_label.set_alignment(0, 0.5)
+        gain_label.props.xalign = 0
         moves_label = Gtk.Label(label=_("Moves:"))
-        moves_label.set_alignment(0, 0.5)
+        moves_label.props.xalign = 0
 
         white_table.attach(min_label, 0, 1, 0, 1)
         white_table.attach(cls.white_min_spin, 1, 2, 0, 1)
@@ -525,29 +540,35 @@ class _GameInitializationMode:
         black_box = Gtk.VBox()
         black_box.set_spacing(6)
         # Use margins instead of deprecated set_border_width
-        black_box.set_margin_left(6)
-        black_box.set_margin_right(6)
+        black_box.set_margin_start(6)
+        black_box.set_margin_end(6)
         black_box.set_margin_top(6)
         black_box.set_margin_bottom(6)
 
         cls.black_min_spin = Gtk.SpinButton()
-        cls.black_min_spin.set_adjustment(Gtk.Adjustment(5, 0, 240, 1))
+        cls.black_min_spin.set_adjustment(
+            Gtk.Adjustment(value=5, lower=0, upper=240, step_increment=1)
+        )
         cls.black_gain_spin = Gtk.SpinButton()
-        cls.black_gain_spin.set_adjustment(Gtk.Adjustment(0, -60, 60, 1))
+        cls.black_gain_spin.set_adjustment(
+            Gtk.Adjustment(value=0, lower=-60, upper=60, step_increment=1)
+        )
         cls.black_moves_spin = Gtk.SpinButton()
-        cls.black_moves_spin.set_adjustment(Gtk.Adjustment(0, 0, 60, 20))
+        cls.black_moves_spin.set_adjustment(
+            Gtk.Adjustment(value=0, lower=0, upper=60, step_increment=20)
+        )
 
-        black_table = Gtk.Table(3, 2)
-        black_table.set_row_spacings(3)
-        black_table.set_col_spacings(12)
+        black_table = Gtk.Table(n_rows=3, n_columns=2)
+        black_table.set_property("row-spacing", 3)
+        black_table.set_property("column-spacing", 12)
 
         # Left-align labels
         min_label2 = Gtk.Label(label=_("Minutes:"))
-        min_label2.set_alignment(0, 0.5)
+        min_label2.props.xalign = 0
         gain_label2 = Gtk.Label(label=_("Gain:"))
-        gain_label2.set_alignment(0, 0.5)
+        gain_label2.props.xalign = 0
         moves_label2 = Gtk.Label(label=_("Moves:"))
-        moves_label2.set_alignment(0, 0.5)
+        moves_label2.props.xalign = 0
 
         black_table.attach(min_label2, 0, 1, 0, 1)
         black_table.attach(cls.black_min_spin, 1, 2, 0, 1)
@@ -655,11 +676,14 @@ class _GameInitializationMode:
     @classmethod
     def __initVariantRadio(cls, confid, radiobutton, configImage):
         model = Gtk.TreeStore(str)
-        treeview = Gtk.TreeView(model)
+        treeview = Gtk.TreeView(model=model)
         treeview.set_headers_visible(False)
         treeview.append_column(Gtk.TreeViewColumn(None, Gtk.CellRendererText(), text=0))
-        alignment = Gtk.Alignment.new(1, 1, 1, 1)
-        alignment.set_padding(6, 6, 12, 12)
+        alignment = Gtk.Alignment(xalign=1, yalign=1, xscale=1, yscale=1)
+        alignment.set_property("top-padding", 6)
+        alignment.set_property("bottom-padding", 6)
+        alignment.set_property("left-padding", 12)
+        alignment.set_property("right-padding", 12)
         alignment.add(treeview)
         ImageMenu.switchWithImage(configImage, alignment)
 

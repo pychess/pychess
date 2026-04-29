@@ -155,7 +155,7 @@ class FilterPanel(Gtk.TreeView):
         addStreakButton.connect("clicked", self.on_add_streak_clicked)
         toolbar.insert(addStreakButton, -1)
 
-        self.filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        self.filterButton = Gtk.ToggleToolButton(stock_id=Gtk.STOCK_FIND)
         self.filterButton.set_tooltip_text(_("Filter game list by various conditions"))
         self.filterButton.connect("clicked", self.on_filter_clicked)
         toolbar.insert(self.filterButton, -1)

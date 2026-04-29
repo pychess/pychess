@@ -23,7 +23,7 @@ def createImage(pixbuf):
 
 
 def createAlignment(top, right, bottom, left):
-    align = Gtk.Alignment.new(0.5, 0.5, 1, 1)
+    align = Gtk.Alignment(xalign=0.5, yalign=0.5, xscale=1, yscale=1)
     align.set_property("top-padding", top)
     align.set_property("right-padding", right)
     align.set_property("bottom-padding", bottom)

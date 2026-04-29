@@ -85,7 +85,6 @@ class ChatView(Gtk.Box):
         self.writeView = Gtk.Entry()
 
         box = Gtk.Box()
-        self.pack_start(self.writeView, False, False, 0)
         box.add(self.writeView)
 
         if self.gamemodel is not None and self.gamemodel.offline_lecture:

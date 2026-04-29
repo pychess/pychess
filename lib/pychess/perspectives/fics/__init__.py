@@ -76,7 +76,7 @@ class FICS(GObject.GObject, Perspective):
             self.emit("logout")
             self.close()
 
-        self.logoff_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_DISCONNECT)
+        self.logoff_button = Gtk.ToolButton(stock_id=Gtk.STOCK_DISCONNECT)
         self.logoff_button.set_tooltip_text(_("Log Off"))
         self.logoff_button.set_label("logoff")
         self.logoff_button.connect("clicked", on_logoff_clicked)

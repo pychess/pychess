@@ -38,7 +38,10 @@ class ImageMenu(Gtk.EventBox):
             self.subwindow.move(x_loc, y_loc)
 
         self.subwindow.props.visible = isopen
-        self.set_state(self.isopen and Gtk.StateType.SELECTED or Gtk.StateType.NORMAL)
+        if self.isopen:
+            self.set_state_flags(Gtk.StateFlags.SELECTED, True)
+        else:
+            self.unset_state_flags(Gtk.StateFlags.SELECTED)
 
     def __onPress(self, self_, event):
         if event.button == 1 and event.type == Gdk.EventType.BUTTON_PRESS:

@@ -23,7 +23,7 @@ class OpeningTreePanel(Gtk.TreeView):
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         self.liststore = Gtk.ListStore(int, str, int, int)
-        self.modelsort = Gtk.TreeModelSort(self.liststore)
+        self.modelsort = Gtk.TreeModelSort(model=self.liststore)
 
         self.modelsort.set_sort_column_id(2, Gtk.SortType.DESCENDING)
         self.set_model(self.modelsort)
@@ -68,7 +68,7 @@ class OpeningTreePanel(Gtk.TreeView):
         prevButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_REWIND)
         toolbar.insert(prevButton, -1)
 
-        self.filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        self.filterButton = Gtk.ToggleToolButton(stock_id=Gtk.STOCK_FIND)
         self.filterButton.set_tooltip_text(_("Filter game list by opening moves"))
         toolbar.insert(self.filterButton, -1)
 
