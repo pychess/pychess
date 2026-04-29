@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import os
 import sys
 import pstats
@@ -21,8 +22,9 @@ if MSYS2:
 
 async def cancel_all_tasks():
     loop = asyncio.get_event_loop()
+    current_task = asyncio.current_task()
     tasks = [
-        task for task in asyncio.all_tasks(loop) if task is not asyncio.current_task()
+        task for task in asyncio.all_tasks(loop) if task is not current_task
     ]
     for task in tasks:
         task.cancel()
@@ -30,6 +32,19 @@ async def cancel_all_tasks():
             await task
         except asyncio.CancelledError:
             print("task cancelled", task)
+
+    cleanup_tasks = [task for task in asyncio.all_tasks(loop) if task is not current_task]
+    if cleanup_tasks:
+        done, pending = await asyncio.wait(cleanup_tasks, timeout=3)
+        for task in done:
+            with contextlib.suppress(Exception):
+                task.result()
+        for task in pending:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                print("task cancelled", task)
 
 
 async def download_file_async(url, progressbar=None):
@@ -59,6 +74,7 @@ def download_file(url, progressbar=None):
 
     except HTTPError as e:
         print("HTTP Error:", e.code, url)
+        e.close()
 
     except URLError as e:
         print("URL Error:", e.reason, url)

@@ -100,11 +100,11 @@ class Database(GObject.GObject, Perspective):
             return self.preview_panels[self.chessfiles.index(self.chessfile)]
 
     def create_toolbuttons(self):
-        self.import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
+        self.import_button = Gtk.ToolButton(stock_id=Gtk.STOCK_CONVERT)
         self.import_button.set_tooltip_text(_("Import PGN file"))
         self.import_button.connect("clicked", self.on_import_clicked)
 
-        self.save_as_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_SAVE_AS)
+        self.save_as_button = Gtk.ToolButton(stock_id=Gtk.STOCK_SAVE_AS)
         self.save_as_button.set_tooltip_text(_("Save to PGN file as..."))
         self.save_as_button.connect("clicked", self.on_save_as_clicked)
 
@@ -125,8 +125,9 @@ class Database(GObject.GObject, Perspective):
         self.progressbar = Gtk.ProgressBar(show_text=True)
 
         self.progress_dialog = Gtk.Dialog(
-            "", mainwindow(), 0, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+            title="", transient_for=mainwindow(), flags=0
         )
+        self.progress_dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         self.progress_dialog.set_deletable(False)
         self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
         self.progress_dialog.get_content_area().pack_start(
@@ -507,18 +508,21 @@ class Database(GObject.GObject, Perspective):
 
         self.importer = PgnImport(self.chessfile, append_pgn=True)
         self.importer.initialize()
-        for i, filename in enumerate(filenames):
-            if len(filenames) > 1:
-                GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
-            if self.importer.cancel:
-                break
-            if isinstance(filename, tuple):
-                info_link, pgn_link = filename
-                self.importer.do_import(
-                    pgn_link, info=info_link, progressbar=self.progressbar
-                )
-            else:
-                self.importer.do_import(filename, progressbar=self.progressbar)
+        try:
+            for i, filename in enumerate(filenames):
+                if len(filenames) > 1:
+                    GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
+                if self.importer.cancel:
+                    break
+                if isinstance(filename, tuple):
+                    info_link, pgn_link = filename
+                    self.importer.do_import(
+                        pgn_link, info=info_link, progressbar=self.progressbar
+                    )
+                else:
+                    self.importer.do_import(filename, progressbar=self.progressbar)
+        finally:
+            self.importer.close()
 
         GLib.idle_add(self.progressbar.set_text, _("Recreating indexes..."))
 
@@ -743,7 +747,7 @@ class Database(GObject.GObject, Perspective):
         )
         tabcontent.set_tooltip_text(tooltip)
 
-        label = Gtk.Label(info)
+        label = Gtk.Label(label=info)
         hbox.pack_start(label, False, True, 0)
 
         tabcontent.add(hbox)

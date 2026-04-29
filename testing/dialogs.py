@@ -36,6 +36,8 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         perspective_manager.add_perspective(self.games_persp)
 
     async def asyncTearDown(self):
+        for gmwidg in self.games_persp.gamewidgets:
+            gmwidg.gamemodel.terminate()
         self.games_persp.gamewidgets.clear()
         await cancel_all_tasks()
 

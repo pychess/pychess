@@ -37,10 +37,17 @@ class Scoutfish:
     def close(self):
         """Terminate scoutfish. Not really needed: engine will terminate as
         soon as pipe is closed, i.e. when we exit."""
-        self.p.sendline("quit")
-        self.p.expect(pexpect.EOF)
-        self.pgn = ""
-        self.db = ""
+        try:
+            self.p.sendline("quit")
+            self.p.expect(pexpect.EOF)
+        finally:
+            self.p.wait()
+            for pipe in (self.p.proc.stdin, self.p.proc.stdout, self.p.proc.stderr):
+                if pipe is not None:
+                    pipe.close()
+            self.p._read_thread.join()
+            self.pgn = ""
+            self.db = ""
 
     def make(self):
         """Make an index out of a pgn file. Normally called by open()"""

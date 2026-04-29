@@ -104,7 +104,10 @@ def start_puzzle_from(filename, index=None):
     timemodel = TimeModel(0, 0)
     gamemodel = LearnModel(timemodel)
 
-    chessfile.loadToModel(rec, 0, gamemodel)
+    try:
+        chessfile.loadToModel(rec, 0, gamemodel)
+    finally:
+        chessfile.close()
 
     start_puzzle_game(gamemodel, filename, records, index, rec)
 

@@ -1002,7 +1002,13 @@ class GameModel(GObject.GObject):
 
             self.checkStatus()
 
-        asyncio.create_task(coro())
+        task = asyncio.create_task(coro())
+
+        def terminate_on_cancel(task):
+            if task.cancelled():
+                self.terminate()
+
+        task.add_done_callback(terminate_on_cancel)
 
     def checkStatus(self):
         """Updates self.status so it fits with what getStatus(boards[-1])
