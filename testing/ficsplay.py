@@ -21,8 +21,6 @@ from pychess.ic.FICSObjects import (
 )
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 from ficsmanagers import EmittingTestCase
-from pychess.Players.Human import Human
-from pychess.Players.ICPlayer import ICPlayer
 from pychess.System.Log import log
 
 log.logger.setLevel(logging.DEBUG)
