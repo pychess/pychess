@@ -107,6 +107,11 @@
     <property name="can-focus">False</property>
     <property name="stock">gtk-new</property>
   </object>
+  <object class="GtkImage" id="image_new_database">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="stock">gtk-new</property>
+  </object>
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -800,7 +805,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="use-underline">True</property>
-                        <property name="image">image1</property>
+                        <property name="image">image_new_database</property>
                         <property name="use-stock">False</property>
                         <signal name="activate" handler="on_new_database1_activate" swapped="no"/>
                       </object>

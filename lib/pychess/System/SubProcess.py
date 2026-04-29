@@ -49,6 +49,10 @@ class SubProcess(GObject.GObject):
         self.write_task = None
         self.terminate_task = None
 
+    def __del__(self):
+        if hasattr(self, "proc"):
+            self._close_transport()
+
     async def start(self):
         log.debug(
             "SubProcess.start(): create_subprocess_exec...",
@@ -129,32 +133,36 @@ class SubProcess(GObject.GObject):
             self.terminate()
 
     async def read_stdout(self, reader):
-        while True:
-            line = await reader.readline()
-            if line:
-                await asyncio.sleep(0)
+        try:
+            while True:
+                line = await reader.readline()
+                if line:
+                    await asyncio.sleep(0)
 
-                try:
-                    line = line.decode().rstrip()
-                    # print(line)
-                except UnicodeError:
-                    # Some engines send author names in different encodinds (f.e. spike)
-                    print("UnicodeError while decoding:", line)
-                    continue
+                    try:
+                        line = line.decode().rstrip()
+                        # print(line)
+                    except UnicodeError:
+                        # Some engines send author names in different encodinds (f.e. spike)
+                        print("UnicodeError while decoding:", line)
+                        continue
 
-                if not line:
-                    continue
+                    if not line:
+                        continue
 
-                for word in self.warnwords:
-                    if word in line:
+                    for word in self.warnwords:
+                        if word in line:
+                            log.debug(line, extra={"task": self.defname})
+                            break
+                    else:
                         log.debug(line, extra={"task": self.defname})
-                        break
+                    self.emit("line", line)
                 else:
-                    log.debug(line, extra={"task": self.defname})
-                self.emit("line", line)
-            else:
-                self.emit("died")
-                break
+                    self.emit("died")
+                    break
+        except asyncio.CancelledError:
+            self._close_transport()
+            raise
         self.terminate()
 
     def terminate(self):
@@ -164,14 +172,26 @@ class SubProcess(GObject.GObject):
         try:
             if self.proc.returncode is not None:
                 self.terminated = True
+                self._close_transport()
                 return
         except ProcessLookupError:
             self.terminated = True
+            self._close_transport()
             return
 
         self.terminated = True
         self.resume()
         self.terminate_task = asyncio.create_task(self._terminate())
+
+    def _close_transport(self):
+        transport = getattr(self.proc, "_transport", None)
+        if transport is not None:
+            popen = getattr(transport, "_proc", None)
+            if popen is not None:
+                for pipe in (popen.stdin, popen.stdout, popen.stderr):
+                    if pipe is not None:
+                        pipe.close()
+            transport.close()
 
     async def _wait_for_exit(self, timeout):
         try:
@@ -184,65 +204,69 @@ class SubProcess(GObject.GObject):
     async def _terminate(self):
         current = asyncio.current_task()
 
-        if self.write_task is not None and self.write_task is not current:
-            log.debug(
-                "SubProcess.terminate(): waiting for pending write",
-                extra={"task": self.defname},
-            )
-            try:
-                await asyncio.wait_for(
-                    asyncio.shield(self.write_task), self.QUIT_TIMEOUT
+        try:
+            if self.write_task is not None and self.write_task is not current:
+                log.debug(
+                    "SubProcess.terminate(): waiting for pending write",
+                    extra={"task": self.defname},
                 )
-            except (
-                asyncio.TimeoutError,
-                asyncio.CancelledError,
-                BrokenPipeError,
-                ConnectionResetError,
-                GLib.GError,
-            ):
-                pass
+                try:
+                    await asyncio.wait_for(
+                        asyncio.shield(self.write_task), self.QUIT_TIMEOUT
+                    )
+                except (
+                    asyncio.TimeoutError,
+                    asyncio.CancelledError,
+                    BrokenPipeError,
+                    ConnectionResetError,
+                    GLib.GError,
+                ):
+                    pass
 
-        if self.proc.stdin is not None:
+            if self.proc.stdin is not None:
+                try:
+                    self.proc.stdin.close()
+                    await self.proc.stdin.wait_closed()
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
+
+            if await self._wait_for_exit(self.QUIT_TIMEOUT):
+                return
+
             try:
-                self.proc.stdin.close()
-            except (BrokenPipeError, ConnectionResetError):
-                pass
+                self.proc.terminate()
+                log.debug("SubProcess.terminate()", extra={"task": self.defname})
+            except ProcessLookupError:
+                log.debug(
+                    "SubProcess.terminate(): ProcessLookupError",
+                    extra={"task": self.defname},
+                )
+                return
 
-        if await self._wait_for_exit(self.QUIT_TIMEOUT):
-            return
+            if await self._wait_for_exit(self.TERM_TIMEOUT):
+                return
 
-        try:
-            self.proc.terminate()
-            log.debug("SubProcess.terminate()", extra={"task": self.defname})
-        except ProcessLookupError:
-            log.debug(
-                "SubProcess.terminate(): ProcessLookupError",
-                extra={"task": self.defname},
-            )
-            return
-
-        if await self._wait_for_exit(self.TERM_TIMEOUT):
-            return
-
-        try:
-            proc = psutil.Process(self.pid)
-            children = proc.children(recursive=True)
-        except psutil.Error:
-            children = []
-
-        try:
-            self.proc.kill()
-            log.debug("SubProcess.kill()", extra={"task": self.defname})
-        except ProcessLookupError:
-            return
-
-        for child in children:
             try:
-                child.kill()
+                proc = psutil.Process(self.pid)
+                children = proc.children(recursive=True)
             except psutil.Error:
-                continue
+                children = []
 
-        await self._wait_for_exit(self.KILL_TIMEOUT)
+            try:
+                self.proc.kill()
+                log.debug("SubProcess.kill()", extra={"task": self.defname})
+            except ProcessLookupError:
+                return
+
+            for child in children:
+                try:
+                    child.kill()
+                except psutil.Error:
+                    continue
+
+            await self._wait_for_exit(self.KILL_TIMEOUT)
+        finally:
+            self._close_transport()
 
     def pause(self):
         if sys.platform != "win32":

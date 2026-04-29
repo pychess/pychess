@@ -1,6 +1,7 @@
 import shutil
 import collections
 import os
+from contextlib import suppress
 from io import StringIO
 from os.path import getmtime
 import re
@@ -507,8 +508,22 @@ class PGNFile(ChessFile):
     size = property(get_size)
 
     def close(self):
+        if self.handle is not self.file:
+            try:
+                self.handle.close()
+            except OSError:
+                pass
+        for parser_attr in ("scoutfish", "chess_db"):
+            self.close_parser(parser_attr)
         self.tag_database.close()
         ChessFile.close(self)
+
+    def close_parser(self, parser_attr):
+        parser = getattr(self, parser_attr, None)
+        if parser is not None:
+            with suppress(OSError, pexpect.ExceptionPexpect):
+                parser.close()
+            setattr(self, parser_attr, None)
 
     def init_tag_database(self, importer=None):
         """Create/open .sqlite database of game header tags"""
@@ -535,7 +550,10 @@ class PGNFile(ChessFile):
             if importer is None:
                 importer = PgnImport(self)
             importer.initialize()
-            importer.do_import(self.path, progressbar=self.progressbar)
+            try:
+                importer.do_import(self.path, progressbar=self.progressbar)
+            finally:
+                importer.close()
             if size > 10000000 and not importer.cancel:
                 create_indexes(self.engine)
 
@@ -558,19 +576,19 @@ class PGNFile(ChessFile):
                 bin_path = os.path.splitext(self.path)[0] + ".bin"
                 if not os.path.isfile(bin_path):
                     log.debug("No valid games found in %s" % self.path)
-                    self.chess_db = None
+                    self.close_parser("chess_db")
                 elif getmtime(self.path) > getmtime(bin_path):
                     self.chess_db.make()
             except OSError as err:
-                self.chess_db = None
+                self.close_parser("chess_db")
                 log.warning(
                     f"Failed to sart chess_db parser. OSError {err.errno} {err.strerror}"
                 )
             except pexpect.TIMEOUT:
-                self.chess_db = None
+                self.close_parser("chess_db")
                 log.warning("chess_db parser failed (pexpect.TIMEOUT)")
             except pexpect.EOF:
-                self.chess_db = None
+                self.close_parser("chess_db")
                 log.warning("chess_db parser failed (pexpect.EOF)")
 
     def init_scoutfish(self):
@@ -591,15 +609,15 @@ class PGNFile(ChessFile):
                 if getmtime(self.path) > getmtime(scout_path):
                     self.scoutfish.make()
             except OSError as err:
-                self.scoutfish = None
+                self.close_parser("scoutfish")
                 log.warning(
                     f"Failed to sart scoutfish. OSError {err.errno} {err.strerror}"
                 )
             except pexpect.TIMEOUT:
-                self.scoutfish = None
+                self.close_parser("scoutfish")
                 log.warning("scoutfish failed (pexpect.TIMEOUT)")
             except pexpect.EOF:
-                self.scoutfish = None
+                self.close_parser("scoutfish")
                 log.warning("scoutfish failed (pexpect.EOF)")
 
     def get_book_moves(self, fen):

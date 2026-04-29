@@ -2,6 +2,7 @@ import asyncio
 import sys
 import unittest
 
+from pychess.System import cancel_all_tasks
 from pychess.System.SubProcess import SubProcess
 
 HELPER_CODE = """\
@@ -58,6 +59,28 @@ class SubProcessTests(unittest.IsolatedAsyncioTestCase):
         await self.terminate_and_wait(subproc)
 
         self.assertEqual(subproc.proc.returncode, 0)
+
+    async def test_cancel_all_tasks_waits_for_cleanup_tasks(self):
+        cleanup_done = asyncio.Event()
+
+        async def worker():
+            try:
+                await asyncio.Future()
+            except asyncio.CancelledError:
+
+                async def cleanup():
+                    await asyncio.sleep(0)
+                    cleanup_done.set()
+
+                asyncio.create_task(cleanup())
+                raise
+
+        asyncio.create_task(worker())
+        await asyncio.sleep(0)
+
+        await cancel_all_tasks()
+
+        self.assertTrue(cleanup_done.is_set())
 
 
 if __name__ == "__main__":

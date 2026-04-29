@@ -108,6 +108,10 @@ class PgnImport:
         self.next_id[ANNOTATOR] = self.ini_names(annotator, ANNOTATOR)
         self.next_id[SOURCE] = self.ini_names(source, SOURCE)
 
+    def close(self):
+        if hasattr(self, "conn"):
+            self.conn.close()
+
     def get_id(self, name, name_table, field, info=None):
         if not name:
             return None
@@ -480,6 +484,8 @@ class PgnImport:
             except SQLAlchemyError as e:
                 log.error(f"Importing {pgnfile} failed! \n{e}")
                 self.conn.rollback()
+            finally:
+                handle.close()
 
 
 def read_games(handle):

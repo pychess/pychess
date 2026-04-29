@@ -56,7 +56,7 @@ class GameList(Gtk.TreeView):
         self.liststore = Gtk.ListStore(
             int, str, str, str, str, str, str, str, str, str, str, str, str, str, str
         )
-        self.modelsort = Gtk.TreeModelSort(self.liststore)
+        self.modelsort = Gtk.TreeModelSort(model=self.liststore)
 
         self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.modelsort.set_sort_func(2, self.compare_elo, 2)
@@ -65,7 +65,6 @@ class GameList(Gtk.TreeView):
         self.set_model(self.modelsort)
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.set_headers_visible(True)
-        self.set_rules_hint(True)
         self.set_search_column(1)
 
         titles = (

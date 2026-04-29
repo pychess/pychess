@@ -44,7 +44,7 @@ class ParrentListSection:
                 menu_item = Gtk.SeparatorMenuItem()
             else:
                 label, callback = ITEM_MAP[item]
-                menu_item = Gtk.MenuItem(label)
+                menu_item = Gtk.MenuItem(label=label)
                 menu_item.connect("activate", callback)
             self.menu.append(menu_item)
         self.menu.attach_to_widget(self.tv, None)

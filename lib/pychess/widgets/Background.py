@@ -236,7 +236,12 @@ def newTheme(widget, background=None):
 
 
 def isDarkTheme(widget):
-    color = widget.get_style_context().get_background_color(Gtk.StateFlags.NORMAL)
+    style_context = widget.get_style_context()
+    found, color = style_context.lookup_color("bg_color")
+    if not found:
+        found, color = style_context.lookup_color("theme_bg_color")
+        if not found:
+            color = Gdk.RGBA(red=0.929412, green=0.929412, blue=0.929412, alpha=1.0)
     minimal = min(color.red, color.green, color.blue)
     maximal = max(color.red, color.green, color.blue)
     lightness = (minimal + maximal) / 2

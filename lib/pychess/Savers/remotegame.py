@@ -133,21 +133,24 @@ class InternetGameInterface:
         # Check
         if response is None:
             return None
-        bytes = response.read()
+        try:
+            bytes = response.read()
 
-        # Decode
-        cs = response.info().get_content_charset()
-        if cs is not None:
-            data = bytes.decode(cs)
-        else:
-            try:
-                data = bytes.decode("utf-8")
-            except Exception:
+            # Decode
+            cs = response.info().get_content_charset()
+            if cs is not None:
+                data = bytes.decode(cs)
+            else:
                 try:
-                    data = bytes.decode("latin-1")
+                    data = bytes.decode("utf-8")
                 except Exception:
-                    log.debug("Error in the decoding of the data")
-                    return None
+                    try:
+                        data = bytes.decode("latin-1")
+                    except Exception:
+                        log.debug("Error in the decoding of the data")
+                        return None
+        finally:
+            response.close()
 
         # Result
         data = data.replace("\ufeff", "").replace("\r", "").strip()
@@ -192,6 +195,8 @@ class InternetGameInterface:
                 response = urlopen(url)
             return self.read_data(response)
         except Exception as exception:
+            if hasattr(exception, "close"):
+                exception.close()
             log.debug("Exception raised: %s" % str(exception))
             return None
 
@@ -235,6 +240,8 @@ class InternetGameInterface:
             response = urlopen(req)
             return self.read_data(response)
         except Exception as exception:
+            if hasattr(exception, "close"):
+                exception.close()
             log.debug("Exception raised: %s" % str(exception))
             return None
 

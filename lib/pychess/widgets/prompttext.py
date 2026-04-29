@@ -3,21 +3,22 @@ from gi.repository import Gtk
 
 def getUserTextDialog(parent, title, description):
     dialog = Gtk.Dialog(
-        title,
-        parent,
-        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-        (
-            Gtk.STOCK_CANCEL,
-            Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OK,
-            Gtk.ResponseType.ACCEPT,
-        ),
+        title=title,
+        transient_for=parent,
+        modal=True,
+        destroy_with_parent=True,
+    )
+    dialog.add_buttons(
+        Gtk.STOCK_CANCEL,
+        Gtk.ResponseType.CANCEL,
+        Gtk.STOCK_OK,
+        Gtk.ResponseType.ACCEPT,
     )
     dialog.set_resizable(False)
     dialog.set_size_request(400, -1)
 
     vbx = Gtk.VBox()
-    label = Gtk.Label(description)
+    label = Gtk.Label(label=description)
     label.set_xalign(0)
     vbx.pack_start(label, True, True, 5)
     textedit = Gtk.Entry()

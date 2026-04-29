@@ -202,15 +202,15 @@ class EnginesDialog:
         # add button
         ################################################################
         engine_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select engine"),
-            mainwindow(),
-            Gtk.FileChooserAction.OPEN,
-            (
-                Gtk.STOCK_CANCEL,
-                Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN,
-                Gtk.ResponseType.OK,
-            ),
+            title=_("Select engine"),
+            transient_for=mainwindow(),
+            action=Gtk.FileChooserAction.OPEN,
+        )
+        engine_chooser_dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
         )
 
         filter = Gtk.FileFilter()
@@ -538,15 +538,15 @@ class EnginesDialog:
         # engine working directory
         ################################################################
         dir_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select working directory"),
-            mainwindow(),
-            Gtk.FileChooserAction.SELECT_FOLDER,
-            (
-                Gtk.STOCK_CANCEL,
-                Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN,
-                Gtk.ResponseType.OK,
-            ),
+            title=_("Select working directory"),
+            transient_for=mainwindow(),
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+        )
+        dir_chooser_dialog.add_buttons(
+            Gtk.STOCK_CANCEL,
+            Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN,
+            Gtk.ResponseType.OK,
         )
         dir_chooser_button = Gtk.FileChooserButton.new_with_dialog(dir_chooser_dialog)
 
@@ -892,8 +892,21 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
 
+    def do_get_preferred_width(self, widget):
+        return self.renderer.get_preferred_width(widget)
+
+    def do_get_preferred_height(self, widget):
+        return self.renderer.get_preferred_height(widget)
+
+    def do_get_preferred_width_for_height(self, widget, height):
+        return self.renderer.get_preferred_width_for_height(widget, height)
+
+    def do_get_preferred_height_for_width(self, widget, width):
+        return self.renderer.get_preferred_height_for_width(widget, width)
+
     def do_get_size(self, widget, cell_area=None):
-        return self.renderer.get_size(widget, cell_area=cell_area)
+        _minimum_size, natural_size = self.renderer.get_preferred_size(widget)
+        return 0, 0, natural_size.width, natural_size.height
 
     def do_render(self, ctx, widget, background_area, cell_area, flags):
         self.renderer.render(ctx, widget, background_area, cell_area, flags)

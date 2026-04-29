@@ -1074,7 +1074,6 @@ class BoardView(Gtk.DrawingArea):
                     alloc.height,
                 )
             self.get_window().invalidate_rect(rect, True)
-            self.get_window().process_updates(True)
 
     ###############################
     #            draw             #

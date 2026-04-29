@@ -76,8 +76,14 @@ class ConsoleView(Gtk.Box):
 
         # Inits the read view
         self.readView = Gtk.TextView()
-        fontdesc = Pango.FontDescription("Monospace 10")
-        self.readView.modify_font(fontdesc)
+        font_provider = Gtk.CssProvider()
+        font_provider.load_from_data(
+            b"textview { font-family: Monospace; font-size: 10pt; }"
+        )
+        self.readView.get_style_context().add_provider(
+            font_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+        self.font_provider = font_provider
 
         self.textbuffer = self.readView.get_buffer()
         self.textbuffer.create_tag("text")

@@ -88,8 +88,11 @@ class Sidepanel:
             return None
 
         # Internal objects/helpers
-        self.cursor_standard = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
-        self.cursor_hand = Gdk.Cursor.new(Gdk.CursorType.HAND2)
+        display = Gdk.Display.get_default()
+        self.cursor_standard = Gdk.Cursor.new_for_display(
+            display, Gdk.CursorType.LEFT_PTR
+        )
+        self.cursor_hand = Gdk.Cursor.new_for_display(display, Gdk.CursorType.HAND2)
 
         # Header text area
         self.header_textview = Gtk.TextView()

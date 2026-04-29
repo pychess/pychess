@@ -7,4 +7,7 @@ class Welcome(Perspective):
         Perspective.__init__(self, "welcome", _("Welcome"))
 
         self.default = True
+        parent = tasker.get_parent()
+        if parent is not None:
+            parent.remove(tasker)
         self.widget.add(tasker)
