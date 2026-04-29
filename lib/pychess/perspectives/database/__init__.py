@@ -124,9 +124,7 @@ class Database(GObject.GObject, Perspective):
         self.progressbar0 = Gtk.ProgressBar(show_text=True)
         self.progressbar = Gtk.ProgressBar(show_text=True)
 
-        self.progress_dialog = Gtk.Dialog(
-            title="", transient_for=mainwindow(), flags=0
-        )
+        self.progress_dialog = Gtk.Dialog(title="", transient_for=mainwindow(), flags=0)
         self.progress_dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         self.progress_dialog.set_deletable(False)
         self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
@@ -511,7 +509,9 @@ class Database(GObject.GObject, Perspective):
         try:
             for i, filename in enumerate(filenames):
                 if len(filenames) > 1:
-                    GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
+                    GLib.idle_add(
+                        self.progressbar0.set_fraction, i / float(len(filenames))
+                    )
                 if self.importer.cancel:
                     break
                 if isinstance(filename, tuple):

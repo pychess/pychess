@@ -67,6 +67,7 @@ class SubProcessTests(unittest.IsolatedAsyncioTestCase):
             try:
                 await asyncio.Future()
             except asyncio.CancelledError:
+
                 async def cleanup():
                     await asyncio.sleep(0)
                     cleanup_done.set()

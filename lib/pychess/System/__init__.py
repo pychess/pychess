@@ -23,9 +23,7 @@ if MSYS2:
 async def cancel_all_tasks():
     loop = asyncio.get_event_loop()
     current_task = asyncio.current_task()
-    tasks = [
-        task for task in asyncio.all_tasks(loop) if task is not current_task
-    ]
+    tasks = [task for task in asyncio.all_tasks(loop) if task is not current_task]
     for task in tasks:
         task.cancel()
         try:
@@ -33,7 +31,9 @@ async def cancel_all_tasks():
         except asyncio.CancelledError:
             print("task cancelled", task)
 
-    cleanup_tasks = [task for task in asyncio.all_tasks(loop) if task is not current_task]
+    cleanup_tasks = [
+        task for task in asyncio.all_tasks(loop) if task is not current_task
+    ]
     if cleanup_tasks:
         done, pending = await asyncio.wait(cleanup_tasks, timeout=3)
         for task in done:
