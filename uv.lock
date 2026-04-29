@@ -24,18 +24,6 @@ wheels = [
 ]
 
 [[package]]
-name = "gbulb"
-version = "0.6.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pygobject" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/52/7a/ebcb0c55cb2e2a3048a086e4a2deeb1a8d8eef5811e97402078b4da5b254/gbulb-0.6.5.tar.gz", hash = "sha256:1571634f34b7a98f04adfb3072f97a8bef4bdf62a36a3816b94b402569b12f9b", size = 31894, upload-time = "2024-05-05T04:44:40.848Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/94/99/4e3d245a055159e815005f004b3af7408a9e4bfb7a5b1c3bb7f411da4b5b/gbulb-0.6.5-py3-none-any.whl", hash = "sha256:5d029fceeffa3694b058002a265bd50e55e52f1fb26f0d4336dff32b33a4ae2b", size = 19100, upload-time = "2024-05-05T04:44:39.054Z" },
-]
-
-[[package]]
 name = "greenlet"
 version = "3.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -211,11 +199,6 @@ dependencies = [
     { name = "websockets" },
 ]
 
-[package.optional-dependencies]
-gbulb = [
-    { name = "gbulb" },
-]
-
 [package.dev-dependencies]
 dev = [
     { name = "pyright" },
@@ -225,7 +208,6 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "gbulb", marker = "extra == 'gbulb'" },
     { name = "pexpect" },
     { name = "psutil" },
     { name = "pycairo" },
@@ -233,7 +215,6 @@ requires-dist = [
     { name = "sqlalchemy", specifier = ">=2" },
     { name = "websockets" },
 ]
-provides-extras = ["gbulb"]
 
 [package.metadata.requires-dev]
 dev = [
