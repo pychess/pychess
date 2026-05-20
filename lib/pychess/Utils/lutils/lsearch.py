@@ -44,6 +44,11 @@ endtime = 0
 timecheck_counter = TIMECHECK_FREQ
 egtb = None
 
+# Evaluation cache for quiescent stand-pat. Keyed by board.hash (Zobrist, encodes
+# position + side-to-move). Cleared at the start of each root alphaBeta call so
+# stale entries from previous iterative-deepening steps don't linger too long.
+_eval_cache = {}
+
 
 def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     """This is a alphabeta/negamax/quiescent/iterativedeepend search algorithm
@@ -57,7 +62,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         the deepest)
     *   a score of your standing the the last possition."""
 
-    global searching, nodes, table, endtime, timecheck_counter
+    global searching, nodes, table, endtime, timecheck_counter, _eval_cache
     foundPv = False
     hashf = hashfALPHA
     amove = []
@@ -77,7 +82,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             return [], MATE_IN_1
 
     if board.variant == ATOMICCHESS:
-        if bin(board.boards[board.color][KING]).count("1") == 0:
+        if (board.boards[board.color][KING]).bit_count() == 0:
             return [], MATED
     elif board.variant == LOSERSCHESS:
         if pieceCount(board, board.color) == 1:
@@ -131,6 +136,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     if ply == 0:
         table.newSearch()
+        _eval_cache.clear()
 
     table.setHashMove(depth, -1)
     probe = table.probe(board, depth, alpha, beta)
@@ -315,7 +321,7 @@ def quiescent(board, alpha, beta, ply):
     if skipPruneChance and random() < skipPruneChance:
         return [], (alpha + beta) // 2
 
-    global searching, nodes, endtime, timecheck_counter
+    global searching, nodes, endtime, timecheck_counter, _eval_cache
 
     if ldraw.test(board):
         return [], 0
@@ -337,7 +343,12 @@ def quiescent(board, alpha, beta, ply):
 
     # no stand-pat when in check
     if not isCheck:
-        value = evaluateComplete(board, board.color)
+        _key = board.hash
+        if _key in _eval_cache:
+            value = _eval_cache[_key]
+        else:
+            value = evaluateComplete(board, board.color)
+            _eval_cache[_key] = value
         if value >= beta:
             return [], beta
         if value > alpha:
@@ -394,7 +405,7 @@ class EndgameTable:
         self.provider = EgtbGaviota()
 
     def _pieceCounts(self, board):
-        return sorted([bin(board.friends[i]).count("1") for i in range(2)])
+        return sorted([(board.friends[i]).bit_count() for i in range(2)])
 
     def scoreAllMoves(self, lBoard):
         """Return each move's result and depth to mate.

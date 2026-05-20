@@ -23,7 +23,7 @@ class EndgameTable(GObject.GObject):
         self.providers = providers
 
     def _pieceCounts(self, board):
-        return sorted([bin(board.friends[i]).count("1") for i in range(2)])
+        return sorted([(board.friends[i]).bit_count() for i in range(2)])
 
     def scoreGame(self, lBoard, omitDepth=False, probeSoft=False):
         """Return result and depth to mate. (Intended for engine use.)

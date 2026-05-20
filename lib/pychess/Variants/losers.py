@@ -23,4 +23,4 @@ class LosersBoard(Board):
 
 def testKingOnly(board):
     """Checks to see if if a winning position has been acheived"""
-    return bin(board.friends[board.color]).count("1") == 1
+    return (board.friends[board.color]).bit_count() == 1
