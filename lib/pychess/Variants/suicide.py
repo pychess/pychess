@@ -47,7 +47,7 @@ class SuicideBoard(Board):
 
 
 def pieceCount(board, color):
-    return bin(board.friends[color]).count("1")
+    return (board.friends[color]).bit_count()
 
 
 if __name__ == "__main__":

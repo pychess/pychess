@@ -337,24 +337,24 @@ def cacheablePawnInfo(board, phase):
                 not (passedPawnMask[opcolor][i] & ~fileBits[cord & 7] & pawns)
                 and board.arBoard[i] != PAWN
             ):
-                n1 = bin(pawns & moveArray[opptype][i]).count("1")
-                n2 = bin(oppawns & moveArray[ptype][i]).count("1")
+                n1 = (pawns & moveArray[opptype][i]).bit_count()
+                n2 = (oppawns & moveArray[ptype][i]).bit_count()
                 if n1 < n2:
                     backward = True
 
             if not backward and bitPosArray[cord] & brank7[opcolor]:
                 i = i + (color == WHITE and 8 or -8)
                 if not (passedPawnMask[opcolor][i] & ~fileBits[1] & pawns):
-                    n1 = bin(pawns & moveArray[opptype][i]).count("1")
-                    n2 = bin(oppawns & moveArray[ptype][i]).count("1")
+                    n1 = (pawns & moveArray[opptype][i]).bit_count()
+                    n2 = (oppawns & moveArray[ptype][i]).bit_count()
                     if n1 < n2:
                         backward = True
 
                 if not backward and bitPosArray[cord] & brank7[opcolor]:
                     i = i + (color == WHITE and 8 or -8)
                     if not (passedPawnMask[opcolor][i] & ~fileBits[1] & pawns):
-                        n1 = bin(pawns & moveArray[opptype][i]).count("1")
-                        n2 = bin(oppawns & moveArray[ptype][i]).count("1")
+                        n1 = (pawns & moveArray[opptype][i]).bit_count()
+                        n2 = (oppawns & moveArray[ptype][i]).bit_count()
                         if n1 < n2:
                             backward = True
 
@@ -570,10 +570,10 @@ def evalKing(board, color, phase):
             wall2 = wall1 << 8
 
         pawns = board.boards[color][PAWN]
-        total_in_front = bin(wall1 | wall2 & pawns).count("1")
+        total_in_front = (wall1 | wall2 & pawns).bit_count()
         numbermod = (0, 3, 6, 9, 7, 5, 3)[total_in_front]
 
-        s = bin(wall1 & pawns).count("1") * 2 + bin(wall2 & pawns).count("1")
+        s = (wall1 & pawns).bit_count() * 2 + (wall2 & pawns).bit_count()
         return (s * numbermod * 5) // 6
 
     return 0
@@ -640,11 +640,10 @@ def evalBishops(board, color, phase):
     if board.pieceCount[color][BISHOP] == 1:
         squareMask = WHITE_SQUARES if (bishops & WHITE_SQUARES) else BLACK_SQUARES
         score = (
-            -bin(pawns & squareMask).count("1")
-            - bin(oppawns & squareMask).count("1") // 2
+            -(pawns & squareMask).bit_count() - (oppawns & squareMask).bit_count() // 2
         )
         if phase > 6:
-            score += bin(board.friends[1 - color] & squareMask).count("1")
+            score += (board.friends[1 - color] & squareMask).bit_count()
 
     return score
 

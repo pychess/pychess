@@ -159,7 +159,7 @@ def offencive_moves_rook(model, ply, phase):
     ffile = fileBits[FILE(FCORD(move))]
     tfile = fileBits[FILE(tcord)]
 
-    if ffile & pawns and not tfile & pawns and bin(pawns).count("1") >= 3:
+    if ffile & pawns and not tfile & pawns and (pawns).bit_count() >= 3:
         if not tfile & oppawns:
             yield _("moves a rook to an open file")
         else:
@@ -194,6 +194,23 @@ def prefix_type(model, ply, phase):
 
 
 def attack_type(model, ply, phase):
+    # TODO: UNSTABLE — changed 4 times in 6 months
+    """Classify the material exchange type for the last move played.
+
+    Yields human-readable description strings such as "captures material",
+    "exchanges material", "sacrifices material", or "takes back material"
+    by comparing the static exchange evaluation (SEE) of the move.  Bishop
+    value is temporarily equated to knight value so that even trades are
+    reported as exchanges rather than wins/losses.
+
+    Args:
+        model: The game model containing board history.
+        ply: The current half-move number being evaluated.
+        phase: Unused game-phase parameter (reserved for future use).
+
+    Yields:
+        str: A translated description of the exchange type.
+    """
     # We set bishop value down to knight value, as it is what most people expect
     bishopBackup = PIECE_VALUES[BISHOP]
     PIECE_VALUES[BISHOP] = PIECE_VALUES[KNIGHT]
@@ -386,7 +403,7 @@ def offencive_moves_pin(model, ply, phase):
                 continue
             # There should be exactly one opponent piece in between
             op = clearBit(ray & board.friends[board.color], c)
-            if bin(op).count("1") != 1:
+            if (op).bit_count() != 1:
                 continue
             # The king can't be pinned
             pinned = lastBit(op)
@@ -481,10 +498,14 @@ def state_pawn(model, ply, phase):
                     continue
 
             score = passedScores[color][cord >> 3] * phase
-            yield score, _("%(color)s has a new passed pawn on %(cord)s") % {
-                "color": reprColor[color],
-                "cord": reprCord[cord],
-            }
+            yield (
+                score,
+                _("%(color)s has a new passed pawn on %(cord)s")
+                % {
+                    "color": reprColor[color],
+                    "cord": reprCord[cord],
+                },
+            )
 
     # Double pawns
     found_doubles = []
@@ -494,10 +515,10 @@ def state_pawn(model, ply, phase):
     for file in range(8):
         bits = fileBits[file]
 
-        count = bin(pawns & bits).count("1")
-        oldcount = bin(oldpawns & bits).count("1")
-        opcount = bin(oppawns & bits).count("1")
-        oldopcount = bin(oldoppawns & bits).count("1")
+        count = (pawns & bits).bit_count()
+        oldcount = (oldpawns & bits).bit_count()
+        opcount = (oppawns & bits).bit_count()
+        oldopcount = (oldoppawns & bits).bit_count()
 
         # Single pawn -> double pawns
         if count > oldcount >= 1:
@@ -558,18 +579,26 @@ def state_pawn(model, ply, phase):
         else:
             s = _("%(color)s got new double pawns %(place)s")
 
-        yield (8 + phase) * 2 * doubles_count, s % {
-            "color": reprColor[color],
-            "place": join(parts),
-        }
+        yield (
+            (8 + phase) * 2 * doubles_count,
+            s
+            % {
+                "color": reprColor[color],
+                "place": join(parts),
+            },
+        )
 
     for color_, list_ in ((WHITE, found_white_isolates), (BLACK, found_black_isolates)):
         if list_:
-            yield 20 * len(list_), ngettext(
-                "%(color)s got an isolated pawn in the %(x)s file",
-                "%(color)s got isolated pawns in the %(x)s files",
-                len(list_),
-            ) % {"color": reprColor[color_], "x": join(list_)}
+            yield (
+                20 * len(list_),
+                ngettext(
+                    "%(color)s got an isolated pawn in the %(x)s file",
+                    "%(color)s got isolated pawns in the %(x)s files",
+                    len(list_),
+                )
+                % {"color": reprColor[color_], "x": join(list_)},
+            )
 
     # Stone wall
     if (
@@ -594,9 +623,10 @@ def state_destroysCastling(model, ply, phase):
         if oldcastling & W_OO and not castling & W_OO:
             yield 900 / phase, _("%s can no longer castle") % reprColor[WHITE]
         else:
-            yield 400 / phase, _("%s can no longer castle in queenside") % reprColor[
-                WHITE
-            ]
+            yield (
+                400 / phase,
+                _("%s can no longer castle in queenside") % reprColor[WHITE],
+            )
     elif oldcastling & W_OO and not castling & W_OO:
         yield 500 / phase, _("%s can no longer castle in kingside") % reprColor[WHITE]
 
@@ -604,9 +634,10 @@ def state_destroysCastling(model, ply, phase):
         if oldcastling & B_OO and not castling & B_OO:
             yield 900 / phase, _("%s can no longer castle") % reprColor[BLACK]
         else:
-            yield 400 / phase, _("%s can no longer castle in queenside") % reprColor[
-                BLACK
-            ]
+            yield (
+                400 / phase,
+                _("%s can no longer castle in queenside") % reprColor[BLACK],
+            )
     elif oldcastling & B_OO and not castling & B_OO:
         yield 500 / phase, _("%s can no longer castle in kingside") % reprColor[BLACK]
 
@@ -642,10 +673,14 @@ def state_trappedBishops(model, ply, phase):
 
     # We have got more points -> We have trapped a bishop
     if s > olds:
-        yield 300 / phase, _("%(opcolor)s has a new trapped bishop on %(cord)s") % {
-            "opcolor": reprColor[opcolor],
-            "cord": reprCord[cord],
-        }
+        yield (
+            300 / phase,
+            _("%(opcolor)s has a new trapped bishop on %(cord)s")
+            % {
+                "opcolor": reprColor[opcolor],
+                "cord": reprCord[cord],
+            },
+        )
 
 
 def simple_tropism(model, ply, phase):
@@ -684,14 +719,20 @@ def simple_tropism(model, ply, phase):
         else:
             piece = arBoard[tcord]
         if phase >= 5 or distance[piece][fcord][opking] < distance[piece][fcord][king]:
-            yield score - oldscore, _(
-                "brings a %(piece)s closer to enemy king: %(cord)s"
-            ) % {"piece": reprPiece[piece], "cord": reprCord[tcord]}
+            yield (
+                score - oldscore,
+                _("brings a %(piece)s closer to enemy king: %(cord)s")
+                % {"piece": reprPiece[piece], "cord": reprCord[tcord]},
+            )
         else:
-            yield (score - oldscore) * 2, _("develops a %(piece)s: %(cord)s") % {
-                "piece": reprPiece[piece].lower(),
-                "cord": reprCord[tcord],
-            }
+            yield (
+                (score - oldscore) * 2,
+                _("develops a %(piece)s: %(cord)s")
+                % {
+                    "piece": reprPiece[piece].lower(),
+                    "cord": reprCord[tcord],
+                },
+            )
 
 
 def simple_activity(model, ply, phase):
@@ -707,10 +748,14 @@ def simple_activity(model, ply, phase):
     oldmoves = len([m for m in genAllMoves(oldboard) if FCORD(m) == fcord])
 
     if moves > oldmoves:
-        yield (moves - oldmoves) / 2, _("places a %(piece)s more active: %(cord)s") % {
-            "piece": reprPiece[board.arBoard[tcord]].lower(),
-            "cord": reprCord[tcord],
-        }
+        yield (
+            (moves - oldmoves) / 2,
+            _("places a %(piece)s more active: %(cord)s")
+            % {
+                "piece": reprPiece[board.arBoard[tcord]].lower(),
+                "cord": reprCord[tcord],
+            },
+        )
 
 
 def tip_pawnStorm(model, ply, phase):
@@ -729,10 +774,10 @@ def tip_pawnStorm(model, ply, phase):
 
     wking = board.boards[WHITE][KING]
     bking = board.boards[BLACK][KING]
-    wleft = bin(board.boards[WHITE][PAWN] & left).count("1")
-    wright = bin(board.boards[WHITE][PAWN] & right).count("1")
-    bleft = bin(board.boards[BLACK][PAWN] & left).count("1")
-    bright = bin(board.boards[BLACK][PAWN] & right).count("1")
+    wleft = (board.boards[WHITE][PAWN] & left).bit_count()
+    wright = (board.boards[WHITE][PAWN] & right).bit_count()
+    bleft = (board.boards[BLACK][PAWN] & left).bit_count()
+    bright = (board.boards[BLACK][PAWN] & right).bit_count()
 
     if wking & left and bking & right:
         if wright > bright:
