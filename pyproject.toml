@@ -34,7 +34,7 @@ dependencies = [
     "psutil",
     "pycairo",
     "PyGObject",
-    "SQLAlchemy>=2",
+    "SQLAlchemy>=2.0.50",
     "websockets",
 ]
 
