@@ -57,6 +57,7 @@ from pychess.Utils.const import (
 )
 
 from pychess.Utils.repr import localReprSign
+from pychess.Utils.lutils.bitboard import bitPosArray
 from pychess.Utils.lutils.ldata import FILE
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.System import uistuff
@@ -1115,13 +1116,14 @@ class SetupPositionExtension(_GameInitializationMode):
             effective = 0
             for color, rank_start in ((WHITE, 0), (BLACK, 56)):
                 king = lboard.kings[color]
-                if king < 0:
+                if not (rank_start <= king < rank_start + 8):
                     continue
                 oo, ooo = (W_OO, W_OOO) if color == WHITE else (B_OO, B_OOO)
                 rooks = [
                     cord
                     for cord in range(rank_start, rank_start + 8)
                     if lboard.arBoard[cord] == ROOK
+                    and (bitPosArray[cord] & lboard.friends[color])
                 ]
                 left = [cord for cord in rooks if cord < king]
                 right = [cord for cord in rooks if cord > king]

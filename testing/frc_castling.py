@@ -121,6 +121,12 @@ dialog_data = (
     ("4k3/8/8/8/8/8/8/R3K3", (W_OO,), "-"),
     # Both white rights ticked but the white king is missing -> dropped.
     ("4k3/8/8/8/8/8/8/R6R", (W_OO, W_OOO), "-"),
+    # White king off the back rank (on e2) -> back-rank rooks ignored, dropped.
+    ("4k3/8/8/8/8/8/4K3/R6R", (W_OO, W_OOO), "-"),
+    # Queenside ticked but the only left-of-king rook is the opponent's -> dropped.
+    ("4k3/8/8/8/8/8/8/r3K2R", (W_OOO,), "-"),
+    # Same position: kingside white rook (h1) is valid and emitted.
+    ("4k3/8/8/8/8/8/8/r3K2R", (W_OO,), "H"),
 )
 
 
