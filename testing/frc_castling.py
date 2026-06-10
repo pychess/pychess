@@ -106,5 +106,34 @@ class SetupCastlingTestCase(unittest.TestCase):
             self.assertEqual(board.castling, expected, fen)
 
 
+# (piece placement, ticked castling flags, expected castling field) for the
+# Setup Position dialog's FRC castling helper. The adversarial cases ensure a
+# right ticked without a matching rook (or king) is dropped instead of crashing
+# with reprCord[None] in reprCastling().
+dialog_data = (
+    # Happy path: standard back rank, all four rights ticked.
+    (
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+        (W_OO, W_OOO, B_OO, B_OOO),
+        "HAha",
+    ),
+    # Kingside ticked but no rook to the right of the king -> dropped.
+    ("4k3/8/8/8/8/8/8/R3K3", (W_OO,), "-"),
+    # Both white rights ticked but the white king is missing -> dropped.
+    ("4k3/8/8/8/8/8/8/R6R", (W_OO, W_OOO), "-"),
+)
+
+
+class DialogFRCCastlingFieldTestCase(unittest.TestCase):
+    def testCastlingFieldGuards(self):
+        """Testing Setup dialog _castling_field FRC guards against missing rook/king"""
+        from pychess.widgets.newGameDialog import SetupPositionExtension
+
+        for pieces, flags, expected in dialog_data:
+            SetupPositionExtension.castl = set(flags)
+            result = SetupPositionExtension._castling_field(FISCHERRANDOMCHESS, pieces)
+            self.assertEqual(result, expected, pieces)
+
+
 if __name__ == "__main__":
     unittest.main()

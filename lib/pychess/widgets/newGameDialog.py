@@ -1108,15 +1108,16 @@ class SetupPositionExtension(_GameInitializationMode):
             lboard = LBoard(FISCHERRANDOMCHESS)
             lboard.applyFen("%s w - - 0 1" % pieces)
 
-            castling = 0
+            requested = 0
             for flag in cls.castl:
-                castling |= flag
-            lboard.castling = castling
+                requested |= flag
 
+            effective = 0
             for color, rank_start in ((WHITE, 0), (BLACK, 56)):
                 king = lboard.kings[color]
                 if king < 0:
                     continue
+                oo, ooo = (W_OO, W_OOO) if color == WHITE else (B_OO, B_OOO)
                 rooks = [
                     cord
                     for cord in range(rank_start, rank_start + 8)
@@ -1124,11 +1125,14 @@ class SetupPositionExtension(_GameInitializationMode):
                 ]
                 left = [cord for cord in rooks if cord < king]
                 right = [cord for cord in rooks if cord > king]
-                if left:
+                if (requested & ooo) and left:
                     lboard.ini_rooks[color][0] = min(left)
-                if right:
+                    effective |= ooo
+                if (requested & oo) and right:
                     lboard.ini_rooks[color][1] = max(right)
+                    effective |= oo
 
+            lboard.castling = effective
             return lboard.reprCastling()
 
         strs = []
