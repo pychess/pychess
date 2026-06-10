@@ -118,7 +118,11 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         castl = dialog.get_fen().split()[2]
         self.assertEqual(castl, "KQkq")
 
-        newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
+        # Send a response so the dialog hides *and* disconnects its response
+        # handler. A bare hide() would leave the SetupPosition handler attached
+        # to the shared newgamedialog, causing it to also fire (and spawn a
+        # stray game) on the next test's OK response.
+        dialog.widgets["newgamedialog"].response(Gtk.ResponseType.CANCEL)
 
     @unittest.skipIf(
         sys.platform == "win32",
