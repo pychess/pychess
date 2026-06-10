@@ -7,7 +7,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
-from pychess.Utils.const import FEN_START, NORMALCHESS
+from pychess.Utils.const import FEN_START, NORMALCHESS, FISCHERRANDOMCHESS
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff, cancel_all_tasks
 from pychess.widgets import gamewidget
@@ -89,6 +89,34 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
 
         await asyncio.wait_for(event.wait(), timeout=5)
+
+        newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
+
+    async def test2_frc_castling(self):
+        """Setup Position dialog round-trips Chess960 file-letter castling"""
+
+        dialog = newGameDialog.SetupPositionExtension()
+
+        # A Chess960 start position with non-standard king/rook files.
+        frc_fen = "nrbbqknr/pppppppp/8/8/8/8/PPPPPPPP/NRBBQKNR w KQkq - 0 1"
+        dialog.run(frc_fen, FISCHERRANDOMCHESS)
+
+        # Loading the position should tick all four castling checkboxes.
+        self.assertTrue(dialog.widgets["woo"].get_active())
+        self.assertTrue(dialog.widgets["wooo"].get_active())
+        self.assertTrue(dialog.widgets["boo"].get_active())
+        self.assertTrue(dialog.widgets["booo"].get_active())
+
+        # ngvariant1 defaults to FISCHERRANDOMCHESS, so get_fen must emit
+        # X-FEN file letters rather than classical KQkq or "-".
+        dialog.widgets["playVariant1Radio"].set_active(True)
+        castl = dialog.get_fen().split()[2]
+        self.assertEqual(castl, "HBhb")
+
+        # Classical chess still produces canonical KQkq from the same flags.
+        dialog.widgets["playNormalRadio"].set_active(True)
+        castl = dialog.get_fen().split()[2]
+        self.assertEqual(castl, "KQkq")
 
         newGameDialog.NewGameMode.widgets["newgamedialog"].hide()
 

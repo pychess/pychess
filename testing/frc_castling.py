@@ -14,6 +14,11 @@ from pychess.Utils.const import (
     FISCHERRANDOMCHESS,
     KING_CASTLE,
     QUEEN_CASTLE,
+    SETUPCHESS,
+    W_OO,
+    W_OOO,
+    B_OO,
+    B_OOO,
 )
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import parseAN
@@ -71,6 +76,34 @@ class FRCCastlingTestCase(unittest.TestCase):
         # print board
         moves = [move for move in genCastles(board)]
         self.assertTrue(parseAN(board, "e1g1") in moves)
+
+
+# (FEN, expected castling flags) for X-FEN file-letter rights parsed as SETUPCHESS.
+# This mirrors how the Setup Position dialog re-parses a loaded Chess960 position.
+setup_data = (
+    (
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah - 0 1",
+        W_OO | W_OOO | B_OO | B_OOO,
+    ),
+    ("1br3kr/2p5/8/8/8/8/8/1BR3KR w CH - 0 2", W_OO | W_OOO),
+    ("1br3kr/2p5/8/8/8/8/8/1BR3KR b ch - 0 2", B_OO | B_OOO),
+    ("2r1k2r/8/8/8/8/8/8/2R1K2R w H - 0 1", W_OO),
+    ("2r1k2r/8/8/8/8/8/8/2R1K2R b h - 0 1", B_OO),
+    (
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        W_OO | W_OOO | B_OO | B_OOO,
+    ),
+    ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1", 0),
+)
+
+
+class SetupCastlingTestCase(unittest.TestCase):
+    def testSetupFileLetterCastling(self):
+        """Testing SETUPCHESS X-FEN file-letter castling parsing"""
+        for fen, expected in setup_data:
+            board = LBoard(SETUPCHESS)
+            board.applyFen(fen)
+            self.assertEqual(board.castling, expected, fen)
 
 
 if __name__ == "__main__":
