@@ -63,6 +63,9 @@ class PyChess:
         except BrokenPipeError:
             sys.exit(0)
 
+    def format_pv(self, board, moves):
+        return listToSan(board, moves)
+
     # Play related
 
     def __remainingMovesA(self):
@@ -170,7 +173,7 @@ class PyChess:
                     if time() > lsearch.endtime:
                         break
                     if self.post:
-                        pv1 = " ".join(listToSan(self.board, mvs))
+                        pv1 = " ".join(self.format_pv(self.board, mvs))
                         time_cs = int(100 * (time() - starttime))
                         self.print(
                             f"{depth} {self.scr} {time_cs} {lsearch.nodes} {pv1}"
@@ -229,7 +232,7 @@ class PyChess:
             board = self.board.clone()
             mvs, scr = alphaBeta(board, depth)
 
-            pv1 = " ".join(listToSan(board, mvs))
+            pv1 = " ".join(self.format_pv(board, mvs))
             time_cs = int(100 * (time() - start))
             self.print(f"{depth} {scr} {time_cs} {lsearch.nodes} {pv1}")
 

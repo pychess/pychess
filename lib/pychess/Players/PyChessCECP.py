@@ -8,6 +8,8 @@ from pychess.Players.PyChess import PyChess
 from pychess.System import conf, fident
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import (
+    CASTLE_KK,
+    CASTLE_SAN,
     NORMALCHESS,
     FEN_START,
     BLACK,
@@ -36,7 +38,7 @@ from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils import lsearch, leval
-from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, ParsingError
+from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, toAN, ParsingError
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCaptures, genCheckEvasions
 from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
@@ -144,9 +146,17 @@ class PyChessCECP(PyChess):
                     self.print("feature done=1")
 
                 elif lines[0] in ("accepted", "rejected"):
-                    # We only really care about one case:
-                    if tuple(lines) == ("rejected", "debug"):
-                        self.debug = False
+                    if len(lines) > 1:
+                        feature = lines[1]
+                        accepted = lines[0] == "accepted"
+
+                        if feature == "san":
+                            # We request SAN, but CECP feature negotiation is
+                            # two-sided. If the GUI rejects san=1, all move
+                            # text we send back must use coordinate notation.
+                            self.features["san"] = int(accepted)
+                        elif feature == "debug" and not accepted:
+                            self.debug = False
 
                 elif lines[0] == "new":
                     self.__stopSearching()
@@ -328,7 +338,7 @@ class PyChessCECP(PyChess):
                             self.print(
                                 "\t%s\t%02.2f%%"
                                 % (
-                                    toSAN(self.board, entry[0]),
+                                    self.__formatMove(self.board, entry[0]),
                                     entry[1] * 100.0 / totalWeight,
                                 )
                             )
@@ -416,20 +426,26 @@ class PyChessCECP(PyChess):
                 elif lines[0] == "moves":
                     self.print(self.board.prepr(ascii=ASCII))
                     self.print(
-                        [toSAN(self.board, move) for move in genAllMoves(self.board)]
+                        [
+                            self.__formatMove(self.board, move)
+                            for move in genAllMoves(self.board)
+                        ]
                     )
 
                 elif lines[0] == "captures":
                     self.print(self.board.prepr(ascii=ASCII))
                     self.print(
-                        [toSAN(self.board, move) for move in genCaptures(self.board)]
+                        [
+                            self.__formatMove(self.board, move)
+                            for move in genCaptures(self.board)
+                        ]
                     )
 
                 elif lines[0] == "evasions":
                     self.print(self.board.prepr(ascii=ASCII))
                     self.print(
                         [
-                            toSAN(self.board, move)
+                            self.__formatMove(self.board, move)
                             for move in genCheckEvasions(self.board)
                         ]
                     )
@@ -488,11 +504,31 @@ class PyChessCECP(PyChess):
         if self.thread:
             self.thread.join()
 
+    def __formatMove(self, board, move):
+        if self.features["san"]:
+            return toSAN(board, move)
+
+        castle_notation = CASTLE_KK
+        if board.variant == FISCHERRANDOMCHESS:
+            # CECP uses O-O/O-O-O for Fischer Random castling.
+            castle_notation = CASTLE_SAN
+        return toAN(board, move, short=True, castleNotation=castle_notation)
+
+    def format_pv(self, board, moves):
+        board = board.clone()
+        formatted = []
+        for move in moves:
+            formatted.append(self.__formatMove(board, move))
+            board.applyMove(move)
+        return formatted
+
     def __go(self):
         def ondone(result):
             if not self.forced:
-                self.board.applyMove(parseSAN(self.board, result))
-                self.print("move %s" % result)
+                move = parseSAN(self.board, result)
+                output = self.__formatMove(self.board, move)
+                self.board.applyMove(move)
+                self.print("move %s" % output)
             # TODO: start pondering, if enabled
 
         self.thread = Thread(
