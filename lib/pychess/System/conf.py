@@ -93,6 +93,9 @@ DEFAULTS = {
     "General": {
         "firstName": username,
         "secondName": _("Guest"),
+        # Preferred UI language as a locale code (e.g. "de", "ml").
+        # An empty string means "follow the system locale".
+        "langcombo": "",
         "showEmt": False,
         "showEval": False,
         "showBlunder": True,

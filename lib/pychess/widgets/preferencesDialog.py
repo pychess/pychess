@@ -100,6 +100,101 @@ def initialize(widgets):
 # General initing
 
 
+# Human readable names for the locales PyChess ships translations for.
+# Keys are the locale directory names under lang/. Anything not listed
+# falls back to showing the bare locale code.
+LANGUAGE_NAMES = {
+    "af": "Afrikaans",
+    "ar": "العربية",
+    "az": "Azərbaycanca",
+    "bg": "Български",
+    "bn": "বাংলা",
+    "br": "Brezhoneg",
+    "ca": "Català",
+    "cs": "Čeština",
+    "da": "Dansk",
+    "de": "Deutsch",
+    "el": "Ελληνικά",
+    "en": "English",
+    "en_GB": "English (United Kingdom)",
+    "es": "Español",
+    "et": "Eesti",
+    "eu": "Euskara",
+    "eu_ES": "Euskara (Espainia)",
+    "fa": "فارسی",
+    "fi": "Suomi",
+    "fr": "Français",
+    "ga": "Gaeilge",
+    "gl": "Galego",
+    "he": "עברית",
+    "hi": "हिन्दी",
+    "hr": "Hrvatski",
+    "hu": "Magyar",
+    "id": "Bahasa Indonesia",
+    "is": "Íslenska",
+    "it": "Italiano",
+    "ja": "日本語",
+    "jv": "Basa Jawa",
+    "ka": "ქართული",
+    "kn": "ಕನ್ನಡ",
+    "ko": "한국어",
+    "ku": "Kurdî",
+    "lt": "Lietuvių",
+    "lv": "Latviešu",
+    "ml": "മലയാളം",
+    "mr": "मराठी",
+    "ms_MY": "Bahasa Melayu",
+    "nb": "Norsk bokmål",
+    "nl": "Nederlands",
+    "oc": "Occitan",
+    "pl": "Polski",
+    "pl_PL": "Polski (Polska)",
+    "pt": "Português",
+    "pt_BR": "Português (Brasil)",
+    "ro": "Română",
+    "ru": "Русский",
+    "si": "සිංහල",
+    "sk": "Slovenčina",
+    "sl": "Slovenščina",
+    "sq": "Shqip",
+    "sv": "Svenska",
+    "te": "తెలుగు",
+    "tr": "Türkçe",
+    "uk": "Українська",
+    "vi": "Tiếng Việt",
+    "wa": "Walon",
+    "zh_CN": "中文 (简体)",
+    "zu": "isiZulu",
+}
+
+
+def get_available_languages():
+    """Return a list of (code, display_name) for shipped translations.
+
+    Scans the lang/ directory for locales that provide a message catalog.
+    The list is sorted by display name. The empty-string code used for
+    "follow the system locale" is not included here; callers prepend it.
+    """
+    langs = []
+    lang_dir = addDataPrefix("lang")
+    try:
+        entries = listdir(lang_dir)
+    except OSError:
+        entries = []
+    for code in entries:
+        lc_messages = os.path.join(lang_dir, code, "LC_MESSAGES")
+        if not isdir(lc_messages):
+            continue
+        has_catalog = isfile(os.path.join(lc_messages, "pychess.mo")) or isfile(
+            os.path.join(lc_messages, "pychess.po")
+        )
+        if not has_catalog:
+            continue
+        langs.append((code, LANGUAGE_NAMES.get(code, code)))
+    langs.sort(key=lambda item: item[1].lower())
+    return langs
+
+
 class GeneralTab:
     def __init__(self, widgets):
         # Give to uistuff.keeper
@@ -111,6 +206,7 @@ class GeneralTab:
                 "pieceTheme",
                 "board_style",
                 "board_frame",
+                "langcombo",
             ):
                 continue
 
@@ -121,6 +217,33 @@ class GeneralTab:
                 print("GeneralTab AttributeError", key, conf.DEFAULTS["General"][key])
             except TypeError:
                 print("GeneralTab TypeError", key, conf.DEFAULTS["General"][key])
+
+        # Language selection. The combo stores a locale code in conf
+        # (empty string == follow the system locale). Switching language
+        # only takes effect after a restart, since translations are bound
+        # when widgets are built.
+        lang_combo = widgets["langcombo"]
+        # codes[i] is the locale code matching row i of the combo model.
+        self.lang_codes = [""] + [code for code, _name in get_available_languages()]
+        data = [(None, _("System default"))] + [
+            (None, name) for _code, name in get_available_languages()
+        ]
+        uistuff.createCombo(lang_combo, data, name="langcombo")
+
+        def _get_lang(combobox):
+            active = combobox.get_active()
+            if active < 0 or active >= len(self.lang_codes):
+                return ""
+            return self.lang_codes[active]
+
+        def _set_lang(combobox, value):
+            try:
+                index = self.lang_codes.index(value)
+            except ValueError:
+                index = 0
+            combobox.set_active(index)
+
+        uistuff.keep(lang_combo, "langcombo", _get_lang, _set_lang)
 
 
 # Hint initing
