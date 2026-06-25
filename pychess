@@ -176,6 +176,27 @@ if no_gettext:
     os.environ["LANG"] = "C"
     locale.setlocale(locale.LC_ALL, "C")
 else:
+    # Honor a UI language chosen in Preferences (stored in the config
+    # file as General/langcombo). An empty value means "follow the system
+    # locale". Setting LANGUAGE makes gettext prefer that catalog. This is
+    # read here, before gettext.install(), because translations are bound
+    # when widgets are built, so the choice applies on the next startup.
+    try:
+        import configparser
+
+        from pychess.System import prefix as _prefix
+
+        _cfg = configparser.RawConfigParser()
+        _cfg_path = _prefix.addUserConfigPrefix("config")
+        if os.path.isfile(_cfg_path):
+            _cfg.read(_cfg_path)
+            _ui_lang = _cfg.get("General", "langcombo", fallback="").strip()
+            if _ui_lang:
+                os.environ["LANGUAGE"] = _ui_lang
+    except Exception:
+        # Never let a bad config file prevent PyChess from starting.
+        pass
+
     locale.setlocale(locale.LC_ALL, "")
     # http://stackoverflow.com/questions/3678174/python-gettext-doesnt-load-translations-on-windows
     if sys.platform.startswith("win"):

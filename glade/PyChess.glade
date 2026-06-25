@@ -1420,6 +1420,45 @@ Ticked : the linear scale focuses on a limited range around the null average. It
                                         <property name="position">12</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkHBox" id="langbox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="spacing">6</property>
+                                        <child>
+                                          <object class="GtkLabel" id="langlabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="label" translatable="yes">_Language:</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="mnemonic-widget">langcombo</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBox" id="langcombo">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Choose the display language. Changes take effect after you restart PyChess.</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">13</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
