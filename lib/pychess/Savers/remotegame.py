@@ -2212,36 +2212,6 @@ class InternetGameChessbase(InternetGameInterface):
             return self.download_list(parser.links)
 
 
-# PlayOK.com
-class InternetGamePlayok(InternetGameInterface):
-    def get_identity(self):
-        return "PlayOK.com", CAT_DL
-
-    def assign_game(self, url):
-        # Verify the hostname
-        parsed = urlparse(url)
-        if parsed.netloc.lower() not in ["www.playok.com", "playok.com"]:
-            return False
-
-        # Read the arguments
-        args = parse_qs(parsed.query)
-        if "g" in args:
-            gid = args["g"][0]
-            if gid[:2] == "ch":
-                gid = gid[2:].replace(".txt", "")
-                if gid.isdigit() and gid != "0":
-                    self.id = gid
-                    return True
-        return False
-
-    def download_game(self):
-        if self.id is not None:
-            pgn = self.download("https://www.playok.com/p/?g=ch%s.txt" % self.id)
-            if len(pgn) > 16:
-                return pgn
-        return None
-
-
 # Pychess.org
 class InternetGamePychess(InternetGameInterface):
     def get_identity(self):
@@ -2368,7 +2338,6 @@ chess_providers = [
     InternetGameChessdb(),
     InternetGameChesspro(),
     InternetGameChessbase(),
-    InternetGamePlayok(),
     InternetGamePychess(),
     # TODO ChessDuo.com
     InternetGameGeneric(),
