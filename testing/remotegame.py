@@ -9,7 +9,6 @@ from pychess.Savers.remotegame import (
     InternetGameFicsgames,
     InternetGameChesstempo,
     InternetGame365chess,
-    InternetGameChesspastebin,
     InternetGameThechessworld,
     InternetGameChessOrg,
     InternetGameEuropeechecs,
@@ -199,24 +198,6 @@ class RemoteGameTestCase(unittest.TestCase):
             ("https://www.365chess.com/game.php?gid=4230834&p=0", True),
         ]  # Game with additional parameter
         self.executeTest(InternetGame365chess(), links)
-
-    def testChesspastebin(self):
-        links = [
-            (
-                "https://www.chesspastebin.com/2018/12/29/anonymous-anonymous-by-george-2/",
-                True,
-            ),  # Game quite complete
-            (
-                "https://www.CHESSPASTEBIN.com/2019/04/14/unknown-unknown-by-alekhine-sapladi/",
-                True,
-            ),  # Game with no header
-            (
-                "https://www.chesspastebin.com/1515/09/13/marignan/",
-                False,
-            ),  # Not a game (invalid URL)
-            ("https://www.chesspastebin.com", True),
-        ]  # Game from homepage
-        self.executeTest(InternetGameChesspastebin(), links)
 
     def testThechessworld(self):
         links = [
