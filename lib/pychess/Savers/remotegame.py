@@ -3,7 +3,7 @@ import sys
 import re
 import json
 from urllib.request import Request, urlopen
-from urllib.parse import urlparse, parse_qs, unquote, urlencode
+from urllib.parse import urlparse, parse_qs, urlencode
 from html import unescape
 from html.parser import HTMLParser
 import websockets
@@ -901,61 +901,6 @@ class InternetGame365chess(InternetGameInterface):
         return self.rebuild_pgn(game)
 
 
-# ChessPastebin.com
-class InternetGameChesspastebin(InternetGameInterface):
-    def get_identity(self):
-        return "ChessPastebin.com", CAT_HTML
-
-    def assign_game(self, url):
-        return self.reacts_to(url, "chesspastebin.com")
-
-    def download_game(self):
-        # Download
-        if self.id is None:
-            return None
-        page = self.download(self.id)
-        if page is None:
-            return None
-
-        # Extract the game ID
-        rxp = re.compile(
-            r".*?\<div id=\"([0-9]+)_board\"\>\<\/div\>.*?", flags=re.IGNORECASE
-        )
-        m = rxp.match(page.replace("\n", ""))
-        if m is None:
-            return None
-        gid = m.group(1)
-
-        # Definition of the parser
-        class chesspastebinparser(HTMLParser):
-            def __init__(self):
-                HTMLParser.__init__(self)
-                self.tag_ok = False
-                self.pgn = None
-
-            def handle_starttag(self, tag, attrs):
-                if tag.lower() == "div":
-                    for k, v in attrs:
-                        if k.lower() == "id" and v == gid:
-                            self.tag_ok = True
-
-            def handle_data(self, data):
-                if self.pgn is None and self.tag_ok:
-                    self.pgn = data
-
-        # Read the PGN
-        parser = chesspastebinparser()
-        parser.feed(page)
-        pgn = parser.pgn
-        if (
-            pgn is not None
-        ):  # Any game must start with '[' to be considered further as valid
-            pgn = pgn.strip()
-            if not pgn.startswith("["):
-                pgn = '[Annotator "ChessPastebin.com"]\n%s' % pgn
-        return pgn
-
-
 # TheChessWorld.com
 class InternetGameThechessworld(InternetGameInterface):
     def get_identity(self):
@@ -1190,165 +1135,6 @@ class InternetGameEuropeechecs(InternetGameInterface):
 
         # Collect the games
         return self.download_list(links, userAgent=True)
-
-
-# GameKnot.com
-class InternetGameGameknot(InternetGameInterface):
-    def get_identity(self):
-        return "GameKnot.com", CAT_HTML
-
-    def assign_game(self, url):
-        # Verify the hostname
-        parsed = urlparse(url.lower())
-        if parsed.netloc not in ["www.gameknot.com", "gameknot.com"]:
-            return False
-
-        # Verify the page
-        if parsed.path == "/analyze-board.pl":
-            ttype = TYPE_GAME
-            tkey = "bd"
-        elif parsed.path == "/chess-puzzle.pl":
-            ttype = TYPE_PUZZLE
-            tkey = "pz"
-        else:
-            return False
-
-        # Read the arguments
-        args = parse_qs(parsed.query)
-        if tkey in args:
-            gid = args[tkey][0]
-            if gid.isdigit() and gid != "0":
-                self.id = gid
-                self.url_type = ttype
-                return True
-        return False
-
-    def download_game(self):
-        # Check
-        if self.url_type not in [TYPE_GAME, TYPE_PUZZLE] or self.id is None:
-            return None
-
-        # Download
-        if self.url_type == TYPE_GAME:
-            url = "https://gameknot.com/analyze-board.pl?bd=%s" % self.id
-        elif self.url_type == TYPE_PUZZLE:
-            url = "https://gameknot.com/chess-puzzle.pl?pz=%s" % self.id
-        page = self.download(url, userAgent=True)
-        if page is None:
-            return None
-
-        # Library
-        def extract_variables(page, structure):
-            game = {}
-            for var, type, tag in structure:
-                game[tag] = ""
-            lines = page.split(";")
-            for line in lines:
-                for var, type, tag in structure:
-                    pos1 = line.find(var)
-                    if pos1 == -1:
-                        continue
-                    if type == "s":
-                        pos1 = line.find("'", pos1 + 1)
-                        pos2 = line.find("'", pos1 + 1)
-                        if pos2 > pos1:
-                            game[tag] = line[pos1 + 1 : pos2]
-                    elif type == "i":
-                        pos1 = line.find("=", pos1 + 1)
-                        if pos1 != -1:
-                            txt = line[pos1 + 1 :].strip()
-                            if txt not in ["", "0"]:
-                                game[tag] = txt
-                    else:
-                        assert False
-            return game
-
-        # Logic for the puzzles
-        if self.url_type == TYPE_PUZZLE:
-            structure = [
-                ("puzzle_id", "i", "_id"),
-                ("puzzle_fen", "s", "FEN"),
-                ("load_solution(", "s", "_solution"),
-            ]
-            game = extract_variables(page, structure)
-            game["_url"] = "https://gameknot.com/chess-puzzle.pl?pz=%s" % game["_id"]
-            game["White"] = _("White")
-            game["Black"] = _("Black")
-            game["Result"] = "*"
-            if game["FEN"] != "":
-                game["SetUp"] = "1"
-            if game["_solution"] != "":
-                list = game["_solution"].split("|")
-                game["_moves"] = " {Solution:"
-                nextid = "0"
-                for item in list:
-                    item = item.split(",")
-                    # 0 = identifier of the move
-                    # 1 = player
-                    # 2 = identifier of the previous move
-                    # 3 = count of following moves
-                    # 4 = algebraic notation of the move
-                    # 5 = UCI notation of the move
-                    # 6 = ?
-                    # 7 = identifier of the next move
-                    # > = additional moves for the current line
-                    curid = item[0]
-                    if curid != nextid:
-                        continue
-                    if len(item) == 4:
-                        break
-                    nextid = item[7]
-                    if self.use_an:
-                        move = item[4]
-                    else:
-                        move = item[5]
-                    game["_moves"] += " %s" % move
-                game["_moves"] += "}"
-
-        # Logic for the games
-        elif self.url_type == TYPE_GAME:
-            # Header
-            structure = [
-                ("anbd_movelist", "s", "_moves"),
-                ("anbd_result", "i", "Result"),
-                ("anbd_player_w", "s", "White"),
-                ("anbd_player_b", "s", "Black"),
-                ("anbd_rating_w", "i", "WhiteElo"),
-                ("anbd_rating_b", "i", "BlackElo"),
-                ("anbd_title", "s", "Event"),
-                ("anbd_timestamp", "s", "Date"),
-                ("export_web_input_result_text", "s", "_reason"),
-            ]
-            game = extract_variables(page, structure)
-            if game["Result"] == "1":
-                game["Result"] = "1-0"
-            elif game["Result"] == "2":
-                game["Result"] = "1/2-1/2"
-            elif game["Result"] == "3":
-                game["Result"] = "0-1"
-            else:
-                game["Result"] = "*"
-
-            # Body
-            board = LBoard()
-            board.applyFen(FEN_START)
-            moves = game["_moves"].split("-")
-            game["_moves"] = ""
-            for move in moves:
-                if move == "":
-                    break
-                try:
-                    if self.use_an:
-                        kmove = parseAny(board, move)
-                        game["_moves"] += toSAN(board, kmove) + " "
-                        board.applyMove(kmove)
-                    else:
-                        game["_moves"] += move + " "
-                except Exception:
-                    return None
-
-        # Rebuild the PGN game
-        return unquote(self.rebuild_pgn(game))
 
 
 # Chess.com
@@ -2322,11 +2108,9 @@ chess_providers = [
     InternetGameFicsgames(),
     InternetGameChesstempo(),
     InternetGame365chess(),
-    InternetGameChesspastebin(),
     InternetGameThechessworld(),
     InternetGameChessOrg(),
     InternetGameEuropeechecs(),
-    InternetGameGameknot(),
     InternetGameChessCom(),
     InternetGameSchachspielen(),
     InternetGameRedhotpawn(),

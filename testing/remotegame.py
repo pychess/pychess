@@ -9,11 +9,9 @@ from pychess.Savers.remotegame import (
     InternetGameFicsgames,
     InternetGameChesstempo,
     InternetGame365chess,
-    InternetGameChesspastebin,
     InternetGameThechessworld,
     InternetGameChessOrg,
     InternetGameEuropeechecs,
-    InternetGameGameknot,
     InternetGameChessCom,
     InternetGameSchachspielen,
     InternetGameRedhotpawn,
@@ -200,24 +198,6 @@ class RemoteGameTestCase(unittest.TestCase):
         ]  # Game with additional parameter
         self.executeTest(InternetGame365chess(), links)
 
-    def testChesspastebin(self):
-        links = [
-            (
-                "https://www.chesspastebin.com/2018/12/29/anonymous-anonymous-by-george-2/",
-                True,
-            ),  # Game quite complete
-            (
-                "https://www.CHESSPASTEBIN.com/2019/04/14/unknown-unknown-by-alekhine-sapladi/",
-                True,
-            ),  # Game with no header
-            (
-                "https://www.chesspastebin.com/1515/09/13/marignan/",
-                False,
-            ),  # Not a game (invalid URL)
-            ("https://www.chesspastebin.com", True),
-        ]  # Game from homepage
-        self.executeTest(InternetGameChesspastebin(), links)
-
     def testThechessworld(self):
         links = [
             (
@@ -263,39 +243,6 @@ class RemoteGameTestCase(unittest.TestCase):
             ("https://www.europe-echecs.com", False),
         ]  # Not a game (homepage)
         self.executeTest(InternetGameEuropeechecs(), links)
-
-    def testGameknot(self):
-        links = [
-            ("https://gameknot.com/analyze-board.pl?bd=22792465#tag", True),  # Game
-            (
-                "https://GAMEKNOT.com/chess.pl?bd=22792465&p=1",
-                False,
-            ),  # Not a game (wrong path)
-            (
-                "https://gameknot.com/analyze-board.pl?bd=1234567890&p=1",
-                False,
-            ),  # Not a game (unknown ID)
-            (
-                "https://gameknot.com/analyze-board.pl?bd=bepofr#tag",
-                False,
-            ),  # Not a game (not numeric ID)
-            ("https://gameknot.com", False),  # Not a game (homepage)
-            ("https://gameknot.com/chess-puzzle.pl?pz=224260", True),  # Puzzle
-            (
-                "https://gameknot.com/chess-puzzle.pl?pz=224541&next=2",
-                True,
-            ),  # Puzzle with parameters
-            (
-                "https://gameknot.com/chess-puzzle.pl?pz=224571",
-                True,
-            ),  # Puzzle with analysis
-            (
-                "https://gameknot.com/chess-puzzle.pl?pz=ABC",
-                False,
-            ),  # Random puzzle but rejected by PyChess (wrong format)
-            ("https://gameknot.com/chess-puzzle.pl?pz=0#tag", False),
-        ]  # Random puzzle but rejected by PyChess (wrong format)
-        self.executeTest(InternetGameGameknot(), links)
 
     def testChessCom(self):
         links = [
