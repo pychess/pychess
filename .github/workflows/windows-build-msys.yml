@@ -16,6 +16,7 @@ on:
 jobs:
   checks:
     name: Build for Windows
+    timeout-minutes: 15
     runs-on: windows-2022
     defaults:
       run:

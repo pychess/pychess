@@ -16,6 +16,7 @@ on:
 jobs:
   run-tests:
     name: Run the test suite
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -32,7 +33,7 @@ jobs:
       run: |
         set -x
         sudo apt-get update
-        sudo apt-get install --no-install-recommends --yes -V \
+        sudo timeout 10m apt-get install --no-install-recommends --yes -V \
             gettext \
             gir1.2-gdkpixbuf-2.0 \
             gir1.2-glib-2.0 \
