@@ -121,9 +121,8 @@ class ChatView(Gtk.Box):
             self.gamemodel.disconnect(self.cid)
 
     def on_obs_btn_clicked(self, other):
-        if not self.gamemodel.connection.ICC:
-            allob = "allob " + str(self.gamemodel.ficsgame.gameno)
-            self.gamemodel.connection.client.run_command(allob)
+        allob = "allob " + str(self.gamemodel.ficsgame.gameno)
+        self.gamemodel.connection.client.run_command(allob)
 
     def update_observers(self, other, observers):
         """Rebuilds observers list text"""

@@ -4,7 +4,6 @@ import re
 
 from pychess.System.Log import log
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END, BLKCMD_PASSWORD
-from pychess.ic.icc import UNIT_START, UNIT_END, DTGR_START, MY_ICC_PREFIX
 
 
 class ConsoleHandler:
@@ -40,7 +39,7 @@ class Prediction:
 
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE, RETURN_MATCH_END = range(4)
-BL, DG, CN = range(3)
+BL = 0
 
 
 class LinePrediction(Prediction):
@@ -179,7 +178,6 @@ class TelnetLines:
         self.telnet = telnet
         self.lines = collections.deque()
         self.block_mode = False
-        self.datagram_mode = False
         self.line_prefix = None
         self.consolehandler = None
         self.show_reply = show_reply
@@ -206,41 +204,7 @@ class TelnetLines:
         if line.startswith(self.line_prefix):
             line = line[len(self.line_prefix) + 1 :]
 
-        if self.datagram_mode:
-            identifier = -1
-            code = 0
-            unit = False
-            if line.startswith(UNIT_START):
-                unit = True
-                unit_lines = []
-                cn_code = int(line[2 : line.find(" ")])
-                if MY_ICC_PREFIX in line:
-                    identifier = 0
-                line = await self.telnet.readline()
-
-            if unit:
-                while UNIT_END not in line:
-                    if line.startswith(DTGR_START):
-                        code, data = line[2:-2].split(" ", 1)
-                        log.debug(
-                            f"{code} {data}",
-                            extra={"task": (self.telnet.name, "datagram")},
-                        )
-                        lines.append(TelnetLine(data, int(code), DG))
-                    else:
-                        if line.endswith(UNIT_END):
-                            parts = line.split(UNIT_END)
-                            if parts[0]:
-                                unit_lines.append(parts[0])
-                        else:
-                            unit_lines.append(line)
-                    line = await self.telnet.readline()
-                if len(unit_lines) > 0:
-                    text = "\n".join(unit_lines)
-                    lines.append(TelnetLine(text, cn_code, CN))
-                    log.debug(text, extra={"task": (self.telnet.name, "not datagram")})
-
-        elif self.block_mode and line.startswith(BLOCK_START):
+        if self.block_mode and line.startswith(BLOCK_START):
             parts = line[1:].split(BLOCK_SEPARATOR)
             if len(parts) == 3:
                 identifier, code, text = parts
@@ -287,14 +251,10 @@ class TelnetLines:
 
 
 class PredictionsTelnet:
-    def __init__(
-        self, telnet, predictions, reply_cmd_dict, replay_dg_dict, replay_cn_dict
-    ):
+    def __init__(self, telnet, predictions, reply_cmd_dict):
         self.telnet = telnet
         self.predictions = predictions
         self.reply_cmd_dict = reply_cmd_dict
-        self.replay_dg_dict = replay_dg_dict
-        self.replay_cn_dict = replay_cn_dict
         self.show_reply = set()
         self.lines = TelnetLines(telnet, self.show_reply)
         self.__command_id = 1
@@ -305,22 +265,6 @@ class PredictionsTelnet:
         if not line.line:
             return  # TODO: necessary?
         # print("line.line:", line.line)
-        if self.lines.datagram_mode and line.code is not None:
-            if line.code_type == DG:
-                callback = self.replay_dg_dict[line.code]
-                callback(line.line)
-                log.debug(
-                    line.line, extra={"task": (self.telnet.name, callback.__name__)}
-                )
-                return
-            elif line.code_type == CN and line.code in self.replay_cn_dict:
-                callback = self.replay_cn_dict[line.code]
-                callback(line.line)
-                log.debug(
-                    line.line, extra={"task": (self.telnet.name, callback.__name__)}
-                )
-                return
-
         predictions = (
             self.reply_cmd_dict[line.code]
             if line.code is not None and line.code in self.reply_cmd_dict
@@ -365,10 +309,6 @@ class PredictionsTelnet:
             if show_reply:
                 self.show_reply.add(self.__command_id)
             self.telnet.write(text)
-        elif self.lines.datagram_mode:
-            if show_reply:
-                text = f"`{MY_ICC_PREFIX}`{text}"
-            self.telnet.write("%s" % text)
         else:
             self.telnet.write("%s" % text)
 

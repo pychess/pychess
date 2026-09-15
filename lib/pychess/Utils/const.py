@@ -24,9 +24,9 @@ WHITE, BLACK = range(2)
     ADJOURNED,
     ABORTED,
     UNKNOWN_STATE,
-    ICC_ABORTED,
-    CANCELLED,
-) = range(12)
+) = range(10)
+# Keep CANCELLED at its historical numeric value for stored-game compatibility.
+CANCELLED = 11
 reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*", "*", "*", "*", "*", "*"]
 
 UNDOABLE_STATES = (DRAW, WHITEWON, BLACKWON)

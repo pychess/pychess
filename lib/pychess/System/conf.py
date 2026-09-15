@@ -22,9 +22,8 @@ from pychess.System.prefix import addDataPrefix, addUserConfigPrefix, getDataPre
 section = "General"
 configParser = RawConfigParser(default_section=section)
 
-for sect in ("FICS", "ICC"):
-    if not configParser.has_section(sect):
-        configParser.add_section(sect)
+if not configParser.has_section("FICS"):
+    configParser.add_section("FICS")
 
 path = addUserConfigPrefix("config")
 encoding = locale.getpreferredencoding()
@@ -233,13 +232,6 @@ DEFAULTS = {
     "FICS": {
         "timesealCheck": True,
         "hostEntry": "freechess.org",
-        "usernameEntry": "",
-        "passwordEntry": "",
-        "asGuestCheck": True,
-    },
-    "ICC": {
-        "timesealCheck": True,
-        "hostEntry": "chessclub.com",
         "usernameEntry": "",
         "passwordEntry": "",
         "asGuestCheck": True,

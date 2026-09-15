@@ -12,13 +12,7 @@ import pychess
 from pychess.System.Log import log
 
 from pychess import ic
-from pychess.Utils.const import (
-    NAME,
-    FISCHERRANDOMCHESS,
-    LOSERSCHESS,
-    ATOMICCHESS,
-    CRAZYHOUSECHESS,
-)
+from pychess.Utils.const import NAME
 from .managers.SeekManager import SeekManager
 from .managers.FingerManager import FingerManager
 from .managers.NewsManager import NewsManager
@@ -31,17 +25,6 @@ from .managers.ListAndVarManager import ListAndVarManager
 from .managers.AutoLogOutManager import AutoLogOutManager
 from .managers.ErrorManager import ErrorManager
 from .managers.AdjournManager import AdjournManager
-from .managers.ICCSeekManager import ICCSeekManager
-from .managers.ICCBoardManager import ICCBoardManager
-from .managers.ICCChatManager import ICCChatManager
-from .managers.ICCHelperManager import ICCHelperManager
-from .managers.ICCAdjournManager import ICCAdjournManager
-from .managers.ICCErrorManager import ICCErrorManager
-from .managers.ICCFingerManager import ICCFingerManager
-from .managers.ICCListAndVarManager import ICCListAndVarManager
-from .managers.ICCNewsManager import ICCNewsManager
-from .managers.ICCOfferManager import ICCOfferManager
-from .managers.ICCAutoLogOutManager import ICCAutoLogOutManager
 
 from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges
 from .TimeSeal import CanceledException, ICSTelnet
@@ -90,18 +73,12 @@ class Connection(GObject.GObject):
 
         self.USCN = False
 
-        self.ICC = False
-        self.replay_dg_dict = {}
-        self.replay_cn_dict = {}
-
     @property
     def ics_name(self):
         if self.FatICS:
             return "FatICS"
         elif self.USCN:
             return "USCN"
-        elif self.ICC:
-            return "ICC"
         else:
             return "FICS"
 
@@ -126,12 +103,6 @@ class Connection(GObject.GObject):
                     self.reply_cmd_dict[callback.BLKCMD].remove(prediction)
             if len(self.reply_cmd_dict[callback.BLKCMD]) == 0:
                 del self.reply_cmd_dict[callback.BLKCMD]
-
-    def expect_dg_line(self, number, callback):
-        self.replay_dg_dict[number] = callback
-
-    def expect_cn_line(self, number, callback):
-        self.replay_cn_dict[number] = callback
 
     def expect_line(self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
@@ -290,11 +261,6 @@ class FICSConnection(Connection):
                 if match:
                     break
 
-                # ICC specific line
-                match = re.search("help anonymous", line)
-                if match:
-                    break
-
                 match = re.search("This is the admin message of the day", line)
                 if match:
                     break
@@ -304,37 +270,17 @@ class FICSConnection(Connection):
             self._post_connect_hook(lines)
             self.FatICS = self.client.FatICS
             self.USCN = self.client.USCN
-            self.ICC = self.client.ICC
             self.client.name = self.username
             self.client = PredictionsTelnet(
                 self.client,
                 self.predictions,
                 self.reply_cmd_dict,
-                self.replay_dg_dict,
-                self.replay_cn_dict,
             )
-            self.client.lines.line_prefix = "aics%" if self.ICC else "fics%"
+            self.client.lines.line_prefix = "fics%"
 
-            if not self.USCN and not self.ICC:
+            if not self.USCN:
                 self.client.run_command("iset block 1")
                 self.client.lines.block_mode = True
-
-            if self.ICC:
-                self.client.run_command("set level1 5")
-                self.client.run_command("set prompt 0")
-                self.client.lines.datagram_mode = True
-
-                ic.GAME_TYPES_BY_SHORT_FICS_NAME["B"] = ic.GAME_TYPES["bullet"]
-                ic.VARIANT_GAME_TYPES[ATOMICCHESS] = ic.GAME_TYPES["w27"]
-                ic.VARIANT_GAME_TYPES[CRAZYHOUSECHESS] = ic.GAME_TYPES["w23"]
-                ic.VARIANT_GAME_TYPES[LOSERSCHESS] = ic.GAME_TYPES["w17"]
-                ic.VARIANT_GAME_TYPES[FISCHERRANDOMCHESS] = ic.GAME_TYPES["w22"]
-            else:
-                ic.GAME_TYPES_BY_SHORT_FICS_NAME["B"] = ic.GAME_TYPES["bughouse"]
-                ic.VARIANT_GAME_TYPES[ATOMICCHESS] = ic.GAME_TYPES["atomic"]
-                ic.VARIANT_GAME_TYPES[CRAZYHOUSECHESS] = ic.GAME_TYPES["crazyhouse"]
-                ic.VARIANT_GAME_TYPES[LOSERSCHESS] = ic.GAME_TYPES["losers"]
-                ic.VARIANT_GAME_TYPES[FISCHERRANDOMCHESS] = ic.GAME_TYPES["wild/fr"]
 
             self.client.run_command("iset defprompt 1")
             self.client.run_command("iset ms 1")
@@ -462,28 +408,16 @@ class FICSMainConnection(FICSConnection):
         # avoid having to init the in a specific order, connect calls should
         # be moved to a "start" function, so all managers would be in
         # the connection object when they are called
-        if self.ICC:
-            self.lvm = ICCListAndVarManager(self)
-            self.em = ICCErrorManager(self)
-            self.glm = ICCSeekManager(self)
-            self.bm = ICCBoardManager(self)
-            self.cm = ICCChatManager(self)
-            self.adm = ICCAdjournManager(self)
-            self.fm = ICCFingerManager(self)
-            self.nm = ICCNewsManager(self)
-            self.om = ICCOfferManager(self)
-            self.alm = ICCAutoLogOutManager(self)
-        else:
-            self.lvm = ListAndVarManager(self)
-            self.em = ErrorManager(self)
-            self.glm = SeekManager(self)
-            self.bm = BoardManager(self)
-            self.cm = ChatManager(self)
-            self.adm = AdjournManager(self)
-            self.fm = FingerManager(self)
-            self.nm = NewsManager(self)
-            self.om = OfferManager(self)
-            self.alm = AutoLogOutManager(self)
+        self.lvm = ListAndVarManager(self)
+        self.em = ErrorManager(self)
+        self.glm = SeekManager(self)
+        self.bm = BoardManager(self)
+        self.cm = ChatManager(self)
+        self.adm = AdjournManager(self)
+        self.fm = FingerManager(self)
+        self.nm = NewsManager(self)
+        self.om = OfferManager(self)
+        self.alm = AutoLogOutManager(self)
         self.com = ConsoleManager(self)
         self.bm.start()
         self.players.start()
@@ -508,7 +442,7 @@ class FICSMainConnection(FICSConnection):
 
     def start_helper_manager(self, set_user_vars):
         # if guest accounts disabled we will handle players in the main connection
-        if self.FatICS or self.USCN or self.ICC:
+        if self.FatICS or self.USCN:
             self.client.run_command("set pin 1")
         else:
             self.client.run_command("iset allresults 1")
@@ -520,10 +454,7 @@ class FICSMainConnection(FICSConnection):
             self.client.run_command("set open 1")
             self.client.run_command("set gin 1")
             self.client.run_command("set availinfo 1")
-        if self.ICC:
-            self.hm = ICCHelperManager(self, self)
-        else:
-            self.hm = HelperManager(self, self)
+        self.hm = HelperManager(self, self)
 
         # disable setting iveriables from console
         self.client.run_command("iset lock 1")
@@ -545,7 +476,7 @@ class FICSHelperConnection(FICSConnection):
         self.client.run_command("set chanoff 1")
         self.client.run_command("set gin 1")
         self.client.run_command("set availinfo 1")
-        if self.FatICS or self.USCN or self.ICC:
+        if self.FatICS or self.USCN:
             self.client.run_command("set pin 1")
         else:
             self.client.run_command("iset allresults 1")

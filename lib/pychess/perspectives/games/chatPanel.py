@@ -3,7 +3,6 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL
 from pychess.widgets.ChatView import ChatView
 from pychess.ic.ICGameModel import ICGameModel
-from pychess.ic.icc import DG_PLAYERS_IN_MY_GAME
 
 __title__ = _("Chat")
 
@@ -71,13 +70,8 @@ class Sidepanel:
             self.chatView.hide()
 
         if isinstance(gamemodel, ICGameModel):
-            if gamemodel.connection.ICC:
-                gamemodel.connection.client.run_command(
-                    "set-2 %s 1" % DG_PLAYERS_IN_MY_GAME
-                )
-            else:
-                allob = "allob " + str(gamemodel.ficsgame.gameno)
-                gamemodel.connection.client.run_command(allob)
+            allob = "allob " + str(gamemodel.ficsgame.gameno)
+            gamemodel.connection.client.run_command(allob)
 
         if (
             hasattr(self, "player")
@@ -99,9 +93,8 @@ class Sidepanel:
     def onICMessageReieved(self, icgamemodel, player, text):
         self.chatView.addMessage(player, text)
         # emit an allob <gameno> to FICS
-        if not icgamemodel.connection.ICC:
-            allob = "allob " + str(icgamemodel.ficsgame.gameno)
-            icgamemodel.connection.client.run_command(allob)
+        allob = "allob " + str(icgamemodel.ficsgame.gameno)
+        icgamemodel.connection.client.run_command(allob)
 
     def onMessageSent(self, chatView, text):
         if hasattr(self, "player") or self.gamemodel.examined:

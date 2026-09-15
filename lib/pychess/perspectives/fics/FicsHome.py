@@ -72,7 +72,7 @@ class UserInfoSection:
             else:
                 headers = (
                     _("Rating"),
-                    _("Need") if self.connection.ICC else _("RD"),
+                    _("RD"),
                     _("Win"),
                     _("Draw"),
                     _("Loss"),
@@ -137,7 +137,7 @@ class UserInfoSection:
             row += 1
 
         player = self.connection.players.get(finger.getName())
-        if not self.connection.ICC and not player.isGuest():
+        if not player.isGuest():
             table.attach(label(_("Games") + ":"), 0, 1, row, row + 1)
             llabel = Gtk.Label()
             llabel.props.xalign = 0
@@ -161,10 +161,7 @@ class UserInfoSection:
                 if self.dock.get_children():
                     self.dock.get_children()[0].remove(self.ping_label)
             else:
-                if self.connection.ICC:
-                    self.ping_label = Gtk.Label(label="")  # TODO
-                else:
-                    self.ping_label = Gtk.Label(label=_("Connecting") + "...")
+                self.ping_label = Gtk.Label(label=_("Connecting") + "...")
                 self.ping_label.props.xalign = 0
 
             def callback(pinger, pingtime):
@@ -179,7 +176,7 @@ class UserInfoSection:
                 else:
                     self.ping_label.set_text("%.0f ms" % pingtime)
 
-            if (not self.pinger) and (not self.connection.ICC):
+            if not self.pinger:
                 self.pinger = Pinger(self.host)
                 self.pinger.start()
                 self.pinger.connect("received", callback)
@@ -208,25 +205,13 @@ class UserInfoSection:
             label0.props.xalign = 0
             label0.props.wrap = True
             label0.props.width_request = 300
-            if self.connection.ICC:
-                reg = "https://store.chessclub.com/customer/account/create/"
-                txt = _(
-                    "You are currently logged in as a guest but "
-                    + "there is a completely free trial for 30 days, "
-                    + "and beyond that, there is no charge and "
-                    + "the account would remain active with the ability to play games. "
-                    + "(With some restrictions. For example, no premium videos, "
-                    + "some limitations in channels, and so on.) "
-                    + "To register an account, go to "
-                )
-            else:
-                reg = "http://www.freechess.org/Register/index.html"
-                txt = _(
-                    "You are currently logged in as a guest. "
-                    + "A guest can't play rated games and therefore isn't "
-                    + "able to play as many of the types of matches offered as "
-                    + "a registered user. To register an account, go to "
-                )
+            reg = "http://www.freechess.org/Register/index.html"
+            txt = _(
+                "You are currently logged in as a guest. "
+                + "A guest can't play rated games and therefore isn't "
+                + "able to play as many of the types of matches offered as "
+                + "a registered user. To register an account, go to "
+            )
 
             label0.set_markup(f'{txt} <a href="{reg}">{reg}</a>.')
             vbox.add(label0)

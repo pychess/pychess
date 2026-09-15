@@ -90,9 +90,8 @@ class ICGameModel(GameModel):
 
         rated = "rated" if ficsgame.rated else "unrated"
         # This is in the format that ficsgames.org writes these PGN headers
-        ics = "ICC" if self.connection.ICC else "FICS"
-        self.tags["Event"] = f"{ics} {rated} {ficsgame.game_type.fics_name} game"
-        self.tags["Site"] = "chessclub.com" if self.connection.ICC else "freechess.org"
+        self.tags["Event"] = f"FICS {rated} {ficsgame.game_type.fics_name} game"
+        self.tags["Site"] = "freechess.org"
 
     def __repr__(self):
         string = GameModel.__repr__(self)

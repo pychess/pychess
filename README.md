@@ -20,7 +20,6 @@ PyChess boasts a wide array of features to enhance your chess experience:
 * Support for UCI and CECP chess engines with 8 different difficulty levels.
 * Built-in Python chess engine.
 * Online play on FICS (Free Internet Chess Server) with Timeseal support.
-* Online play on ICC (Internet Chess Club) with timestamp support.
 * Resizable chess board, "pre-drag" support, move and capture sounds, and animations.
 * Compatibility with PGN, EPD, and FEN chess file formats.
 * Undo, pause, and resume games.
@@ -45,7 +44,7 @@ Once installed, you can run PyChess as follows:
 
 ### Playing Chess
 * To play a game against the computer, select "New Game" and configure the options as desired.
-* For online play, you can log in to FICS or ICC and enjoy games with players from around the world.
+* For online play, you can log in to FICS and enjoy games with players from around the world.
 
 ## Community and Support
 * Visit the [PyChess Project Homepage](https://pychess.github.io/) for project updates and news.

@@ -20,8 +20,6 @@ from pychess.Utils.const import (
     UPSIDEDOWNCHESS,
     PAWNSPUSHEDCHESS,
     PAWNSPASSEDCHESS,
-    GIVEAWAYCHESS,
-    THREECHECKCHESS,
 )
 
 IC_CONNECTED, IC_DISCONNECTED = range(2)
@@ -221,26 +219,6 @@ GAME_TYPES = {
     "wild/5": WildGameType("wild/5", UPSIDEDOWNCHESS),
     "wild/8": WildGameType("wild/8", PAWNSPUSHEDCHESS),
     "wild/8a": WildGameType("wild/8a", PAWNSPASSEDCHESS),
-    # ICC https://www.chessclub.com/user/helpcenter/tips/wild.html
-    "w17": WildGameType("w17", LOSERSCHESS),
-    "w26": WildGameType("w26", GIVEAWAYCHESS),
-    "w24": WildGameType("w24", BUGHOUSECHESS),
-    "w23": WildGameType("w23", CRAZYHOUSECHESS),
-    # "w16": WildGameType("w16", KRIEGSPIELCHESS),
-    "w27": WildGameType("w27", ATOMICCHESS),
-    # "w28": WildGameType("w28", SHATRANJCHESS),
-    "w25": WildGameType("w25", THREECHECKCHESS),
-    "w1": WildGameType("w1", WILDCASTLESHUFFLECHESS),
-    "w2": WildGameType("w2", SHUFFLECHESS),
-    "w3": WildGameType("w3", RANDOMCHESS),
-    "w4": WildGameType("w4", ASYMMETRICRANDOMCHESS),
-    "w22": WildGameType("w22", FISCHERRANDOMCHESS),
-    "w5": WildGameType("w5", UPSIDEDOWNCHESS),
-    # "w7": WildGameType("w7", THREEPAWNSCHESS),
-    "w8": WildGameType("w8", PAWNSPUSHEDCHESS),
-    # "w9": WildGameType("w9", TWOKINGSCHESS),
-    # "w18": WildGameType("w18", EIGHTQUEENSCHESS),
-    # "w19": WildGameType("w19", KNNKPCHESS),
 }
 
 VARIANT_GAME_TYPES = {}
@@ -270,13 +248,6 @@ for key in GAME_TYPES_BY_SHORT_FICS_NAME:
         GAME_TYPES_BY_SHORT_FICS_NAME[key]
     )
 
-
-# Finally add conflicting ICC game type
-GAME_TYPES["bullet"] = NormalGameType("bullet", "B", TYPE_BULLET, _("Bullet"))
-GAME_TYPES_BY_FICS_NAME["bullet"] = GAME_TYPES["bullet"]
-GAME_TYPES_BY_RATING_TYPE[TYPE_BULLET] = GAME_TYPES["bullet"]
-# GAME_TYPES_BY_SHORT_FICS_NAME["B"] will be fixed in FICSConnections.py
-# and VARIANT_GAME_TYPES[FISCHERRANDOMCHESS] also
 
 
 def type_to_display_text(typename):

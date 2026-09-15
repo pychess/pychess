@@ -144,12 +144,8 @@ class ICLogon:
         self.widgets["nameEntry"].set_text(
             names[1] if widget.get_active() else names[0]
         )
-        if self.ics == "ICC":
-            self.widgets["nameLabel"].set_sensitive(not widget.get_active())
-            self.widgets["nameEntry"].set_sensitive(not widget.get_active())
-        else:
-            self.widgets["nameLabel"].set_sensitive(True)
-            self.widgets["nameEntry"].set_sensitive(True)
+        self.widgets["nameLabel"].set_sensitive(True)
+        self.widgets["nameEntry"].set_sensitive(True)
         self.widgets["passwordLabel"].set_sensitive(not widget.get_active())
         self.widgets["passEntry"].set_sensitive(not widget.get_active())
         conf.set("asGuestCheck", widget.get_active(), section=self.ics)
@@ -161,11 +157,6 @@ class ICLogon:
         tree_iter = combo.get_active_iter()
         if tree_iter is not None:
             model = combo.get_model()
-            is_enabled = model[tree_iter][1]  # Check the 'enabled' column
-            if not is_enabled:
-                combo.set_active(0)
-                return
-
             self.ics = model[tree_iter][0]
             # print("Selected: %s" % self.ics)
             self.widgets["logOnAsGuest"].set_active(
@@ -299,10 +290,7 @@ class ICLogon:
         self.widgets["messagePanel"].show_all()
 
     def onCreateNew(self, button):
-        if self.widgets["hostEntry"].get_text() == "chessclub.com":
-            webbrowser.open("https://store.chessclub.com/customer/account/create/")
-        else:
-            webbrowser.open("http://www.freechess.org/Register/index.html")
+        webbrowser.open("http://www.freechess.org/Register/index.html")
 
     def onConnectClicked(self, button):
         self.canceled = False
@@ -348,8 +336,7 @@ class ICLogon:
         self.main_connected_event = asyncio.Event()
         self.connection_task = asyncio.create_task(self.connection.start())
 
-        # guest users are rather limited on ICC (helper connection is useless)
-        if self.host not in ("localhost", "127.0.0.1", "chessclub.com"):
+        if self.host not in ("localhost", "127.0.0.1"):
             self.helperconn = FICSHelperConnection(
                 self.connection, self.host, ports, timeseal
             )
@@ -392,9 +379,6 @@ class ICLogon:
 
     def onConnected(self, connection):
         self.main_connected_event.set()
-        if connection.ICC:
-            self.connection.start_helper_manager(True)
-
         self.lounge = perspective_manager.get_perspective("fics")
         self.lounge.open_lounge(connection, self.helperconn, self.host)
         self.hide()

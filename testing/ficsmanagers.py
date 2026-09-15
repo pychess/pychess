@@ -67,14 +67,12 @@ class DummyConnection(Connection):
                 line = await self.queue.get()
                 return line
 
-        def __init__(self, predictions, reply_cmd_dict, replay_dg_dict, replay_cn_dict):
+        def __init__(self, predictions, reply_cmd_dict):
             PredictionsTelnet.__init__(
                 self,
                 self.DummyTelnet(),
                 predictions,
                 reply_cmd_dict,
-                replay_dg_dict,
-                replay_cn_dict,
             )
             self.commands = []
 
@@ -98,8 +96,6 @@ class DummyConnection(Connection):
         self.client = self.DummyClient(
             self.predictions,
             self.reply_cmd_dict,
-            self.replay_dg_dict,
-            self.replay_cn_dict,
         )
         self.client.lines.block_mode = True
         self.client.lines.line_prefix = "fics%"

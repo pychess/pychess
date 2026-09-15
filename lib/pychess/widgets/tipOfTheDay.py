@@ -203,7 +203,7 @@ class TipOfTheDay:
                 "You can play against chess engines on an Internet chess server. Use the filter to include or exclude them from the available players."
             ),
             _(
-                "The communication with an Internet chess server is not standardized. Therefore, you can only connect to the supported chess servers in PyChess, like freechess.org or chessclub.com"
+                "The communication with an Internet chess server is not standardized. Therefore, PyChess can only connect to explicitly supported chess servers, such as freechess.org"
             ),
             _(
                 "PyChess is able to download chess games remotely from the following websites:"

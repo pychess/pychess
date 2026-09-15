@@ -1,16 +1,10 @@
 import asyncio
-import sys
 import random
 import time
 import platform
-import subprocess
 import getpass
-import os
-import shutil
 
 from pychess.System.Log import log
-from pychess.System.prefix import getEngineDataPrefix
-from pychess.ic.icc import B_DTGR_END, B_UNIT_END
 
 if not hasattr(asyncio.StreamReader, "readuntil"):
     from pychess.System.readuntil import readuntil, _wait_for_data
@@ -75,9 +69,6 @@ class ICSStreamReaderProtocol(asyncio.StreamReaderProtocol):
                 self.FatICS = True
             elif b"puertorico.com" in data:
                 self.USCN = True
-                data = data.replace(IAC_WONT_ECHO, b"")
-            elif b"chessclub.com" in data:
-                self.ICC = True
                 data = data.replace(IAC_WONT_ECHO, b"")
             elif b"Starting FICS session" in data:
                 data = data.replace(IAC_WONT_ECHO, b"")
@@ -160,17 +151,6 @@ class ICSStreamReaderProtocol(asyncio.StreamReaderProtocol):
         return bytearray(result), g_count, (state, lookahead)
 
 
-# You can get ICC timestamp from
-# https://www.chessclub.com/user/resources/icc/timestamp/
-if sys.platform == "win32":
-    timestamp = "timestamp_win32.exe"
-else:
-    timestamp = "timestamp_linux_2.6.8"
-
-altpath = getEngineDataPrefix()
-timestamp_path = shutil.which(timestamp, os.X_OK, path=altpath)
-
-
 class ICSTelnet:
     sensitive = False
 
@@ -180,9 +160,7 @@ class ICSTelnet:
         self.canceled = False
         self.FatICS = False
         self.USCN = False
-        self.ICC = False
         self.timeseal = timeseal
-        self.ICC_buffer = ""
 
     async def start(self, host, port, connected_event):
         if self.canceled:
@@ -192,36 +170,6 @@ class ICSTelnet:
         self.connected_event = connected_event
 
         self.name = host
-
-        if host == "chessclub.com":
-            self.ICC = True
-
-            if self.timeseal and timestamp_path is not None:
-                self.host = "127.0.0.1"
-                self.port = 5500
-                try:
-                    if sys.platform == "win32":
-                        # To prevent engines opening console window
-                        startupinfo = subprocess.STARTUPINFO()
-                        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                    else:
-                        startupinfo = None
-                    create = asyncio.create_subprocess_exec(
-                        *["%s" % timestamp_path, "-p", "%s" % self.port],
-                        startupinfo=startupinfo,
-                    )
-                    self.timestamp_proc = await create
-                    log.info("%s started OK" % timestamp_path)
-                except OSError as err:
-                    log.info(
-                        f"Can't start {timestamp_path} OSError: {err.errno} {err.strerror}"
-                    )
-                    self.port = port
-                    self.host = host
-            else:
-                log.info("%s not found" % timestamp_path)
-
-            self.timeseal = False
 
         def cb(reader, writer):
             reader.stream_writer = writer
@@ -274,44 +222,15 @@ class ICSTelnet:
         if self.canceled:
             raise CanceledException()
 
-        if self.ICC:
-            line = await self.readuntil(b"\n")
-            return line.strip()
-        else:
-            line = await self.reader.readline()
-            return line.decode("latin_1").strip()
+        line = await self.reader.readline()
+        return line.decode("latin_1").strip()
 
     async def readuntil(self, until):
         if self.canceled:
             raise CanceledException()
 
-        if self.ICC:
-            if len(self.ICC_buffer) == 0:
-                self.ICC_buffer = await self.reader.readuntil(until)
-            i = self.ICC_buffer.find(until)
-            m = sys.maxsize
-            if i >= 0:
-                m = i
-            j = self.ICC_buffer.find(B_DTGR_END)
-            if j >= 0:
-                m = min(m, j)
-            k = self.ICC_buffer.find(B_UNIT_END)
-            if k >= 0:
-                m = min(m, k)
-            if m != sys.maxsize:
-                if m == i:
-                    stuff = self.ICC_buffer[: m + len(until)]
-                    self.ICC_buffer = self.ICC_buffer[m + len(until) :]
-                    return stuff.decode("latin_1")
-                else:
-                    stuff = self.ICC_buffer[: m + 2]
-                    self.ICC_buffer = self.ICC_buffer[m + 2 :]
-                    return stuff.decode("latin_1")
-            else:
-                return ""
-        else:
-            data = await self.reader.readuntil(until)
-            return data.decode("latin_1")
+        data = await self.reader.readuntil(until)
+        return data.decode("latin_1")
 
     async def read_until(self, *untils):
         if self.canceled:

@@ -2,7 +2,6 @@ Features
 --------
 
 - Play on FICS (freechess.org)
-- Play on ICC (chessclub.com)
 - CECP and UCI chess engine support with customizable engine configurations
 - Polyglot opening book support
 - Gaviota end-game tablebase support

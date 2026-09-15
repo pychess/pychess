@@ -226,19 +226,13 @@ class ICPlayer(Player):
                 "ICPlayer.playerUndoMoves: set self.turn_interrupt = True %s"
                 % self.name
             )
-            if self.connection.ICC:
-                self.move_queue.put_nowait("stm")
-            else:
-                self.turn_interrupt = True
+            self.turn_interrupt = True
         if movecount % 2 == 0 and gamemodel.curplayer == self:
             log.debug(
                 "ICPlayer.playerUndoMoves: set self.pass_interrupt = True %s"
                 % self.name
             )
-            if self.connection.ICC:
-                self.move_queue.put_nowait("pass")
-            else:
-                self.pass_interrupt = True
+            self.pass_interrupt = True
 
     def resetPosition(self):
         """Used in observed examined games f.e. when LectureBot starts another example"""

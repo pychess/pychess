@@ -2,7 +2,7 @@ import asyncio
 import os
 from io import StringIO
 
-from gi.repository import GLib, Gtk, GObject
+from gi.repository import Gtk, GObject
 
 from pychess.ic import (
     IC_POS_EXAMINATING,
@@ -80,58 +80,6 @@ class FICS(GObject.GObject, Perspective):
         self.logoff_button.set_tooltip_text(_("Log Off"))
         self.logoff_button.set_label("logoff")
         self.logoff_button.connect("clicked", on_logoff_clicked)
-
-        def on_minute_1_clicked(button):
-            self.connection.client.run_command("1-minute")
-
-        def on_minute_3_clicked(button):
-            self.connection.client.run_command("3-minute")
-
-        def on_minute_5_clicked(button):
-            self.connection.client.run_command("5-minute")
-
-        def on_minute_15_clicked(button):
-            self.connection.client.run_command("15-minute")
-
-        def on_minute_25_clicked(button):
-            self.connection.client.run_command("25-minute")
-
-        def on_chess960_clicked(button):
-            self.connection.client.run_command("chess960")
-
-        self.minute_1_button = Gtk.ToggleToolButton()
-        self.minute_1_button.set_label("1")
-        self.minute_1_button.set_tooltip_text(_("New game from 1-minute playing pool"))
-        self.minute_1_button.connect("clicked", on_minute_1_clicked)
-
-        self.minute_3_button = Gtk.ToggleToolButton()
-        self.minute_3_button.set_label("3")
-        self.minute_3_button.set_tooltip_text(_("New game from 3-minute playing pool"))
-        self.minute_3_button.connect("clicked", on_minute_3_clicked)
-
-        self.minute_5_button = Gtk.ToggleToolButton()
-        self.minute_5_button.set_label("5")
-        self.minute_5_button.set_tooltip_text(_("New game from 5-minute playing pool"))
-        self.minute_5_button.connect("clicked", on_minute_5_clicked)
-
-        self.minute_15_button = Gtk.ToggleToolButton()
-        self.minute_15_button.set_label("15")
-        self.minute_15_button.set_tooltip_text(
-            _("New game from 15-minute playing pool")
-        )
-        self.minute_15_button.connect("clicked", on_minute_15_clicked)
-
-        self.minute_25_button = Gtk.ToggleToolButton()
-        self.minute_25_button.set_label("25")
-        self.minute_25_button.set_tooltip_text(
-            _("New game from 25-minute playing pool")
-        )
-        self.minute_25_button.connect("clicked", on_minute_25_clicked)
-
-        self.chess960_button = Gtk.ToggleToolButton()
-        self.chess960_button.set_label("960")
-        self.chess960_button.set_tooltip_text(_("New game from Chess960 playing pool"))
-        self.chess960_button.connect("clicked", on_chess960_clicked)
 
     def init_layout(self):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -312,14 +260,6 @@ class FICS(GObject.GObject, Perspective):
         self.connection.cm.connect("arrivalNotification", self.onArrivalNotification)
         self.connection.cm.connect("departedNotification", self.onDepartedNotification)
 
-        def get_top_games():
-            if perspective_manager.current_perspective == self:
-                self.connection.client.run_command("games *19")
-            return True
-
-        if self.connection.ICC:
-            self.event_id = GLib.timeout_add_seconds(5, get_top_games)
-
         for user in self.connection.notify_users:
             user = self.connection.players.get(user)
             self.user_from_notify_list_is_present(user)
@@ -340,21 +280,7 @@ class FICS(GObject.GObject, Perspective):
             self.notebooks[panel_name(panel.__name__)].append_page(instance)
             instance.show()
 
-        tool_buttons = [
-            self.logoff_button,
-        ]
-        self.quick_seek_buttons = []
-        if self.connection.ICC:
-            self.quick_seek_buttons = [
-                self.minute_1_button,
-                self.minute_3_button,
-                self.minute_5_button,
-                self.minute_15_button,
-                self.minute_25_button,
-                self.chess960_button,
-            ]
-            tool_buttons += self.quick_seek_buttons
-        perspective_manager.set_perspective_toolbuttons("fics", tool_buttons)
+        perspective_manager.set_perspective_toolbuttons("fics", [self.logoff_button])
 
         if self.first_run:
             self.first_run = False
@@ -387,10 +313,6 @@ class FICS(GObject.GObject, Perspective):
         for message in self.messages:
             message.dismiss()
         del self.messages[:]
-
-        if self.connection.ICC:
-            for button in self.quick_seek_buttons:
-                button.set_active(False)
 
         timemodel = TimeModel(ficsgame.minutes * 60, ficsgame.inc)
 
@@ -529,9 +451,8 @@ class FICS(GObject.GObject, Perspective):
             self.connection.fm.finger(wplayer.name)
         elif ficsgame.relation == IC_POS_EXAMINATING:
             gamemodel.examined = True
-        if not self.connection.ICC:
-            allob = "allob " + str(ficsgame.gameno)
-            gamemodel.connection.client.run_command(allob)
+        allob = "allob " + str(ficsgame.gameno)
+        gamemodel.connection.client.run_command(allob)
 
     def onFinger(self, fm, finger):
         titles = finger.getTitles()
