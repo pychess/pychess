@@ -249,7 +249,6 @@ for key in GAME_TYPES_BY_SHORT_FICS_NAME:
     )
 
 
-
 def type_to_display_text(typename):
     if "loaded from" in typename.lower():
         typename = typename.split()[-1]

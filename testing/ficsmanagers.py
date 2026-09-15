@@ -499,6 +499,20 @@ class SeekManagerTests(EmittingTestCase):
         await self.runAndAssertEquals("addSeek", lines, (expectedResult,))
 
 
+class FICSPlayerTests(unittest.TestCase):
+    def test_repr_ratings(self):
+        player = FICSPlayer("LowRated")
+        player.ratings[TYPE_BLITZ] = 9
+        player.ratings[TYPE_STANDARD] = 1500
+
+        text = repr(player)
+
+        self.assertIn("Blitz=9", text)
+        self.assertIn("Standard=1500", text)
+        self.assertNotIn("Bullet=", text)
+        self.assertNotIn("Lightning=", text)
+
+
 class BoardManagerTests(EmittingTestCase):
     async def asyncSetUp(self):
         await EmittingTestCase.asyncSetUp(self)
@@ -517,6 +531,25 @@ class BoardManagerTests(EmittingTestCase):
             self.deleted_seeks.add(seek)
 
         self.connection.glm.connect("removeSeek", sr_handler)
+
+    async def test_game_end_with_single_digit_rating(self):
+        player = FICSPlayer("LowRated")
+        player.ratings[TYPE_BLITZ] = 9
+        game = FICSGame(
+            player, FICSPlayer("Opponent"), gameno=1, game_type=GAME_TYPES["blitz"]
+        )
+        self.manager.theGameImPlaying = game
+        self.manager.gamemodelStartedEvents[game.gameno] = asyncio.Event()
+        ended_games = []
+        self.manager.connect(
+            "curGameEnded", lambda manager, game: ended_games.append(game)
+        )
+
+        self.manager.onGameEnd(self.connection.games, game)
+
+        self.assertEqual(ended_games, [game])
+        self.assertIsNone(self.manager.theGameImPlaying)
+        self.assertNotIn(game.gameno, self.manager.gamemodelStartedEvents)
 
     def match_offer(self, offer):
         return (

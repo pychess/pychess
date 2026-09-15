@@ -289,8 +289,9 @@ class FICSPlayer(GObject.GObject):
         else:
             rep += ", game=None"
         for rating_type in RATING_TYPES:
-            if rating_type in self.ratings:
-                rep += f", {GAME_TYPES_BY_RATING_TYPE[rating_type].display_text}={repr(self.ratings[rating_type])}"
+            game_type = GAME_TYPES_BY_RATING_TYPE.get(rating_type)
+            if game_type is not None and self.ratings[rating_type]:
+                rep += f", {game_type.display_text}={repr(self.ratings[rating_type])}"
         return "<FICSPlayer " + rep + ">"
 
     def isAvailableForGame(self):
