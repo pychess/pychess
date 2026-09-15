@@ -596,7 +596,7 @@ class PyChess(Gtk.Application):
         self.initGlade(self.log_viewer)
         self.addPerspectives()
         self.handleArgs(self.chess_file)
-        if self.version_check:
+        if self.version_check and conf.get("check_version_at_startup"):
             asyncio.create_task(checkversion())
 
         self.loaded_cids = {}

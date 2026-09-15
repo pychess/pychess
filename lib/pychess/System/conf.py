@@ -186,6 +186,7 @@ DEFAULTS = {
         "welcome_image": addDataPrefix("glade/background.jpg"),
         "alarm_spin": 15,
         "show_tip_at_startup": True,
+        "check_version_at_startup": True,
         "tips_seed": 0,
         "tips_index": 0,
         "download_timestamp": False,
