@@ -1,8 +1,114 @@
-Install the following binary dependencies:
+PyChess on macOS
+================
 
-brew install gtk+3 pygobject3 gtksourceview4 librsvg gst-python
+PyChess is a GTK3 / PyGObject desktop application. It runs on macOS (both Apple
+Silicon and Intel Macs) using the GTK libraries provided by Homebrew.
+
+Tested with: macOS 14 (Sonoma) and later, Python 3.10+ (Apple Silicon & Intel).
 
 
-And then install the python depdencies:
+1. Install the binary dependencies with Homebrew
+------------------------------------------------
 
-pip install -r requirements.txt
+If you do not have Homebrew yet, install it from https://brew.sh.
+
+Then install the GTK stack and supporting libraries:
+
+    brew install python gtk+3 pygobject3 gtksourceview4 librsvg \
+                 gst-python adwaita-icon-theme gettext
+
+- `python`            : use the Homebrew Python (PyGObject is built against it).
+- `gtk+3`             : the GTK 3 toolkit.
+- `pygobject3`        : Python bindings for GTK and other GObject libraries.
+- `gtksourceview4`    : syntax-highlighted move/PGN views.
+- `librsvg`           : renders SVG board and piece themes.
+- `gst-python`        : sound support (GStreamer Python bindings).
+- `adwaita-icon-theme`: required so PyChess can show its icons.
+- `gettext`           : provides `msgfmt`, used to compile translations at build
+                        time. (Homebrew does not symlink it onto PATH by default;
+                        setup.py falls back to CPython's bundled msgfmt.py if it
+                        is missing.)
+
+
+2. Install the Python dependencies
+-----------------------------------
+
+From the repository root:
+
+    python3 -m pip install --upgrade pip
+    python3 -m pip install -r requirements.txt
+
+IMPORTANT: run everything with the Homebrew Python
+(`/opt/homebrew/bin/python3` on Apple Silicon, `/usr/local/bin/python3` on Intel).
+Mixing the system Python with Homebrew's PyGObject is the most common cause of
+"ImportError: cannot import name Gtk".
+
+
+3. Generate the locally-built data files (first checkout only)
+--------------------------------------------------------------
+
+Before running or installing, generate the opening-book database and the piece
+theme previews. These are not shipped in the repository:
+
+    PYTHONPATH=lib python3 pgn2ecodb.py
+    python3 create_theme_preview.py
+
+
+4. Run PyChess from the source tree
+-----------------------------------
+
+    python3 pychess
+
+If icons are missing, or you see GSettings schema errors, make sure the Homebrew
+share directory is on XDG_DATA_DIRS:
+
+    export XDG_DATA_DIRS="$(brew --prefix)/share:$XDG_DATA_DIRS"
+    python3 pychess
+
+A ready-made launcher that sets all the required environment variables for you
+is provided at `macos/run.sh`:
+
+    ./macos/run.sh
+
+
+5. Install system-wide (optional)
+---------------------------------
+
+    python3 setup.py install
+    # or, into a virtualenv:
+    python3 -m pip install .
+
+The data files are installed under `<python-prefix>/share/pychess` and are found
+automatically at runtime.
+
+
+6. Chess engine
+---------------
+
+PyChess needs a chess engine for analysis and play. Install Stockfish with:
+
+    brew install stockfish
+
+and point PyChess at it via Preferences -> Engines (or it will be auto-detected
+when `stockfish` is on your PATH).
+
+
+Troubleshooting
+---------------
+
+- "ImportError: cannot import name Gtk" / "Namespace Gtk not available"
+      You are using the system Python, which cannot see Homebrew's PyGObject.
+      Use the Homebrew Python: `brew install python`, then re-run with
+      `/opt/homebrew/bin/python3` (Apple Silicon) or `/usr/local/bin/python3`.
+
+- No icons / missing application icon
+      Install `adwaita-icon-theme` and ensure the Homebrew share dir is on
+      XDG_DATA_DIRS (see step 4).
+
+- "libintl not found" warning at startup
+      Install gettext: `brew install gettext`. Translations will then load; the
+      app still runs without it.
+
+- No sound
+      Make sure GStreamer is installed:
+      `brew install gst-python gstreamer gst-plugins-base gst-plugins-good`.
