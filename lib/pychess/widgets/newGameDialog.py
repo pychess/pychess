@@ -1073,7 +1073,23 @@ class SetupPositionExtension(_GameInitializationMode):
             view.rotation = pi
 
     @classmethod
+    def _selected_variant(cls):
+        if cls.widgets["playNormalRadio"].get_active():
+            variant_index = NORMALCHESS
+        elif cls.widgets["playVariant1Radio"].get_active():
+            variant_index = conf.get("ngvariant1")
+        else:
+            variant_index = conf.get("ngvariant2")
+        return variants[variant_index]
+
+    @classmethod
     def fen_changed(cls, *args):
+        if hasattr(cls, "setupmodel"):
+            display_variant = cls._selected_variant().variant
+            if cls.setupmodel.display_variant != display_variant:
+                cls.setupmodel.display_variant = display_variant
+                if cls.board_control is not None:
+                    cls.board_control.view.redrawCanvas()
         cls.widgets["fen_entry"].set_text(cls.get_fen())
 
     @classmethod
@@ -1150,14 +1166,7 @@ class SetupPositionExtension(_GameInitializationMode):
 
     @classmethod
     def get_fen(cls):
-        # Find variant
-        if cls.widgets["playNormalRadio"].get_active():
-            variant_index = NORMALCHESS
-        elif cls.widgets["playVariant1Radio"].get_active():
-            variant_index = conf.get("ngvariant1")
-        else:
-            variant_index = conf.get("ngvariant2")
-        variant = variants[variant_index]
+        variant = cls._selected_variant()
 
         pieces = cls.setupmodel.boards[-1].as_fen(variant.variant)
 
@@ -1205,7 +1214,10 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("Setup Position"))
         cls.widgets["setupPositionSidePanel"].show()
 
-        cls.setupmodel = SetupModel()
+        display_variant = (
+            variant if fenstr is not None else cls._selected_variant().variant
+        )
+        cls.setupmodel = SetupModel(display_variant=display_variant)
         cls.board_control = BoardControl(cls.setupmodel, {}, setup_position=True)
         cls.setupmodel.curplayer = SetupPlayer(cls.board_control)
         cls.setupmodel.connect("game_changed", cls.game_changed)

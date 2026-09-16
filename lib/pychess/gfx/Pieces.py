@@ -48,6 +48,7 @@ def drawPiece(
 
     color = WHITE if drawAsWhite else piece.color
     sign = PAWN if drawAsPawn else piece.sign
+    all_in_one_image = False
     if variant is not None and variant == SITTUYINCHESS:
         image = sittuyin_svg_pieces[color][sign]
         w, h = image.props.width, image.props.height
@@ -58,16 +59,19 @@ def drawPiece(
         w, h = image.props.width, image.props.height
         offset_x = 0
         offset_y = 0
+    elif variant == SCHESS:
+        image = schess_svg_pieces[color][sign]
+        w, h = image.props.width, image.props.height
+        offset_x = 0
+        offset_y = 0
     elif all_in_one:
+        all_in_one_image = True
         image = svg_pieces
         w, h = image.props.width / 6, image.props.height / 2
         offset_x = piece_ord[sign] * psize
         offset_y = 0 if color == BLACK else psize
     else:
-        if variant is not None and variant == SCHESS:
-            image = schess_svg_pieces[color][sign]
-        else:
-            image = svg_pieces[color][sign]
+        image = svg_pieces[color][sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
         offset_y = 0
@@ -83,7 +87,7 @@ def drawPiece(
 
     if asean:
         image.render_cairo(context)
-    elif all_in_one:
+    elif all_in_one_image:
         pieceid = "#{}{}".format("White" if color == 0 else "Black", pnames[sign - 1])
         image.render_cairo_sub(context, id=pieceid)
     else:

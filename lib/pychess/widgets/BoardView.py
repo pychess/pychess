@@ -199,7 +199,6 @@ class BoardView(Gtk.DrawingArea):
         if gamemodel is None:
             gamemodel = GameModel()
         self.model = gamemodel
-        self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
         self.setup_position = setup_position
         self.shown_variation_idx = (
@@ -353,6 +352,10 @@ class BoardView(Gtk.DrawingArea):
             conf.notify_remove(cid)
         for cid in self.model_cids:
             self.model.disconnect(cid)
+
+    @property
+    def display_variant(self):
+        return getattr(self.model, "display_variant", self.model.variant.variant)
 
     def gameStarted(self, model):
         if model.lesson_game:
@@ -1263,7 +1266,7 @@ class BoardView(Gtk.DrawingArea):
         col.parse(self.light_colour)
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
-        if self.model.variant.variant in ASEAN_VARIANTS:
+        if self.display_variant in ASEAN_VARIANTS:
             # just fill the whole board with light color
             if self.colors_only or self.transparent:
                 context.rectangle(xc_loc, yc_loc, side * self.FILES, side * self.RANKS)
@@ -1307,9 +1310,9 @@ class BoardView(Gtk.DrawingArea):
         col.parse(self.dark_colour)
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
-        if self.model.variant.variant in ASEAN_VARIANTS:
+        if self.display_variant in ASEAN_VARIANTS:
             # diagonals
-            if self.model.variant.variant == SITTUYINCHESS:
+            if self.display_variant == SITTUYINCHESS:
                 context.set_source_rgb(0.0, 0.0, 0.0)
                 context.set_line_width(0.5 if r is None else 1.0)
                 context.move_to(xc_loc, yc_loc)
@@ -1463,8 +1466,8 @@ class BoardView(Gtk.DrawingArea):
             side - CORD_PADDING * 2,
             drawAsWhite=self.drawAsWhite,
             drawAsPawn=self.drawAsPawns,
-            asean=self.asean,
-            variant=self.model.variant.variant,
+            asean=self.display_variant in ASEAN_VARIANTS,
+            variant=self.display_variant,
         )
         context.transform(matrix)
 
@@ -2303,7 +2306,7 @@ class BoardView(Gtk.DrawingArea):
         if the square at that co-ordinate is light
         Return : Boolean
         """
-        if self.model.variant.variant in ASEAN_VARIANTS:
+        if self.display_variant in ASEAN_VARIANTS:
             return False
         x_loc, y_loc = cord.cords
         return (x_loc % 2 + y_loc % 2) == 1

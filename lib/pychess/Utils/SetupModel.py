@@ -2,7 +2,7 @@ import asyncio
 
 from gi.repository import GObject
 
-from pychess.Utils.const import LOCAL, RUNNING
+from pychess.Utils.const import LOCAL, RUNNING, SETUPCHESS
 from pychess.Utils.DecisionSupportAlgorithm import DecisionSupportAlgorithm
 from pychess.Variants.setupposition import SetupBoard
 
@@ -51,7 +51,7 @@ class SetupModel(GObject.GObject):
         "game_ended": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
     }
 
-    def __init__(self):
+    def __init__(self, display_variant=SETUPCHESS):
         GObject.GObject.__init__(self)
         self.stop = False
         self.lowply = 0
@@ -59,6 +59,9 @@ class SetupModel(GObject.GObject):
         self.players = []
         self.moves = []
         self.variant = SetupBoard
+        # SETUPCHESS controls editor behavior. Keep the target variant
+        # separately so BoardView can render the position appropriately.
+        self.display_variant = display_variant
         self.boards = [self.variant()]
         self.variations = [self.boards]
 
