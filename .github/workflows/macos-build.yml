@@ -1,8 +1,10 @@
 # Copyright (C) 2026 Franky100-pig
 # Licensed under GPL v3 or later
 #
-# Build/install smoke test for macOS (Apple Silicon).
-# Mirrors .github/workflows/run-tests.yml, with Homebrew instead of apt.
+# Build/install smoke test for macOS. The full GTK stack is exercised on
+# Apple Silicon; a lightweight Intel job verifies the architecture-specific
+# Homebrew gettext/libintl lookup without forcing Homebrew to build GTK from
+# source on Intel runners.
 
 name: Build for macOS
 
@@ -18,9 +20,9 @@ on:
 
 jobs:
   checks:
-    name: Build for macOS
+    name: Build for macOS (Apple Silicon)
     timeout-minutes: 30
-    runs-on: macos-14  # Apple Silicon (arm64); Homebrew lives in /opt/homebrew
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
@@ -32,7 +34,7 @@ jobs:
     - name: Install dependencies (Homebrew)
       run: |
         brew install gtk+3 pygobject3 gtksourceview4 librsvg \
-                     gst-python adwaita-icon-theme gettext stockfish
+                     gstreamer adwaita-icon-theme gettext stockfish
 
     - name: Create venv and install Python dependencies
       run: |
@@ -56,7 +58,8 @@ jobs:
         # workaround for pip >=25.3, creates file "learn/puzzles/mate_in_4.sqlite"
         python3 setup.py --version
 
-        # Also exercises the gettext/msgfmt fallback added for macOS.
+        # Homebrew's gettext is keg-only, so setup.py must find msgfmt in the
+        # formula's opt prefix rather than relying on it being on PATH.
         pip3 install -e .
 
     - name: Smoke test
@@ -64,12 +67,30 @@ jobs:
         set -x
         source .venv/bin/activate
 
-        # GTK and its typelibs must be importable
+        # GTK and its typelibs must be importable.
         python3 -c "import gi; gi.require_version('Gtk', '3.0'); from gi.repository import Gtk; print('GTK', Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION)"
 
-        # The pychess package must be importable
+        # The pychess package must be importable.
         python3 -c "import pychess; print('pychess import OK')"
 
-        # Running the installed launcher exercises the macOS libintl lookup that
-        # used to abort startup on Apple Silicon (it only looked under /usr/local).
+        # Exercise the same libintl loader used by the launcher.
+        PYTHONPATH=lib python3 -c "from pychess.System.libintl import load_libintl; assert load_libintl() is not None; print('libintl OK')"
+
+        # Basic launcher smoke test. argparse exits before GUI startup.
         pychess --help
+
+  intel-libintl:
+    name: libintl smoke test (Intel)
+    timeout-minutes: 10
+    runs-on: macos-15-intel
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+    - name: Install gettext (Homebrew)
+      run: brew install gettext
+
+    - name: Test Intel Homebrew libintl lookup
+      run: |
+        set -x
+        test -f "$(brew --prefix gettext)/lib/libintl.dylib"
+        PYTHONPATH=lib python3 -c "from pychess.System.libintl import load_libintl; assert load_libintl() is not None; print('libintl OK')"

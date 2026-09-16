@@ -7,7 +7,8 @@ GTK libraries provided by Homebrew.
 Tested with: macOS 14 (Sonoma) and later, Apple Silicon
              (see .github/workflows/macos-build.yml).
              Intel Macs use the same steps, with /usr/local wherever Apple
-             Silicon uses /opt/homebrew.
+             Silicon uses /opt/homebrew. CI also checks the Intel gettext/libintl
+             lookup; the full GTK build job runs on Apple Silicon.
 
 
 1. Install the binary dependencies with Homebrew
@@ -18,7 +19,7 @@ If you do not have Homebrew yet, install it from https://brew.sh.
 Then install the GTK stack and supporting libraries:
 
     brew install python gtk+3 pygobject3 gtksourceview4 librsvg \
-                 gst-python adwaita-icon-theme gettext stockfish
+                 gstreamer adwaita-icon-theme gettext stockfish
 
 - `python`            : the Homebrew Python. PyGObject is built against it, so the
                         macOS system Python cannot be used.
@@ -26,12 +27,11 @@ Then install the GTK stack and supporting libraries:
 - `pygobject3`        : Python bindings for GTK and other GObject libraries.
 - `gtksourceview4`    : syntax-highlighted move/PGN views.
 - `librsvg`           : renders SVG board and piece themes.
-- `gst-python`        : sound support (GStreamer Python bindings).
+- `gstreamer`         : sound support, including the GStreamer Python bindings.
 - `adwaita-icon-theme`: required so PyChess can show its icons.
 - `gettext`           : provides `msgfmt`, used to compile translations at build
-                        time. (Homebrew does not symlink it onto PATH by default;
-                        setup.py falls back to CPython's bundled msgfmt.py when it
-                        is not found.)
+                        time, and libintl at runtime. Homebrew keeps gettext
+                        keg-only, so PyChess also checks its `opt/gettext` path.
 - `stockfish`         : the chess engine used for analysis and play.
 
 Make sure the Homebrew `bin` directory comes before `/usr/bin` in your PATH:
@@ -143,4 +143,4 @@ Troubleshooting
 
 - No sound
       Make sure GStreamer is installed:
-      `brew install gst-python gstreamer gst-plugins-base gst-plugins-good`.
+      `brew install gstreamer`.

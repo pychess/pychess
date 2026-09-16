@@ -52,28 +52,21 @@ VERSION = pychess.VERSION
 
 
 def _find_msgfmt():
-    """Locate gettext's ``msgfmt`` without aborting the build when it is missing.
-
-    On macOS, Homebrew's gettext is not symlinked onto PATH by default, so a
-    bare ``msgfmt`` is not executable. Fall back to the CPython-bundled
-    ``Tools/i18n/msgfmt.py`` which ships with every interpreter.
-    """
+    """Locate gettext's ``msgfmt``, including Homebrew's keg-only paths."""
     found = shutil.which("msgfmt")
     if found:
         return found
-    for base in ("/opt/homebrew/opt/gettext/bin", "/usr/local/opt/gettext/bin"):
-        candidate = os.path.join(base, "msgfmt")
+
+    prefixes = []
+    configured_prefix = os.environ.get("HOMEBREW_PREFIX")
+    if configured_prefix:
+        prefixes.append(configured_prefix)
+    prefixes.extend(("/opt/homebrew", "/usr/local"))
+
+    for prefix in dict.fromkeys(prefixes):
+        candidate = os.path.join(prefix, "opt", "gettext", "bin", "msgfmt")
         if os.path.isfile(candidate):
             return candidate
-    major, minor = sys.version_info[:2]
-    for candidate in (
-        os.path.join(sys.prefix, "tools", "i18n", "msgfmt.py"),
-        os.path.join(
-            sys.prefix, "lib", f"python{major}.{minor}", "tools", "i18n", "msgfmt.py"
-        ),
-    ):
-        if os.path.isfile(candidate):
-            return f"{sys.executable} {candidate}"
     return None
 
 
@@ -241,15 +234,20 @@ if sys.platform == "win32":
     else:
         msgfmt_path = argv0_path + "/tools/i18n/"
     msgfmt = f"{os.path.abspath(sys.executable)} {msgfmt_path}msgfmt.py"
-else:
+elif sys.platform == "darwin":
     msgfmt = _find_msgfmt()
     if msgfmt is None:
         print(
             "WARNING: 'msgfmt' (gettext) not found; skipping translation "
-            "compilation. Install gettext (e.g. `brew install gettext`) for a "
+            "compilation. Install gettext with `brew install gettext` for a "
             "localized UI.",
             file=sys.stderr,
         )
+else:
+    # Preserve the historical behavior on Unix-like packaging jobs: missing
+    # gettext is a build error instead of silently producing an unlocalized
+    # package.
+    msgfmt = "msgfmt"
 
 if msgfmt is not None:
     pychess_langs = []

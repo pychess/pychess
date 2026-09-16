@@ -117,7 +117,7 @@ steps, with /usr/local wherever Apple Silicon uses /opt/homebrew).
 See INSTALL_MACOS for the full, step-by-step guide.
 
     brew install python gtk+3 pygobject3 gtksourceview4 librsvg \
-                 gst-python adwaita-icon-theme gettext stockfish
+                 gstreamer adwaita-icon-theme gettext stockfish
 
 Homebrew's Python is externally managed (PEP 668), so install into a virtual
 environment that can still see Homebrew's PyGObject:

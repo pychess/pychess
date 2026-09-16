@@ -225,23 +225,9 @@ else:
         libintl.bindtextdomain(domain, locale_dir)
         libintl.bind_textdomain_codeset(domain, "UTF-8")
     elif sys.platform == "darwin":
-        import ctypes
+        from pychess.System.libintl import load_libintl
 
-        # Homebrew installs gettext to different prefixes per architecture:
-        # /opt/homebrew on Apple Silicon, /usr/local on Intel. The bare library
-        # name only resolves when the brew lib dir is on the dynamic linker
-        # search path, so try the explicit Apple Silicon and Intel paths too.
-        libintl = None
-        for _candidate in (
-            "libintl.dylib",
-            "/opt/homebrew/lib/libintl.dylib",
-            "/usr/local/lib/libintl.dylib",
-        ):
-            try:
-                libintl = ctypes.cdll.LoadLibrary(_candidate)
-                break
-            except OSError:
-                continue
+        libintl = load_libintl()
         if libintl is None:
             print(
                 "WARNING: libintl not found; translations may be unavailable. "
