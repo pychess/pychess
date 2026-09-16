@@ -1212,13 +1212,27 @@ class GameModel(GObject.GObject):
         return False
 
     def add_variation(self, board, moves, comment="", score="", emit=True):
+        if not moves:
+            return
+
         if board.board.next is None:
-            # If we are in the latest played board, and want to add a variation
-            # we have to add the latest move first
-            if board.board.lastMove is None or board.board.prev is None:
-                return
-            moves = [Move(board.board.lastMove)] + moves
-            board = board.board.prev.pieceBoard
+            if board.board.prev is None:
+                # There is no mainline move to own a variation when analysis
+                # starts from the initial position (including a custom FEN).
+                # Keep a synthetic node after the position as the variation
+                # parent. It is replaced by the real next move if play later
+                # continues from here.
+                null_board = board.clone()
+                null_board.board.fen_was_applied = False
+                null_board.board.prev = board.board
+                board.board.next = null_board.board
+            else:
+                # If we are in the latest played board, and want to add a
+                # variation, we have to add the latest move first.
+                if board.board.lastMove is None:
+                    return
+                moves = [Move(board.board.lastMove)] + moves
+                board = board.board.prev.pieceBoard
 
         board0 = board
         board = board0.clone()
@@ -1298,8 +1312,10 @@ class GameModel(GObject.GObject):
             if board.pieceBoard in vari:
                 self.variations.remove(vari)
 
-        # remove null_board if variation was added on last played move
-        if not parent.fen_was_applied:
+        # Remove a synthetic parent after its last analyzer variation is gone.
+        if not parent.fen_was_applied and not any(
+            isinstance(child, list) for child in parent.children
+        ):
             parent.prev.next = None
 
         self.needsSave = True
