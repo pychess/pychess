@@ -227,12 +227,29 @@ else:
     elif sys.platform == "darwin":
         import ctypes
 
-        try:
-            libintl = ctypes.cdll.LoadLibrary("libintl.dylib")
-        except OSError:
-            # This is default install location if using brew to install dependencies
-            libintl = ctypes.cdll.LoadLibrary("/usr/local/lib/libintl.dylib")
-        libintl.bindtextdomain(domain, locale_dir)
+        # Homebrew installs gettext to different prefixes per architecture:
+        # /opt/homebrew on Apple Silicon, /usr/local on Intel. The bare library
+        # name only resolves when the brew lib dir is on the dynamic linker
+        # search path, so try the explicit Apple Silicon and Intel paths too.
+        libintl = None
+        for _candidate in (
+            "libintl.dylib",
+            "/opt/homebrew/lib/libintl.dylib",
+            "/usr/local/lib/libintl.dylib",
+        ):
+            try:
+                libintl = ctypes.cdll.LoadLibrary(_candidate)
+                break
+            except OSError:
+                continue
+        if libintl is None:
+            print(
+                "WARNING: libintl not found; translations may be unavailable. "
+                "Install gettext with `brew install gettext`.",
+                file=sys.stderr,
+            )
+        else:
+            libintl.bindtextdomain(domain, locale_dir)
 
     else:
         locale.bindtextdomain(domain, locale_dir)
