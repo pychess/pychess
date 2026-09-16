@@ -113,7 +113,7 @@ class PieceRenderingTestCase(unittest.TestCase):
         self.assertTrue(schess_image.rendered)
         self.assertFalse(selected_image.rendered_sub)
 
-    def test_asean_uses_fixed_set_for_elephant_piece(self):
+    def test_asean_uses_fixed_set_for_silver_piece(self):
         selected_image = _Image()
         asean_image = _Image()
 
@@ -121,11 +121,11 @@ class PieceRenderingTestCase(unittest.TestCase):
             patch.object(Pieces, "all_in_one", False),
             patch.object(Pieces, "svg_pieces", _piece_sets(BISHOP, selected_image)),
             patch.object(
-                Pieces, "asean_svg_pieces", _piece_sets(ELEPHANT, asean_image)
+                Pieces, "asean_svg_pieces", _piece_sets(Pieces.SILVER, asean_image)
             ),
         ):
             Pieces.drawPiece(
-                Piece(WHITE, BISHOP),
+                Piece(WHITE, Pieces.SILVER),
                 _Context(),
                 0,
                 0,
@@ -144,11 +144,11 @@ class PieceRenderingTestCase(unittest.TestCase):
             patch.object(Pieces, "all_in_one", True),
             patch.object(Pieces, "svg_pieces", selected_image),
             patch.object(
-                Pieces, "asean_svg_pieces", _piece_sets(ELEPHANT, asean_image)
+                Pieces, "asean_svg_pieces", _piece_sets(Pieces.SILVER, asean_image)
             ),
         ):
             Pieces.drawPiece(
-                Piece(WHITE, BISHOP),
+                Piece(WHITE, Pieces.SILVER),
                 _Context(),
                 0,
                 0,
