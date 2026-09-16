@@ -1,5 +1,6 @@
 import os.path
 import unittest
+from io import StringIO
 
 from pychess.Savers.pgn import load, walk, pattern, MOVE
 from pychess.System.protoopen import protoopen
@@ -69,6 +70,26 @@ class PgnTestCase(unittest.TestCase):
                 self.assertEqual(orig, new)
 
         pgnfile.close()
+
+    def test_percent_line_inside_brace_comment(self):
+        pgn = """[Event "Test"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "White"]
+[Black "Black"]
+[Result "*"]
+
+1. e4 { [
+%clk 0:05:00] } 1... e5 2. Nf3 Nc6 *
+"""
+        pgnfile = load(StringIO(pgn))
+
+        movetext = pgnfile.get_movetext(pgnfile.games[0])
+        self.assertIn("%clk 0:05:00] } 1... e5", movetext)
+
+        model = pgnfile.loadToModel(None)
+        self.assertEqual(model.ply, 4)
 
     def test_pgn(self):
         self.pgn_test("atomic")

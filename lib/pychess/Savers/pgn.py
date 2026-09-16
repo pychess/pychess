@@ -1240,8 +1240,10 @@ class PGNFile(ChessFile):
             line = self.handle.readline()
 
         while line:
-            # escape non-PGN data line
-            if line.startswith("%"):
+            # Escape lines are ignored outside comments. A line starting with
+            # "%" inside a brace comment is comment text and may also contain
+            # the closing brace followed by more movetext.
+            if line.startswith("%") and not in_comment:
                 line = self.handle.readline()
                 continue
 
