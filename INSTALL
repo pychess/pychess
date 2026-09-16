@@ -112,14 +112,15 @@ python setup.py bdist_msi
 -------------------------
 Dependencies for macOS:
 
-Tested on Catalina and Python 3.7.2
+Tested on macOS 14 (Sonoma) and later, Python 3.10+ (Apple Silicon & Intel).
+See INSTALL_MACOS for the full, step-by-step guide.
 
-1. brew install
-brew install pygobject3 gtk+3
-brew install gst-python
-brew install gtksourceview4
-brew install librsvg
-# (optional) brew install gettext
+    brew install python gtk+3 pygobject3 gtksourceview4 librsvg \
+                 gst-python adwaita-icon-theme gettext
+    python3 -m pip install -r requirements.txt
 
-2. pip install
-see requirements.txt
+Use the Homebrew Python (not the system one) so PyGObject is importable.
+Generate eco.db and the piece-theme previews before running or installing:
+
+    PYTHONPATH=lib python3 pgn2ecodb.py
+    python3 create_theme_preview.py
