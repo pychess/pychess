@@ -26,7 +26,8 @@ from pychess.Savers.pgn import comment_arrows_re, comment_circles_re
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import (
-    ASEAN_VARIANTS,
+    ASEAN_BOARD_VARIANTS,
+    MAKRUK_PIECE_VARIANTS,
     DROP_VARIANTS,
     WAITING_TO_START,
     REMOTE,
@@ -1266,7 +1267,7 @@ class BoardView(Gtk.DrawingArea):
         col.parse(self.light_colour)
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
-        if self.display_variant in ASEAN_VARIANTS:
+        if self.display_variant in ASEAN_BOARD_VARIANTS:
             # just fill the whole board with light color
             if self.colors_only or self.transparent:
                 context.rectangle(xc_loc, yc_loc, side * self.FILES, side * self.RANKS)
@@ -1310,7 +1311,7 @@ class BoardView(Gtk.DrawingArea):
         col.parse(self.dark_colour)
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
-        if self.display_variant in ASEAN_VARIANTS:
+        if self.display_variant in ASEAN_BOARD_VARIANTS:
             # diagonals
             if self.display_variant == SITTUYINCHESS:
                 context.set_source_rgb(0.0, 0.0, 0.0)
@@ -1466,7 +1467,7 @@ class BoardView(Gtk.DrawingArea):
             side - CORD_PADDING * 2,
             drawAsWhite=self.drawAsWhite,
             drawAsPawn=self.drawAsPawns,
-            asean=self.display_variant in ASEAN_VARIANTS,
+            asean=self.display_variant in MAKRUK_PIECE_VARIANTS,
             variant=self.display_variant,
         )
         context.transform(matrix)
@@ -2306,7 +2307,7 @@ class BoardView(Gtk.DrawingArea):
         if the square at that co-ordinate is light
         Return : Boolean
         """
-        if self.display_variant in ASEAN_VARIANTS:
+        if self.display_variant in ASEAN_BOARD_VARIANTS:
             return False
         x_loc, y_loc = cord.cords
         return (x_loc % 2 + y_loc % 2) == 1

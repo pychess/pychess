@@ -19,6 +19,7 @@ from pychess.Utils.const import (
     ROOK,
     PAWN,
     reprSign,
+    ASEANCHESS,
     SITTUYINCHESS,
     HAWK,
     ELEPHANT,
@@ -49,7 +50,13 @@ def drawPiece(
     color = WHITE if drawAsWhite else piece.color
     sign = PAWN if drawAsPawn else piece.sign
     all_in_one_image = False
-    if variant is not None and variant == SITTUYINCHESS:
+    if variant == ASEANCHESS:
+        asean_sign = ELEPHANT if sign == BISHOP else sign
+        image = asean_svg_pieces[color][asean_sign]
+        w, h = image.props.width, image.props.height
+        offset_x = 0
+        offset_y = 0
+    elif variant is not None and variant == SITTUYINCHESS:
         image = sittuyin_svg_pieces[color][sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
@@ -129,6 +136,7 @@ svg_pieces = None
 makruk_svg_pieces = get_svg_pieces("makruk")
 sittuyin_svg_pieces = get_svg_pieces("sittuyin")
 schess_svg_pieces = get_svg_pieces("merida")
+asean_svg_pieces = get_svg_pieces("merida")
 piece2char = None
 
 

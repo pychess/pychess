@@ -1,6 +1,6 @@
 from gi.repository import Gtk, GObject
 
-from pychess.Utils.const import ASEAN_VARIANTS, NORMALCHESS
+from pychess.Utils.const import MAKRUK_PIECE_VARIANTS, NORMALCHESS
 from pychess.gfx import Pieces
 
 
@@ -10,7 +10,7 @@ class PieceWidget(Gtk.DrawingArea):
         self.connect("draw", self.expose)
         self.piece = piece
         self.variant = variant
-        self.asean = variant in ASEAN_VARIANTS
+        self.asean = variant in MAKRUK_PIECE_VARIANTS
 
     def setPiece(self, piece):
         self.piece = piece

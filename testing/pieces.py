@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 
 from pychess.Utils.Piece import Piece
-from pychess.Utils.const import HAWK, KNIGHT, SCHESS, WHITE
+from pychess.Utils.const import ASEANCHESS, BISHOP, ELEPHANT, HAWK, KNIGHT, SCHESS, WHITE
 from pychess.gfx import Pieces
 
 
@@ -103,4 +103,47 @@ class PieceRenderingTestCase(unittest.TestCase):
             )
 
         self.assertTrue(schess_image.rendered)
+        self.assertFalse(selected_image.rendered_sub)
+
+
+    def test_asean_uses_fixed_set_for_elephant_piece(self):
+        selected_image = _Image()
+        asean_image = _Image()
+
+        with (
+            patch.object(Pieces, "all_in_one", False),
+            patch.object(Pieces, "svg_pieces", _piece_sets(BISHOP, selected_image)),
+            patch.object(Pieces, "asean_svg_pieces", _piece_sets(ELEPHANT, asean_image)),
+        ):
+            Pieces.drawPiece(
+                Piece(WHITE, BISHOP),
+                _Context(),
+                0,
+                0,
+                32,
+                variant=ASEANCHESS,
+            )
+
+        self.assertTrue(asean_image.rendered)
+        self.assertFalse(selected_image.rendered)
+
+    def test_asean_ignores_all_in_one_theme(self):
+        selected_image = _Image()
+        asean_image = _Image()
+
+        with (
+            patch.object(Pieces, "all_in_one", True),
+            patch.object(Pieces, "svg_pieces", selected_image),
+            patch.object(Pieces, "asean_svg_pieces", _piece_sets(ELEPHANT, asean_image)),
+        ):
+            Pieces.drawPiece(
+                Piece(WHITE, BISHOP),
+                _Context(),
+                0,
+                0,
+                32,
+                variant=ASEANCHESS,
+            )
+
+        self.assertTrue(asean_image.rendered)
         self.assertFalse(selected_image.rendered_sub)
