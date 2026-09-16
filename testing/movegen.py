@@ -172,7 +172,11 @@ class FindMovesTestCase(unittest.TestCase):
         positions = [
             (
                 "rnsmksnr/8/ppp1pppp/3p4/4P3/PPPP1PPP/8/RNSKMSNR w - - 0 2",
-                [(1, 27), (2, 728)],
+                [(1, 24), (2, 575), (3, 13748)],
+            ),
+            (
+                "rnsmksnr/8/ppp1pppp/3p4/4P3/PPPP1PPP/8/RNSKMSNR w DEde - 0 2",
+                [(1, 27), (2, 728), (3, 19138)],
             ),
             (
                 "rns2snr/2m1k3/ppp1pppp/3p4/4P3/PPPP1PPP/3K1M2/RNS2SNR w - - 4 4",

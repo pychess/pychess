@@ -266,10 +266,10 @@ def genPieceMoves(board, piece, tcord):
             if board.variant == CAMBODIANCHESS:
                 if board.is_first_move[QUEEN][board.color]:
                     if board.color == WHITE:
-                        if not board.arBoard[E3]:
+                        if tcord == E3 and not board.arBoard[E3]:
                             moves.add(newMove(E1, E3))
                     else:
-                        if not board.arBoard[D6]:
+                        if tcord == D6 and not board.arBoard[D6]:
                             moves.add(newMove(D8, D6))
             return moves
         else:
@@ -618,6 +618,7 @@ def genAllMoves(board, drops=True):
         if (
             board.arBoard[board.ini_kings[board.color]] == KING
             and board.is_first_move[KING][board.color]
+            and not board.isChecked()
         ):
             if board.color == WHITE:
                 if not board.arBoard[B2]:

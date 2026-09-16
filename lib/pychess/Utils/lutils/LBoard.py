@@ -70,7 +70,7 @@ from pychess.Utils.const import (
     QUEEN_PROMOTION,
 )
 from pychess.Utils.repr import reprColor
-from .ldata import FILE, fileBits
+from .ldata import FILE, RANK, fileBits
 from .attack import isAttacked
 from .bitboard import clearBit, iterBits, setBit, bitPosArray
 from .PolyglotHash import (
@@ -201,8 +201,22 @@ class LBoard:
     def iniCambodian(self):
         self.ini_kings = (D1, E8)
         self.ini_queens = (E1, D8)
-        self.is_first_move = {KING: [True, True], QUEEN: [True, True]}
+        # Cambodian special-move rights are encoded in the FEN castling field
+        # as DEde. They are enabled while parsing that field below.
+        self.is_first_move = {KING: [False, False], QUEEN: [False, False]}
         self.hist_is_first_move = []
+
+    def setCambodianFirstMove(self, piece, color, enabled):
+        if self.is_first_move[piece][color] == enabled:
+            return
+
+        self.is_first_move[piece][color] = enabled
+        # Cambodian has no castling, so the four independent Polyglot castling
+        # keys can also distinguish these four special-move rights in hashes.
+        if piece == KING:
+            self.hash ^= W_OOHash if color == WHITE else B_OOHash
+        else:
+            self.hash ^= W_OOOHash if color == WHITE else B_OOOHash
 
     def iniSchess(self):
         self.virgin = [0, 0]
@@ -384,12 +398,6 @@ class LBoard:
                         self.promoted[cord] = 1
                         promoted = False
 
-                    if self.variant == CAMBODIANCHESS:
-                        if piece == KING and self.kings[color] != self.ini_kings[color]:
-                            self.is_first_move[KING][color] = False
-                        if piece == QUEEN and cord != self.ini_queens[color]:
-                            self.is_first_move[QUEEN][color] = False
-
                     cord += 1
 
             if self.variant == FISCHERRANDOMCHESS:
@@ -487,6 +495,40 @@ class LBoard:
                     side = WHITE if char.isupper() else BLACK
                     cord = ord(char) - 65 if side == WHITE else ord(char) - 97 + 56
                     self.virgin[side] = setBit(self.virgin[side], cord)
+
+        if self.variant == CAMBODIANCHESS:
+            # Fairy-Stockfish uses the castling field as "gating" rights for
+            # Cambodian chess: D/E are White's king/queen special moves and
+            # d/e are Black's. A right is meaningful only while the matching
+            # piece is still on its initial square.
+            self.setCambodianFirstMove(
+                KING,
+                WHITE,
+                "D" in castChr and self.kings[WHITE] == self.ini_kings[WHITE],
+            )
+            self.setCambodianFirstMove(
+                QUEEN,
+                WHITE,
+                bool(
+                    "E" in castChr
+                    and self.boards[WHITE][QUEEN]
+                    & bitPosArray[self.ini_queens[WHITE]]
+                ),
+            )
+            self.setCambodianFirstMove(
+                KING,
+                BLACK,
+                "d" in castChr and self.kings[BLACK] == self.ini_kings[BLACK],
+            )
+            self.setCambodianFirstMove(
+                QUEEN,
+                BLACK,
+                bool(
+                    "e" in castChr
+                    and self.boards[BLACK][QUEEN]
+                    & bitPosArray[self.ini_queens[BLACK]]
+                ),
+            )
 
         if self.variant in (
             WILDCASTLECHESS,
@@ -715,9 +757,31 @@ class LBoard:
 
         if self.variant == CAMBODIANCHESS:
             if fpiece == KING and self.is_first_move[KING][color]:
-                self.is_first_move[KING][color] = False
+                self.setCambodianFirstMove(KING, color, False)
             elif fpiece == QUEEN and self.is_first_move[QUEEN][color]:
-                self.is_first_move[QUEEN][color] = False
+                self.setCambodianFirstMove(QUEEN, color, False)
+
+            # Capturing a still-virgin queen also consumes its special-move
+            # right. Fairy-Stockfish models this by removing the gate on the
+            # captured starting square.
+            if (
+                tpiece == QUEEN
+                and tcord == self.ini_queens[opcolor]
+                and self.is_first_move[QUEEN][opcolor]
+            ):
+                self.setCambodianFirstMove(QUEEN, opcolor, False)
+
+            # The king permanently loses its special leap if an enemy rook
+            # moves onto the same rank or file. The Cambodian rule calls this
+            # "aiming" at the king; intervening pieces do not matter.
+            opking = self.kings[opcolor]
+            if (
+                fpiece == ROOK
+                and opking >= 0
+                and self.is_first_move[KING][opcolor]
+                and (FILE(tcord) == FILE(opking) or RANK(tcord) == RANK(opking))
+            ):
+                self.setCambodianFirstMove(KING, opcolor, False)
         elif self.variant == SCHESS:
             if qcastle:
                 self.virgin[color] = clearBit(self.virgin[color], self.ini_kings[color])
