@@ -112,14 +112,22 @@ python setup.py bdist_msi
 -------------------------
 Dependencies for macOS:
 
-Tested on Catalina and Python 3.7.2
+Tested on macOS 14 (Sonoma) and later, Apple Silicon (Intel Macs use the same
+steps, with /usr/local wherever Apple Silicon uses /opt/homebrew).
+See INSTALL_MACOS for the full, step-by-step guide.
 
-1. brew install
-brew install pygobject3 gtk+3
-brew install gst-python
-brew install gtksourceview4
-brew install librsvg
-# (optional) brew install gettext
+    brew install python gtk+3 pygobject3 gtksourceview4 librsvg \
+                 gst-python adwaita-icon-theme gettext stockfish
 
-2. pip install
-see requirements.txt
+Homebrew's Python is externally managed (PEP 668), so install into a virtual
+environment that can still see Homebrew's PyGObject:
+
+    python3 -m venv --system-site-packages .venv
+    source .venv/bin/activate
+    python3 -m pip install -r requirements.txt
+
+Generate eco.db and the piece-theme previews before running or installing; both
+need PYTHONPATH=lib because they import pychess from the source tree:
+
+    PYTHONPATH=lib python3 pgn2ecodb.py
+    PYTHONPATH=lib python3 create_theme_preview.py

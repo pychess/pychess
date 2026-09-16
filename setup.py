@@ -4,6 +4,7 @@ from glob import glob
 from os import listdir
 from os.path import isdir, isfile
 import os
+import shutil
 import site
 import sys
 import subprocess
@@ -48,6 +49,33 @@ pychess = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(pychess)
 
 VERSION = pychess.VERSION
+
+
+def _find_msgfmt():
+    """Locate gettext's ``msgfmt`` without aborting the build when it is missing.
+
+    On macOS, Homebrew's gettext is not symlinked onto PATH by default, so a
+    bare ``msgfmt`` is not executable. Fall back to the CPython-bundled
+    ``Tools/i18n/msgfmt.py`` which ships with every interpreter.
+    """
+    found = shutil.which("msgfmt")
+    if found:
+        return found
+    for base in ("/opt/homebrew/opt/gettext/bin", "/usr/local/opt/gettext/bin"):
+        candidate = os.path.join(base, "msgfmt")
+        if os.path.isfile(candidate):
+            return candidate
+    major, minor = sys.version_info[:2]
+    for candidate in (
+        os.path.join(sys.prefix, "tools", "i18n", "msgfmt.py"),
+        os.path.join(
+            sys.prefix, "lib", f"python{major}.{minor}", "tools", "i18n", "msgfmt.py"
+        ),
+    ):
+        if os.path.isfile(candidate):
+            return f"{sys.executable} {candidate}"
+    return None
+
 
 NAME = "pychess"
 
@@ -94,6 +122,7 @@ CLASSIFIERS = [
     "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: POSIX",
+    "Operating System :: MacOS :: MacOS X",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -213,19 +242,30 @@ if sys.platform == "win32":
         msgfmt_path = argv0_path + "/tools/i18n/"
     msgfmt = f"{os.path.abspath(sys.executable)} {msgfmt_path}msgfmt.py"
 else:
-    msgfmt = "msgfmt"
+    msgfmt = _find_msgfmt()
+    if msgfmt is None:
+        print(
+            "WARNING: 'msgfmt' (gettext) not found; skipping translation "
+            "compilation. Install gettext (e.g. `brew install gettext`) for a "
+            "localized UI.",
+            file=sys.stderr,
+        )
 
-pychess_langs = []
-for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
-    if sys.platform == "win32":
-        command = f"{msgfmt} lang/{dir}/{pofile}.po"
-    else:
-        command = f"{msgfmt} lang/{dir}/{pofile}.po -o lang/{dir}/{pofile}.mo"
-    subprocess.call(command.split())
-    DATA_FILES += [
-        ("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])
-    ]
-    pychess_langs.append(dir)
+if msgfmt is not None:
+    pychess_langs = []
+    for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
+        if sys.platform == "win32":
+            command = f"{msgfmt} lang/{dir}/{pofile}.po"
+        else:
+            command = f"{msgfmt} lang/{dir}/{pofile}.po -o lang/{dir}/{pofile}.mo"
+        subprocess.call(command.split())
+        DATA_FILES += [
+            (
+                "share/locale/" + dir + "/LC_MESSAGES",
+                ["lang/" + dir + "/" + pofile + ".mo"],
+            )
+        ]
+        pychess_langs.append(dir)
 
 PACKAGES = []
 

@@ -1,8 +1,146 @@
-Install the following binary dependencies:
+PyChess on macOS
+================
 
-brew install gtk+3 pygobject3 gtksourceview4 librsvg gst-python
+PyChess is a GTK3 / PyGObject desktop application. It runs on macOS using the
+GTK libraries provided by Homebrew.
+
+Tested with: macOS 14 (Sonoma) and later, Apple Silicon
+             (see .github/workflows/macos-build.yml).
+             Intel Macs use the same steps, with /usr/local wherever Apple
+             Silicon uses /opt/homebrew.
 
 
-And then install the python depdencies:
+1. Install the binary dependencies with Homebrew
+------------------------------------------------
 
-pip install -r requirements.txt
+If you do not have Homebrew yet, install it from https://brew.sh.
+
+Then install the GTK stack and supporting libraries:
+
+    brew install python gtk+3 pygobject3 gtksourceview4 librsvg \
+                 gst-python adwaita-icon-theme gettext stockfish
+
+- `python`            : the Homebrew Python. PyGObject is built against it, so the
+                        macOS system Python cannot be used.
+- `gtk+3`             : the GTK 3 toolkit.
+- `pygobject3`        : Python bindings for GTK and other GObject libraries.
+- `gtksourceview4`    : syntax-highlighted move/PGN views.
+- `librsvg`           : renders SVG board and piece themes.
+- `gst-python`        : sound support (GStreamer Python bindings).
+- `adwaita-icon-theme`: required so PyChess can show its icons.
+- `gettext`           : provides `msgfmt`, used to compile translations at build
+                        time. (Homebrew does not symlink it onto PATH by default;
+                        setup.py falls back to CPython's bundled msgfmt.py when it
+                        is not found.)
+- `stockfish`         : the chess engine used for analysis and play.
+
+Make sure the Homebrew `bin` directory comes before `/usr/bin` in your PATH:
+
+    export PATH="$(brew --prefix)/bin:$PATH"
+
+
+2. Create a virtual environment and install the Python dependencies
+-------------------------------------------------------------------
+
+Homebrew's Python is marked as externally managed (PEP 668), so `pip install`
+refuses to write into it and fails with "error: externally-managed-environment".
+Create a virtual environment that can still see Homebrew's PyGObject:
+
+    cd <repository root>
+    python3 -m venv --system-site-packages .venv
+    source .venv/bin/activate
+    python -m pip install --upgrade pip
+    python -m pip install -r requirements.txt
+
+`--system-site-packages` is what lets the virtual environment use Homebrew's
+`gi` module instead of trying (and usually failing) to build PyGObject from
+source.
+
+Run the remaining steps with the virtual environment activated.
+
+
+3. Generate the locally-built data files (first checkout only)
+--------------------------------------------------------------
+
+Before running or installing, generate the opening-book database and the piece
+theme previews. These are not shipped in the repository:
+
+    PYTHONPATH=lib python3 pgn2ecodb.py
+    PYTHONPATH=lib python3 create_theme_preview.py
+
+Both commands need `PYTHONPATH=lib`, because they import pychess from the source
+tree rather than from an installed copy.
+
+
+4. Run PyChess from the source tree
+-----------------------------------
+
+    python3 pychess
+
+If icons are missing, or you see GSettings schema errors, make sure the Homebrew
+share directory is on XDG_DATA_DIRS:
+
+    export XDG_DATA_DIRS="$(brew --prefix)/share:$XDG_DATA_DIRS"
+    python3 pychess
+
+A ready-made launcher that detects the Homebrew prefix, exports all the required
+environment variables for you and picks up `.venv` automatically is provided at
+`macos/run.sh`:
+
+    ./macos/run.sh
+
+
+5. Install it properly (optional)
+---------------------------------
+
+With the virtual environment activated:
+
+    pip install .          # regular install
+    # or, for a development install:
+    pip install -e .
+
+This installs the `pychess` console script, so afterwards you can start PyChess
+with just:
+
+    pychess
+
+The data files are installed under `<prefix>/share/pychess` and are found
+automatically at runtime.
+
+
+6. Chess engine
+---------------
+
+`pychess` looks for a chess engine for analysis and play. The `stockfish`
+formula installed in step 1 is auto-detected when it is on your PATH; otherwise
+point PyChess at it explicitly via Preferences -> Engines.
+
+
+Troubleshooting
+---------------
+
+- "error: externally-managed-environment"
+      You are running `pip install` against Homebrew's Python directly. Create
+      and activate the virtual environment from step 2 first.
+
+- "ImportError: cannot import name Gtk" / "Namespace Gtk not available"
+      You are using the macOS system Python, which cannot see Homebrew's
+      PyGObject. Use the Homebrew Python: `brew install python`, then re-run with
+      `/opt/homebrew/bin/python3` (Apple Silicon) or `/usr/local/bin/python3`
+      (Intel).
+
+- "ModuleNotFoundError: No module named 'pychess'"
+      The script imports pychess from the source tree, so it needs
+      `PYTHONPATH=lib` (see step 3).
+
+- No icons / missing application icon
+      Install `adwaita-icon-theme` and ensure the Homebrew share directory is on
+      XDG_DATA_DIRS (see step 4).
+
+- "WARNING: libintl not found" at startup
+      Install gettext: `brew install gettext`. PyChess still starts without it;
+      what you lose is translations.
+
+- No sound
+      Make sure GStreamer is installed:
+      `brew install gst-python gstreamer gst-plugins-base gst-plugins-good`.
