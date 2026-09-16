@@ -63,7 +63,7 @@ class _Context:
 
 
 def _piece_sets(sign, image):
-    pieces = [[None] * 9, [None] * 9]
+    pieces = [[None] * 11, [None] * 11]
     pieces[WHITE][sign] = image
     return pieces
 
