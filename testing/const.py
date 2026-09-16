@@ -17,5 +17,10 @@ class AseanDisplayConstantsTestCase(unittest.TestCase):
         self.assertNotIn(ASEANCHESS, MAKRUK_PIECE_VARIANTS)
 
     def test_other_asean_variants_keep_existing_special_styles(self):
-        self.assertEqual(ASEAN_BOARD_VARIANTS, (MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS, SITTUYINCHESS))
-        self.assertEqual(MAKRUK_PIECE_VARIANTS, (MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS))
+        self.assertEqual(
+            ASEAN_BOARD_VARIANTS,
+            (MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS, SITTUYINCHESS),
+        )
+        self.assertEqual(
+            MAKRUK_PIECE_VARIANTS, (MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS)
+        )
