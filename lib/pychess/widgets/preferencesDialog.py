@@ -547,7 +547,7 @@ class SoundTab:
     @classmethod
     def getPlayer(cls):
         if not cls._player:
-            cls._player = gstreamer.sound_player
+            cls._player = gstreamer.get_player()
         return cls._player
 
     @classmethod

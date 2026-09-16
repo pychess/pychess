@@ -65,9 +65,11 @@ Known caveats:
 
 ## Runtime Sound
 
-If GStreamer initialization fails on newer PyGObject, check
-`lib/pychess/System/gst_player.py`. `Gst.init_check` must be called with an
-argument list such as `[]`, not `None`, because some versions reject `None`.
+Sound playback on Linux/macOS uses GStreamer directly in the main PyChess
+process through `lib/pychess/System/gstreamer.py`. The GStreamer bus signal
+watch is handled by GTK's existing GLib main loop; do not add a second main
+loop or helper subprocess. `Gst.init_check` must be called with an argument
+list such as `[]`, not `None`, because some PyGObject versions reject `None`.
 
 ## Packaging Metadata
 
