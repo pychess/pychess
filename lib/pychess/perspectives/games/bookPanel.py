@@ -869,9 +869,7 @@ class StrengthCellRenderer(Gtk.CellRenderer):
             text_x = cell_area.x + max(
                 TEXT_XPAD, cell_area.width - text_width - TEXT_XPAD
             )
-            text_y = cell_area.y + max(
-                TEXT_YPAD, (cell_area.height - text_height) / 2
-            )
+            text_y = cell_area.y + max(TEXT_YPAD, (cell_area.height - text_height) / 2)
             context.move_to(text_x, text_y)
             PangoCairo.show_layout(context, layout)
 
