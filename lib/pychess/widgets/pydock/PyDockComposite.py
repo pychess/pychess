@@ -14,6 +14,8 @@ class PyDockComposite(Gtk.Alignment):
         self.position = position
         self.perspective = perspective
         self.paned = paned
+        # Dock children must keep their GTK size requisition so the divider
+        # cannot be dragged far enough to hide a visible area completely.
         self.add(self.paned)
         self.paned.show()
 
@@ -40,10 +42,10 @@ class PyDockComposite(Gtk.Alignment):
     def changeComponent(self, old, new):
         if old == self.paned.get_child1():
             self.paned.remove(old)
-            self.paned.pack1(new, resize=True, shrink=True)
+            self.paned.pack1(new, resize=True, shrink=False)
         else:
             self.paned.remove(old)
-            self.paned.pack2(new, resize=True, shrink=True)
+            self.paned.pack2(new, resize=True, shrink=False)
         new.show()
 
     def removeComponent(self, component):
@@ -64,11 +66,11 @@ class PyDockComposite(Gtk.Alignment):
 
     def initChildren(self, old, new, preserve_dimensions=False):
         if self.position == NORTH or self.position == WEST:
-            self.paned.pack1(new, resize=True, shrink=True)
-            self.paned.pack2(old, resize=True, shrink=True)
+            self.paned.pack1(new, resize=True, shrink=False)
+            self.paned.pack2(old, resize=True, shrink=False)
         elif self.position == SOUTH or self.position == EAST:
-            self.paned.pack1(old, resize=True, shrink=True)
-            self.paned.pack2(new, resize=True, shrink=True)
+            self.paned.pack1(old, resize=True, shrink=False)
+            self.paned.pack2(new, resize=True, shrink=False)
         old.show()
         new.show()
 

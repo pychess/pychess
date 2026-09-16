@@ -212,7 +212,7 @@ requires-dist = [
     { name = "psutil" },
     { name = "pycairo" },
     { name = "pygobject" },
-    { name = "sqlalchemy", specifier = ">=2.0.52" },
+    { name = "sqlalchemy" },
     { name = "websockets" },
 ]
 
