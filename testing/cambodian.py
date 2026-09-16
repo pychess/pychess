@@ -48,9 +48,7 @@ class CambodianSpecialMovesTestCase(unittest.TestCase):
         self.assertNotEqual(with_rights, without_rights)
 
     def test_dash_fen_disables_special_move_rights(self):
-        board = self.board(
-            "rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR w - - 0 1"
-        )
+        board = self.board("rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR w - - 0 1")
 
         self.assertFalse(board.is_first_move[KING][WHITE])
         self.assertFalse(board.is_first_move[QUEEN][WHITE])

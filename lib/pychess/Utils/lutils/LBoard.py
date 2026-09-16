@@ -511,8 +511,7 @@ class LBoard:
                 WHITE,
                 bool(
                     "E" in castChr
-                    and self.boards[WHITE][QUEEN]
-                    & bitPosArray[self.ini_queens[WHITE]]
+                    and self.boards[WHITE][QUEEN] & bitPosArray[self.ini_queens[WHITE]]
                 ),
             )
             self.setCambodianFirstMove(
@@ -525,8 +524,7 @@ class LBoard:
                 BLACK,
                 bool(
                     "e" in castChr
-                    and self.boards[BLACK][QUEEN]
-                    & bitPosArray[self.ini_queens[BLACK]]
+                    and self.boards[BLACK][QUEEN] & bitPosArray[self.ini_queens[BLACK]]
                 ),
             )
 
