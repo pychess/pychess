@@ -28,7 +28,7 @@ PyChess learning modules need stockfish to be installed
 -------------------------------
 Dependencies for Ubuntu/Debian:
 stockfish
-gnome-icon-theme
+adwaita-icon-theme
 python3
 python3-cairo
 python3-gi
