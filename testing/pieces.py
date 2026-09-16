@@ -5,7 +5,6 @@ from pychess.Utils.Piece import Piece
 from pychess.Utils.const import (
     ASEANCHESS,
     BISHOP,
-    ELEPHANT,
     HAWK,
     KNIGHT,
     SCHESS,
