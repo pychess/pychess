@@ -1,0 +1,56 @@
+# Copyright (C) 2026
+# Licensed under GPL v3 or later
+#
+# macOS build/install smoke test for PyChess.
+# Mirrors .github/workflows/windows-build-msys.yml but for macOS runners.
+
+name: Build for macOS
+
+# Drop permissions to minimum for security
+permissions:
+  contents: read
+
+on:
+  pull_request:
+  push:
+  schedule:
+    - cron: '30 3 * * 5'  # Every Friday at 3:30am
+
+jobs:
+  macos:
+    name: Build for macOS
+    timeout-minutes: 30
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+    - name: Set up Python (Homebrew)
+      run: |
+        brew install python
+        echo "$(brew --prefix)/bin" >> "$GITHUB_PATH"
+
+    - name: Install dependencies (Homebrew)
+      run: |
+        brew install gtk+3 pygobject3 gtksourceview4 librsvg \
+                     gst-python adwaita-icon-theme gettext stockfish
+
+    - name: Create venv and install Python dependencies
+      run: |
+        python3 -m venv --system-site-packages .venv
+        . .venv/bin/activate
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+
+    - name: Generate local data files
+      run: |
+        . .venv/bin/activate
+        PYTHONPATH=lib python pgn2ecodb.py
+        python create_theme_preview.py
+
+    - name: Import / build smoke test
+      run: |
+        . .venv/bin/activate
+        set -x
+        python -c "import gi; gi.require_version('Gtk', '3.0'); from gi.repository import Gtk; print('GTK', Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION)"
+        python -m pip install .
+        python -c "import pychess; print('pychess import OK')"
