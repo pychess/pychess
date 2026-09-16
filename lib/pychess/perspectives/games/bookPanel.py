@@ -1,7 +1,8 @@
 import asyncio
+from math import ceil, pi
 import os
 
-from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
+from gi.repository import Gdk, Gtk, GObject, PangoCairo
 
 from pychess.System import conf, uistuff
 from pychess.Utils import prettyPrintScore
@@ -25,7 +26,6 @@ from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
-from math import ceil
 
 __title__ = _("Hints")
 
@@ -805,7 +805,8 @@ class Sidepanel:
 ################################################################################
 
 
-width, height = 80, 23
+MIN_WIDTH, MIN_HEIGHT = 80, 23
+TEXT_XPAD, TEXT_YPAD = 10, 2
 
 
 class StrengthCellRenderer(Gtk.CellRenderer):
@@ -828,6 +829,34 @@ class StrengthCellRenderer(Gtk.CellRenderer):
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
 
+    def _get_layout(self, widget, text=None):
+        # Use the TreeView's Pango context instead of a hard-coded font.  Besides
+        # matching the current GTK theme, this also makes the layout follow the
+        # platform's DPI/font scaling.
+        if text is None:
+            text = self.data[0] if self.data and self.data[0] else "0.00/00"
+        return widget.create_pango_layout(text)
+
+    def _get_preferred_size(self, widget):
+        text_width, text_height = self._get_layout(widget).get_pixel_size()
+        width = max(MIN_WIDTH, text_width + 2 * TEXT_XPAD)
+        height = max(MIN_HEIGHT, text_height + 2 * TEXT_YPAD)
+        return width, height
+
+    def do_get_preferred_width(self, widget):
+        width, _height = self._get_preferred_size(widget)
+        return width, width
+
+    def do_get_preferred_height(self, widget):
+        _width, height = self._get_preferred_size(widget)
+        return height, height
+
+    def do_get_preferred_width_for_height(self, widget, height):
+        return self.do_get_preferred_width(widget)
+
+    def do_get_preferred_height_for_width(self, widget, width):
+        return self.do_get_preferred_height(widget)
+
     def do_render(self, context, widget, background_area, cell_area, flags):
         if not self.data:
             return
@@ -835,19 +864,19 @@ class StrengthCellRenderer(Gtk.CellRenderer):
         if widthfrac:
             paintGraph(context, widthfrac, stoplightColor(goodness), cell_area)
         if text:
-            layout = PangoCairo.create_layout(context)
-            layout.set_text(text, -1)
-
-            fd = Pango.font_description_from_string("Sans 10")
-            layout.set_font_description(fd)
-
-            w, h = layout.get_pixel_size()
-            context.move_to(cell_area.x, cell_area.y)
-            context.rel_move_to(70 - w, (height - h) / 2)
-
+            layout = self._get_layout(widget, text)
+            text_width, text_height = layout.get_pixel_size()
+            text_x = cell_area.x + max(
+                TEXT_XPAD, cell_area.width - text_width - TEXT_XPAD
+            )
+            text_y = cell_area.y + max(
+                TEXT_YPAD, (cell_area.height - text_height) / 2
+            )
+            context.move_to(text_x, text_y)
             PangoCairo.show_layout(context, layout)
 
     def do_get_size(self, widget, cell_area=None):
+        width, height = self._get_preferred_size(widget)
         return (0, 0, width, height)
 
 
@@ -871,19 +900,17 @@ def stoplightColor(x):
 def paintGraph(cairo, widthfrac, rgb, rect):
     x, y, w0, h = rect.x, rect.y, rect.width, rect.height
     w = ceil(widthfrac * w0)
+    radius = min(10.0, w / 2.0, h / 2.0)
 
     cairo.save()
     cairo.rectangle(x, y, w, h)
     cairo.clip()
-    cairo.move_to(x + 10, y)
-    cairo.rel_line_to(w - 20, 0)
-    cairo.rel_curve_to(10, 0, 10, 0, 10, 10)
-    cairo.rel_line_to(0, 3)
-    cairo.rel_curve_to(0, 10, 0, 10, -10, 10)
-    cairo.rel_line_to(-w + 20, 0)
-    cairo.rel_curve_to(-10, 0, -10, 0, -10, -10)
-    cairo.rel_line_to(0, -3)
-    cairo.rel_curve_to(0, -10, 0, -10, 10, -10)
+    cairo.new_sub_path()
+    cairo.arc(x + w - radius, y + radius, radius, -pi / 2, 0)
+    cairo.arc(x + w - radius, y + h - radius, radius, 0, pi / 2)
+    cairo.arc(x + radius, y + h - radius, radius, pi / 2, pi)
+    cairo.arc(x + radius, y + radius, radius, pi, 3 * pi / 2)
+    cairo.close_path()
     cairo.set_source_rgb(*rgb)
     cairo.fill()
     cairo.restore()
