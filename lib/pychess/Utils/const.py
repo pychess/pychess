@@ -301,7 +301,7 @@ sliders = [
 ]
 
 # Piece signs
-reprSign = ["", "P", "N", "B", "R", "Q", "K", "H", "E"]
+reprSign = ["", "P", "N", "B", "R", "Q", "K", "H", "E", "S", "F"]
 reprSignMakruk = ["", "P", "N", "S", "R", "M", "K"]
 reprSignSittuyin = ["", "P", "N", "S", "R", "F", "K"]
 chr2Sign = {

@@ -28,6 +28,9 @@ from pychess.Utils.const import (
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 
+SILVER = 9
+FERZ = 10
+
 piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
 pnames = ("Pawn", "Knight", "Bishop", "Rook", "Queen", "King")
 
@@ -51,7 +54,12 @@ def drawPiece(
     sign = PAWN if drawAsPawn else piece.sign
     all_in_one_image = False
     if variant == ASEANCHESS:
-        asean_sign = ELEPHANT if sign == BISHOP else sign
+        if sign == BISHOP:
+            asean_sign = SILVER
+        elif sign == QUEEN:
+            asean_sign = FERZ
+        else:
+            asean_sign = sign
         image = asean_svg_pieces[color][asean_sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
@@ -107,7 +115,7 @@ def drawPiece(
 
 surfaceCache = {}
 
-pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, HAWK, ELEPHANT)
+pieces = (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, HAWK, ELEPHANT, SILVER, FERZ)
 
 
 def get_svg_pieces(svgdir):
@@ -118,10 +126,10 @@ def get_svg_pieces(svgdir):
             addDataPrefix(f"pieces/{svgdir}/{svgdir}.svg")
         )
     else:
-        rsvg_handles = [[None] * 9, [None] * 9]
+        rsvg_handles = [[None] * 11, [None] * 11]
         for c, color in ((WHITE, "white"), (BLACK, "black")):
             for p in pieces:
-                if p in (HAWK, ELEPHANT) and svgdir != "merida":
+                if p in (HAWK, ELEPHANT, SILVER, FERZ) and svgdir != "merida":
                     continue
                 rsvg_handles[c][p] = Rsvg.Handle.new_from_file(
                     addDataPrefix(
