@@ -260,7 +260,10 @@ if msgfmt is not None:
             command = f"{msgfmt} lang/{dir}/{pofile}.po -o lang/{dir}/{pofile}.mo"
         subprocess.call(command.split())
         DATA_FILES += [
-            ("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])
+            (
+                "share/locale/" + dir + "/LC_MESSAGES",
+                ["lang/" + dir + "/" + pofile + ".mo"],
+            )
         ]
         pychess_langs.append(dir)
 
