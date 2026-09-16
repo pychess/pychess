@@ -80,9 +80,7 @@ class GstPlayer(Player):
         if message.type == self.Gst.MessageType.ERROR:
             self.player.set_state(self.Gst.State.NULL)
             simple_message, advanced_message = message.parse_error()
-            log.error(
-                "GStreamer error '%s': %s" % (simple_message, advanced_message)
-            )
+            log.error("GStreamer error '%s': %s" % (simple_message, advanced_message))
         elif message.type == self.Gst.MessageType.EOS:
             self.player.set_state(self.Gst.State.NULL)
         return True
