@@ -62,7 +62,9 @@ def generateLessonsSidepanel(solving_progress, learn_category_id, entries, start
 
             async def coro():
                 for file_name, title, author in entries:
-                    progress = solving_progress.get(file_name)
+                    # __getitem__ loads or initializes progress; UserDict.get
+                    # bypasses it for missing keys on Python 3.14 and later.
+                    progress = solving_progress[file_name]
                     (
                         progress_ratio_string,
                         percent,
