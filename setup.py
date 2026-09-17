@@ -211,12 +211,14 @@ if not isfile(os.path.abspath("learn/puzzles/mate_in_4.sqlite")):
         chessfile = PGNFile(protoopen(filename))
         chessfile.init_tag_database()
 
-DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.olv"))]
-DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.pgn"))]
-DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.sqlite"))]
-DATA_FILES += [("share/pychess/learn/lessons", glob("learn/lessons/*.pgn"))]
-DATA_FILES += [("share/pychess/learn/lessons", glob("learn/lessons/*.sqlite"))]
-DATA_FILES += [("share/pychess/learn/lectures", glob("learn/lectures/*.txt"))]
+LEARN_DATA_DIRS = ["puzzles", "lessons", "lectures"]
+if not msi:
+    DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.olv"))]
+    DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.pgn"))]
+    DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.sqlite"))]
+    DATA_FILES += [("share/pychess/learn/lessons", glob("learn/lessons/*.pgn"))]
+    DATA_FILES += [("share/pychess/learn/lessons", glob("learn/lessons/*.sqlite"))]
+    DATA_FILES += [("share/pychess/learn/lectures", glob("learn/lectures/*.txt"))]
 
 for dir in [d for d in listdir("pieces") if isdir(os.path.join("pieces", d))]:
     DATA_FILES += [("share/pychess/pieces/" + dir, glob("pieces/" + dir + "/*.svg"))]
@@ -307,6 +309,18 @@ if msi:
 
     # Create the list of includes as cx_freeze likes
     include_files = []
+    # cx_Freeze's build_exe path is the source of truth for files used by the
+    # frozen application.  Keep Learn data there explicitly instead of relying
+    # on setuptools' data_files handling, which is intended for normal
+    # installs and can leave the frozen application without its resources.
+    for subdir in LEARN_DATA_DIRS:
+        include_files.append(
+            (
+                os.path.join("learn", subdir),
+                os.path.join("share", "pychess", "learn", subdir),
+            )
+        )
+
     for mo in gtk_mo:
         mofile = os.path.join(lang_path, mo)
         if os.path.isfile(mofile):

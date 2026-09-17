@@ -84,6 +84,10 @@ license = { text = "GPL-3.0-or-later" }
 Do not change this to `license = "GPL-3.0-or-later"` without checking the DEB
 and RPM workflows.
 
+The Windows cx_Freeze MSI build must copy the Learn directories through
+`build_exe.include_files`; keep the normal-install `data_files` entries for
+DEB/RPM packaging.
+
 ## Git Hygiene
 
 - Do not assume ignored test artifacts are meaningful source changes. Unit tests
