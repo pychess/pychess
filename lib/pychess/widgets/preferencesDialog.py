@@ -17,7 +17,7 @@ from urllib.parse import unquote
 
 from gi.repository import Gtk, GdkPixbuf, Gdk
 
-from pychess.System.prefix import addDataPrefix
+from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils import book
@@ -171,26 +171,36 @@ LANGUAGE_NAMES = {
 def get_available_languages():
     """Return a list of (code, display_name) for shipped translations.
 
-    Scans the lang/ directory for locales that provide a message catalog.
+    Scans the source-tree and installed layouts for locales that provide a
+    message catalog. Source checkouts keep catalogs under lang/, while Unix
+    packages install them under the standard share/locale directory.
     The list is sorted by display name. The empty-string code used for
     "follow the system locale" is not included here; callers prepend it.
     """
     langs = []
-    lang_dir = addDataPrefix("lang")
-    try:
-        entries = listdir(lang_dir)
-    except OSError:
-        entries = []
-    for code in entries:
-        lc_messages = os.path.join(lang_dir, code, "LC_MESSAGES")
-        if not isdir(lc_messages):
+    language_dirs = [addDataPrefix("lang")]
+    if isInstalled():
+        language_dirs.append(os.path.join(os.path.dirname(getDataPrefix()), "locale"))
+
+    seen_codes = set()
+    for lang_dir in language_dirs:
+        try:
+            entries = listdir(lang_dir)
+        except OSError:
             continue
-        has_catalog = isfile(os.path.join(lc_messages, "pychess.mo")) or isfile(
-            os.path.join(lc_messages, "pychess.po")
-        )
-        if not has_catalog:
-            continue
-        langs.append((code, LANGUAGE_NAMES.get(code, code)))
+        for code in entries:
+            if code in seen_codes:
+                continue
+            lc_messages = os.path.join(lang_dir, code, "LC_MESSAGES")
+            if not isdir(lc_messages):
+                continue
+            has_catalog = isfile(os.path.join(lc_messages, "pychess.mo")) or isfile(
+                os.path.join(lc_messages, "pychess.po")
+            )
+            if not has_catalog:
+                continue
+            langs.append((code, LANGUAGE_NAMES.get(code, code)))
+            seen_codes.add(code)
     langs.sort(key=lambda item: item[1].lower())
     return langs
 
