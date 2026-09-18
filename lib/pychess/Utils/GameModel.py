@@ -982,10 +982,12 @@ class GameModel(GObject.GObject):
                 if self.puzzle_game and len(self.moves) % 2 == 1:
                     status, reason = getStatus(self.boards[-1])
                     self.failed_playing_best = self.check_failed_playing_best(status)
-                    if self.failed_playing_best:
-                        # print("failed_playing_best() == True -> await asyncio.sleep(1.5) ")
+                    if self.failed_playing_best and not getattr(
+                        self, "authored_move_checked", False
+                    ):
                         # It may happen that analysis had no time to fill hints with best moves
-                        # so we give him another chance with some additional time to think on it
+                        # so we give him another chance with some additional time to think on it.
+                        # Authored YACPDB validation is deterministic and needs no retry delay.
                         self.spectators[HINT].setBoard(self.boards[-2])
                         # TODO: wait for an event (analyzer PV reaching 18 ply)
                         # instead of hard coded sleep time

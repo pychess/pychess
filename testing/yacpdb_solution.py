@@ -2,7 +2,9 @@ import unittest
 
 from pychess.Savers.yacpdb_solution import (
     SolutionParseError,
+    matching_solution_children,
     parse_solution,
+    solution_nodes_after_moves,
     solution_tree_from_data,
     solution_tree_to_data,
 )
@@ -87,6 +89,45 @@ class YacpdbSolutionTest(unittest.TestCase):
         )
         self.assertEqual(
             [node.uci for node in replies["f7g7"].real_children()], ["h1a8"]
+        )
+
+    def test_runtime_frontier_follows_golden_authored_branch(self):
+        tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
+
+        key_nodes = solution_nodes_after_moves(tree, ["h6h1"])
+        self.assertEqual(len(key_nodes), 1)
+        self.assertEqual(key_nodes[0].uci, "h6h1")
+
+        defence_nodes = solution_nodes_after_moves(tree, ["h6h1", "g7g6"])
+        self.assertEqual(len(defence_nodes), 1)
+        self.assertEqual(defence_nodes[0].uci, "g7g6")
+
+        continuation_nodes = solution_nodes_after_moves(tree, ["h6h1", "g7g6", "e4g6"])
+        self.assertEqual(len(continuation_nodes), 1)
+        self.assertEqual(continuation_nodes[0].uci, "e4g6")
+
+    def test_runtime_frontier_rejects_non_authored_key(self):
+        tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
+
+        self.assertEqual(solution_nodes_after_moves(tree, ["h6h2"]), [])
+
+    def test_runtime_frontier_keeps_duplicate_authored_move_branches(self):
+        tree = solution_tree_from_data(
+            [
+                {"move": "a1a2", "children": [{"move": "h8h7"}]},
+                {"move": "a1a2", "children": [{"move": "h8g8"}]},
+            ]
+        )
+
+        matches = matching_solution_children([tree], "a1a2")
+        self.assertEqual(len(matches), 2)
+        self.assertEqual(
+            {node.uci for node in solution_nodes_after_moves(tree, ["a1a2", "h8h7"])},
+            {"h8h7"},
+        )
+        self.assertEqual(
+            {node.uci for node in solution_nodes_after_moves(tree, ["a1a2", "h8g8"])},
+            {"h8g8"},
         )
 
     def test_try_is_excluded_from_default_playable_children(self):

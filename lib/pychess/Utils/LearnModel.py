@@ -16,7 +16,12 @@ from pychess.Utils.const import (
     PUZZLE,
     ENDGAME,
 )
+from pychess.Savers.yacpdb_solution import (
+    matching_solution_children,
+    solution_nodes_after_moves,
+)
 from pychess.Utils.GameModel import GameModel
+from pychess.Utils.lutils import lmove
 
 learn2str = {
     LECTURE: "Lecture",
@@ -85,6 +90,9 @@ class LearnModel(GameModel):
         self.hints = {}
         self.goal = None
         self.failed_playing_best = False
+        self.authored_move_checked = False
+        self.authored_solution_nodes = []
+        self.authored_solution_node = None
 
         if learn_type == LECTURE:
             self.offline_lecture = True
@@ -97,6 +105,10 @@ class LearnModel(GameModel):
         elif learn_type == PUZZLE:
             self.puzzle_game = True
             self.goal = Goal(self.tags["Termination"])
+            if getattr(self, "authored_solution_tree", None) is not None:
+                self._sync_authored_solution_nodes()
+                self.connect("game_changed", self._on_authored_game_changed)
+                self.connect("moves_undone", self._on_authored_moves_undone)
 
         elif learn_type == LESSON:
             self.lesson_game = True
@@ -108,7 +120,56 @@ class LearnModel(GameModel):
         ply, move = hint
         self.hints[ply] = [(move, 10000)]
 
+    def _normalized_authored_moves(self, count=None):
+        if count is None:
+            count = len(self.moves)
+        return [
+            lmove.toAN(self.boards[index].board, self.moves[index].move, short=True)
+            for index in range(count)
+        ]
+
+    def _sync_authored_solution_nodes(self):
+        tree = getattr(self, "authored_solution_tree", None)
+        if tree is None:
+            self.authored_solution_nodes = []
+            self.authored_solution_node = None
+            return
+
+        nodes = solution_nodes_after_moves(tree, self._normalized_authored_moves())
+        self.authored_solution_nodes = nodes
+        self.authored_solution_node = nodes[0] if len(nodes) == 1 else None
+
+    def _on_authored_game_changed(self, gamemodel, ply):
+        self._sync_authored_solution_nodes()
+
+    def _on_authored_moves_undone(self, gamemodel, moves):
+        self._sync_authored_solution_nodes()
+
+    def _check_authored_solution_move(self):
+        """Validate the latest solver move against the authored tree when possible.
+
+        Return ``None`` when prior play has already left the authored tree, in
+        which case the existing engine-based Learn validation remains the
+        fallback until authored defender replies are wired in.
+        """
+        tree = getattr(self, "authored_solution_tree", None)
+        if tree is None or not self.moves:
+            return None
+
+        prefix_moves = self._normalized_authored_moves(len(self.moves) - 1)
+        nodes = solution_nodes_after_moves(tree, prefix_moves)
+        if not nodes:
+            return None
+
+        latest_move = self._normalized_authored_moves()[-1]
+        return bool(matching_solution_children(nodes, latest_move))
+
     def check_failed_playing_best(self, status):
+        self.authored_move_checked = False
+        authored_move_ok = self._check_authored_solution_move()
+        if authored_move_ok is not None:
+            self.authored_move_checked = True
+            return not authored_move_ok
         if self.ply - 1 in self.hints:
             best_score = self.hints[self.ply - 1][0][1]
             best_moves = [
@@ -148,7 +209,9 @@ class LearnModel(GameModel):
         full_moves = (self.ply - self.lowply) // 2 + 1
         # print("Is Goal not reached?", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best, self.tags, self.hints)
 
-        if (
+        authored_move_ok = not (self.authored_move_checked and self.failed_playing_best)
+
+        if authored_move_ok and (
             (
                 self.goal.result == DRAW_IN
                 and status == DRAW

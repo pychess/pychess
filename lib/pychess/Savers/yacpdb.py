@@ -160,9 +160,9 @@ class YACPDBFile(ChessFile):
         model.variations = [model.boards]
         model.status = WAITING_TO_START
 
-        # Phase D runtime handoff: the packaged tree is available on the model,
-        # but LearnModel does not consume it yet.  Gameplay therefore remains
-        # engine-driven until the authored-move integration is implemented.
+        # Runtime Learn play consumes this compiled tree for authored move
+        # validation and, in later Phase D steps, authored defender replies
+        # and hints.
         try:
             model.authored_solution_tree = solution_tree_from_data(rec["SolutionTree"])
         except ValueError as exc:

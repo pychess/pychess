@@ -108,6 +108,42 @@ class SolutionNode:
         return result
 
 
+def matching_solution_children(
+    nodes: list[SolutionNode], move: str
+) -> list[SolutionNode]:
+    """Return every authored child matching ``move`` from a node frontier.
+
+    Historical solution text can repeat the same move in separate authored
+    branches.  Keep every matching node instead of arbitrarily choosing one,
+    so later continuations remain available to runtime puzzle play.
+    """
+    matches: list[SolutionNode] = []
+    seen: set[int] = set()
+    for node in nodes:
+        for child in node.real_children():
+            if child.uci == move and id(child) not in seen:
+                matches.append(child)
+                seen.add(id(child))
+    return matches
+
+
+def solution_nodes_after_moves(
+    root: SolutionNode, moves: list[str]
+) -> list[SolutionNode]:
+    """Replay normalized moves through an authored solution tree.
+
+    An empty result means the played history has left the authored tree.
+    Multiple nodes are retained when identical authored moves occur in more
+    than one branch.
+    """
+    nodes = [root]
+    for move in moves:
+        nodes = matching_solution_children(nodes, move)
+        if not nodes:
+            break
+    return nodes
+
+
 @dataclass(frozen=True)
 class _ParsedPly:
     depth: int
