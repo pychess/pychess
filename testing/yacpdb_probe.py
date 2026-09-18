@@ -4,6 +4,7 @@ from unittest.mock import patch
 from utilities.yacpdb_probe import (
     classify,
     composer_query,
+    debug_page,
     entry_id,
     exact_position_query,
     fetch_query,
@@ -97,6 +98,28 @@ class YacpdbProbeTest(unittest.TestCase):
 
         with self.assertRaisesRegex(RuntimeError, "empty before all 3"):
             fetch_query('Author("Loyd, Samuel%")', timeout=30, all_pages=True)
+
+
+    @patch("utilities.yacpdb_probe.print")
+    def test_debug_page_reports_page_accounting_and_ids(self, mock_print):
+        debug_page(
+            query='Author("Loyd, Samuel%")',
+            page=10,
+            entries=[{"id": 901}, {"id": 947}],
+            metadata={"count": 948},
+            unusable=0,
+            cumulative_usable=947,
+            cumulative_unusable=0,
+        )
+
+        output = "\n".join(str(call.args[0]) for call in mock_print.call_args_list)
+        self.assertIn("page=10", output)
+        self.assertIn("raw=2", output)
+        self.assertIn("cumulative_usable=947", output)
+        self.assertIn("accounted=947", output)
+        self.assertIn("count=948", output)
+        self.assertIn("first=901 last=947", output)
+        self.assertIn("&p=10", output)
 
     def test_direct_mate_with_orthodox_position_and_solution_is_candidate(self):
         entry = {

@@ -105,16 +105,55 @@ def result_count(metadata: dict[str, Any]) -> int | None:
     return count if count >= 0 else None
 
 
+def debug_page(
+    *,
+    query: str,
+    page: int,
+    entries: list[dict[str, Any]],
+    metadata: dict[str, Any],
+    unusable: int,
+    cumulative_usable: int,
+    cumulative_unusable: int,
+) -> None:
+    ids = [problem_id for entry in entries if (problem_id := entry_id(entry))]
+    raw_rows = len(entries) + unusable
+    if ids:
+        id_summary = f"first={ids[0]} last={ids[-1]} min={min(ids)} max={max(ids)}"
+    else:
+        id_summary = "none"
+    print(
+        "DEBUG YACPDB "
+        f"page={page} raw={raw_rows} usable={len(entries)} unusable={unusable} "
+        f"cumulative_usable={cumulative_usable} "
+        f"cumulative_unusable={cumulative_unusable} "
+        f"accounted={cumulative_usable + cumulative_unusable} "
+        f"count={result_count(metadata)!r} ids=[{id_summary}]",
+        file=sys.stderr,
+    )
+    print(f"DEBUG YACPDB url={query_url(query, page=page)}", file=sys.stderr)
+
+
 def fetch_query(
     query: str,
     *,
     timeout: float,
     page: int = 1,
     all_pages: bool = False,
+    debug: bool = False,
 ) -> tuple[list[dict[str, Any]], dict[str, Any], int, int]:
     first_entries, metadata, unusable = fetch_query_page(
         query, page=page, timeout=timeout
     )
+    if debug:
+        debug_page(
+            query=query,
+            page=page,
+            entries=first_entries,
+            metadata=metadata,
+            unusable=unusable,
+            cumulative_usable=len(first_entries),
+            cumulative_unusable=unusable,
+        )
     if not all_pages:
         return first_entries, metadata, 1, unusable
 
@@ -140,6 +179,16 @@ def fetch_query(
         page_entries, page_metadata, page_unusable = fetch_query_page(
             query, page=page_number, timeout=timeout
         )
+        if debug:
+            debug_page(
+                query=query,
+                page=page_number,
+                entries=page_entries,
+                metadata=page_metadata,
+                unusable=page_unusable,
+                cumulative_usable=len(entries) + len(page_entries),
+                cumulative_unusable=unusable + page_unusable,
+            )
         if not page_entries and page_unusable == 0:
             raise RuntimeError(
                 f"YACPDB page {page_number} was empty before all {expected} "
@@ -358,6 +407,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--timeout", type=float, default=30.0, help="HTTP timeout in seconds"
     )
     parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="print per-page YACPDB pagination diagnostics to stderr",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         help="write selected gateway records as UTF-8 JSON for inspection",
@@ -390,6 +444,7 @@ def main(argv: list[str] | None = None) -> int:
             timeout=args.timeout,
             page=args.page,
             all_pages=args.all_pages,
+            debug=args.debug,
         )
     except RuntimeError as exc:
         print(f"error: {exc}", file=sys.stderr)
