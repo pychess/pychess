@@ -70,7 +70,7 @@ class SolutionNode:
     mark: str = ""
     is_refutation: bool = False
     declares_threat: bool = False
-    children: list["SolutionNode"] = field(default_factory=list)
+    children: list[SolutionNode] = field(default_factory=list)
 
     @property
     def is_null(self) -> bool:
@@ -80,7 +80,7 @@ class SolutionNode:
     def is_try(self) -> bool:
         return "?" in self.mark
 
-    def real_children(self, *, include_tries: bool = False) -> list["SolutionNode"]:
+    def real_children(self, *, include_tries: bool = False) -> list[SolutionNode]:
         """Return directly playable authored children, skipping null plies.
 
         Set-play branches are not playable from the initial puzzle position;
