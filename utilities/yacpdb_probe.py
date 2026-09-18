@@ -173,6 +173,9 @@ def fetch_query(
     if len(seen_ids) != len(entries):
         raise RuntimeError("YACPDB gateway returned a record without a valid ID")
     page_number = 1
+    page_capacity = len(first_entries) + unusable
+    previous_raw_rows = page_capacity
+    last_data_page = 1
 
     while len(seen_ids) + unusable < expected:
         page_number += 1
@@ -189,7 +192,13 @@ def fetch_query(
                 cumulative_usable=len(entries) + len(page_entries),
                 cumulative_unusable=unusable + page_unusable,
             )
-        if not page_entries and page_unusable == 0:
+        raw_rows = len(page_entries) + page_unusable
+        if raw_rows == 0:
+            if previous_raw_rows < page_capacity:
+                # The gateway's reported count can include records which are
+                # not actually pageable. A short page followed by an empty
+                # page is authoritative evidence that the result set ended.
+                break
             raise RuntimeError(
                 f"YACPDB page {page_number} was empty before all {expected} "
                 "records were returned"
@@ -215,6 +224,9 @@ def fetch_query(
         entries.extend(page_entries)
         seen_ids.update(new_ids)
         unusable += page_unusable
+        page_capacity = max(page_capacity, raw_rows)
+        previous_raw_rows = raw_rows
+        last_data_page = page_number
 
         page_count = result_count(page_metadata)
         if page_count is not None and page_count != expected:
@@ -224,13 +236,13 @@ def fetch_query(
             )
 
     accounted = len(seen_ids) + unusable
-    if accounted != expected:
+    if accounted != expected and previous_raw_rows >= page_capacity:
         raise RuntimeError(
             "YACPDB pagination accounting mismatch: "
             f"{len(seen_ids)} usable + {unusable} unusable rows, expected {expected}"
         )
 
-    return entries, metadata, page_number, unusable
+    return entries, metadata, last_data_page, unusable
 
 
 def entry_id(entry: dict[str, Any]) -> int | None:
@@ -449,6 +461,17 @@ def main(argv: list[str] | None = None) -> int:
     except RuntimeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
+
+    gateway_accounted = len(entries) + unusable_rows
+    expected = result_count(metadata)
+    if args.all_pages and expected is not None and gateway_accounted != expected:
+        print(
+            "warning: YACPDB reported "
+            f"{expected} matches, but pagination returned {gateway_accounted} rows "
+            f"({len(entries)} usable + {unusable_rows} unusable); "
+            "using the pageable result set",
+            file=sys.stderr,
+        )
 
     if args.max_records is not None:
         entries = entries[: args.max_records]

@@ -80,6 +80,29 @@ class YacpdbProbeTest(unittest.TestCase):
         self.assertEqual(unusable, 1)
 
     @patch("utilities.yacpdb_probe.fetch_query_page")
+    def test_fetch_query_accepts_short_final_page_despite_stale_count(
+        self, fetch_page
+    ):
+        fetch_page.side_effect = [
+            ([{"id": 1}, {"id": 2}], {"count": 4}, 0),
+            ([{"id": 3}], {"count": 4}, 0),
+            ([], {"count": 4}, 0),
+        ]
+
+        entries, metadata, pages, unusable = fetch_query(
+            'Author("Loyd, Samuel%")', timeout=30, all_pages=True
+        )
+
+        self.assertEqual([entry["id"] for entry in entries], [1, 2, 3])
+        self.assertEqual(metadata, {"count": 4})
+        self.assertEqual(pages, 2)
+        self.assertEqual(unusable, 0)
+        self.assertEqual(
+            [call.kwargs["page"] for call in fetch_page.call_args_list],
+            [1, 2, 3],
+        )
+
+    @patch("utilities.yacpdb_probe.fetch_query_page")
     def test_fetch_query_detects_repeated_page(self, fetch_page):
         fetch_page.side_effect = [
             ([{"id": 1}, {"id": 2}], {"count": 3}, 0),
