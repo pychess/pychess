@@ -128,6 +128,9 @@ class LearnInfoBar(Gtk.InfoBar):
             self.set_response_sensitive(RETRY, False)
         self.show_all()
 
+        if self.gamemodel.puzzle_game:
+            preferencesDialog.SoundTab.playAction("invalidMove")
+
     def back_to_mainline(self):
         self.clear()
         self.set_message_type(Gtk.MessageType.INFO)
