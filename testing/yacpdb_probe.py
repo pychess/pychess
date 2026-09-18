@@ -1,6 +1,15 @@
 import unittest
+from unittest.mock import patch
 
-from utilities.yacpdb_probe import classify, composer_query, entry_id
+from utilities.yacpdb_probe import (
+    classify,
+    composer_query,
+    entry_id,
+    exact_position_query,
+    fetch_query,
+    query_url,
+    result_count,
+)
 
 
 class YacpdbProbeTest(unittest.TestCase):
@@ -9,6 +18,68 @@ class YacpdbProbeTest(unittest.TestCase):
             composer_query('Doe, John "Jack"'),
             'Author("Doe, John \\"Jack\\"%")',
         )
+
+    def test_exact_position_query_matches_yacpdb_matrix_search(self):
+        self.assertEqual(
+            exact_position_query(
+                ["Ka7", "Qh6", "Be4", "Sd7", "Pe5"],
+                ["Kg8", "Rg7", "Pe7", "Pe6"],
+            ),
+            'MatrixExtended("wKa7 wQh6 wBe4 wSd7 wPe5 '
+            'bKg8 bRg7 bPe7 bPe6", false, false, "None") '
+            "AND PCount(*) = 9",
+        )
+
+    def test_query_url_uses_gateway_page_parameter_after_first_page(self):
+        first = query_url('Author("Loyd, Samuel%")', page=1)
+        second = query_url('Author("Loyd, Samuel%")', page=2)
+
+        self.assertNotIn("&p=", first)
+        self.assertIn("&p=2", second)
+
+    def test_result_count_accepts_numeric_string(self):
+        self.assertEqual(result_count({"count": "948"}), 948)
+        self.assertIsNone(result_count({"count": "not-a-number"}))
+
+    @patch("utilities.yacpdb_probe.fetch_query_page")
+    def test_fetch_query_all_pages_uses_count_and_collects_ids(self, fetch_page):
+        fetch_page.side_effect = [
+            ([{"id": 1}, {"id": 2}], {"count": 5}),
+            ([{"id": 3}, {"id": 4}], {"count": 5}),
+            ([{"id": 5}], {"count": 5}),
+        ]
+
+        entries, metadata, pages = fetch_query(
+            'Author("Loyd, Samuel%")', timeout=30, all_pages=True
+        )
+
+        self.assertEqual([entry["id"] for entry in entries], [1, 2, 3, 4, 5])
+        self.assertEqual(metadata, {"count": 5})
+        self.assertEqual(pages, 3)
+        self.assertEqual(
+            [call.kwargs["page"] for call in fetch_page.call_args_list],
+            [1, 2, 3],
+        )
+
+    @patch("utilities.yacpdb_probe.fetch_query_page")
+    def test_fetch_query_detects_repeated_page(self, fetch_page):
+        fetch_page.side_effect = [
+            ([{"id": 1}, {"id": 2}], {"count": 3}),
+            ([{"id": 1}, {"id": 2}], {"count": 3}),
+        ]
+
+        with self.assertRaisesRegex(RuntimeError, "repeated already-seen IDs"):
+            fetch_query('Author("Loyd, Samuel%")', timeout=30, all_pages=True)
+
+    @patch("utilities.yacpdb_probe.fetch_query_page")
+    def test_fetch_query_rejects_premature_empty_page(self, fetch_page):
+        fetch_page.side_effect = [
+            ([{"id": 1}, {"id": 2}], {"count": 3}),
+            ([], {"count": 3}),
+        ]
+
+        with self.assertRaisesRegex(RuntimeError, "empty before all 3"):
+            fetch_query('Author("Loyd, Samuel%")', timeout=30, all_pages=True)
 
     def test_direct_mate_with_orthodox_position_and_solution_is_candidate(self):
         entry = {

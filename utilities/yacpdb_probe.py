@@ -1,28 +1,26 @@
 #!/usr/bin/env python3
 """Probe current YACPDB data for a PyChess puzzle-corpus refresh.
 
-This is a maintainer utility. It discovers records through YACPDB's public
-Query Language gateway and then fetches the complete JSON record for every
-returned ID. It does not modify PyChess's packaged puzzle corpus.
+This is a maintainer utility. It reads complete problem records from YACPDB's
+public Query Language gateway. It does not modify PyChess's packaged puzzle
+corpus.
 
 Examples::
 
     python3 utilities/yacpdb_probe.py --composer "Loyd, Samuel"
+    python3 utilities/yacpdb_probe.py --composer "Loyd, Samuel" --all-pages
     python3 utilities/yacpdb_probe.py --query 'Id("12345")' --show 1
-    python3 utilities/yacpdb_probe.py --composer "Loyd, Samuel" \
-        --output /tmp/loyd-yacpdb.json
+    python3 utilities/yacpdb_probe.py --position \
+        "Ka7 Qh6 Be4 Sd7 Pe5" "Kg8 Rg7 Pe7 Pe6"
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import sys
-import time
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -30,17 +28,9 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 QL_URL = "https://yacpdb.org/gateway/ql"
-ENTRY_URL = "https://www.yacpdb.org/json.php"
 USER_AGENT = "PyChess YACPDB corpus probe (+https://github.com/pychess/pychess)"
 DIRECT_MATE_RE = re.compile(r"^#([1-9][0-9]*)$")
 ORTHODOX_PIECE_RE = re.compile(r"^[KQRBSP][a-h][1-8]$")
-
-
-def default_cache_dir() -> Path:
-    base = os.environ.get("XDG_CACHE_HOME")
-    if base:
-        return Path(base) / "pychess" / "yacpdb"
-    return Path.home() / ".cache" / "pychess" / "yacpdb"
 
 
 def quote_ql_string(value: str) -> str:
@@ -50,6 +40,16 @@ def quote_ql_string(value: str) -> str:
 
 def composer_query(composer: str) -> str:
     return f'Author("{quote_ql_string(composer)}%")'
+
+
+def exact_position_query(white: list[str], black: list[str]) -> str:
+    """Build the exact-position QL used by YACPDB/FEN Tool searches."""
+    pieces = [f"w{piece}" for piece in white] + [f"b{piece}" for piece in black]
+    matrix = " ".join(pieces)
+    return (
+        f'MatrixExtended("{matrix}", false, false, "None") '
+        f"AND PCount(*) = {len(pieces)}"
+    )
 
 
 def request_json(url: str, *, timeout: float) -> Any:
@@ -65,9 +65,19 @@ def request_json(url: str, *, timeout: float) -> Any:
         raise RuntimeError(f"Invalid JSON returned by {url}") from exc
 
 
-def fetch_query(query: str, *, timeout: float) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    url = f"{QL_URL}?{urlencode({'q': query})}"
-    payload = request_json(url, timeout=timeout)
+def query_url(query: str, *, page: int = 1) -> str:
+    params: dict[str, Any] = {"q": query}
+    if page != 1:
+        # YACPDB's SPA encodes result pages as .../#q/<query>/<page>; the
+        # gateway forwards the same page number as its short ``p`` parameter.
+        params["p"] = page
+    return f"{QL_URL}?{urlencode(params)}"
+
+
+def fetch_query_page(
+    query: str, *, page: int, timeout: float
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    payload = request_json(query_url(query, page=page), timeout=timeout)
     if not isinstance(payload, dict):
         raise RuntimeError("YACPDB QL response is not a JSON object")
     if not payload.get("success"):
@@ -85,6 +95,88 @@ def fetch_query(query: str, *, timeout: float) -> tuple[list[dict[str, Any]], di
     return normalized, metadata
 
 
+def result_count(metadata: dict[str, Any]) -> int | None:
+    value = metadata.get("count")
+    try:
+        count = int(value)
+    except (TypeError, ValueError):
+        return None
+    return count if count >= 0 else None
+
+
+def fetch_query(
+    query: str,
+    *,
+    timeout: float,
+    page: int = 1,
+    all_pages: bool = False,
+) -> tuple[list[dict[str, Any]], dict[str, Any], int]:
+    first_entries, metadata = fetch_query_page(query, page=page, timeout=timeout)
+    if not all_pages:
+        return first_entries, metadata, 1
+
+    if page != 1:
+        raise ValueError("all-pages queries must start at page 1")
+
+    expected = result_count(metadata)
+    if expected is None or expected <= len(first_entries):
+        return first_entries, metadata, 1
+
+    if not first_entries:
+        return first_entries, metadata, 1
+
+    entries = list(first_entries)
+    seen_ids = {problem_id for entry in entries if (problem_id := entry_id(entry))}
+    if len(seen_ids) != len(entries):
+        raise RuntimeError("YACPDB gateway returned a record without a valid ID")
+    page_number = 1
+
+    while len(seen_ids) < expected:
+        page_number += 1
+        page_entries, page_metadata = fetch_query_page(
+            query, page=page_number, timeout=timeout
+        )
+        if not page_entries:
+            raise RuntimeError(
+                f"YACPDB page {page_number} was empty before all {expected} "
+                "records were returned"
+            )
+
+        page_ids = {
+            problem_id
+            for entry in page_entries
+            if (problem_id := entry_id(entry)) is not None
+        }
+        if len(page_ids) != len(page_entries):
+            raise RuntimeError(
+                f"YACPDB page {page_number} returned a record without a valid ID"
+            )
+
+        new_ids = page_ids - seen_ids
+        if len(new_ids) != len(page_ids):
+            raise RuntimeError(
+                f"YACPDB page {page_number} repeated already-seen IDs; "
+                "gateway pagination may have changed"
+            )
+
+        entries.extend(page_entries)
+        seen_ids.update(new_ids)
+
+        page_count = result_count(page_metadata)
+        if page_count is not None and page_count != expected:
+            raise RuntimeError(
+                "YACPDB result count changed while paging "
+                f"({expected} -> {page_count})"
+            )
+
+    if len(seen_ids) != expected:
+        raise RuntimeError(
+            f"YACPDB returned {len(seen_ids)} unique records, expected {expected}"
+        )
+
+    return entries, metadata, page_number
+
+
 def entry_id(entry: dict[str, Any]) -> int | None:
     value = entry.get("id")
     try:
@@ -92,46 +184,6 @@ def entry_id(entry: dict[str, Any]) -> int | None:
     except (TypeError, ValueError):
         return None
     return number if number > 0 else None
-
-
-def load_cached_entry(cache_dir: Path, problem_id: int) -> dict[str, Any] | None:
-    path = cache_dir / f"{problem_id}.json"
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (FileNotFoundError, OSError, json.JSONDecodeError):
-        return None
-    return data if isinstance(data, dict) else None
-
-
-def save_cached_entry(cache_dir: Path, problem_id: int, entry: dict[str, Any]) -> None:
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    path = cache_dir / f"{problem_id}.json"
-    path.write_text(json.dumps(entry, ensure_ascii=False), encoding="utf-8")
-
-
-def fetch_entry(
-    problem_id: int,
-    *,
-    timeout: float,
-    cache_dir: Path,
-    refresh: bool,
-    delay: float,
-) -> tuple[dict[str, Any] | None, bool]:
-    """Return (entry, from_cache)."""
-    if not refresh:
-        cached = load_cached_entry(cache_dir, problem_id)
-        if cached is not None:
-            return cached, True
-
-    url = f"{ENTRY_URL}?{urlencode({'entry': '', 'id': problem_id})}"
-    data = request_json(url, timeout=timeout)
-    if delay:
-        time.sleep(delay)
-    if not isinstance(data, dict) or not data:
-        return None, False
-
-    save_cached_entry(cache_dir, problem_id, data)
-    return data, False
 
 
 def position_pieces(entry: dict[str, Any]) -> tuple[list[str], list[str]] | None:
@@ -204,72 +256,27 @@ def classify(entry: dict[str, Any]) -> tuple[str, ...]:
     return tuple(traits)
 
 
-def fetch_entries(
-    ids: list[int],
-    *,
-    jobs: int,
-    timeout: float,
-    cache_dir: Path,
-    refresh: bool,
-    delay: float,
-) -> tuple[list[dict[str, Any]], int, int]:
-    entries: list[dict[str, Any]] = []
-    cache_hits = 0
-    failures = 0
-
-    def one(problem_id: int) -> tuple[int, dict[str, Any] | None, bool]:
-        try:
-            entry, from_cache = fetch_entry(
-                problem_id,
-                timeout=timeout,
-                cache_dir=cache_dir,
-                refresh=refresh,
-                delay=delay,
-            )
-        except RuntimeError as exc:
-            print(f"warning: YACPDB #{problem_id}: {exc}", file=sys.stderr)
-            return problem_id, None, False
-        return problem_id, entry, from_cache
-
-    with ThreadPoolExecutor(max_workers=jobs) as pool:
-        futures = {pool.submit(one, problem_id): problem_id for problem_id in ids}
-        for future in as_completed(futures):
-            problem_id, entry, from_cache = future.result()
-            if entry is None:
-                failures += 1
-                continue
-            entry.setdefault("id", problem_id)
-            entries.append(entry)
-            cache_hits += int(from_cache)
-
-    entries.sort(key=lambda entry: entry_id(entry) or 0)
-    return entries, cache_hits, failures
-
-
 def print_summary(
     *,
     query: str,
-    gateway_entries: list[dict[str, Any]],
-    metadata: dict[str, Any],
     entries: list[dict[str, Any]],
-    cache_hits: int,
-    failures: int,
+    metadata: dict[str, Any],
+    gateway_pages: int,
     show: int,
 ) -> None:
-    ids = [problem_id for entry in gateway_entries if (problem_id := entry_id(entry))]
+    ids = [problem_id for entry in entries if (problem_id := entry_id(entry))]
     traits = Counter(trait for entry in entries for trait in classify(entry))
 
     print(f"QL query: {query}")
-    print(f"Gateway entries: {len(gateway_entries)}")
-    print(f"Gateway entries with IDs: {len(ids)}")
+    print(f"Gateway records: {len(entries)}")
+    print(f"Gateway records with IDs: {len(ids)}")
+    print(f"Gateway pages fetched: {gateway_pages}")
     if metadata:
         print("Gateway metadata:")
         print(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True))
     else:
         print("Gateway metadata: (none returned)")
-    print(f"Full records fetched: {len(entries)}")
-    print(f"Cache hits: {cache_hits}")
-    print(f"Fetch failures: {failures}")
+
     print()
     print("Record traits:")
     for trait, count in sorted(traits.items()):
@@ -310,92 +317,82 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help='composer name for a YACPDB Author(...) query, e.g. "Loyd, Samuel"',
     )
     source.add_argument("--query", help="raw YACPDB Query Language expression")
+    source.add_argument(
+        "--position",
+        nargs=2,
+        metavar=("WHITE", "BLACK"),
+        help=(
+            "exact orthodox position as two space-separated piece lists, "
+            'e.g. --position "Ka7 Qh6 Be4" "Kg8 Rg7"'
+        ),
+    )
+    parser.add_argument(
+        "--page",
+        type=int,
+        default=1,
+        help="QL result page to inspect (default: 1)",
+    )
+    parser.add_argument(
+        "--all-pages",
+        action="store_true",
+        help="walk every QL result page using the gateway result count",
+    )
     parser.add_argument(
         "--max-records",
         type=int,
         default=None,
-        help="fetch only the first N IDs (useful for a quick API probe)",
+        help="inspect only the first N records returned by the gateway",
     )
     parser.add_argument("--show", type=int, default=3, help="show N candidate samples")
-    parser.add_argument("--jobs", type=int, default=4, help="parallel full-record requests")
-    parser.add_argument("--delay", type=float, default=0.05, help="delay after each live request")
-    parser.add_argument("--timeout", type=float, default=30.0, help="HTTP timeout in seconds")
     parser.add_argument(
-        "--cache-dir",
-        type=Path,
-        default=default_cache_dir(),
-        help="full-record cache directory",
-    )
-    parser.add_argument(
-        "--refresh",
-        action="store_true",
-        help="ignore cached full records and fetch them again",
+        "--timeout", type=float, default=30.0, help="HTTP timeout in seconds"
     )
     parser.add_argument(
         "--output",
         type=Path,
-        help="write fetched full records as UTF-8 JSON for inspection",
+        help="write selected gateway records as UTF-8 JSON for inspection",
     )
     args = parser.parse_args(argv)
-    if args.jobs < 1:
-        parser.error("--jobs must be at least 1")
+    if args.page < 1:
+        parser.error("--page must be at least 1")
+    if args.all_pages and args.page != 1:
+        parser.error("--all-pages cannot be combined with --page other than 1")
     if args.max_records is not None and args.max_records < 1:
         parser.error("--max-records must be at least 1")
     if args.show < 0:
         parser.error("--show cannot be negative")
-    if args.delay < 0:
-        parser.error("--delay cannot be negative")
     return args
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    query = args.query or composer_query(args.composer)
+    if args.query:
+        query = args.query
+    elif args.composer:
+        query = composer_query(args.composer)
+    else:
+        white, black = (pieces.split() for pieces in args.position)
+        query = exact_position_query(white, black)
 
     try:
-        gateway_entries, metadata = fetch_query(query, timeout=args.timeout)
+        entries, metadata, gateway_pages = fetch_query(
+            query,
+            timeout=args.timeout,
+            page=args.page,
+            all_pages=args.all_pages,
+        )
     except RuntimeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
 
-    ids = sorted(
-        {
-            problem_id
-            for entry in gateway_entries
-            if (problem_id := entry_id(entry)) is not None
-        }
-    )
     if args.max_records is not None:
-        ids = ids[: args.max_records]
-
-    if not ids:
-        print_summary(
-            query=query,
-            gateway_entries=gateway_entries,
-            metadata=metadata,
-            entries=[],
-            cache_hits=0,
-            failures=0,
-            show=args.show,
-        )
-        return 0
-
-    entries, cache_hits, failures = fetch_entries(
-        ids,
-        jobs=args.jobs,
-        timeout=args.timeout,
-        cache_dir=args.cache_dir,
-        refresh=args.refresh,
-        delay=args.delay,
-    )
+        entries = entries[: args.max_records]
 
     print_summary(
         query=query,
-        gateway_entries=gateway_entries,
-        metadata=metadata,
         entries=entries,
-        cache_hits=cache_hits,
-        failures=failures,
+        metadata=metadata,
+        gateway_pages=gateway_pages,
         show=args.show,
     )
 
@@ -405,10 +402,8 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps(entries, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
-        print(f"\nWrote {len(entries)} full records to {args.output}")
+        print(f"\nWrote {len(entries)} gateway records to {args.output}")
 
-    if failures:
-        return 2
     return 0
 
 
