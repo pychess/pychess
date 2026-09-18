@@ -44,28 +44,45 @@ class YacpdbProbeTest(unittest.TestCase):
     @patch("utilities.yacpdb_probe.fetch_query_page")
     def test_fetch_query_all_pages_uses_count_and_collects_ids(self, fetch_page):
         fetch_page.side_effect = [
-            ([{"id": 1}, {"id": 2}], {"count": 5}),
-            ([{"id": 3}, {"id": 4}], {"count": 5}),
-            ([{"id": 5}], {"count": 5}),
+            ([{"id": 1}, {"id": 2}], {"count": 5}, 0),
+            ([{"id": 3}, {"id": 4}], {"count": 5}, 0),
+            ([{"id": 5}], {"count": 5}, 0),
         ]
 
-        entries, metadata, pages = fetch_query(
+        entries, metadata, pages, unusable = fetch_query(
             'Author("Loyd, Samuel%")', timeout=30, all_pages=True
         )
 
         self.assertEqual([entry["id"] for entry in entries], [1, 2, 3, 4, 5])
         self.assertEqual(metadata, {"count": 5})
         self.assertEqual(pages, 3)
+        self.assertEqual(unusable, 0)
         self.assertEqual(
             [call.kwargs["page"] for call in fetch_page.call_args_list],
             [1, 2, 3],
         )
 
     @patch("utilities.yacpdb_probe.fetch_query_page")
+    def test_fetch_query_counts_unusable_gateway_rows(self, fetch_page):
+        fetch_page.side_effect = [
+            ([{"id": 1}, {"id": 2}], {"count": 4}, 0),
+            ([{"id": 3}], {"count": 4}, 1),
+        ]
+
+        entries, metadata, pages, unusable = fetch_query(
+            'Author("Loyd, Samuel%")', timeout=30, all_pages=True
+        )
+
+        self.assertEqual([entry["id"] for entry in entries], [1, 2, 3])
+        self.assertEqual(metadata, {"count": 4})
+        self.assertEqual(pages, 2)
+        self.assertEqual(unusable, 1)
+
+    @patch("utilities.yacpdb_probe.fetch_query_page")
     def test_fetch_query_detects_repeated_page(self, fetch_page):
         fetch_page.side_effect = [
-            ([{"id": 1}, {"id": 2}], {"count": 3}),
-            ([{"id": 1}, {"id": 2}], {"count": 3}),
+            ([{"id": 1}, {"id": 2}], {"count": 3}, 0),
+            ([{"id": 1}, {"id": 2}], {"count": 3}, 0),
         ]
 
         with self.assertRaisesRegex(RuntimeError, "repeated already-seen IDs"):
@@ -74,8 +91,8 @@ class YacpdbProbeTest(unittest.TestCase):
     @patch("utilities.yacpdb_probe.fetch_query_page")
     def test_fetch_query_rejects_premature_empty_page(self, fetch_page):
         fetch_page.side_effect = [
-            ([{"id": 1}, {"id": 2}], {"count": 3}),
-            ([], {"count": 3}),
+            ([{"id": 1}, {"id": 2}], {"count": 3}, 0),
+            ([], {"count": 3}, 0),
         ]
 
         with self.assertRaisesRegex(RuntimeError, "empty before all 3"):

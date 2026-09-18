@@ -76,7 +76,7 @@ def query_url(query: str, *, page: int = 1) -> str:
 
 def fetch_query_page(
     query: str, *, page: int, timeout: float
-) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], dict[str, Any], int]:
     payload = request_json(query_url(query, page=page), timeout=timeout)
     if not isinstance(payload, dict):
         raise RuntimeError("YACPDB QL response is not a JSON object")
@@ -91,8 +91,9 @@ def fetch_query_page(
         raise RuntimeError("YACPDB QL response has no result.entries list")
 
     normalized = [entry for entry in entries if isinstance(entry, dict)]
+    unusable = len(entries) - len(normalized)
     metadata = {key: value for key, value in result.items() if key != "entries"}
-    return normalized, metadata
+    return normalized, metadata, unusable
 
 
 def result_count(metadata: dict[str, Any]) -> int | None:
@@ -110,20 +111,23 @@ def fetch_query(
     timeout: float,
     page: int = 1,
     all_pages: bool = False,
-) -> tuple[list[dict[str, Any]], dict[str, Any], int]:
-    first_entries, metadata = fetch_query_page(query, page=page, timeout=timeout)
+) -> tuple[list[dict[str, Any]], dict[str, Any], int, int]:
+    first_entries, metadata, unusable = fetch_query_page(
+        query, page=page, timeout=timeout
+    )
     if not all_pages:
-        return first_entries, metadata, 1
+        return first_entries, metadata, 1, unusable
 
     if page != 1:
         raise ValueError("all-pages queries must start at page 1")
 
     expected = result_count(metadata)
-    if expected is None or expected <= len(first_entries):
-        return first_entries, metadata, 1
+    accounted = len(first_entries) + unusable
+    if expected is None or expected <= accounted:
+        return first_entries, metadata, 1, unusable
 
-    if not first_entries:
-        return first_entries, metadata, 1
+    if not first_entries and unusable == 0:
+        return first_entries, metadata, 1, unusable
 
     entries = list(first_entries)
     seen_ids = {problem_id for entry in entries if (problem_id := entry_id(entry))}
@@ -131,12 +135,12 @@ def fetch_query(
         raise RuntimeError("YACPDB gateway returned a record without a valid ID")
     page_number = 1
 
-    while len(seen_ids) < expected:
+    while len(seen_ids) + unusable < expected:
         page_number += 1
-        page_entries, page_metadata = fetch_query_page(
+        page_entries, page_metadata, page_unusable = fetch_query_page(
             query, page=page_number, timeout=timeout
         )
-        if not page_entries:
+        if not page_entries and page_unusable == 0:
             raise RuntimeError(
                 f"YACPDB page {page_number} was empty before all {expected} "
                 "records were returned"
@@ -161,6 +165,7 @@ def fetch_query(
 
         entries.extend(page_entries)
         seen_ids.update(new_ids)
+        unusable += page_unusable
 
         page_count = result_count(page_metadata)
         if page_count is not None and page_count != expected:
@@ -169,12 +174,14 @@ def fetch_query(
                 f"({expected} -> {page_count})"
             )
 
-    if len(seen_ids) != expected:
+    accounted = len(seen_ids) + unusable
+    if accounted != expected:
         raise RuntimeError(
-            f"YACPDB returned {len(seen_ids)} unique records, expected {expected}"
+            "YACPDB pagination accounting mismatch: "
+            f"{len(seen_ids)} usable + {unusable} unusable rows, expected {expected}"
         )
 
-    return entries, metadata, page_number
+    return entries, metadata, page_number, unusable
 
 
 def entry_id(entry: dict[str, Any]) -> int | None:
@@ -262,6 +269,7 @@ def print_summary(
     entries: list[dict[str, Any]],
     metadata: dict[str, Any],
     gateway_pages: int,
+    unusable_rows: int,
     show: int,
 ) -> None:
     ids = [problem_id for entry in entries if (problem_id := entry_id(entry))]
@@ -271,6 +279,8 @@ def print_summary(
     print(f"Gateway records: {len(entries)}")
     print(f"Gateway records with IDs: {len(ids)}")
     print(f"Gateway pages fetched: {gateway_pages}")
+    if unusable_rows:
+        print(f"Gateway unusable rows: {unusable_rows}")
     if metadata:
         print("Gateway metadata:")
         print(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True))
@@ -375,7 +385,7 @@ def main(argv: list[str] | None = None) -> int:
         query = exact_position_query(white, black)
 
     try:
-        entries, metadata, gateway_pages = fetch_query(
+        entries, metadata, gateway_pages, unusable_rows = fetch_query(
             query,
             timeout=args.timeout,
             page=args.page,
@@ -393,6 +403,7 @@ def main(argv: list[str] | None = None) -> int:
         entries=entries,
         metadata=metadata,
         gateway_pages=gateway_pages,
+        unusable_rows=unusable_rows,
         show=args.show,
     )
 
