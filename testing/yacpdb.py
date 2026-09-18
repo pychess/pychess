@@ -5,6 +5,7 @@ import unittest
 
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers.yacpdb import FORMAT_NAME, FORMAT_VERSION, YACPDBFile
+from pychess.Savers.yacpdb_solution import playable_solution_moves
 
 
 class FakeBoard:
@@ -129,6 +130,22 @@ class YACPDBFileTest(unittest.TestCase):
 
         self.assertEqual(model.yacpdb_id, 47462)
         self.assertEqual(model.authored_solution_tree.real_children()[0].uci, "h6h1")
+
+    def test_old_manual_loyd_hint_is_available_from_authored_tree(self):
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "learn"
+            / "puzzles"
+            / "loyd.yacpdb.json"
+        )
+        with path.open(encoding="utf-8") as handle:
+            chessfile = YACPDBFile(handle)
+        rec = next(rec for rec in chessfile.games if rec["YACPDBId"] == 15311)
+        model = chessfile.loadToModel(rec, 0, FakeModel())
+
+        self.assertEqual(
+            playable_solution_moves([model.authored_solution_tree]), ["g2h1"]
+        )
 
 
 if __name__ == "__main__":

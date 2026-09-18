@@ -161,8 +161,7 @@ class YACPDBFile(ChessFile):
         model.status = WAITING_TO_START
 
         # Runtime Learn play consumes this compiled tree for authored move
-        # validation and defender replies, with authored hints wired in a later
-        # Phase D step.
+        # validation, defender replies, and hints.
         try:
             model.authored_solution_tree = solution_tree_from_data(rec["SolutionTree"])
         except ValueError as exc:

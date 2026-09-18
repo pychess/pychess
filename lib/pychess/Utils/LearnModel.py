@@ -157,11 +157,12 @@ class LearnModel(GameModel):
         self._sync_authored_solution_nodes()
 
     def _check_authored_solution_move(self):
-        """Validate the latest solver move against the authored tree when possible.
+        """Validate the latest solver move against the authored solution tree.
 
-        Return ``None`` when prior play has already left the authored tree, in
-        which case the existing engine-based Learn validation remains the
-        fallback.
+        ``None`` means this is not an authored YACPDB puzzle.  Once an authored
+        tree is present it remains the correctness oracle: an unexpected
+        off-tree prefix is treated as a failed authored line rather than
+        falling back to engine evaluation.
         """
         tree = getattr(self, "authored_solution_tree", None)
         if tree is None or not self.moves:
@@ -170,7 +171,7 @@ class LearnModel(GameModel):
         prefix_moves = self._normalized_authored_moves(len(self.moves) - 1)
         nodes = solution_nodes_after_moves(tree, prefix_moves)
         if not nodes:
-            return None
+            return False
 
         latest_move = self._normalized_authored_moves()[-1]
         return bool(matching_solution_children(nodes, latest_move))
