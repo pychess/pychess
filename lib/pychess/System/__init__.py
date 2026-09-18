@@ -26,10 +26,8 @@ async def cancel_all_tasks():
     tasks = [task for task in asyncio.all_tasks(loop) if task is not current_task]
     for task in tasks:
         task.cancel()
-        try:
-            await task
-        except asyncio.CancelledError:
-            print("task cancelled", task)
+    if tasks:
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     cleanup_tasks = [
         task for task in asyncio.all_tasks(loop) if task is not current_task
@@ -41,10 +39,8 @@ async def cancel_all_tasks():
                 task.result()
         for task in pending:
             task.cancel()
-            try:
-                await task
-            except asyncio.CancelledError:
-                print("task cancelled", task)
+        if pending:
+            await asyncio.gather(*pending, return_exceptions=True)
 
 
 async def download_file_async(url, progressbar=None):
