@@ -2,14 +2,17 @@ import unittest
 from unittest.mock import patch
 
 from utilities.yacpdb_probe import (
+    audit_solutions,
     classify,
     composer_query,
     debug_page,
+    entry_fen,
     entry_id,
     exact_position_query,
     fetch_query,
     query_url,
     result_count,
+    solution_failure_category,
 )
 
 
@@ -80,9 +83,7 @@ class YacpdbProbeTest(unittest.TestCase):
         self.assertEqual(unusable, 1)
 
     @patch("utilities.yacpdb_probe.fetch_query_page")
-    def test_fetch_query_accepts_short_final_page_despite_stale_count(
-        self, fetch_page
-    ):
+    def test_fetch_query_accepts_short_final_page_despite_stale_count(self, fetch_page):
         fetch_page.side_effect = [
             ([{"id": 1}, {"id": 2}], {"count": 4}, 0),
             ([{"id": 3}], {"count": 4}, 0),
@@ -121,7 +122,6 @@ class YacpdbProbeTest(unittest.TestCase):
 
         with self.assertRaisesRegex(RuntimeError, "empty before all 3"):
             fetch_query('Author("Loyd, Samuel%")', timeout=30, all_pages=True)
-
 
     @patch("utilities.yacpdb_probe.print")
     def test_debug_page_reports_page_accounting_and_ids(self, mock_print):
@@ -177,6 +177,56 @@ class YacpdbProbeTest(unittest.TestCase):
         }
 
         self.assertEqual(classify(entry), ("non-orthodox-piece",))
+
+    def test_entry_fen_builds_issue_1862_position(self):
+        entry = {
+            "algebraic": {
+                "white": ["Ka7", "Qh6", "Be4", "Sd7", "Pe5"],
+                "black": ["Kg8", "Rg7", "Pe7", "Pe6"],
+            }
+        }
+
+        self.assertEqual(
+            entry_fen(entry),
+            "6k1/K2Np1r1/4p2Q/4P3/4B3/8/8/8 w - - 0 1",
+        )
+
+    def test_solution_failure_category_separates_syntax_and_legality(self):
+        self.assertEqual(
+            solution_failure_category("line 1: unsupported solution syntax: 'x'"),
+            "unsupported-syntax",
+        )
+        self.assertEqual(
+            solution_failure_category("authored move 'x' is illegal at ply 2"),
+            "illegal-move",
+        )
+
+    def test_audit_solutions_counts_compiled_and_failed_candidates(self):
+        base = {
+            "stipulation": "#3",
+            "algebraic": {
+                "white": ["Ka7", "Qh6", "Be4", "Sd7", "Pe5"],
+                "black": ["Kg8", "Rg7", "Pe7", "Pe6"],
+            },
+        }
+        good = {
+            **base,
+            "id": 47462,
+            "solution": "1.Qh6-h1 !",
+        }
+        unsupported = {
+            **base,
+            "id": 47463,
+            "solution": "1.Qh1?? zz",
+        }
+
+        counts, failures = audit_solutions([good, unsupported])
+
+        self.assertEqual(counts["candidates"], 2)
+        self.assertEqual(counts["compiled"], 1)
+        self.assertEqual(counts["failed"], 1)
+        self.assertEqual(counts["unsupported-syntax"], 1)
+        self.assertEqual(failures[0][:2], (47463, "unsupported-syntax"))
 
     def test_entry_id_accepts_numeric_string(self):
         self.assertEqual(entry_id({"id": "123"}), 123)

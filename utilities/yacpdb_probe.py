@@ -12,6 +12,7 @@ Examples::
     python3 utilities/yacpdb_probe.py --query 'Id("12345")' --show 1
     python3 utilities/yacpdb_probe.py --position \
         "Ka7 Qh6 Be4 Sd7 Pe5" "Kg8 Rg7 Pe7 Pe6"
+    python3 utilities/yacpdb_probe.py --input loyd-yacpdb.json --audit-solutions
 """
 
 from __future__ import annotations
@@ -231,8 +232,7 @@ def fetch_query(
         page_count = result_count(page_metadata)
         if page_count is not None and page_count != expected:
             raise RuntimeError(
-                "YACPDB result count changed while paging "
-                f"({expected} -> {page_count})"
+                f"YACPDB result count changed while paging ({expected} -> {page_count})"
             )
 
     accounted = len(seen_ids) + unusable
@@ -324,6 +324,116 @@ def classify(entry: dict[str, Any]) -> tuple[str, ...]:
     return tuple(traits)
 
 
+def entry_fen(entry: dict[str, Any]) -> str:
+    """Build an orthodox FEN from a YACPDB algebraic position."""
+    pieces = position_pieces(entry)
+    if pieces is None:
+        raise ValueError("record has no usable algebraic position")
+
+    board: dict[str, str] = {}
+    for color, color_pieces in (("white", pieces[0]), ("black", pieces[1])):
+        for piece in color_pieces:
+            if not ORTHODOX_PIECE_RE.fullmatch(piece):
+                raise ValueError(f"unsupported {color} piece {piece!r}")
+            square = piece[1:3]
+            if square in board:
+                raise ValueError(f"duplicate piece square {square}")
+            symbol = "N" if piece[0] == "S" else piece[0]
+            board[square] = symbol if color == "white" else symbol.lower()
+
+    ranks: list[str] = []
+    for rank in range(8, 0, -1):
+        empty = 0
+        parts: list[str] = []
+        for file_name in "abcdefgh":
+            symbol = board.get(f"{file_name}{rank}")
+            if symbol is None:
+                empty += 1
+                continue
+            if empty:
+                parts.append(str(empty))
+                empty = 0
+            parts.append(symbol)
+        if empty:
+            parts.append(str(empty))
+        ranks.append("".join(parts))
+
+    return f"{'/'.join(ranks)} w - - 0 1"
+
+
+def solution_failure_category(message: str) -> str:
+    if "unsupported solution syntax" in message:
+        return "unsupported-syntax"
+    if " is illegal at ply " in message:
+        return "illegal-move"
+    if "cannot parse authored move" in message:
+        return "move-parse"
+    if "cannot attach ply" in message or "null" in message:
+        return "tree-structure"
+    return "other"
+
+
+def audit_solutions(
+    entries: list[dict[str, Any]],
+) -> tuple[Counter[str], list[tuple[int | None, str, str]]]:
+    """Compile all core candidates and categorize parser failures."""
+    repo_lib = Path(__file__).resolve().parents[1] / "lib"
+    repo_lib_text = str(repo_lib)
+    if repo_lib_text not in sys.path:
+        sys.path.insert(0, repo_lib_text)
+
+    from pychess.Savers.yacpdb_solution import SolutionParseError, parse_solution
+
+    counts: Counter[str] = Counter()
+    failures: list[tuple[int | None, str, str]] = []
+    for entry in entries:
+        if "candidate" not in classify(entry):
+            continue
+        counts["candidates"] += 1
+        try:
+            solution = entry["solution"]
+            assert isinstance(solution, str)
+            parse_solution(solution, entry_fen(entry))
+        except (SolutionParseError, ValueError) as exc:
+            category = solution_failure_category(str(exc))
+            counts["failed"] += 1
+            counts[category] += 1
+            failures.append((entry_id(entry), category, str(exc)))
+        else:
+            counts["compiled"] += 1
+
+    return counts, failures
+
+
+def print_solution_audit(entries: list[dict[str, Any]], *, show_failures: int) -> None:
+    counts, failures = audit_solutions(entries)
+    candidates = counts["candidates"]
+    compiled = counts["compiled"]
+    failed = counts["failed"]
+
+    print("\nSolution tree audit:")
+    print(f"  candidates             {candidates}")
+    print(f"  compiled               {compiled}")
+    print(f"  failed                 {failed}")
+    if candidates:
+        print(f"  success                {compiled / candidates:.1%}")
+
+    categories = [
+        (name, count)
+        for name, count in counts.items()
+        if name not in {"candidates", "compiled", "failed"}
+    ]
+    if categories:
+        print("  failure categories:")
+        for name, count in sorted(categories):
+            print(f"    {name:20} {count}")
+
+    if failures and show_failures:
+        print(f"\nParser failure samples ({min(show_failures, len(failures))}):")
+        for problem_id, category, message in failures[:show_failures]:
+            print(f"  #{problem_id or '?'} [{category}] {message}")
+
+
 def print_summary(
     *,
     query: str,
@@ -384,6 +494,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument(
+        "--input",
+        type=Path,
+        help="read previously downloaded YACPDB gateway records from JSON",
+    )
+    source.add_argument(
         "--composer",
         help='composer name for a YACPDB Author(...) query, e.g. "Loyd, Samuel"',
     )
@@ -424,6 +539,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="print per-page YACPDB pagination diagnostics to stderr",
     )
     parser.add_argument(
+        "--audit-solutions",
+        action="store_true",
+        help="compile every core candidate solution and report parser failures",
+    )
+    parser.add_argument(
+        "--show-failures",
+        type=int,
+        default=20,
+        help="show N solution-parser failures when auditing (default: 20)",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         help="write selected gateway records as UTF-8 JSON for inspection",
@@ -437,41 +563,65 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--max-records must be at least 1")
     if args.show < 0:
         parser.error("--show cannot be negative")
+    if args.show_failures < 0:
+        parser.error("--show-failures cannot be negative")
+    if args.input and (args.all_pages or args.page != 1 or args.debug):
+        parser.error("--input cannot be combined with --all-pages, --page, or --debug")
     return args
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    if args.query:
-        query = args.query
-    elif args.composer:
-        query = composer_query(args.composer)
+    if args.input:
+        query = f"input:{args.input}"
+        try:
+            payload = json.loads(args.input.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"error: cannot read {args.input}: {exc}", file=sys.stderr)
+            return 1
+        if not isinstance(payload, list) or not all(
+            isinstance(entry, dict) for entry in payload
+        ):
+            print(
+                f"error: {args.input} must contain a JSON array of problem objects",
+                file=sys.stderr,
+            )
+            return 1
+        entries = payload
+        metadata = {"count": len(entries), "source": str(args.input)}
+        gateway_pages = 0
+        unusable_rows = 0
     else:
-        white, black = (pieces.split() for pieces in args.position)
-        query = exact_position_query(white, black)
+        if args.query:
+            query = args.query
+        elif args.composer:
+            query = composer_query(args.composer)
+        else:
+            white, black = (pieces.split() for pieces in args.position)
+            query = exact_position_query(white, black)
 
-    try:
-        entries, metadata, gateway_pages, unusable_rows = fetch_query(
-            query,
-            timeout=args.timeout,
-            page=args.page,
-            all_pages=args.all_pages,
-            debug=args.debug,
-        )
-    except RuntimeError as exc:
-        print(f"error: {exc}", file=sys.stderr)
-        return 1
+        try:
+            entries, metadata, gateway_pages, unusable_rows = fetch_query(
+                query,
+                timeout=args.timeout,
+                page=args.page,
+                all_pages=args.all_pages,
+                debug=args.debug,
+            )
+        except RuntimeError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
 
-    gateway_accounted = len(entries) + unusable_rows
-    expected = result_count(metadata)
-    if args.all_pages and expected is not None and gateway_accounted != expected:
-        print(
-            "warning: YACPDB reported "
-            f"{expected} matches, but pagination returned {gateway_accounted} rows "
-            f"({len(entries)} usable + {unusable_rows} unusable); "
-            "using the pageable result set",
-            file=sys.stderr,
-        )
+        gateway_accounted = len(entries) + unusable_rows
+        expected = result_count(metadata)
+        if args.all_pages and expected is not None and gateway_accounted != expected:
+            print(
+                "warning: YACPDB reported "
+                f"{expected} matches, but pagination returned {gateway_accounted} rows "
+                f"({len(entries)} usable + {unusable_rows} unusable); "
+                "using the pageable result set",
+                file=sys.stderr,
+            )
 
     if args.max_records is not None:
         entries = entries[: args.max_records]
@@ -484,6 +634,9 @@ def main(argv: list[str] | None = None) -> int:
         unusable_rows=unusable_rows,
         show=args.show,
     )
+
+    if args.audit_solutions:
+        print_solution_audit(entries, show_failures=args.show_failures)
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
