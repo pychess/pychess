@@ -168,6 +168,49 @@ class YacpdbProbeTest(unittest.TestCase):
 
         self.assertEqual(classify(entry), ("candidate", "has-options"))
 
+    def test_none_placeholder_is_not_a_candidate_solution(self):
+        entry = {
+            "id": 3,
+            "stipulation": "#2",
+            "algebraic": {"white": ["Ka1"], "black": ["Kh8"]},
+            "solution": "None",
+        }
+
+        self.assertEqual(classify(entry), ("missing-solution",))
+
+    def test_twins_and_duplex_are_reported_and_excluded_from_core_candidates(self):
+        base = {
+            "stipulation": "#2",
+            "algebraic": {"white": ["Ka1"], "black": ["Kh8"]},
+            "solution": "1.Ka1-b1",
+        }
+        twins = {**base, "twins": {"b": "rotate 180"}}
+        duplex = {**base, "options": ["Duplex"]}
+
+        self.assertEqual(classify(twins), ("has-twins",))
+        self.assertEqual(classify(duplex), ("has-options", "has-duplex"))
+
+    def test_entry_fen_infers_castling_rights_from_home_king_and_rooks(self):
+        entry = {
+            "algebraic": {
+                "white": ["Ke1", "Ra1", "Rh1"],
+                "black": ["Ke8", "Ra8", "Rh8"],
+            }
+        }
+
+        self.assertEqual(entry_fen(entry), "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1")
+
+    def test_cooked_unsound_and_retro_records_are_not_core_candidates(self):
+        base = {
+            "stipulation": "#2",
+            "algebraic": {"white": ["Ka1"], "black": ["Kh8"]},
+            "solution": "1.Ka1-b1",
+        }
+
+        self.assertEqual(classify({**base, "keywords": ["Cooked"]}), ("cooked",))
+        self.assertEqual(classify({**base, "keywords": ["Unsound"]}), ("unsound",))
+        self.assertEqual(classify({**base, "keywords": ["Retro"]}), ("retro",))
+
     def test_fairy_piece_is_not_candidate(self):
         entry = {
             "id": 2,
@@ -217,7 +260,7 @@ class YacpdbProbeTest(unittest.TestCase):
         unsupported = {
             **base,
             "id": 47463,
-            "solution": "1.Qh1?? zz",
+            "solution": "1.Qh1/Qh2",
         }
 
         counts, failures = audit_solutions([good, unsupported])

@@ -36,23 +36,31 @@ class SolutionParseError(ValueError):
 
 _COMMENT_RE = re.compile(r"\{[^{}]*\}")
 _MOVE_HEAD_RE = re.compile(r"^(?:(?P<number>\d+)(?P<dots>\.{1,3})\s*)?(?P<body>.*)$")
-_MOVE_RE = re.compile(
+_LONG_MOVE_RE = re.compile(
     r"^(?P<move>"
-    r"(?:[KQRBSP]?[a-h][1-8][\-*][a-h][1-8](?:=[QRBS])?(?:\s+ep\.)?)"
+    r"(?:[KQRBSPNDL]?[a-h][1-8][\-*][a-h][1-8](?:=[QRBSN])?(?:\s+ep\.)?)"
     r"|(?:0-0(?:-0)?)"
-    r")(?P<tail>.*)$",
+    r")",
+    re.IGNORECASE,
+)
+_SAN_MOVE_RE = re.compile(
+    r"^(?P<move>"
+    r"(?:[KQRBSNDL]?[a-h1-8]{0,2}x?[a-h][1-8](?:=?[QRBSN])?[+#]?)"
+    r"|(?:0-0(?:-0)?)"
+    r")",
     re.IGNORECASE,
 )
 _EXPLICIT_MOVE_RE = re.compile(
-    r"^(?P<piece>[KQRBSP]?)(?P<from>[a-h][1-8])[\-*](?P<to>[a-h][1-8])"
-    r"(?:=(?P<promotion>[QRBS]))?(?:\s+ep\.)?$",
+    r"^(?P<piece>[KQRBSPNDL]?)(?P<from>[a-h][1-8])[\-*](?P<to>[a-h][1-8])"
+    r"(?:=(?P<promotion>[QRBSN]))?(?:\s+ep\.)?$",
     re.IGNORECASE,
 )
-_MARK_RE = re.compile(r"(?<!\w)(!!|\?\?|!\?|\?!|!|\?)(?!\w)")
-_MOVE_START_RE = re.compile(
-    r"(?:but:?\s*)?\d+\.{1,3}\s*(?=(?:[KQRBSP]?[a-h][1-8]|0-0))",
+_MARK_RE = re.compile(r"^(!!|\?\?|!\?|\?!|!|\?)")
+_ANNOTATION_ONLY_RE = re.compile(
+    r"^(?P<mark>!!|\?\?|!\?|\?!|!|\?)(?:\s+(?:zugzwang\.?|zz))?$",
     re.IGNORECASE,
 )
+_MOVE_START_RE = re.compile(r"(?:but:?\s*)?\d+\.{1,3}\s*", re.IGNORECASE)
 
 
 @dataclass
@@ -116,14 +124,19 @@ def _strip_comments(text: str) -> str:
 
 
 def _ply_depth(number: int, dots: str) -> int:
-    # Direct mates start with White.  Popeye prints ``1.`` for White and
-    # ``1...`` for Black.  Be liberal and treat two-or-more dots as Black.
+    # Direct mates start with White. Popeye prints ``1.`` for White and
+    # ``1...`` for Black. Be liberal and treat two-or-more dots as Black.
     return number * 2 if len(dots) >= 2 else number * 2 - 1
+
+
+def _normalize_move_number_spacing(line: str) -> str:
+    # Some historical records spell a black move as ``1. ... Kd4``.
+    return re.sub(r"\b(\d+)\.\s+\.\.\.\s*", r"\1...", line)
 
 
 def _split_move_segments(line: str) -> list[str]:
     starts = [match.start() for match in _MOVE_START_RE.finditer(line)]
-    if len(starts) <= 1:
+    if not starts or (len(starts) == 1 and starts[0] == 0):
         return [line]
     if starts[0] != 0:
         starts.insert(0, 0)
@@ -131,28 +144,165 @@ def _split_move_segments(line: str) -> list[str]:
     return [line[starts[i] : starts[i + 1]].strip() for i in range(len(starts) - 1)]
 
 
+def _with_mark(ply: _ParsedPly, mark: str) -> _ParsedPly:
+    return _ParsedPly(
+        depth=ply.depth,
+        raw=ply.raw,
+        mark=mark,
+        is_refutation=ply.is_refutation,
+        declares_threat=ply.declares_threat,
+    )
+
+
+def _with_threat(ply: _ParsedPly) -> _ParsedPly:
+    return _ParsedPly(
+        depth=ply.depth,
+        raw=ply.raw,
+        mark=ply.mark,
+        is_refutation=ply.is_refutation,
+        declares_threat=True,
+    )
+
+
+def _consume_move(text: str) -> tuple[str, str] | None:
+    match = _LONG_MOVE_RE.match(text)
+    if match is None:
+        match = _SAN_MOVE_RE.match(text)
+    if match is None:
+        return None
+    return match.group("move"), text[match.end() :]
+
+
+def _parse_move_sequence(
+    body: str,
+    *,
+    depth: int,
+    is_refutation: bool,
+    line_number: int,
+    original: str,
+) -> tuple[list[_ParsedPly], bool]:
+    """Parse one numbered move plus compact unnumbered continuations.
+
+    Older YACPDB records frequently put a whole line of play on one physical
+    line, e.g. ``1.Rd6-d4+! e5*d4 2.Qh5-c5``. Numbered moves are split before
+    this helper is called; the unnumbered replies are consumed here one ply at
+    a time. Syntax whose branching semantics are not yet represented (slashes,
+    parenthesized alternatives, prose) is rejected rather than truncated.
+    """
+    parsed: list[_ParsedPly] = []
+    text = body.strip()
+    current_depth = depth
+    refutation = is_refutation
+    pending_refutation = False
+
+    while text:
+        consumed = _consume_move(text)
+        if consumed is None:
+            raise SolutionParseError(
+                f"line {line_number}: unsupported solution syntax: {original!r}"
+            )
+        raw_move, text = consumed
+        text = text.lstrip()
+        mark = ""
+        declares_threat = False
+
+        while text:
+            mark_match = _MARK_RE.match(text)
+            if mark_match:
+                mark = mark_match.group(1)
+                text = text[mark_match.end() :].lstrip()
+                continue
+            if text.startswith("+") or text.startswith("#"):
+                text = text[1:].lstrip()
+                continue
+            lower = text.lower()
+            if lower.startswith("zugzwang."):
+                text = text[len("zugzwang.") :].lstrip()
+                continue
+            if lower.startswith("zugzwang"):
+                text = text[len("zugzwang") :].lstrip()
+                continue
+            if lower.startswith("zz") and (len(text) == 2 or text[2].isspace()):
+                text = text[2:].lstrip()
+                continue
+            if lower.startswith("threat:"):
+                declares_threat = True
+                text = text[len("threat:") :].lstrip()
+                break
+            if lower == "threat":
+                declares_threat = True
+                text = ""
+                break
+            if lower.startswith("but") and (
+                len(text) == 3 or text[3] in {":", " ", "\t"}
+            ):
+                consumed_but = 4 if len(text) > 3 and text[3] == ":" else 3
+                text = text[consumed_but:].lstrip()
+                pending_refutation = True
+                break
+            break
+
+        parsed.append(
+            _ParsedPly(
+                depth=current_depth,
+                raw=raw_move,
+                mark=mark,
+                is_refutation=refutation,
+                declares_threat=declares_threat,
+            )
+        )
+        refutation = False
+
+        if not text:
+            break
+        if text.startswith(("/", "(", "[", ",")):
+            raise SolutionParseError(
+                f"line {line_number}: unsupported solution syntax: {original!r}"
+            )
+        current_depth += 1
+
+    return parsed, pending_refutation
+
+
 def _parse_solution_lines(solution: str) -> list[_ParsedPly]:
     plies: list[_ParsedPly] = []
-    pending_threat = False
     pending_refutation = False
     solution = _strip_comments(solution)
 
     for line_number, original_line in enumerate(solution.splitlines(), 1):
-        for original in _split_move_segments(original_line.strip().strip('"')):
+        normalized_line = _normalize_move_number_spacing(
+            original_line.strip().strip('"')
+        )
+        for original in _split_move_segments(normalized_line):
             line = original.strip()
             if not line:
                 continue
 
             lower = line.lower()
-            if lower in {"threat:", "threat"}:
+            if lower.startswith("threat:") or lower == "threat":
                 if not plies:
                     raise SolutionParseError(
                         f"line {line_number}: threat marker has no preceding move"
                     )
-                pending_threat = True
-                continue
+                plies[-1] = _with_threat(plies[-1])
+                if lower == "threat":
+                    continue
+                line = line[len("threat:") :].strip()
+                if not line:
+                    continue
+                lower = line.lower()
             if lower in {"zugzwang.", "zugzwang"}:
                 continue
+
+            annotation = _ANNOTATION_ONLY_RE.fullmatch(line)
+            if annotation:
+                if not plies:
+                    raise SolutionParseError(
+                        f"line {line_number}: annotation has no preceding move"
+                    )
+                plies[-1] = _with_mark(plies[-1], annotation.group("mark"))
+                continue
+
             if lower in {"but", "but:"}:
                 pending_refutation = True
                 continue
@@ -170,20 +320,6 @@ def _parse_solution_lines(solution: str) -> list[_ParsedPly]:
             dots = head.group("dots")
             body = head.group("body").strip()
 
-            move_match = _MOVE_RE.match(body)
-            if move_match is None:
-                raise SolutionParseError(
-                    f"line {line_number}: unsupported solution syntax: "
-                    f"{original.strip()!r}"
-                )
-
-            raw_move = move_match.group("move")
-            tail = move_match.group("tail")
-            mark_match = _MARK_RE.search(tail)
-            mark = mark_match.group(1) if mark_match else ""
-            declares_threat = pending_threat or "threat:" in tail.lower()
-            pending_threat = False
-
             if number_text is None:
                 if not plies:
                     raise SolutionParseError(
@@ -194,18 +330,18 @@ def _parse_solution_lines(solution: str) -> list[_ParsedPly]:
                 assert dots is not None
                 depth = _ply_depth(int(number_text), dots)
 
-            plies.append(
-                _ParsedPly(
-                    depth=depth,
-                    raw=raw_move,
-                    mark=mark,
-                    is_refutation=is_refutation,
-                    declares_threat=declares_threat,
-                )
+            sequence, trailing_refutation = _parse_move_sequence(
+                body,
+                depth=depth,
+                is_refutation=is_refutation,
+                line_number=line_number,
+                original=original.strip(),
             )
+            plies.extend(sequence)
+            pending_refutation = trailing_refutation
 
-    if pending_threat:
-        raise SolutionParseError("solution ends immediately after a threat marker")
+    if pending_refutation:
+        raise SolutionParseError("solution ends immediately after a refutation marker")
     if not plies:
         raise SolutionParseError("solution contains no moves")
     return plies
@@ -255,16 +391,25 @@ def _unflatten(plies: list[_ParsedPly]) -> SolutionNode:
     return root
 
 
+def _normalize_san(raw: str) -> str:
+    san = raw.replace("0", "O")
+    if san and san[0] in {"S", "D", "L"}:
+        san = {"S": "N", "D": "Q", "L": "B"}[san[0]] + san[1:]
+    san = re.sub(r"([18])=?S(?=[+#]?$)", r"\1=N", san)
+    san = re.sub(r"([18])N(?=[+#]?$)", r"\1=N", san)
+    return san
+
+
 def _parse_authored_move(board: LBoard, raw: str) -> int:
     if raw.startswith("0-0"):
         return lmove.parseSAN(board, raw.replace("0", "O"))
 
     match = _EXPLICIT_MOVE_RE.match(raw)
     if match is None:
-        raise SolutionParseError(f"unsupported authored move {raw!r}")
+        return lmove.parseSAN(board, _normalize_san(raw))
 
     piece_name = match.group("piece").upper() or "P"
-    piece_name = "S" if piece_name == "N" else piece_name
+    piece_name = {"N": "S", "D": "Q", "L": "B"}.get(piece_name, piece_name)
     piece_types = {
         "K": KING,
         "Q": QUEEN,
@@ -284,7 +429,7 @@ def _parse_authored_move(board: LBoard, raw: str) -> int:
     promotion = match.group("promotion")
     suffix = ""
     if promotion:
-        suffix = {"S": "n"}.get(promotion.upper(), promotion.lower())
+        suffix = {"S": "n", "N": "n"}.get(promotion.upper(), promotion.lower())
     return lmove.parseAN(board, match.group("from") + match.group("to") + suffix)
 
 

@@ -99,5 +99,56 @@ class YacpdbSolutionTest(unittest.TestCase):
             parse_solution("1.Qh6-a6 !", ISSUE_1862_FEN)
 
 
+class YacpdbSolutionNotationTest(unittest.TestCase):
+    def test_compact_unnumbered_reply_on_same_line_is_retained(self):
+        fen = "8/8/3R4/4p2Q/5k2/6N1/5K2/8 w - - 0 1"
+        tree = parse_solution(
+            "1.Rd6-d4+! e5*d4 2.Qh5-c5 #",
+            fen,
+        )
+
+        key = tree.real_children()[0]
+        self.assertEqual(key.uci, "d6d4")
+        self.assertEqual([node.uci for node in key.real_children()], ["e5d4"])
+        self.assertEqual(
+            [node.uci for node in key.real_children()[0].real_children()],
+            ["h5c5"],
+        )
+
+    def test_short_san_and_knight_promotion_are_normalized(self):
+        fen = "8/3P4/4k3/8/8/8/8/K7 w - - 0 1"
+        tree = parse_solution("1.d8N+! Ke6-e5 2.Sd8-f7 #", fen)
+
+        key = tree.real_children()[0]
+        self.assertEqual(key.uci, "d7d8n")
+        self.assertEqual([node.uci for node in key.real_children()], ["e6e5"])
+        self.assertEqual(
+            [node.uci for node in key.real_children()[0].real_children()],
+            ["d8f7"],
+        )
+
+    def test_german_piece_alias_is_checked_against_board(self):
+        fen = "7k/8/8/8/8/8/1B6/K7 w - - 0 1"
+        tree = parse_solution("1.Lb2-f6 !", fen)
+
+        self.assertEqual([node.uci for node in tree.real_children()], ["b2f6"])
+
+    def test_separate_threat_prefix_marks_previous_move(self):
+        fen = "7k/8/8/8/8/8/1Q6/K7 w - - 0 1"
+        tree = parse_solution("1.Qb2-b1 !\nthreat: 2.Qb1-h7 #", fen)
+
+        key = tree.real_children()[0]
+        self.assertTrue(key.declares_threat)
+        self.assertEqual(key.children[0].kind, "threat")
+        self.assertEqual(
+            [node.uci for node in key.children[0].real_children()], ["b1h7"]
+        )
+
+    def test_slash_alternatives_are_rejected_instead_of_truncated(self):
+        fen = "7k/8/8/8/8/8/8/K5R1 b - - 0 1"
+        with self.assertRaisesRegex(SolutionParseError, "unsupported solution syntax"):
+            parse_solution("1...Rg8/Rf8", fen)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -270,9 +270,9 @@ def position_pieces(entry: dict[str, Any]) -> tuple[list[str], list[str]] | None
 def classify(entry: dict[str, Any]) -> tuple[str, ...]:
     """Return factual traits useful for deciding what PyChess can package.
 
-    This intentionally reports rather than guesses about YACPDB options and
-    legends. The first refresh should tell us which of those occur in otherwise
-    orthodox direct mates before we turn them into rejection rules.
+    Multi-position/role-reversed records and records explicitly marked cooked,
+    unsound, or retro are not suitable for PyChess's ordinary one-position
+    Learn puzzles and are therefore excluded from the core candidate set.
     """
     traits: list[str] = []
 
@@ -293,14 +293,34 @@ def classify(entry: dict[str, Any]) -> tuple[str, ...]:
             traits.append("black-king-count")
 
     solution = entry.get("solution")
-    if not isinstance(solution, str) or not solution.strip():
+    if (
+        not isinstance(solution, str)
+        or not solution.strip()
+        or solution.strip().lower() == "none"
+    ):
         traits.append("missing-solution")
+
+    twins = entry.get("twins")
+    if twins not in (None, {}, [], ""):
+        traits.append("has-twins")
 
     options = entry.get("options")
     if isinstance(options, list) and options:
         traits.append("has-options")
+        if any(str(option).lower() == "duplex" for option in options):
+            traits.append("has-duplex")
     elif options not in (None, [], ""):
         traits.append("has-options")
+
+    keywords = entry.get("keywords")
+    if isinstance(keywords, list):
+        normalized_keywords = {str(keyword).lower() for keyword in keywords}
+        if "cooked" in normalized_keywords:
+            traits.append("cooked")
+        if "unsound" in normalized_keywords:
+            traits.append("unsound")
+        if "retro" in normalized_keywords:
+            traits.append("retro")
 
     legend = entry.get("legend")
     if isinstance(legend, dict) and legend:
@@ -317,6 +337,11 @@ def classify(entry: dict[str, Any]) -> tuple[str, ...]:
         "white-king-count",
         "black-king-count",
         "missing-solution",
+        "has-twins",
+        "has-duplex",
+        "cooked",
+        "unsound",
+        "retro",
     }
     if not core_failures.intersection(traits):
         traits.insert(0, "candidate")
@@ -358,7 +383,26 @@ def entry_fen(entry: dict[str, Any]) -> str:
             parts.append(str(empty))
         ranks.append("".join(parts))
 
-    return f"{'/'.join(ranks)} w - - 0 1"
+    # Chess-composition convention permits castling unless it can be proved
+    # unavailable. The source records do not carry FEN move-right fields, so
+    # preserve every castling right consistent with the diagram; applying
+    # authored moves will clear rights normally afterwards.
+    castling = ""
+    white, black = pieces
+    white_set = set(white)
+    black_set = set(black)
+    if "Ke1" in white_set:
+        if "Rh1" in white_set:
+            castling += "K"
+        if "Ra1" in white_set:
+            castling += "Q"
+    if "Ke8" in black_set:
+        if "Rh8" in black_set:
+            castling += "k"
+        if "Ra8" in black_set:
+            castling += "q"
+
+    return f"{'/'.join(ranks)} w {castling or '-'} - 0 1"
 
 
 def solution_failure_category(message: str) -> str:
@@ -466,8 +510,8 @@ def print_summary(
     candidates = [entry for entry in entries if "candidate" in classify(entry)]
     print(f"\nCore PyChess candidates: {len(candidates)}")
     print(
-        "  (direct #N + orthodox 8x8 pieces + one king each + non-empty solution;"
-        " options/legend are reported but not rejected yet)"
+        "  (sound non-retro single-position non-duplex direct #N + orthodox "
+        "8x8 pieces + one king each + authored solution)"
     )
 
     for entry in candidates[:show]:
