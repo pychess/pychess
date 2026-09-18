@@ -2,6 +2,7 @@ import unittest
 
 from pychess.Savers.yacpdb_solution import (
     SolutionParseError,
+    direct_solution_children,
     matching_solution_children,
     parse_solution,
     solution_nodes_after_moves,
@@ -110,6 +111,63 @@ class YacpdbSolutionTest(unittest.TestCase):
         tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
 
         self.assertEqual(solution_nodes_after_moves(tree, ["h6h2"]), [])
+
+    def test_runtime_defender_children_do_not_expose_threat_continuation(self):
+        tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
+
+        key_nodes = solution_nodes_after_moves(tree, ["h6h1"])
+        self.assertEqual(
+            {node.uci for node in direct_solution_children(key_nodes)},
+            {"g7g6", "g7f7", "g8f7"},
+        )
+
+        threat_key_nodes = solution_nodes_after_moves(tree, ["h6h1", "g7g6", "e4g6"])
+        self.assertEqual(direct_solution_children(threat_key_nodes), [])
+        self.assertEqual(
+            [node.uci for node in threat_key_nodes[0].real_children()], ["h1h7"]
+        )
+
+    def test_runtime_frontier_consumes_omitted_threat_defence(self):
+        tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
+
+        # The authored text omits Black's reply after 2.Bxg6 because every
+        # otherwise-unlisted defence permits the same 3.Qh7# threat.
+        nodes = solution_nodes_after_moves(tree, ["h6h1", "g7g6", "e4g6", "g8h8"])
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].kind, "threat")
+
+        continuation = solution_nodes_after_moves(
+            tree, ["h6h1", "g7g6", "e4g6", "g8h8", "h1h7"]
+        )
+        self.assertEqual(len(continuation), 1)
+        self.assertEqual(continuation[0].uci, "h1h7")
+
+    def test_runtime_frontier_prefers_explicit_defence_over_threat_fallback(self):
+        tree = solution_tree_from_data(
+            [
+                {
+                    "move": "a1a2",
+                    "children": [
+                        {
+                            "kind": "threat",
+                            "children": [{"move": "b1b2"}],
+                        },
+                        {
+                            "move": "h8h7",
+                            "children": [{"move": "b1b2"}],
+                        },
+                    ],
+                }
+            ]
+        )
+
+        explicit = solution_nodes_after_moves(tree, ["a1a2", "h8h7"])
+        self.assertEqual(len(explicit), 1)
+        self.assertEqual(explicit[0].uci, "h8h7")
+
+        omitted = solution_nodes_after_moves(tree, ["a1a2", "h8g8"])
+        self.assertEqual(len(omitted), 1)
+        self.assertEqual(omitted[0].kind, "threat")
 
     def test_runtime_frontier_keeps_duplicate_authored_move_branches(self):
         tree = solution_tree_from_data(

@@ -884,9 +884,25 @@ class GameModel(GObject.GObject):
                     )
 
                     move = None
+                    if self.puzzle_game and curPlayer.__type__ == ARTIFICIAL:
+                        get_authored_move = getattr(
+                            self, "get_authored_defender_move", None
+                        )
+                        if get_authored_move is not None:
+                            move = get_authored_move()
+                            if move is not None:
+                                log.debug(
+                                    f"GameModel.run: id={id(self)}, players={str(self.players)}, self.ply={self.ply}: got authored defender move={move}"
+                                )
+                                # Keep the otherwise-idle player engine in sync
+                                # in case a later threat line needs it to supply
+                                # an omitted defensive move.
+                                curPlayer.set_board(self.boards[-1].move(move))
+
                     # if the current player is a bot, get a move from the book
                     if (
-                        curPlayer.__type__ == ARTIFICIAL
+                        move is None
+                        and curPlayer.__type__ == ARTIFICIAL
                         and book_depth_max > 0
                         and self.ply <= book_depth_max
                     ):

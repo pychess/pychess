@@ -108,6 +108,25 @@ class SolutionNode:
         return result
 
 
+def direct_solution_children(nodes: list[SolutionNode]) -> list[SolutionNode]:
+    """Return authored moves on the immediately following ply.
+
+    Unlike :meth:`SolutionNode.real_children`, this deliberately does not
+    traverse threat null nodes.  Runtime defender selection must distinguish
+    explicit authored defences from a threat continuation that follows an
+    omitted, otherwise irrelevant defensive move.
+    """
+    children: list[SolutionNode] = []
+    seen: set[int] = set()
+    for node in nodes:
+        for child in node.children:
+            if child.is_null or child.is_try or id(child) in seen:
+                continue
+            children.append(child)
+            seen.add(id(child))
+    return children
+
+
 def matching_solution_children(
     nodes: list[SolutionNode], move: str
 ) -> list[SolutionNode]:
@@ -127,18 +146,45 @@ def matching_solution_children(
     return matches
 
 
+def _matching_direct_solution_children(
+    nodes: list[SolutionNode], move: str
+) -> list[SolutionNode]:
+    return [child for child in direct_solution_children(nodes) if child.uci == move]
+
+
+def _threat_solution_nodes(nodes: list[SolutionNode]) -> list[SolutionNode]:
+    threats: list[SolutionNode] = []
+    seen: set[int] = set()
+    for node in nodes:
+        for child in node.children:
+            if child.kind == "threat" and id(child) not in seen:
+                threats.append(child)
+                seen.add(id(child))
+    return threats
+
+
 def solution_nodes_after_moves(
     root: SolutionNode, moves: list[str]
 ) -> list[SolutionNode]:
-    """Replay normalized moves through an authored solution tree.
+    """Replay normalized game moves through an authored solution tree.
 
     An empty result means the played history has left the authored tree.
     Multiple nodes are retained when identical authored moves occur in more
     than one branch.
+
+    Popeye threat notation omits an irrelevant defender ply.  On defender
+    turns, prefer an explicit authored defence; if the played legal move is not
+    one of those and the current authored node declares a threat, consume the
+    threat null node instead.  Runtime legality is still enforced by GameModel;
+    this function only maps that already-played move onto the authored tree.
     """
     nodes = [root]
-    for move in moves:
-        nodes = matching_solution_children(nodes, move)
+    for index, move in enumerate(moves):
+        if index % 2 == 1:
+            matches = _matching_direct_solution_children(nodes, move)
+            nodes = matches or _threat_solution_nodes(nodes)
+        else:
+            nodes = matching_solution_children(nodes, move)
         if not nodes:
             break
     return nodes

@@ -17,10 +17,12 @@ from pychess.Utils.const import (
     ENDGAME,
 )
 from pychess.Savers.yacpdb_solution import (
+    direct_solution_children,
     matching_solution_children,
     solution_nodes_after_moves,
 )
 from pychess.Utils.GameModel import GameModel
+from pychess.Utils.Move import parseAN
 from pychess.Utils.lutils import lmove
 
 learn2str = {
@@ -150,7 +152,7 @@ class LearnModel(GameModel):
 
         Return ``None`` when prior play has already left the authored tree, in
         which case the existing engine-based Learn validation remains the
-        fallback until authored defender replies are wired in.
+        fallback.
         """
         tree = getattr(self, "authored_solution_tree", None)
         if tree is None or not self.moves:
@@ -163,6 +165,30 @@ class LearnModel(GameModel):
 
         latest_move = self._normalized_authored_moves()[-1]
         return bool(matching_solution_children(nodes, latest_move))
+
+    def get_authored_defender_move(self):
+        """Return the next explicit authored defender move, if one exists.
+
+        Threat notation can intentionally omit the defender ply.  In that case
+        return ``None`` so the existing engine supplies a concrete legal move;
+        ``solution_nodes_after_moves`` will map that move through the authored
+        threat null node and keep subsequent solver validation on the tree.
+        """
+        tree = getattr(self, "authored_solution_tree", None)
+        if tree is None or not self.moves or len(self.moves) % 2 != 1:
+            return None
+
+        nodes = solution_nodes_after_moves(tree, self._normalized_authored_moves())
+        if not nodes:
+            return None
+
+        replies = direct_solution_children(nodes)
+        if not replies:
+            return None
+
+        reply = replies[0]
+        assert reply.uci is not None
+        return parseAN(self.boards[-1], reply.uci)
 
     def check_failed_playing_best(self, status):
         self.authored_move_checked = False
