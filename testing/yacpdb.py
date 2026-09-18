@@ -152,6 +152,7 @@ class YACPDBFileTest(unittest.TestCase):
             chessfile.loadToModel(chessfile.games[0], 0, FakeModel())
 
     def test_all_packaged_composer_collections_load(self):
+        self.assertEqual(list(PACKAGED_CORPUS_DIR.glob("*.olv")), [])
         paths = sorted(PACKAGED_CORPUS_DIR.glob("*.yacpdb.json"))
         self.assertEqual(
             {path.name for path in paths},

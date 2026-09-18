@@ -13,7 +13,6 @@ from pychess.widgets import new_notebook, mainwindow
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import WEST, SOUTH, CENTER
 from pychess.System.prefix import addUserDataPrefix
-from pychess.Savers.olv import OLVFile
 from pychess.Savers.yacpdb import YACPDBFile
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
@@ -227,11 +226,6 @@ class Learn(GObject.GObject, Perspective):
             elif filename.endswith(".yacpdb.json"):
                 stat[4] += len(progress)
                 stat[5] += progress.count(1)
-            elif filename.endswith(".olv"):
-                replacement = filename.removesuffix(".olv") + ".yacpdb.json"
-                if not os.path.isfile(addDataPrefix(f"learn/puzzles/{replacement}")):
-                    stat[4] += len(progress)
-                    stat[5] += progress.count(1)
 
         # Compute cumulative lessons solving statistics
         solving_progress = lessons_solving_progress.read_all()
@@ -264,7 +258,7 @@ class GObjectMutableMapping(GObjectMeta, ABCMeta):
 
 class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping):
     """Book keeping of puzzle/lesson solving progress
-    Each dict key is a .pgn/.olv/.yacpdb.json file name
+    Each dict key is a .pgn/.yacpdb.json file name
     Values are list of 0/1 values showing a given file puzzles solved or not
     The dict is automatically synced with corresponding puzzles.json/lessons.json files
     """
@@ -291,13 +285,6 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
             chessfile = PGNFile(protoopen(addDataPrefix(f"learn/{subdir}/{filename}")))
             chessfile.limit = 1000
             chessfile.init_tag_database()
-        elif filename.lower().endswith(".olv"):
-            chessfile = OLVFile(
-                protoopen(
-                    addDataPrefix(f"learn/{subdir}/{filename}"),
-                    encoding="utf-8",
-                )
-            )
         elif filename.lower().endswith(".yacpdb.json"):
             chessfile = YACPDBFile(
                 protoopen(

@@ -213,7 +213,6 @@ if not isfile(os.path.abspath("learn/puzzles/mate_in_4.sqlite")):
 
 LEARN_DATA_DIRS = ["puzzles", "lessons", "lectures"]
 if not msi:
-    DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.olv"))]
     DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.yacpdb.json"))]
     DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.pgn"))]
     DATA_FILES += [("share/pychess/learn/puzzles", glob("learn/puzzles/*.sqlite"))]

@@ -22,7 +22,6 @@ from pychess.perspectives import perspective_manager
 from pychess.perspectives.learn.generateLessonsSidepanel import generateLessonsSidepanel
 from pychess.perspectives.learn import lessons_solving_progress
 from pychess.perspectives.learn import puzzles_solving_progress
-from pychess.Savers.olv import OLVFile
 from pychess.Savers.yacpdb import YACPDBFile
 from pychess.Savers.pgn import PGNFile
 from pychess.System import conf
@@ -42,11 +41,6 @@ puzzles1 = []
 puzzles2 = []
 puzzles3 = []
 puzzle_files = sorted(os.listdir(path=addDataPrefix("learn/puzzles/")))
-yacpdb_collections = {
-    elem.removesuffix(".yacpdb.json")
-    for elem in puzzle_files
-    if elem.endswith(".yacpdb.json")
-}
 for elem in puzzle_files:
     if elem.startswith("lichess_study") and elem.endswith(".pgn"):
         if elem[14:31] == "lichess-practice-":
@@ -70,12 +64,6 @@ for elem in puzzle_files:
     elif elem.endswith(".yacpdb.json"):
         collection = elem.removesuffix(".yacpdb.json")
         puzzles2.append((elem, "Puzzles by %s" % collection.capitalize(), "yacpdb.org"))
-    elif elem.endswith(".olv"):
-        collection = elem.removesuffix(".olv")
-        if collection not in yacpdb_collections:
-            puzzles2.append(
-                (elem, "Puzzles by %s" % collection.capitalize(), "yacpdb.org")
-            )
     elif elem.endswith(".pgn"):
         puzzles3.append((elem, elem.split(".pgn")[0].capitalize(), _("others")))
 
@@ -95,10 +83,6 @@ def start_puzzle_from(filename, index=None):
         chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))
         chessfile.limit = 1000
         chessfile.init_tag_database()
-    elif filename.lower().endswith(".olv"):
-        chessfile = OLVFile(
-            protoopen(addDataPrefix("learn/puzzles/%s" % filename), encoding="utf-8")
-        )
     elif filename.lower().endswith(".yacpdb.json"):
         chessfile = YACPDBFile(
             protoopen(addDataPrefix("learn/puzzles/%s" % filename), encoding="utf-8")
