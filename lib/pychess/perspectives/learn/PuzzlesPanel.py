@@ -72,6 +72,9 @@ PUZZLES = puzzles0 + puzzles1 + puzzles2 + puzzles3
 # Note: Find the declaration of the class Sidepanel at the end of the file
 
 
+AUTHORED_KEY_PGNS = {"mate_in_2.pgn", "mate_in_3.pgn", "mate_in_4.pgn"}
+
+
 HINTS = {
     "r2qrbk1/5ppp/pn1p4/np2P1P1/3p4/5N2/PPB2PP1/R1BQR1K1 w - - 1 20": (38, "c2h7"),
     "3r1rk1/bpq2ppp/p1b1p3/2P5/1P2B3/P4Q2/1B3PPP/2R2RK1 w - - 3 18": (34, "e4h7"),
@@ -105,6 +108,10 @@ def start_puzzle_from(filename, index=None):
 
     try:
         chessfile.loadToModel(rec, 0, gamemodel)
+        if filename in AUTHORED_KEY_PGNS:
+            solution_model = chessfile.loadToModel(rec, gamemodel.lowply + 1)
+            if solution_model.moves:
+                gamemodel.authored_pgn_key = solution_model.moves[0].as_uci()
     finally:
         chessfile.close()
 

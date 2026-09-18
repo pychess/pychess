@@ -112,6 +112,8 @@ class LearnModel(GameModel):
                 self._sync_authored_solution_nodes()
                 self.connect("game_changed", self._on_authored_game_changed)
                 self.connect("moves_undone", self._on_authored_moves_undone)
+            elif getattr(self, "authored_pgn_key", None) is not None:
+                self.hints[self.ply] = [(self.authored_pgn_key, 10000)]
 
         elif learn_type == LESSON:
             self.lesson_game = True
@@ -200,9 +202,23 @@ class LearnModel(GameModel):
         assert reply.uci is not None
         return parseAN(self.boards[-1], reply.uci)
 
+    def _check_authored_pgn_key_move(self):
+        """Validate the first solver move against an authored PGN key.
+
+        The mate-in-2/3/4 puzzle PGNs contain a published solution mainline.
+        Its first move is authoritative, but later plies still use the existing
+        engine path because the PGN mainline may omit valid defensive branches.
+        """
+        authored_key = getattr(self, "authored_pgn_key", None)
+        if authored_key is None or len(self.moves) != 1:
+            return None
+        return self.moves[-1].as_uci() == authored_key
+
     def check_failed_playing_best(self, status):
         self.authored_move_checked = False
         authored_move_ok = self._check_authored_solution_move()
+        if authored_move_ok is None:
+            authored_move_ok = self._check_authored_pgn_key_move()
         if authored_move_ok is not None:
             self.authored_move_checked = True
             return not authored_move_ok

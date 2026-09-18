@@ -1003,7 +1003,7 @@ class GameModel(GObject.GObject):
                     ):
                         # It may happen that analysis had no time to fill hints with best moves
                         # so we give him another chance with some additional time to think on it.
-                        # Authored YACPDB validation is deterministic and needs no retry delay.
+                        # Authored validation is deterministic and needs no retry delay.
                         self.spectators[HINT].setBoard(self.boards[-2])
                         # TODO: wait for an event (analyzer PV reaching 18 ply)
                         # instead of hard coded sleep time
