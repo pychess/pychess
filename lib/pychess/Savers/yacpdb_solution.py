@@ -127,6 +127,23 @@ def direct_solution_children(nodes: list[SolutionNode]) -> list[SolutionNode]:
     return children
 
 
+def playable_solution_moves(nodes: list[SolutionNode]) -> list[str]:
+    """Return unique authored playable moves from a runtime node frontier.
+
+    Threat null nodes are traversed by :meth:`SolutionNode.real_children`, so
+    this is suitable for solver hints both on ordinary branches and after an
+    omitted threat defence.  Tries and set-play branches remain excluded.
+    """
+    moves: list[str] = []
+    seen: set[str] = set()
+    for node in nodes:
+        for child in node.real_children():
+            if child.uci is not None and child.uci not in seen:
+                moves.append(child.uci)
+                seen.add(child.uci)
+    return moves
+
+
 def matching_solution_children(
     nodes: list[SolutionNode], move: str
 ) -> list[SolutionNode]:

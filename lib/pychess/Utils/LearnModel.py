@@ -19,6 +19,7 @@ from pychess.Utils.const import (
 from pychess.Savers.yacpdb_solution import (
     direct_solution_children,
     matching_solution_children,
+    playable_solution_moves,
     solution_nodes_after_moves,
 )
 from pychess.Utils.GameModel import GameModel
@@ -140,6 +141,14 @@ class LearnModel(GameModel):
         nodes = solution_nodes_after_moves(tree, self._normalized_authored_moves())
         self.authored_solution_nodes = nodes
         self.authored_solution_node = nodes[0] if len(nodes) == 1 else None
+
+        # LearnInfoBar already consumes ``hints`` for both the Hint and Best
+        # move buttons.  Seed the current solver ply directly from the authored
+        # tree so YACPDB puzzles do not have to wait for engine analysis.
+        if len(self.moves) % 2 == 0:
+            moves = playable_solution_moves(nodes)
+            if moves:
+                self.hints[self.ply] = [(move, 10000) for move in moves]
 
     def _on_authored_game_changed(self, gamemodel, ply):
         self._sync_authored_solution_nodes()

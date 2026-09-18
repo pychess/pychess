@@ -4,6 +4,7 @@ from pychess.Savers.yacpdb_solution import (
     SolutionParseError,
     direct_solution_children,
     matching_solution_children,
+    playable_solution_moves,
     parse_solution,
     solution_nodes_after_moves,
     solution_tree_from_data,
@@ -111,6 +112,27 @@ class YacpdbSolutionTest(unittest.TestCase):
         tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
 
         self.assertEqual(solution_nodes_after_moves(tree, ["h6h2"]), [])
+
+    def test_runtime_playable_moves_supply_authored_hints(self):
+        tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
+
+        self.assertEqual(playable_solution_moves([tree]), ["h6h1"])
+
+        continuation = solution_nodes_after_moves(tree, ["h6h1", "g7g6"])
+        self.assertEqual(playable_solution_moves(continuation), ["e4g6"])
+
+        threat = solution_nodes_after_moves(tree, ["h6h1", "g7g6", "e4g6", "g8h8"])
+        self.assertEqual(playable_solution_moves(threat), ["h1h7"])
+
+    def test_runtime_playable_moves_deduplicate_repeated_authored_move(self):
+        tree = solution_tree_from_data(
+            [
+                {"move": "a1a2", "children": [{"move": "h8h7"}]},
+                {"move": "a1a2", "children": [{"move": "h8g8"}]},
+            ]
+        )
+
+        self.assertEqual(playable_solution_moves([tree]), ["a1a2"])
 
     def test_runtime_defender_children_do_not_expose_threat_continuation(self):
         tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
