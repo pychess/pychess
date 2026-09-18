@@ -178,6 +178,25 @@ class YacpdbSolutionNotationTest(unittest.TestCase):
         with self.assertRaisesRegex(SolutionParseError, "unsupported solution syntax"):
             parse_solution("1.Qh6-h1/", fen)
 
+    def test_comma_defences_are_siblings_with_shared_continuation(self):
+        fen = "3b4/8/4RR2/8/8/8/5P1P/5K1k w - - 0 1"
+        tree = parse_solution(
+            "1.Rb6! Bc7,Be7\n2.Rd6",
+            fen,
+        )
+
+        key = tree.real_children()[0]
+        self.assertEqual(key.uci, "e6b6")
+        defences = {node.uci: node for node in key.real_children()}
+        self.assertEqual(set(defences), {"d8c7", "d8e7"})
+        for defence in defences.values():
+            self.assertEqual([node.uci for node in defence.real_children()], ["b6d6"])
+
+    def test_incomplete_comma_alternative_is_rejected(self):
+        fen = "3b4/8/4RR2/8/8/8/5P1P/5K1k w - - 0 1"
+        with self.assertRaisesRegex(SolutionParseError, "unsupported solution syntax"):
+            parse_solution("1.Rb6! Bc7,", fen)
+
     def test_parenthesized_threat_uses_null_ply(self):
         fen = "K7/8/8/4Q3/8/4R3/4rN2/1N2k3 w - - 0 1"
         tree = parse_solution(

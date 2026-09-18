@@ -118,7 +118,7 @@ class _ParsedPly:
 
 @dataclass(frozen=True)
 class _ParsedGroup:
-    """Sibling authored moves written as slash-separated alternatives."""
+    """Sibling authored moves written as compact separator alternatives."""
 
     depth: int
     alternatives: tuple[_ParsedPly, ...]
@@ -356,7 +356,7 @@ def _parse_move_sequence(
                 )
             )
 
-            if not text.startswith("/"):
+            if not text.startswith(("/", ",")):
                 break
             text = text[1:].lstrip()
             if not text:
@@ -387,7 +387,7 @@ def _parse_move_sequence(
 
         if not text:
             break
-        if text.startswith(("[", ",")):
+        if text.startswith("["):
             raise SolutionParseError(
                 f"line {line_number}: unsupported solution syntax: {original!r}"
             )
