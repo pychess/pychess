@@ -230,14 +230,15 @@ def create_indexes(engine):
 
 
 def ini_schema_version(engine):
-    conn = engine.connect()
-    conn.execute(
-        schema_version.insert(),
-        [
-            {"id": 1, "version": SCHEMA_VERSION},
-        ],
-    )
-    conn.close()
+    # SQLAlchemy 2 does not autocommit statements on a plain connection.
+    # This row is also written while building the read-only Learn databases.
+    with engine.begin() as connection:
+        connection.execute(
+            schema_version.insert(),
+            [
+                {"id": 1, "version": SCHEMA_VERSION},
+            ],
+        )
 
 
 # create an empty database to use as skeleton
