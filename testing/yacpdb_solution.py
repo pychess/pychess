@@ -178,6 +178,45 @@ class YacpdbSolutionNotationTest(unittest.TestCase):
         with self.assertRaisesRegex(SolutionParseError, "unsupported solution syntax"):
             parse_solution("1.Qh6-h1/", fen)
 
+    def test_parenthesized_threat_uses_null_ply(self):
+        fen = "K7/8/8/4Q3/8/4R3/4rN2/1N2k3 w - - 0 1"
+        tree = parse_solution(
+            "1.Nd2! (2.Rxe2#)\n"
+            "   1...Kxf2 2.Qg3#\n"
+            "   1...Kxd2 2.Qc3#\n"
+            "   1...Rxe3 2.Qxe3#",
+            fen,
+        )
+
+        key = tree.real_children()[0]
+        self.assertEqual(key.uci, "b1d2")
+        self.assertTrue(key.declares_threat)
+        threat = next(child for child in key.children if child.kind == "threat")
+        self.assertEqual([node.uci for node in threat.real_children()], ["e3e2"])
+        self.assertEqual(
+            {node.uci for node in key.children if not node.is_null},
+            {"e1f2", "e1d2", "e2e3"},
+        )
+
+    def test_parenthesized_threat_retains_slash_alternatives(self):
+        fen = "8/4p3/B1Rq1p2/2pk1B2/N1R5/N7/KQ3B2/8 w - - 0 1"
+        tree = parse_solution("1.Bb7?? (2.Nb6#/R6xc5#)", fen)
+
+        key = tree.real_children(include_tries=True)[0]
+        self.assertEqual(key.uci, "a6b7")
+        self.assertTrue(key.declares_threat)
+        threat = key.children[0]
+        self.assertEqual(threat.kind, "threat")
+        self.assertEqual(
+            {node.uci for node in threat.real_children(include_tries=True)},
+            {"a4b6", "c6c5"},
+        )
+
+    def test_unclosed_parenthesized_continuation_is_rejected(self):
+        fen = "K7/8/8/4Q3/8/4R3/4rN2/1N2k3 w - - 0 1"
+        with self.assertRaisesRegex(SolutionParseError, "unsupported solution syntax"):
+            parse_solution("1.Nd2! (2.Rxe2#", fen)
+
 
 if __name__ == "__main__":
     unittest.main()

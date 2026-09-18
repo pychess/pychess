@@ -144,7 +144,20 @@ def _normalize_move_number_spacing(line: str) -> str:
 
 
 def _split_move_segments(line: str) -> list[str]:
-    starts = [match.start() for match in _MOVE_START_RE.finditer(line)]
+    paren_depth = 0
+    top_level = [True] * (len(line) + 1)
+    for index, char in enumerate(line):
+        top_level[index] = paren_depth == 0
+        if char == "(":
+            paren_depth += 1
+        elif char == ")" and paren_depth:
+            paren_depth -= 1
+
+    starts = [
+        match.start()
+        for match in _MOVE_START_RE.finditer(line)
+        if top_level[match.start()]
+    ]
     if not starts or (len(starts) == 1 and starts[0] == 0):
         return [line]
     if starts[0] != 0:
@@ -191,6 +204,73 @@ def _consume_move(text: str) -> tuple[str, str] | None:
     return match.group("move"), text[match.end() :]
 
 
+def _consume_parenthesized(text: str) -> tuple[str, str] | None:
+    """Return the contents and remainder of one balanced parenthesized suffix."""
+    if not text.startswith("("):
+        return None
+
+    depth = 0
+    for index, char in enumerate(text):
+        if char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth == 0:
+                return text[1:index].strip(), text[index + 1 :]
+    return None
+
+
+def _parse_parenthesized_continuation(
+    text: str,
+    *,
+    parent_depth: int,
+    line_number: int,
+    original: str,
+) -> tuple[list[_ParsedGroup], str]:
+    """Parse Popeye's parenthesized threat continuation after an authored move."""
+    consumed = _consume_parenthesized(text)
+    if consumed is None:
+        raise SolutionParseError(
+            f"line {line_number}: unsupported solution syntax: {original!r}"
+        )
+    contents, remainder = consumed
+    if not contents:
+        raise SolutionParseError(
+            f"line {line_number}: unsupported solution syntax: {original!r}"
+        )
+
+    head = _MOVE_HEAD_RE.fullmatch(contents)
+    assert head is not None
+    number_text = head.group("number")
+    dots = head.group("dots")
+    if number_text is None or dots is None:
+        raise SolutionParseError(
+            f"line {line_number}: parenthesized continuation has no move number: "
+            f"{original!r}"
+        )
+
+    depth = _ply_depth(int(number_text), dots)
+    if depth != parent_depth + 2:
+        raise SolutionParseError(
+            f"line {line_number}: parenthesized continuation at ply {depth} does "
+            f"not follow an omitted reply after ply {parent_depth}: {original!r}"
+        )
+
+    groups, pending_refutation = _parse_move_sequence(
+        head.group("body").strip(),
+        depth=depth,
+        is_refutation=False,
+        line_number=line_number,
+        original=original,
+    )
+    if pending_refutation:
+        raise SolutionParseError(
+            f"line {line_number}: refutation marker inside parenthesized "
+            f"continuation: {original!r}"
+        )
+    return groups, remainder
+
+
 def _parse_move_sequence(
     body: str,
     *,
@@ -205,9 +285,10 @@ def _parse_move_sequence(
     line, e.g. ``1.Rd6-d4+! e5*d4 2.Qh5-c5``. Numbered moves are split before
     this helper is called; the unnumbered replies are consumed here one ply at
     a time. Slash-separated moves at one ply are retained as sibling
-    alternatives. Other branching syntax whose semantics are not yet
-    represented (parentheses, comma alternatives, prose) is rejected rather
-    than truncated.
+    alternatives. Parenthesized continuations are retained as threat branches
+    after the omitted defensive ply. Other branching syntax whose semantics are
+    not yet represented (comma alternatives, prose) is rejected rather than
+    truncated.
     """
     groups: list[_ParsedGroup] = []
     text = body.strip()
@@ -288,9 +369,25 @@ def _parse_move_sequence(
         )
         refutation = False
 
+        if text.startswith("("):
+            groups[-1] = _map_group(groups[-1], _with_threat)
+            continuation, text = _parse_parenthesized_continuation(
+                text,
+                parent_depth=current_depth,
+                line_number=line_number,
+                original=original,
+            )
+            groups.extend(continuation)
+            text = text.lstrip()
+            if not text:
+                break
+            raise SolutionParseError(
+                f"line {line_number}: unsupported solution syntax: {original!r}"
+            )
+
         if not text:
             break
-        if text.startswith(("(", "[", ",")):
+        if text.startswith(("[", ",")):
             raise SolutionParseError(
                 f"line {line_number}: unsupported solution syntax: {original!r}"
             )
