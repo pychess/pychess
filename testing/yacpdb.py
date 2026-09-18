@@ -5,7 +5,11 @@ import unittest
 
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers.yacpdb import FORMAT_NAME, FORMAT_VERSION, YACPDBFile
-from pychess.Savers.yacpdb_solution import playable_solution_moves
+from pychess.Savers.yacpdb_solution import (
+    direct_solution_children,
+    playable_solution_moves,
+    solution_nodes_after_moves,
+)
 
 
 class FakeBoard:
@@ -59,6 +63,37 @@ def puzzle(**overrides):
 
 def open_corpus(payload):
     return YACPDBFile(io.StringIO(json.dumps(payload)))
+
+
+PACKAGED_CORPUS_DIR = Path(__file__).resolve().parents[1] / "learn" / "puzzles"
+PACKAGED_COLLECTIONS = {
+    "alekhine",
+    "baird",
+    "benko",
+    "bron",
+    "cheron",
+    "dawson",
+    "horwitz",
+    "kubbel",
+    "lasker",
+    "loyd",
+    "mansfield",
+    "reti",
+    "troicki",
+    "vukcevich",
+}
+PACKAGED_PUZZLE_COUNT = 5338
+
+
+def load_packaged_puzzle(collection, problem_id):
+    path = PACKAGED_CORPUS_DIR / f"{collection}.yacpdb.json"
+    with path.open(encoding="utf-8") as handle:
+        chessfile = YACPDBFile(handle)
+    try:
+        rec = next(rec for rec in chessfile.games if rec["YACPDBId"] == problem_id)
+        return chessfile.loadToModel(rec, 0, FakeModel())
+    finally:
+        chessfile.close()
 
 
 class YACPDBFileTest(unittest.TestCase):
@@ -116,32 +151,97 @@ class YACPDBFileTest(unittest.TestCase):
         with self.assertRaisesRegex(LoadingError, "YACPDB #42"):
             chessfile.loadToModel(chessfile.games[0], 0, FakeModel())
 
-    def test_golden_issue_1862_tree_is_available_at_runtime(self):
-        path = (
-            Path(__file__).resolve().parents[1]
-            / "learn"
-            / "puzzles"
-            / "loyd.yacpdb.json"
+    def test_all_packaged_composer_collections_load(self):
+        paths = sorted(PACKAGED_CORPUS_DIR.glob("*.yacpdb.json"))
+        self.assertEqual(
+            {path.name for path in paths},
+            {f"{collection}.yacpdb.json" for collection in PACKAGED_COLLECTIONS},
         )
-        with path.open(encoding="utf-8") as handle:
-            chessfile = YACPDBFile(handle)
-        rec = next(rec for rec in chessfile.games if rec["YACPDBId"] == 47462)
-        model = chessfile.loadToModel(rec, 0, FakeModel())
+
+        total = 0
+        for path in paths:
+            with self.subTest(collection=path.stem):
+                with path.open(encoding="utf-8") as handle:
+                    chessfile = YACPDBFile(handle)
+                try:
+                    self.assertIn(chessfile.collection, PACKAGED_COLLECTIONS)
+                    self.assertGreater(chessfile.count, 0)
+                    total += chessfile.count
+                    for rec in chessfile.games:
+                        model = chessfile.loadToModel(rec, 0, FakeModel())
+                        self.assertTrue(
+                            playable_solution_moves([model.authored_solution_tree])
+                        )
+                finally:
+                    chessfile.close()
+
+        self.assertEqual(total, PACKAGED_PUZZLE_COUNT)
+
+    def test_golden_issue_1862_tree_is_available_at_runtime(self):
+        model = load_packaged_puzzle("loyd", 47462)
+        tree = model.authored_solution_tree
 
         self.assertEqual(model.yacpdb_id, 47462)
-        self.assertEqual(model.authored_solution_tree.real_children()[0].uci, "h6h1")
+        self.assertEqual(playable_solution_moves([tree]), ["h6h1"])
+
+        key = tree.real_children()[0]
+        self.assertEqual(
+            {node.uci for node in direct_solution_children([key])},
+            {"g7g6", "g7f7", "g8f7"},
+        )
+
+        threat = solution_nodes_after_moves(tree, ["h6h1", "g7g6", "e4g6", "g8h8"])
+        self.assertEqual(len(threat), 1)
+        self.assertEqual(threat[0].kind, "threat")
+        self.assertEqual(playable_solution_moves(threat), ["h1h7"])
+
+    def test_packaged_set_play_is_retained_but_not_offered_as_the_key(self):
+        model = load_packaged_puzzle("baird", 1120)
+        tree = model.authored_solution_tree
+
+        self.assertEqual(tree.children[0].kind, "set")
+        self.assertEqual(
+            {node.uci for node in tree.children[0].real_children()},
+            {"e4e3", "e4f4"},
+        )
+        self.assertEqual(playable_solution_moves([tree]), ["c7b5"])
+
+    def test_packaged_try_is_retained_but_not_offered_as_the_key(self):
+        model = load_packaged_puzzle("baird", 1067)
+        tree = model.authored_solution_tree
+
+        self.assertEqual(playable_solution_moves([tree]), ["d1a1"])
+        self.assertEqual(
+            {node.uci for node in tree.real_children(include_tries=True)},
+            {"d1c1", "d1a1"},
+        )
+        tried = next(node for node in tree.children if node.uci == "d1c1")
+        self.assertTrue(tried.is_try)
+        self.assertEqual(
+            [node.uci for node in tried.children if node.is_refutation], ["e3d2"]
+        )
+
+    def test_packaged_promotion_continuation_is_preserved(self):
+        model = load_packaged_puzzle("baird", 1134)
+        tree = model.authored_solution_tree
+
+        nodes = solution_nodes_after_moves(tree, ["d1d2", "e5d6", "c7c8q"])
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].uci, "c7c8q")
+
+    def test_packaged_castling_keys_are_preserved(self):
+        kingside = load_packaged_puzzle("dawson", 41070)
+        queenside = load_packaged_puzzle("dawson", 41069)
+
+        self.assertEqual(
+            playable_solution_moves([kingside.authored_solution_tree]), ["O-O"]
+        )
+        self.assertEqual(
+            playable_solution_moves([queenside.authored_solution_tree]), ["O-O-O"]
+        )
 
     def test_old_manual_loyd_hint_is_available_from_authored_tree(self):
-        path = (
-            Path(__file__).resolve().parents[1]
-            / "learn"
-            / "puzzles"
-            / "loyd.yacpdb.json"
-        )
-        with path.open(encoding="utf-8") as handle:
-            chessfile = YACPDBFile(handle)
-        rec = next(rec for rec in chessfile.games if rec["YACPDBId"] == 15311)
-        model = chessfile.loadToModel(rec, 0, FakeModel())
+        model = load_packaged_puzzle("loyd", 15311)
 
         self.assertEqual(
             playable_solution_moves([model.authored_solution_tree]), ["g2h1"]
