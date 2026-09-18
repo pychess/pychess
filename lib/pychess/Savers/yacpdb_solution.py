@@ -57,6 +57,7 @@ _EXPLICIT_MOVE_RE = re.compile(
     re.IGNORECASE,
 )
 _MARK_RE = re.compile(r"^(!!|\?\?|!\?|\?!|!|\?)")
+_THEMATIC_LABEL_RE = re.compile(r"^\[[A-Za-z]\]")
 _ANNOTATION_ONLY_RE = re.compile(
     r"^(?P<mark>!!|\?\?|!\?|\?!|!|\?)(?:\s+(?:zugzwang\.?|zz))?$",
     re.IGNORECASE,
@@ -286,9 +287,9 @@ def _parse_move_sequence(
     this helper is called; the unnumbered replies are consumed here one ply at
     a time. Slash-separated moves at one ply are retained as sibling
     alternatives. Parenthesized continuations are retained as threat branches
-    after the omitted defensive ply. Other branching syntax whose semantics are
-    not yet represented (comma alternatives, prose) is rejected rather than
-    truncated.
+    after the omitted defensive ply. Single-letter bracket labels such as
+    ``[A]``/``[a]`` are thematic annotations and do not alter the move tree.
+    Other unsupported syntax is rejected rather than truncated.
     """
     groups: list[_ParsedGroup] = []
     text = body.strip()
@@ -311,6 +312,10 @@ def _parse_move_sequence(
             declares_threat = False
 
             while text:
+                label_match = _THEMATIC_LABEL_RE.match(text)
+                if label_match:
+                    text = text[label_match.end() :].lstrip()
+                    continue
                 mark_match = _MARK_RE.match(text)
                 if mark_match:
                     mark = mark_match.group(1)

@@ -197,6 +197,25 @@ class YacpdbSolutionNotationTest(unittest.TestCase):
         with self.assertRaisesRegex(SolutionParseError, "unsupported solution syntax"):
             parse_solution("1.Rb6! Bc7,", fen)
 
+    def test_single_letter_thematic_labels_do_not_change_tree(self):
+        fen = "3b4/8/4RR2/8/8/8/5P1P/5K1k w - - 0 1"
+        tree = parse_solution(
+            "1.Rb6[A]! Bc7[a],Be7[b]\n2.Rd6#[B]",
+            fen,
+        )
+
+        key = tree.real_children()[0]
+        self.assertEqual(key.uci, "e6b6")
+        defences = {node.uci: node for node in key.real_children()}
+        self.assertEqual(set(defences), {"d8c7", "d8e7"})
+        for defence in defences.values():
+            self.assertEqual([node.uci for node in defence.real_children()], ["b6d6"])
+
+    def test_non_thematic_bracket_annotation_is_still_rejected(self):
+        fen = "3b4/8/4RR2/8/8/8/5P1P/5K1k w - - 0 1"
+        with self.assertRaisesRegex(SolutionParseError, "unsupported solution syntax"):
+            parse_solution("1.Rb6[+wPa3]!", fen)
+
     def test_parenthesized_threat_uses_null_ply(self):
         fen = "K7/8/8/4Q3/8/4R3/4rN2/1N2k3 w - - 0 1"
         tree = parse_solution(
@@ -219,7 +238,7 @@ class YacpdbSolutionNotationTest(unittest.TestCase):
 
     def test_parenthesized_threat_retains_slash_alternatives(self):
         fen = "8/4p3/B1Rq1p2/2pk1B2/N1R5/N7/KQ3B2/8 w - - 0 1"
-        tree = parse_solution("1.Bb7?? (2.Nb6#/R6xc5#)", fen)
+        tree = parse_solution("1.Bb7[A]?? (2.Nb6#[A]/R6xc5#[B])", fen)
 
         key = tree.real_children(include_tries=True)[0]
         self.assertEqual(key.uci, "a6b7")
