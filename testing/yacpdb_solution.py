@@ -1,6 +1,11 @@
 import unittest
 
-from pychess.Savers.yacpdb_solution import SolutionParseError, parse_solution
+from pychess.Savers.yacpdb_solution import (
+    SolutionParseError,
+    parse_solution,
+    solution_tree_from_data,
+    solution_tree_to_data,
+)
 
 
 ISSUE_1862_FEN = "6k1/K2Np1r1/4p2Q/4P3/4B3/8/8/8 w - - 0 1"
@@ -49,6 +54,24 @@ class YacpdbSolutionTest(unittest.TestCase):
         self.assertEqual(
             [node.uci for node in bg6.children[0].real_children()], ["h1h7"]
         )
+
+    def test_packaged_tree_round_trip_preserves_authored_structure(self):
+        tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)
+
+        data = solution_tree_to_data(tree)
+        restored = solution_tree_from_data(data)
+
+        self.assertEqual(solution_tree_to_data(restored), data)
+        key = restored.real_children()[0]
+        self.assertEqual(key.uci, "h6h1")
+        self.assertEqual(
+            {node.uci for node in key.real_children()},
+            {"g7g6", "g7f7", "g8f7"},
+        )
+
+    def test_packaged_tree_rejects_invalid_normalized_move(self):
+        with self.assertRaisesRegex(ValueError, "invalid serialized move"):
+            solution_tree_from_data([{"move": "Qh1"}])
 
     def test_issue_1862_all_authored_branches_are_normalized(self):
         tree = parse_solution(ISSUE_1862_SOLUTION, ISSUE_1862_FEN)

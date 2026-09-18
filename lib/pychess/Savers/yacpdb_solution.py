@@ -612,6 +612,115 @@ def _resolve_tree(node: SolutionNode, board: LBoard) -> None:
         _resolve_tree(child, branch)
 
 
+_SERIALIZED_MOVE_RE = re.compile(r"(?:[a-h][1-8][a-h][1-8][qrbn]?|O-O(?:-O)?)$")
+_SERIALIZED_MARKS = {"!", "?", "!!", "??", "!?", "?!"}
+_SERIALIZED_NULL_KINDS = {"set", "threat", "null"}
+
+
+def solution_tree_to_data(root: SolutionNode) -> list[dict[str, object]]:
+    """Serialize a compiled tree into the packaged YACPDB JSON representation.
+
+    The synthetic root is omitted.  Real move nodes store only normalized PyChess AN
+    plus the authored annotations needed by Learn; null nodes retain their kind
+    so omitted set-play/threat plies remain explicit.  The original solution
+    text is stored once at puzzle-record level, so duplicating each raw move
+    spelling here is unnecessary.
+    """
+
+    if root.kind != "root" or root.depth != 0:
+        raise ValueError("solution tree must have a depth-0 root node")
+
+    def serialize(node: SolutionNode) -> dict[str, object]:
+        data: dict[str, object]
+        if node.is_null:
+            data = {"kind": node.kind}
+        else:
+            if node.uci is None:
+                raise ValueError("cannot serialize unresolved solution move")
+            data = {"move": node.uci}
+            if node.mark:
+                data["mark"] = node.mark
+            if node.is_refutation:
+                data["refutation"] = True
+            if node.declares_threat:
+                data["declares_threat"] = True
+
+        if node.children:
+            data["children"] = [serialize(child) for child in node.children]
+        return data
+
+    return [serialize(child) for child in root.children]
+
+
+def solution_tree_from_data(data: object) -> SolutionNode:
+    """Deserialize and validate a packaged YACPDB solution tree."""
+
+    if not isinstance(data, list):
+        raise ValueError("solution tree must be a list of root children")
+
+    def deserialize(value: object, depth: int) -> SolutionNode:
+        if not isinstance(value, dict):
+            raise ValueError("solution tree node must be an object")
+
+        kind = value.get("kind")
+        if kind is not None:
+            if kind not in _SERIALIZED_NULL_KINDS:
+                raise ValueError(f"unsupported serialized null kind {kind!r}")
+            allowed = {"kind", "children"}
+            extra = set(value) - allowed
+            if extra:
+                raise ValueError(
+                    f"unsupported serialized null fields: {sorted(extra)!r}"
+                )
+            node = SolutionNode(depth=depth, kind=kind)
+        else:
+            allowed = {
+                "move",
+                "mark",
+                "refutation",
+                "declares_threat",
+                "children",
+            }
+            extra = set(value) - allowed
+            if extra:
+                raise ValueError(
+                    f"unsupported serialized move fields: {sorted(extra)!r}"
+                )
+
+            move = value.get("move")
+            if not isinstance(move, str) or not _SERIALIZED_MOVE_RE.fullmatch(move):
+                raise ValueError(f"invalid serialized move {move!r}")
+
+            mark = value.get("mark", "")
+            if not isinstance(mark, str) or (mark and mark not in _SERIALIZED_MARKS):
+                raise ValueError(f"invalid serialized move mark {mark!r}")
+
+            refutation = value.get("refutation", False)
+            declares_threat = value.get("declares_threat", False)
+            if not isinstance(refutation, bool):
+                raise ValueError("serialized refutation flag must be boolean")
+            if not isinstance(declares_threat, bool):
+                raise ValueError("serialized declares_threat flag must be boolean")
+
+            node = SolutionNode(
+                depth=depth,
+                uci=move,
+                mark=mark,
+                is_refutation=refutation,
+                declares_threat=declares_threat,
+            )
+
+        children = value.get("children", [])
+        if not isinstance(children, list):
+            raise ValueError("serialized solution children must be a list")
+        node.children = [deserialize(child, depth + 1) for child in children]
+        return node
+
+    root = SolutionNode(depth=0, kind="root")
+    root.children = [deserialize(child, 1) for child in data]
+    return root
+
+
 def parse_solution(solution: str, fen: str) -> SolutionNode:
     """Compile Popeye solution text into a validated normalized move tree."""
     board = LBoard()
