@@ -166,10 +166,24 @@ def build_corpus(
 
 def write_corpus(path: Path, corpus: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(corpus, ensure_ascii=False, separators=(",", ":")) + "\n",
-        encoding="utf-8",
-    )
+
+    # Keep each puzzle on its own line.  The representation remains compact, but
+    # a future YACPDB refresh can then produce a useful Git diff instead of
+    # replacing one multi-megabyte JSON line for the whole composer collection.
+    header = {key: value for key, value in corpus.items() if key != "puzzles"}
+    puzzles = corpus.get("puzzles")
+    if not isinstance(puzzles, list):
+        raise ValueError("corpus puzzles must be a list")
+
+    prefix = json.dumps(header, ensure_ascii=False, separators=(",", ":"))
+    lines = [prefix[:-1] + ',"puzzles":[']
+    for index, puzzle in enumerate(puzzles):
+        suffix = "," if index + 1 < len(puzzles) else ""
+        lines.append(
+            json.dumps(puzzle, ensure_ascii=False, separators=(",", ":")) + suffix
+        )
+    lines.append("]}")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

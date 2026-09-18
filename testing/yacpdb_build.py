@@ -80,6 +80,7 @@ class YacpdbBuildTest(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertTrue(first.endswith(b"\n"))
         self.assertNotIn(b": ", first)
+        self.assertEqual(first.count(b"\n"), len(corpus["puzzles"]) + 2)
         decoded = json.loads(first)
         self.assertEqual(decoded, corpus)
 
