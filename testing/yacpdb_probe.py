@@ -260,7 +260,7 @@ class YacpdbProbeTest(unittest.TestCase):
         unsupported = {
             **base,
             "id": 47463,
-            "solution": "1.Qh1/Qh2",
+            "solution": "1.Qh6-h1 (2.Qh1-h7#)",
         }
 
         counts, failures = audit_solutions([good, unsupported])

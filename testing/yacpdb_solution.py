@@ -144,10 +144,39 @@ class YacpdbSolutionNotationTest(unittest.TestCase):
             [node.uci for node in key.children[0].real_children()], ["b1h7"]
         )
 
-    def test_slash_alternatives_are_rejected_instead_of_truncated(self):
-        fen = "7k/8/8/8/8/8/8/K5R1 b - - 0 1"
+    def test_slash_defences_are_siblings_with_shared_continuation(self):
+        fen = "8/1p2PQp1/3k4/p6p/K1Pp1p2/1P5P/P2q4/8 w - - 0 1"
+        tree = parse_solution(
+            "1.e8N+!\n1...Kc6/Kc5 2.Qc7#",
+            fen,
+        )
+
+        key = tree.real_children()[0]
+        self.assertEqual(key.uci, "e7e8n")
+        defences = {node.uci: node for node in key.real_children()}
+        self.assertEqual(set(defences), {"d6c6", "d6c5"})
+        for defence in defences.values():
+            self.assertEqual([node.uci for node in defence.real_children()], ["f7c7"])
+
+    def test_slash_continuations_are_siblings_under_each_shared_parent(self):
+        fen = "4Q3/4PPr1/6k1/6P1/5pPp/8/q5n1/5b1K w - - 0 1"
+        tree = parse_solution(
+            "1...Rg8 2.Qxg8#/fxg8Q#",
+            fen,
+        )
+
+        set_play = tree.children[0]
+        defence = set_play.real_children()[0]
+        self.assertEqual(defence.uci, "g7g8")
+        self.assertEqual(
+            {node.uci for node in defence.real_children()},
+            {"e8g8", "f7g8q"},
+        )
+
+    def test_incomplete_slash_alternative_is_rejected(self):
+        fen = "6k1/K2Np1r1/4p2Q/4P3/4B3/8/8/8 w - - 0 1"
         with self.assertRaisesRegex(SolutionParseError, "unsupported solution syntax"):
-            parse_solution("1...Rg8/Rf8", fen)
+            parse_solution("1.Qh6-h1/", fen)
 
 
 if __name__ == "__main__":

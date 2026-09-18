@@ -12,6 +12,7 @@ structure without ever exposing the null node as a playable move.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 import re
 
@@ -115,6 +116,14 @@ class _ParsedPly:
     declares_threat: bool
 
 
+@dataclass(frozen=True)
+class _ParsedGroup:
+    """Sibling authored moves written as slash-separated alternatives."""
+
+    depth: int
+    alternatives: tuple[_ParsedPly, ...]
+
+
 def _strip_comments(text: str) -> str:
     previous = None
     while previous != text:
@@ -164,6 +173,15 @@ def _with_threat(ply: _ParsedPly) -> _ParsedPly:
     )
 
 
+def _map_group(
+    group: _ParsedGroup, transform: Callable[[_ParsedPly], _ParsedPly]
+) -> _ParsedGroup:
+    return _ParsedGroup(
+        depth=group.depth,
+        alternatives=tuple(transform(ply) for ply in group.alternatives),
+    )
+
+
 def _consume_move(text: str) -> tuple[str, str] | None:
     match = _LONG_MOVE_RE.match(text)
     if match is None:
@@ -180,92 +198,109 @@ def _parse_move_sequence(
     is_refutation: bool,
     line_number: int,
     original: str,
-) -> tuple[list[_ParsedPly], bool]:
+) -> tuple[list[_ParsedGroup], bool]:
     """Parse one numbered move plus compact unnumbered continuations.
 
     Older YACPDB records frequently put a whole line of play on one physical
     line, e.g. ``1.Rd6-d4+! e5*d4 2.Qh5-c5``. Numbered moves are split before
     this helper is called; the unnumbered replies are consumed here one ply at
-    a time. Syntax whose branching semantics are not yet represented (slashes,
-    parenthesized alternatives, prose) is rejected rather than truncated.
+    a time. Slash-separated moves at one ply are retained as sibling
+    alternatives. Other branching syntax whose semantics are not yet
+    represented (parentheses, comma alternatives, prose) is rejected rather
+    than truncated.
     """
-    parsed: list[_ParsedPly] = []
+    groups: list[_ParsedGroup] = []
     text = body.strip()
     current_depth = depth
     refutation = is_refutation
     pending_refutation = False
 
     while text:
-        consumed = _consume_move(text)
-        if consumed is None:
-            raise SolutionParseError(
-                f"line {line_number}: unsupported solution syntax: {original!r}"
-            )
-        raw_move, text = consumed
-        text = text.lstrip()
-        mark = ""
-        declares_threat = False
+        alternatives: list[_ParsedPly] = []
 
-        while text:
-            mark_match = _MARK_RE.match(text)
-            if mark_match:
-                mark = mark_match.group(1)
-                text = text[mark_match.end() :].lstrip()
-                continue
-            if text.startswith("+") or text.startswith("#"):
-                text = text[1:].lstrip()
-                continue
-            lower = text.lower()
-            if lower.startswith("zugzwang."):
-                text = text[len("zugzwang.") :].lstrip()
-                continue
-            if lower.startswith("zugzwang"):
-                text = text[len("zugzwang") :].lstrip()
-                continue
-            if lower.startswith("zz") and (len(text) == 2 or text[2].isspace()):
-                text = text[2:].lstrip()
-                continue
-            if lower.startswith("threat:"):
-                declares_threat = True
-                text = text[len("threat:") :].lstrip()
-                break
-            if lower == "threat":
-                declares_threat = True
-                text = ""
-                break
-            if lower.startswith("but") and (
-                len(text) == 3 or text[3] in {":", " ", "\t"}
-            ):
-                consumed_but = 4 if len(text) > 3 and text[3] == ":" else 3
-                text = text[consumed_but:].lstrip()
-                pending_refutation = True
-                break
-            break
+        while True:
+            consumed = _consume_move(text)
+            if consumed is None:
+                raise SolutionParseError(
+                    f"line {line_number}: unsupported solution syntax: {original!r}"
+                )
+            raw_move, text = consumed
+            text = text.lstrip()
+            mark = ""
+            declares_threat = False
 
-        parsed.append(
-            _ParsedPly(
-                depth=current_depth,
-                raw=raw_move,
-                mark=mark,
-                is_refutation=refutation,
-                declares_threat=declares_threat,
+            while text:
+                mark_match = _MARK_RE.match(text)
+                if mark_match:
+                    mark = mark_match.group(1)
+                    text = text[mark_match.end() :].lstrip()
+                    continue
+                if text.startswith("+") or text.startswith("#"):
+                    text = text[1:].lstrip()
+                    continue
+                lower = text.lower()
+                if lower.startswith("zugzwang."):
+                    text = text[len("zugzwang.") :].lstrip()
+                    continue
+                if lower.startswith("zugzwang"):
+                    text = text[len("zugzwang") :].lstrip()
+                    continue
+                if lower.startswith("zz") and (len(text) == 2 or text[2].isspace()):
+                    text = text[2:].lstrip()
+                    continue
+                if lower.startswith("threat:"):
+                    declares_threat = True
+                    text = text[len("threat:") :].lstrip()
+                    break
+                if lower == "threat":
+                    declares_threat = True
+                    text = ""
+                    break
+                if lower.startswith("but") and (
+                    len(text) == 3 or text[3] in {":", " ", "\t"}
+                ):
+                    consumed_but = 4 if len(text) > 3 and text[3] == ":" else 3
+                    text = text[consumed_but:].lstrip()
+                    pending_refutation = True
+                    break
+                break
+
+            alternatives.append(
+                _ParsedPly(
+                    depth=current_depth,
+                    raw=raw_move,
+                    mark=mark,
+                    is_refutation=refutation,
+                    declares_threat=declares_threat,
+                )
             )
+
+            if not text.startswith("/"):
+                break
+            text = text[1:].lstrip()
+            if not text:
+                raise SolutionParseError(
+                    f"line {line_number}: unsupported solution syntax: {original!r}"
+                )
+
+        groups.append(
+            _ParsedGroup(depth=current_depth, alternatives=tuple(alternatives))
         )
         refutation = False
 
         if not text:
             break
-        if text.startswith(("/", "(", "[", ",")):
+        if text.startswith(("(", "[", ",")):
             raise SolutionParseError(
                 f"line {line_number}: unsupported solution syntax: {original!r}"
             )
         current_depth += 1
 
-    return parsed, pending_refutation
+    return groups, pending_refutation
 
 
-def _parse_solution_lines(solution: str) -> list[_ParsedPly]:
-    plies: list[_ParsedPly] = []
+def _parse_solution_lines(solution: str) -> list[_ParsedGroup]:
+    groups: list[_ParsedGroup] = []
     pending_refutation = False
     solution = _strip_comments(solution)
 
@@ -280,11 +315,11 @@ def _parse_solution_lines(solution: str) -> list[_ParsedPly]:
 
             lower = line.lower()
             if lower.startswith("threat:") or lower == "threat":
-                if not plies:
+                if not groups:
                     raise SolutionParseError(
                         f"line {line_number}: threat marker has no preceding move"
                     )
-                plies[-1] = _with_threat(plies[-1])
+                groups[-1] = _map_group(groups[-1], _with_threat)
                 if lower == "threat":
                     continue
                 line = line[len("threat:") :].strip()
@@ -296,11 +331,14 @@ def _parse_solution_lines(solution: str) -> list[_ParsedPly]:
 
             annotation = _ANNOTATION_ONLY_RE.fullmatch(line)
             if annotation:
-                if not plies:
+                if not groups:
                     raise SolutionParseError(
                         f"line {line_number}: annotation has no preceding move"
                     )
-                plies[-1] = _with_mark(plies[-1], annotation.group("mark"))
+                groups[-1] = _map_group(
+                    groups[-1],
+                    lambda ply: _with_mark(ply, annotation.group("mark")),
+                )
                 continue
 
             if lower in {"but", "but:"}:
@@ -321,11 +359,11 @@ def _parse_solution_lines(solution: str) -> list[_ParsedPly]:
             body = head.group("body").strip()
 
             if number_text is None:
-                if not plies:
+                if not groups:
                     raise SolutionParseError(
                         f"line {line_number}: first move has no move number"
                     )
-                depth = plies[-1].depth + 1
+                depth = groups[-1].depth + 1
             else:
                 assert dots is not None
                 depth = _ply_depth(int(number_text), dots)
@@ -337,56 +375,71 @@ def _parse_solution_lines(solution: str) -> list[_ParsedPly]:
                 line_number=line_number,
                 original=original.strip(),
             )
-            plies.extend(sequence)
+            groups.extend(sequence)
             pending_refutation = trailing_refutation
 
     if pending_refutation:
         raise SolutionParseError("solution ends immediately after a refutation marker")
-    if not plies:
+    if not groups:
         raise SolutionParseError("solution contains no moves")
-    return plies
+    return groups
 
 
 # Tree construction follows the Popeye ply-depth semantics used by Olive and
 # Py2Web (GPL-3.0), adapted here to PyChess move validation and data types.
-def _unflatten(plies: list[_ParsedPly]) -> SolutionNode:
+def _unflatten(groups: list[_ParsedGroup]) -> SolutionNode:
     root = SolutionNode(depth=0, kind="root")
-    stack = [root]
+    frontier: dict[int, list[SolutionNode]] = {0: [root]}
 
-    for ply in plies:
-        if ply.depth < 1:
-            raise SolutionParseError(f"invalid ply depth {ply.depth}")
+    for group in groups:
+        depth = group.depth
+        if depth < 1:
+            raise SolutionParseError(f"invalid ply depth {depth}")
 
-        while stack[-1].depth >= ply.depth:
-            stack.pop()
-        parent = stack[-1]
+        for stale_depth in [value for value in frontier if value >= depth]:
+            del frontier[stale_depth]
 
-        while parent.depth + 1 < ply.depth:
-            if parent.depth == 0:
-                kind = "set"
-            elif parent.declares_threat:
-                kind = "threat"
-            else:
-                kind = "null"
-            null_node = SolutionNode(depth=parent.depth + 1, kind=kind)
-            parent.children.append(null_node)
-            parent = null_node
-            stack.append(parent)
+        parent_depth = depth - 1
+        if parent_depth not in frontier:
+            available_depths = [value for value in frontier if value < depth]
+            if not available_depths:
+                raise SolutionParseError(f"cannot attach alternatives at depth {depth}")
+            nearest_depth = max(available_depths)
+            parents = frontier[nearest_depth]
+            for missing_depth in range(nearest_depth + 1, depth):
+                null_nodes: list[SolutionNode] = []
+                for parent in parents:
+                    if parent.depth == 0:
+                        kind = "set"
+                    elif parent.declares_threat:
+                        kind = "threat"
+                    else:
+                        kind = "null"
+                    null_node = SolutionNode(depth=missing_depth, kind=kind)
+                    parent.children.append(null_node)
+                    null_nodes.append(null_node)
+                frontier[missing_depth] = null_nodes
+                parents = null_nodes
+        else:
+            parents = frontier[parent_depth]
 
-        if parent.depth + 1 != ply.depth:
-            raise SolutionParseError(
-                f"cannot attach ply {ply.raw!r} at depth {ply.depth}"
-            )
-
-        node = SolutionNode(
-            depth=ply.depth,
-            raw=ply.raw,
-            mark=ply.mark,
-            is_refutation=ply.is_refutation,
-            declares_threat=ply.declares_threat,
-        )
-        parent.children.append(node)
-        stack.append(node)
+        nodes: list[SolutionNode] = []
+        for parent in parents:
+            for ply in group.alternatives:
+                if ply.depth != depth:
+                    raise SolutionParseError(
+                        f"alternative {ply.raw!r} has inconsistent ply depth {ply.depth}"
+                    )
+                node = SolutionNode(
+                    depth=depth,
+                    raw=ply.raw,
+                    mark=ply.mark,
+                    is_refutation=ply.is_refutation,
+                    declares_threat=ply.declares_threat,
+                )
+                parent.children.append(node)
+                nodes.append(node)
+        frontier[depth] = nodes
 
     return root
 
