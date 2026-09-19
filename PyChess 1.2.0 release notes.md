@@ -38,6 +38,18 @@ Sound, translations, GTK, Stockfish and the other required Homebrew dependencies
 
 ## Long-standing bug fixes
 
+### Learn progress and puzzle data initialize reliably
+
+Learn progress initialization now works with Python 3.14, and Learn's database schema is committed correctly when the bundled databases are created. The Learn data is also included correctly in Windows MSI builds.
+
+### Composition puzzles follow their authored solutions
+
+The bundled composition puzzles now use generated **YACPDB** data instead of the obsolete OLV files. Learn follows the published solution trees, including alternative lines, threat continuations, defender replies and authored hints, rather than relying on engine guesses.
+
+### Mate puzzles and retries give more accurate feedback
+
+Mate-in-2/3/4 puzzles now respect their authored PGN key moves, including correctly encoded puzzle data. Retrying an incorrect puzzle move also produces the normal invalid-move sound.
+
 ### Engine analysis can be inserted from the initial position
 
 Engine principal variations can now be inserted into the annotation tree even when no move has yet been played (#1947).
