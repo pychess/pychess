@@ -3,8 +3,8 @@
 [![codecov](https://codecov.io/gh/pychess/pychess/branch/master/graph/badge.svg)](https://codecov.io/gh/pychess/pychess)
 [![Documentation Status](https://readthedocs.org/projects/pychess/badge/?version=latest)](http://pychess.readthedocs.org/en/latest/?badge=latest)
 
-# PyChess - A Free Chess Client for Linux/Windows
-Welcome to PyChess, a free and feature-rich chess client designed for Linux and Windows platforms. Whether you're a beginner looking for a quick game or an advanced player seeking to enhance your skills, PyChess has you covered.
+# PyChess - A Free Chess Client for Linux/Windows/macOS
+Welcome to PyChess, a free and feature-rich chess client designed for Linux, Windows and macOS platforms. Whether you're a beginner looking for a quick game or an advanced player seeking to enhance your skills, PyChess has you covered.
 
 ## About PyChess
 PyChess is a GTK chess client developed primarily for GNOME but compatible with various Linux desktop environments. The entire PyChess codebase, from the user interface to the chess engine, is written in Python and released under the GNU Public License.
@@ -33,14 +33,15 @@ PyChess boasts a wide array of features to enhance your chess experience:
 To install PyChess, follow these steps:
 
 * Visit the PyChess Download Page on GitHub.
-* Download the latest release suitable for your platform (Linux or Windows).
-* Follow the installation instructions provided for your specific operating system.
+* Download the latest release suitable for your platform (Linux, Windows or macOS).
+* Follow the installation instructions provided for your specific operating system. On macOS, follow the Homebrew-based setup in `INSTALL_MACOS`.
 
 ### Running PyChess
 Once installed, you can run PyChess as follows:
 
 * Linux: Launch PyChess from your application menu or execute pychess in the terminal.
 * Windows: Double-click the PyChess executable.
+* macOS: Run `./macos/run.sh` from a checkout, or `pychess` if installed. See `INSTALL_MACOS` for the Homebrew setup.
 
 ### Playing Chess
 * To play a game against the computer, select "New Game" and configure the options as desired.
@@ -68,7 +69,7 @@ PyChess is an open-source project, and contributions are welcome! Whether you wa
 
 2. **Set Up Your Development Environment**
    - Ensure you have Python 3.10 or newer installed.
-   - Install the required system GTK/GObject packages for your platform. On Debian/Ubuntu, see `INSTALL` for the full package list.
+   - Install the required system GTK/GObject packages for your platform. On Debian/Ubuntu, see `INSTALL` for the full package list; on macOS, see `INSTALL_MACOS` for the Homebrew packages.
    - Install Python dependencies with `uv`:
      ```bash
      uv sync --group dev
