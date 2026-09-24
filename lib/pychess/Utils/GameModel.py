@@ -676,6 +676,9 @@ class GameModel(GObject.GObject):
             for offer_ in keys:
                 if offer.type == offer_.type and offer != offer_:
                     del self.offers[offer_]
+            # Notify listeners (e.g. the menu) that the outstanding offers
+            # changed, so e.g. the corresponding "Offer *" item can be disabled.
+            self.emit("game_changed", self.ply)
 
     def withdrawReceived(self, player, offer):
         log.debug(f"GameModel.withdrawReceived: withdrawer={repr(player)} {offer}")
@@ -687,6 +690,7 @@ class GameModel(GObject.GObject):
         if offer in self.offers and self.offers[offer] == player:
             del self.offers[offer]
             opPlayer.offerWithdrawn(offer)
+            self.emit("game_changed", self.ply)
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
 
@@ -701,6 +705,7 @@ class GameModel(GObject.GObject):
             del self.offers[offer]
             log.debug("GameModel.declineReceived: declining %s" % offer)
             opPlayer.offerDeclined(offer)
+            self.emit("game_changed", self.ply)
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
 
