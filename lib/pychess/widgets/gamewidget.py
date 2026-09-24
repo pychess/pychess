@@ -33,6 +33,12 @@ from pychess.Utils.const import (
     FAN_PIECES,
     TOOL_CHESSDB,
     TOOL_SCOUTFISH,
+    DRAW_OFFER,
+    ABORT_OFFER,
+    ADJOURN_OFFER,
+    PAUSE_OFFER,
+    RESUME_OFFER,
+    TAKEBACK_OFFER,
 )
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Move import listToMoves
@@ -231,6 +237,9 @@ class GameWidget(GObject.GObject):
             self.menuitems["abort"].sensitive = False
             self.menuitems["abort"].tooltip = ""
 
+        if any(o.type == ABORT_OFFER for o in self.gamemodel.offers):
+            self.menuitems["abort"].sensitive = False
+
     def _update_menu_adjourn(self):
         self.menuitems["adjourn"].sensitive = (
             isinstance(self.gamemodel, ICGameModel)
@@ -238,6 +247,9 @@ class GameWidget(GObject.GObject):
             and not self.gamemodel.isObservationGame()
             and not self.gamemodel.hasGuestPlayers()
         )
+
+        if any(o.type == ADJOURN_OFFER for o in self.gamemodel.offers):
+            self.menuitems["adjourn"].sensitive = False
 
         if (
             isinstance(self.gamemodel, ICGameModel)
@@ -255,6 +267,7 @@ class GameWidget(GObject.GObject):
         self.menuitems["draw"].sensitive = (
             self.gamemodel.status in UNFINISHED_STATES
             and not self.gamemodel.isObservationGame()
+            and not any(o.type == DRAW_OFFER for o in self.gamemodel.offers)
         )
 
         def can_win(color):
@@ -303,6 +316,10 @@ class GameWidget(GObject.GObject):
         self.menuitems["resume1"].sensitive = (
             self.gamemodel.status == PAUSED and game_is_pausable()
         )
+        if any(o.type == PAUSE_OFFER for o in self.gamemodel.offers):
+            self.menuitems["pause1"].sensitive = False
+        if any(o.type == RESUME_OFFER for o in self.gamemodel.offers):
+            self.menuitems["resume1"].sensitive = False
         # TODO: if IC game is over and game ended in adjournment
         #       and opponent is available, enable Resume
 
@@ -319,6 +336,9 @@ class GameWidget(GObject.GObject):
         ):
             self.menuitems["undo1"].sensitive = True
         else:
+            self.menuitems["undo1"].sensitive = False
+
+        if any(o.type == TAKEBACK_OFFER for o in self.gamemodel.offers):
             self.menuitems["undo1"].sensitive = False
 
     def _update_menu_ask_to_move(self):
