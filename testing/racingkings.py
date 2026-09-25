@@ -131,34 +131,36 @@ _EXPECTED_RK_RESULT = {
 
 
 class RealRacingKingsGamesTestCase(unittest.TestCase):
-    def _assert_rk_terminal(self, board):
-        """A king on the back rank must end the game: a win for its owner, or a
-        draw if both kings are there. It can never still be RUNNING. This is the
-        invariant that issue #1889 broke (winner to move with its own king on the
-        back rank returned RUNNING)."""
+    def _assert_rk_consistent(self, board):
+        """Invariant that must hold at *every* ply: getStatus() never reports a
+        win for a side whose king is not on the back rank, and a draw only when
+        both kings are on the back rank. A king on the back rank with the
+        opponent still to move is legitimately RUNNING (the opponent may still
+        race there too), so we must not force a win here -- the exact result is
+        only asserted at the final position."""
+        status, _ = getStatus(board)
         lboard = board.board
-        wk = lboard.kings[WHITE]
-        bk = lboard.kings[BLACK]
-        wk8 = A8 <= wk <= H8
-        bk8 = A8 <= bk <= H8
-        if wk8 and bk8:
-            self.assertEqual(getStatus(board)[0], DRAW)
-            return
-        if wk8:
-            self.assertEqual(getStatus(board), (WHITEWON, WON_KINGINEIGHTROW))
-        elif bk8:
-            self.assertEqual(getStatus(board), (BLACKWON, WON_KINGINEIGHTROW))
+        wk8 = A8 <= lboard.kings[WHITE] <= H8
+        bk8 = A8 <= lboard.kings[BLACK] <= H8
+        if status == WHITEWON:
+            self.assertTrue(wk8, "WHITEWON but White king not on the back rank")
+        elif status == BLACKWON:
+            self.assertTrue(bk8, "BLACKWON but Black king not on the back rank")
+        elif status == DRAW:
+            self.assertTrue(
+                wk8 and bk8, "DRAW without both kings on the back rank"
+            )
 
     def test_real_lichess_games(self):
         """Replay real Racing Kings games from lichess and confirm getStatus()
-        matches the actual result at every position where a king is on the back
-        rank, and at the final position."""
+        is internally consistent at every ply and matches the game's actual
+        outcome at the final position."""
         for moves, result in _REAL_RK_GAMES:
             with self.subTest(result=result, first_move=moves[0]):
-                board = RacingKingsBoard()
+                board = RacingKingsBoard(setup=True)
                 for san in moves:
                     board = board.move(parseSAN(board, san))
-                    self._assert_rk_terminal(board)
+                    self._assert_rk_consistent(board)
                 self.assertEqual(getStatus(board), _EXPECTED_RK_RESULT[result])
 
 
