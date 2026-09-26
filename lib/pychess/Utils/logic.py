@@ -50,7 +50,11 @@ from pychess.Variants.losers import testKingOnly
 from pychess.Variants.atomic import kingExplode
 from pychess.Variants.kingofthehill import testKingInCenter
 from pychess.Variants.threecheck import checkCount
-from pychess.Variants.racingkings import testKingInEightRow, test2KingInEightRow
+from pychess.Variants.racingkings import (
+    testKingInEightRow,
+    test2KingInEightRow,
+    RANK8,
+)
 
 
 def getDestinationCords(board, cord):
@@ -123,6 +127,14 @@ def getStatus(board):
     elif board.variant == RACINGKINGSCHESS:
         if test2KingInEightRow(lboard):
             return DRAW, DRAW_KINGSINEIGHTROW
+        # If it is the winner's turn again, the opponent has already moved
+        # without reaching the back rank, so the win stands even if a saving
+        # move existed earlier. Without this, a player who reaches the back
+        # rank can keep moving pieces after the game is effectively over.
+        if lboard.kings[WHITE] in RANK8 and board.color == WHITE:
+            return WHITEWON, WON_KINGINEIGHTROW
+        if lboard.kings[BLACK] in RANK8 and board.color == BLACK:
+            return BLACKWON, WON_KINGINEIGHTROW
         elif testKingInEightRow(lboard):
             can_save = False
             for move in lmovegen.genAllMoves(lboard):
