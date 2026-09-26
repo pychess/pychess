@@ -139,11 +139,15 @@ class OfferMenuSensitivityTestCase(unittest.TestCase):
     def test_draw_re_enabled_after_withdraw(self):
         """After the outstanding draw offer is withdrawn, the Draw item is
         enabled again."""
-        self.model.offerReceived(self.white, Offer(DRAW_OFFER))
+        offer = Offer(DRAW_OFFER)
+        self.model.offerReceived(self.white, offer)
         GameWidget._update_menu_draw(self.widget)
         self.assertFalse(self.widget.menuitems["draw"].sensitive)
 
-        self.model.withdrawReceived(self.white, Offer(DRAW_OFFER))
+        # Withdraw the same Offer instance (GameModel matches outstanding
+        # offers by identity), mirroring how the real client withdraws a live
+        # offer.
+        self.model.withdrawReceived(self.white, offer)
         GameWidget._update_menu_draw(self.widget)
         self.assertTrue(self.widget.menuitems["draw"].sensitive)
 
