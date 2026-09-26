@@ -25,6 +25,15 @@
 #
 set -euo pipefail
 
+# Make sure a Homebrew that was already installed outside this script's PATH is
+# still discoverable. The non-interactive installer does not persist
+# /opt/homebrew/bin to the user's shell, so a brand-new shell would otherwise
+# report "Homebrew not found" and try (and fail) to re-download it.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+# Skip Homebrew's automatic `brew update` on every invocation (needs network and
+# can be flaky behind a proxy); formulae are already installed on re-runs.
+export HOMEBREW_NO_AUTO_UPDATE=1
+
 # ---------------------------------------------------------------------------
 # Locate the source tree (parent of the directory that holds this script).
 # ---------------------------------------------------------------------------
@@ -130,15 +139,11 @@ step "Creating virtual environment"
 source "$VENV/bin/activate"
 python -m pip install --upgrade pip setuptools wheel
 
-step "Installing PyChess (editable, no build isolation)"
-# --no-build-isolation avoids spinning up a fresh build env that would try to
-# fetch PyGObject from PyPI. The brewed PyGObject satisfies setup.py's
-# unpinned 'PyGObject' requirement.
-pip install --no-build-isolation -e "$SRC_DIR"
-
 step "Installing pinned pure-Python dependencies"
 # Install the exact pins from requirements.txt, but skip PyGObject/pycairo
-# (provided by the brewed 'pygobject3' formula).
+# (provided by the brewed 'pygobject3' formula). These must be installed before
+# the data files are generated, because pgn2ecodb.py / create_theme_preview.py
+# import pychess modules.
 TMP_REQ="$(mktemp)"
 grep -viE '^(PyGObject|pycairo)==' "$SRC_DIR/requirements.txt" > "$TMP_REQ" || true
 pip install -r "$TMP_REQ" || \
@@ -147,11 +152,20 @@ rm -f "$TMP_REQ"
 
 # ---------------------------------------------------------------------------
 # 4. Locally-built data files
+#    MUST run BEFORE `pip install -e`: pychess's setup.py refuses to build
+#    unless eco.db already exists in the source tree.
 # ---------------------------------------------------------------------------
 step "Generating opening book and piece-theme previews"
 cd "$SRC_DIR"
 PYTHONPATH=lib python pgn2ecodb.py
 PYTHONPATH=lib python create_theme_preview.py
+cd "$SCRIPT_DIR"
+
+step "Installing PyChess (editable, no build isolation)"
+# --no-build-isolation avoids spinning up a fresh build env that would try to
+# fetch PyGObject from PyPI. The brewed PyGObject satisfies setup.py's
+# unpinned 'PyGObject' requirement. eco.db now exists, so the build succeeds.
+pip install --no-build-isolation -e "$SRC_DIR"
 
 # ---------------------------------------------------------------------------
 # 5. Build the .app wrapper
