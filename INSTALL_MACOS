@@ -11,6 +11,23 @@ Tested with: macOS 14 (Sonoma) and later, Apple Silicon
              lookup; the full GTK build job runs on Apple Silicon.
 
 
+Quick install (recommended)
+---------------------------
+
+If you just want to install PyChess and get a normal double-clickable app, use
+the bundled installer. From inside a PyChess source checkout run:
+
+    ./macos/install.sh
+
+This single command installs the Homebrew GTK stack, builds a virtual
+environment that re-uses Homebrew's PyGObject, installs PyChess, and produces a
+self-contained `PyChess.app` in your `~/Applications` folder that you can launch
+from Launchpad or Finder. See `macos/install.sh` for what it does step by step.
+
+The rest of this document describes the manual steps the installer performs, in
+case you prefer to install by hand or need to debug a problem.
+
+
 1. Install the binary dependencies with Homebrew
 ------------------------------------------------
 
