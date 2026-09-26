@@ -9,7 +9,7 @@
 # virtual environment bundled inside the app.
 set -euo pipefail
 
-APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+APP_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 VENV="$APP_DIR/Contents/Resources/venv"
 
 # Detect the Homebrew prefix (Apple Silicon vs Intel).
