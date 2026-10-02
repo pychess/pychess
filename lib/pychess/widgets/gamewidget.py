@@ -181,6 +181,9 @@ class GameWidget(GObject.GObject):
 
         self.board._del()
 
+        if self.clock is not None:
+            self.clock._del()
+
         if self.game_ended_message is not None:
             self.game_ended_message.callback = None
 
@@ -839,7 +842,9 @@ class GameWidget(GObject.GObject):
         )
 
         self.on_shapes_changed(self.board)
-        self.board.connect("shapes_changed", self.on_shapes_changed)
+        self.cids[self.board] = self.board.connect(
+            "shapes_changed", self.on_shapes_changed
+        )
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, True, True, 0)
