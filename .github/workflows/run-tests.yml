@@ -80,6 +80,16 @@ jobs:
         Xvfb "${DISPLAY}" &
         xvfb_pid=$!
 
+        # Wait for the server to accept connections. The suite reaches GTK
+        # within the first second, and GTK aborts the whole process ("Can't
+        # create a GtkStyleContext without a display connection") if it gets
+        # there before Xvfb is listening.
+        x_socket="/tmp/.X11-unix/X${DISPLAY#:}"
+        for _ in $(seq 1 100); do
+          python3 -c 'import socket, sys; socket.socket(socket.AF_UNIX).connect(sys.argv[1])' "${x_socket}" 2>/dev/null && break
+          sleep 0.1
+        done
+
         PYCHESS_UNITTEST=true PYTHONPATH=lib python3 -m unittest discover -s testing -p "*.py" -v || touch FAILED
 
         kill -s SIGTERM "${xvfb_pid}"
