@@ -44,3 +44,8 @@ def save(file, model, position=None, flip=False):
         boardview.drawCords(context, None)
 
     surface.write_to_png(file.name)
+
+    # The view is only used as a renderer here, but its constructor registers
+    # a pile of config listeners and model handlers. Release them, otherwise
+    # every export keeps the whole view alive forever.
+    boardview._del()
