@@ -4,7 +4,7 @@ import unittest
 from gi.repository import GLib
 
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.const import WHITE
+from pychess.Utils.const import WHITE, BLACK
 
 
 def pump(seconds):
@@ -55,13 +55,20 @@ class ZeroListenerTests(unittest.TestCase):
 
     def test_no_busy_polling_while_time_remains(self):
         model, checks = self.counting_model(60)
-        model.emit("time_changed")
+        try:
+            model.emit("time_changed")
 
-        pump(1.0)
+            pump(1.0)
 
-        # The old implementation re-checked every 10 ms, so this used to be
-        # around 90 wakeups for a single second of a 60 s clock.
-        self.assertLessEqual(len(checks), 3, "%d wakeups in one second" % len(checks))
+            # The old implementation re-checked every 10 ms, so this used to
+            # be around 90 wakeups for a single second of a 60 s clock.
+            self.assertLessEqual(
+                len(checks), 3, "%d wakeups in one second" % len(checks)
+            )
+        finally:
+            # The 60 s timeout is still armed at this point; end() cancels it
+            # so it cannot fire (and keep the model alive) later in the run.
+            model.end()
 
     def test_flag_is_reannounced_when_time_comes_back(self):
         model, _checks = self.counting_model(1)
@@ -82,6 +89,39 @@ class ZeroListenerTests(unittest.TestCase):
         # later -- roughly 1.5 s after the first one.
         gap = events[1] - events[0]
         self.assertTrue(1.0 < gap < 2.4, "re-announced after %.2fs" % gap)
+
+    def test_flag_is_not_reannounced_when_only_the_turn_moves(self):
+        """Only time given back to the flagged player may re-arm their flag.
+
+        A single "someone flagged" marker was cleared whenever the *other*
+        player happened to have time left, so the flag was announced again as
+        soon as the move came back to the player who had already flagged.
+        """
+        model, _checks = self.counting_model(1)
+        events = []
+        model.connect("zero_reached", lambda m, color: events.append(color))
+        try:
+            model.emit("time_changed")
+
+            pump(1.5)
+            self.assertEqual(events, [WHITE], "flag not announced exactly once")
+
+            # Black to move, with a fresh clock.
+            model.movingColor = BLACK
+            model.counter = time.time()
+            model.emit("player_changed")
+            pump(0.3)
+
+            # Back to White, who was never given any time back.
+            model.updatePlayer(WHITE, 0)
+            model.movingColor = WHITE
+            model.counter = time.time()
+            model.emit("player_changed")
+            pump(0.5)
+        finally:
+            model.end()
+
+        self.assertEqual(events, [WHITE], "flag re-announced: %r" % (events,))
 
     def test_end_cancels_the_pending_check(self):
         model, checks = self.counting_model(1)

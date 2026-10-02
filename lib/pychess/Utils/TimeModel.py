@@ -93,9 +93,12 @@ class TimeModel(GObject.GObject):
         # been superseded, so it must not emit or re-arm anything.
         self.zero_listener_id = None
         self.zero_listener_generation = 0
-        # Color we already reported as running out of time. It is cleared as
-        # soon as that player gets time back, so the flag is announced once.
-        self.zero_reached_color = None
+        # Colors we already reported as running out of time. The state is per
+        # color on purpose: it has to be cleared only when that same player
+        # gets time back, not when the turn merely moves to the opponent.
+        # Otherwise a player who flagged and then gets the move again without
+        # any time added would be announced a second time.
+        self.zero_reached_colors = set()
 
     def __repr__(self):
         text = f"<TimeModel object at {id(self)} (White: {str(self.getPlayerTime(WHITE))} Black: {str(self.getPlayerTime(BLACK))} ended={self.ended})>"
@@ -147,10 +150,12 @@ class TimeModel(GObject.GObject):
         remaining_time = the_time - cur_time + 0.01
         if remaining_time > 0:
             # More than the rounding slack means this player really has time
-            # again, so a later flag has to be announced once more. Without
-            # this, a flag callback would stay suppressed forever once fired.
+            # again, so a later flag of theirs has to be announced once more.
+            # Without this, a flag callback would stay suppressed forever once
+            # fired. Only this color is cleared: the other one is not the one
+            # whose time we just looked at.
             if remaining_time > MIN_ZERO_LISTENER_INTERVAL_MS / 1000.0:
-                self.zero_reached_color = None
+                self.zero_reached_colors.discard(color)
             # Arm exactly one timeout for the moment the player is expected to
             # run out of time. Re-checking every few milliseconds instead would
             # wake the GLib main loop ~100 times per second for the whole
@@ -167,8 +172,8 @@ class TimeModel(GObject.GObject):
         self.zero_listener_id = None
 
         if self.getPlayerTime(color) <= 0 and self.started:
-            if self.zero_reached_color != color:
-                self.zero_reached_color = color
+            if color not in self.zero_reached_colors:
+                self.zero_reached_colors.add(color)
                 self.emit("time_changed")
                 self.emit("zero_reached", color)
             return False
