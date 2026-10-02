@@ -1,9 +1,15 @@
+from math import ceil
 from time import time
 
 from gi.repository import GLib, GObject
 
 from pychess.Utils.const import WHITE, BLACK
 from pychess.System.Log import log
+
+# Shortest interval we ever arm the zero listener for. Anything below this is
+# pointless: it would burn the main loop without making the flag fall any
+# earlier, since GTK cannot repaint faster than this anyway.
+MIN_ZERO_LISTENER_INTERVAL_MS = 10
 
 
 class TimeModel(GObject.GObject):
@@ -82,16 +88,53 @@ class TimeModel(GObject.GObject):
         self.connect("player_changed", self.__zerolistener, "player_changed")
         self.connect("pause_changed", self.__zerolistener, "pause_changed")
 
+        # Each arming of the zero listener carries a generation number. A
+        # callback holding a stale generation belongs to a timeout that has
+        # been superseded, so it must not emit or re-arm anything.
         self.zero_listener_id = None
-        self.zero_listener_time = 0
-        self.zero_listener_source = None
+        self.zero_listener_generation = 0
+        # Colors we already reported as running out of time. The state is per
+        # color on purpose: it has to be cleared only when that same player
+        # gets time back, not when the turn merely moves to the opponent.
+        # Otherwise a player who flagged and then gets the move again without
+        # any time added would be announced a second time.
+        self.zero_reached_colors = set()
 
     def __repr__(self):
         text = f"<TimeModel object at {id(self)} (White: {str(self.getPlayerTime(WHITE))} Black: {str(self.getPlayerTime(BLACK))} ended={self.ended})>"
         return text
 
+    def __remove_zero_listener(self):
+        """Cancel the pending flag check, if any.
+
+        Bumping the generation first makes any callback that is already queued
+        a no-op, so we never depend on being able to resolve the GLib source.
+        """
+        self.zero_listener_generation += 1
+        source_id = self.zero_listener_id
+        self.zero_listener_id = None
+        if source_id is not None:
+            GLib.source_remove(source_id)
+
+    def __arm_zero_listener(self, color, remaining_time):
+        interval_ms = max(
+            MIN_ZERO_LISTENER_INTERVAL_MS, int(ceil(remaining_time * 1000))
+        )
+        self.zero_listener_generation += 1
+        generation = self.zero_listener_generation
+        self.zero_listener_id = GLib.timeout_add(
+            interval_ms, self.__checkzero, color, generation
+        )
+
     def __zerolistener(self, *args):
         if self.ended:
+            return False
+
+        if not self.started or self.paused:
+            # A clock that has not started yet, or that is paused, does not
+            # count down, so nothing can expire. Drop any pending check;
+            # start(), resume() and tap() each emit a signal that re-arms it.
+            self.__remove_zero_listener()
             return False
 
         cur_time = time()
@@ -105,29 +148,40 @@ class TimeModel(GObject.GObject):
             color = BLACK
 
         remaining_time = the_time - cur_time + 0.01
-        if remaining_time > 0 and remaining_time != self.zero_listener_time:
-            if (
-                (self.zero_listener_id is not None)
-                and (self.zero_listener_source is not None)
-                and not self.zero_listener_source.is_destroyed()
-            ):
-                GLib.source_remove(self.zero_listener_id)
-            self.zero_listener_time = remaining_time
-            self.zero_listener_id = GLib.timeout_add(10, self.__checkzero, color)
-            default_context = (
-                GLib.main_context_get_thread_default() or GLib.main_context_default()
-            )
-            if hasattr(default_context, "find_source_by_id"):
-                self.zero_listener_source = default_context.find_source_by_id(
-                    self.zero_listener_id
-                )
+        if remaining_time > 0:
+            # More than the rounding slack means this player really has time
+            # again, so a later flag of theirs has to be announced once more.
+            # Without this, a flag callback would stay suppressed forever once
+            # fired. Only this color is cleared: the other one is not the one
+            # whose time we just looked at.
+            if remaining_time > MIN_ZERO_LISTENER_INTERVAL_MS / 1000.0:
+                self.zero_reached_colors.discard(color)
+            # Arm exactly one timeout for the moment the player is expected to
+            # run out of time. Re-checking every few milliseconds instead would
+            # wake the GLib main loop ~100 times per second for the whole
+            # duration of a move, doing nothing.
+            self.__remove_zero_listener()
+            self.__arm_zero_listener(color, remaining_time)
 
-    def __checkzero(self, color):
-        if self.getPlayerTime(color) <= 0 and self.started:
-            self.emit("time_changed")
-            self.emit("zero_reached", color)
+    def __checkzero(self, color, generation):
+        if generation != self.zero_listener_generation:
+            # Superseded by a newer arming; that one is the live check.
             return False
-        return True
+
+        # This source has just expired, so it must no longer be removed.
+        self.zero_listener_id = None
+
+        if self.getPlayerTime(color) <= 0 and self.started:
+            if color not in self.zero_reached_colors:
+                self.zero_reached_colors.add(color)
+                self.emit("time_changed")
+                self.emit("zero_reached", color)
+            return False
+
+        # Millisecond rounding can fire us marginally early. Re-arm for the
+        # little that is left rather than dropping the check entirely.
+        self.__zerolistener()
+        return False
 
     ############################################################################
     # Interacting                                                              #
@@ -187,12 +241,7 @@ class TimeModel(GObject.GObject):
         log.debug("TimeModel.end: self=%s" % self)
         self.pause()
         self.ended = True
-        if (
-            (self.zero_listener_id is not None)
-            and (self.zero_listener_source is not None)
-            and not self.zero_listener_source.is_destroyed()
-        ):
-            GLib.source_remove(self.zero_listener_id)
+        self.__remove_zero_listener()
 
     def pause(self):
         log.debug("TimeModel.pause: self=%s" % self)

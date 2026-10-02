@@ -28,7 +28,29 @@ class ChessClock(Gtk.DrawingArea):
         self.short_on_time = [False, False]
         self.alarm_spin = conf.get("alarm_spin")
 
-        conf.notify_add("alarm_spin", self.on_alarm_spin)
+        self.alarm_spin_cid = conf.notify_add("alarm_spin", self.on_alarm_spin)
+        self.time_changed_cid = None
+        self.player_changed_cid = None
+        self.update_source_id = None
+
+    def _del(self):
+        """Release everything that would otherwise outlive the widget.
+
+        The 100 ms repaint timer holds a reference to this widget, and the
+        config listener is stored in a module level dict, so neither of them
+        goes away with the widget itself.
+        """
+        self.stop()
+        self.setModel(None)
+        if self.alarm_spin_cid is not None:
+            conf.notify_remove(self.alarm_spin_cid)
+            self.alarm_spin_cid = None
+
+    def stop(self):
+        """Cancel the periodic repaint timer, if one is armed."""
+        if self.update_source_id is not None:
+            GLib.source_remove(self.update_source_id)
+            self.update_source_id = None
 
     def on_alarm_spin(self, *args):
         self.alarm_spin = conf.get("alarm_spin")
@@ -215,14 +237,38 @@ class ChessClock(Gtk.DrawingArea):
         GLib.idle_add(do_redraw_canvas)
 
     def setModel(self, model):
+        """Attach a TimeModel, or detach the current one when model is None."""
+        self.stop()
+        if self.model is not None:
+            if self.time_changed_cid is not None and self.model.handler_is_connected(
+                self.time_changed_cid
+            ):
+                self.model.disconnect(self.time_changed_cid)
+            if self.player_changed_cid is not None and self.model.handler_is_connected(
+                self.player_changed_cid
+            ):
+                self.model.disconnect(self.player_changed_cid)
+        self.time_changed_cid = None
+        self.player_changed_cid = None
         self.model = model
-        self.model.connect("time_changed", self.time_changed)
-        self.model.connect("player_changed", self.player_changed)
+        if model is None:
+            return
+        self.time_changed_cid = self.model.connect("time_changed", self.time_changed)
+        self.player_changed_cid = self.model.connect(
+            "player_changed", self.player_changed
+        )
         self.formatedCache = [
             formatTime(self.model.getPlayerTime(self.model.movingColor or WHITE))
         ] * 2
         if model.secs != 0 or model.gain != 0:
-            GLib.timeout_add(100, self.update)
+            self.update_source_id = GLib.timeout_add(100, self.__update_timeout)
+
+    def __update_timeout(self):
+        """GLib timeout callback; stops the timer once the game is over."""
+        keep_running = self.update()
+        if not keep_running:
+            self.update_source_id = None
+        return keep_running
 
     def time_changed(self, model):
         self.update()
@@ -231,7 +277,7 @@ class ChessClock(Gtk.DrawingArea):
         self.redraw_canvas()
 
     def update(self, wmovecount=-1, bmovecount=-1):
-        if self.model.ended:
+        if self.model is None or self.model.ended:
             return False
         if len(self.model.gamemodel.players) < 2:
             return not self.model.ended

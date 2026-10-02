@@ -17,30 +17,37 @@ def save(file, model, position=None, flip=False):
 
     show_cords = conf.get("showCords")
     boardview = BoardView(model)
-    padding = int(SQUARE / 4) if show_cords else 0
+    try:
+        padding = int(SQUARE / 4) if show_cords else 0
 
-    width = SQUARE * 8 + padding * 2
-    height = SQUARE * 8 + padding * 2
+        width = SQUARE * 8 + padding * 2
+        height = SQUARE * 8 + padding * 2
 
-    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
-    context = cairo.Context(surface)
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        context = cairo.Context(surface)
 
-    boardview.shown = position
-    boardview.square = 0 + padding, 0 + padding, SQUARE * 8, SQUARE
+        boardview.shown = position
+        boardview.square = 0 + padding, 0 + padding, SQUARE * 8, SQUARE
 
-    if flip:
-        boardview._rotation = math.pi
-        boardview.matrix = cairo.Matrix.init_rotate(math.pi)
+        if flip:
+            boardview._rotation = math.pi
+            boardview.matrix = cairo.Matrix.init_rotate(math.pi)
 
-    boardview.matrix, boardview.invmatrix = matrixAround(
-        boardview.matrix, width / 2.0, height / 2.0
-    )
-    context.transform(boardview.matrix)
+        boardview.matrix, boardview.invmatrix = matrixAround(
+            boardview.matrix, width / 2.0, height / 2.0
+        )
+        context.transform(boardview.matrix)
 
-    boardview.drawBoard(context, None)
-    boardview.drawPieces(context, None)
+        boardview.drawBoard(context, None)
+        boardview.drawPieces(context, None)
 
-    if show_cords:
-        boardview.drawCords(context, None)
+        if show_cords:
+            boardview.drawCords(context, None)
 
-    surface.write_to_png(file.name)
+        surface.write_to_png(file.name)
+    finally:
+        # The view is only used as a renderer here, but its constructor
+        # registers a pile of config listeners and model handlers. Release
+        # them even if drawing or writing raised, otherwise every export
+        # keeps the whole view alive forever.
+        boardview._del()

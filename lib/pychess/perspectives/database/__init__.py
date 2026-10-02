@@ -296,7 +296,8 @@ class Database(GObject.GObject, Perspective):
                 GLib.idle_add(self.emit, "chessfile_opened0", chessfile)
             else:
                 if self.chessfile is None:
-                    self.close(None)
+                    # This runs on the worker thread; close() touches widgets.
+                    GLib.idle_add(self.close, None)
 
         thread = threading.Thread(target=opening)
         thread.daemon = True
@@ -348,6 +349,8 @@ class Database(GObject.GObject, Perspective):
                 self.notebooks["PreviewPanel"].remove_page(i)
                 del self.gamelists[i]
                 del self.filter_panels[i]
+                del self.opening_tree_panels[i]
+                del self.preview_panels[i]
                 del self.chessfiles[i]
                 chessfile.close()
 
