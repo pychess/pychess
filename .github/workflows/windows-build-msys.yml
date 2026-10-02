@@ -28,20 +28,23 @@ jobs:
       uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884  # v2.32.0
       with:
         update: true
-        msystem: MINGW64
+        # UCRT64, not MINGW64: MSYS2 dropped msvcrt support for cx_Freeze (and
+        # its freeze-core dependency) on 2026-09-23, so the mingw64 repo no
+        # longer carries it. UCRT64 is the environment MSYS2 recommends now.
+        msystem: UCRT64
         install: |
-          mingw-w64-x86_64-adwaita-icon-theme
-          mingw-w64-x86_64-gtk3
-          mingw-w64-x86_64-gtksourceview4
-          mingw-w64-x86_64-python
-          mingw-w64-x86_64-python-cairo
-          mingw-w64-x86_64-python-cx-freeze
-          mingw-w64-x86_64-python-gobject
-          mingw-w64-x86_64-python-pexpect
-          mingw-w64-x86_64-python-psutil
-          mingw-w64-x86_64-python-sqlalchemy
-          mingw-w64-x86_64-python-pip
-          mingw-w64-x86_64-toolchain
+          mingw-w64-ucrt-x86_64-adwaita-icon-theme
+          mingw-w64-ucrt-x86_64-gtk3
+          mingw-w64-ucrt-x86_64-gtksourceview4
+          mingw-w64-ucrt-x86_64-python
+          mingw-w64-ucrt-x86_64-python-cairo
+          mingw-w64-ucrt-x86_64-python-cx-freeze
+          mingw-w64-ucrt-x86_64-python-gobject
+          mingw-w64-ucrt-x86_64-python-pexpect
+          mingw-w64-ucrt-x86_64-python-psutil
+          mingw-w64-ucrt-x86_64-python-sqlalchemy
+          mingw-w64-ucrt-x86_64-python-pip
+          mingw-w64-ucrt-x86_64-toolchain
 
     - name: Install build dependencies (PyPI)
       run: |
