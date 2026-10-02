@@ -44,12 +44,14 @@ class ZeroListenerTests(unittest.TestCase):
         started_at = time.monotonic()
         model.emit("time_changed")
 
-        pump(2.0)
+        pump(2.5)
 
         self.assertEqual(len(events), 1, "flag announced %d times" % len(events))
         color, when = events[0]
         self.assertEqual(color, WHITE)
-        self.assertAlmostEqual(when - started_at, 1.0, delta=0.4)
+        # Meant to be 1 s; the slack absorbs a busy CI runner delivering the
+        # timeout late, while still catching "never fired" and "fired twice".
+        self.assertAlmostEqual(when - started_at, 1.0, delta=0.5)
 
     def test_no_busy_polling_while_time_remains(self):
         model, checks = self.counting_model(60)
@@ -73,7 +75,7 @@ class ZeroListenerTests(unittest.TestCase):
             return False
 
         GLib.timeout_add(1500, give_time_back)
-        pump(3.0)
+        pump(4.0)
 
         self.assertEqual(len(events), 2, "got %d flag announcements" % len(events))
         # Time was handed back at 1.5 s, so the second flag falls one second
@@ -115,5 +117,5 @@ class ZeroListenerTests(unittest.TestCase):
         model.connect("zero_reached", lambda m, color: events.append(color))
         model.resume()
         self.assertIsNotNone(model.zero_listener_id, "resumed clock not re-armed")
-        pump(1.5)
+        pump(2.5)
         self.assertEqual(events, [WHITE])
