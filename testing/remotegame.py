@@ -1,4 +1,6 @@
 import unittest
+from unittest.mock import Mock, patch
+from urllib.parse import parse_qs, urlparse
 
 # import random
 
@@ -28,6 +30,79 @@ from pychess.Savers.remotegame import (
 )
 
 cplist = get_internet_game_providers()
+
+
+class LichessDownloadTestCase(unittest.TestCase):
+    def test_finished_games_use_public_export(self):
+        for status, winner, result in (
+            (30, "white", "1-0"),
+            (30, "black", "0-1"),
+            (32, None, "1/2-1/2"),  # Stalemate
+            (34, None, "1/2-1/2"),  # Draw
+        ):
+            with self.subTest(status=status, winner=winner):
+                provider = InternetGameLichess()
+                self.assertTrue(
+                    provider.assign_game(
+                        "http://lichess.org/CA4bR2b8/black/analysis#12"
+                    )
+                )
+                game = {"rated": True, "status": {"id": status}}
+                if winner is not None:
+                    game["winner"] = winner
+                pgn = (
+                    '[Event "rated blitz game"]\n'
+                    '[White "thibault"]\n'
+                    '[Black "Dzem"]\n'
+                    f'[Result "{result}"]\n\n'
+                    f"1. e4 {{ [%clk 0:03:00] [%eval 0.12] }} e5 {result}"
+                )
+                response = Mock()
+                response.read.return_value = pgn.encode("utf-8")
+                response.info.return_value.get_content_charset.return_value = "utf-8"
+                with (
+                    patch.object(provider, "query_api", return_value={"game": game}),
+                    patch(
+                        "pychess.Savers.remotegame.urlopen", return_value=response
+                    ) as urlopen,
+                ):
+                    self.assertEqual(provider.download_game(), pgn)
+
+                urlopen.assert_called_once()
+                request = urlopen.call_args.args[0]
+                url = urlparse(request.full_url)
+                self.assertEqual(url.netloc, "lichess.org")
+                self.assertEqual(url.path, "/games/export/_ids")
+                self.assertEqual(request.get_method(), "POST")
+                self.assertEqual(request.data, b"CA4bR2b8")
+                self.assertEqual(request.get_header("Content-type"), "text/plain")
+                self.assertEqual(
+                    request.get_header("Accept"), "application/x-chess-pgn"
+                )
+                for flag in ("literate", "clocks", "evals", "opening"):
+                    self.assertEqual(parse_qs(url.query)[flag], ["1"])
+                response.close.assert_called_once()
+
+    def test_ongoing_rated_game_is_not_downloaded(self):
+        provider = InternetGameLichess()
+        provider.assign_game("https://lichess.org/CA4bR2b8")
+        game = {"rated": True, "status": {"id": 20, "name": "started"}}
+        with (
+            patch.object(provider, "query_api", return_value={"game": game}),
+            patch("pychess.Savers.remotegame.urlopen") as urlopen,
+        ):
+            self.assertIsNone(provider.download_game())
+        urlopen.assert_not_called()
+
+    def test_missing_game_is_not_downloaded(self):
+        provider = InternetGameLichess()
+        provider.assign_game("https://lichess.org/CA4bR2b8")
+        with (
+            patch.object(provider, "query_api", return_value=None),
+            patch("pychess.Savers.remotegame.urlopen") as urlopen,
+        ):
+            self.assertIsNone(provider.download_game())
+        urlopen.assert_not_called()
 
 
 class RemoteGameTestCase(unittest.TestCase):

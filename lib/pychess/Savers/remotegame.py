@@ -451,9 +451,21 @@ class InternetGameLichess(InternetGameInterface):
             # Download the finished game
             api = self.query_api("/import/master/%s/white" % self.id)
             game = self.json_field(api, "game")
-            if "winner" in game:
-                url = f"https://lichess.{self.url_tld}/game/export/{self.id}?literate=1"
-                return self.download(url)
+            if not isinstance(game, dict):
+                return None
+            if "winner" in game or game.get("status", {}).get("id", 0) >= 30:
+                # The single-game export requires authentication for older games.
+                # The public bulk API accepts a single ID as a plain-text body.
+                request = Request(
+                    f"https://lichess.{self.url_tld}/games/export/_ids"
+                    "?literate=1&clocks=1&evals=1&opening=1",
+                    data=self.id.encode("utf-8"),
+                    headers={
+                        "Content-Type": "text/plain",
+                        "Accept": "application/x-chess-pgn",
+                    },
+                )
+                return self.read_data(urlopen(request))
             else:
                 if not self.allow_extra and game["rated"]:
                     return None
