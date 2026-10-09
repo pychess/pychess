@@ -20,7 +20,8 @@ from pychess.Utils.const import (
     QUEEN_CASTLE,
 )
 from pychess.Utils import Move
-from pychess.Utils.lutils.bitboard import toString
+
+# from pychess.Utils.lutils.bitboard import toString
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.ldata import brank8
 from pychess.Utils.lutils.lmove import parseAN, toAN, parseSAN, toSAN
@@ -60,8 +61,8 @@ class SchessTestCase(unittest.TestCase):
         FEN = "r4knr/1bpp1Pp1/pp3b2/q2pep1p/3N4/P1N5/1PPQBPPP/R1B1K2R[hHE] w KQ - 1 17"
         board = LBoard(SCHESS)
         board.applyFen(FEN)
-        print("--------")
-        print(board)
+        # print("--------")
+        # print(board)
 
         moves = set()
         for move in genAllMoves(board):
@@ -113,8 +114,8 @@ class SchessTestCase(unittest.TestCase):
 
         for move in "e2e3 e7e5 d1h5 d8e7 h5g4 b8c6 g1f3 d7d5 g4h4 e7c5 h4a4 e5e4 d2d4 c5e7 f3d2 e7b4 a4b4 c6b4".split():
             board.applyMove(parseAN(board, move))
-        print("--------")
-        print(board)
+        # print("--------")
+        # print(board)
 
         moves = set()
         for move in genAllMoves(board):
@@ -126,8 +127,8 @@ class SchessTestCase(unittest.TestCase):
         fen = board.asFen()
         move = parseAN(board, "e1d1e")
         board.applyMove(move)
-        print("e1d1e")
-        print(board)
+        # print("e1d1e")
+        # print(board)
 
         self.assertEqual(
             placement(board.asFen()),
@@ -147,8 +148,8 @@ class SchessTestCase(unittest.TestCase):
         moves = set()
         for move in genAllMoves(board):
             moves.add(toAN(board, move))
-        print("--------")
-        print(board)
+        # print("--------")
+        # print(board)
 
         self.assertIn("a1e1h", moves)
         self.assertIn("a1e1e", moves)
@@ -156,8 +157,8 @@ class SchessTestCase(unittest.TestCase):
         fen = board.asFen()
         parseAN(board, "a1e1e")
         board.applyMove(move)
-        print("a1e1e")
-        print(board)
+        # print("a1e1e")
+        # print(board)
 
         self.assertEqual(
             placement(board.asFen()),
@@ -177,8 +178,8 @@ class SchessTestCase(unittest.TestCase):
         moves = set()
         for move in genAllMoves(board):
             moves.add(toAN(board, move))
-        print("--------")
-        print(board)
+        # print("--------")
+        # print(board)
 
         self.assertIn("h8e8h", moves)
         self.assertIn("h8e8e", moves)
@@ -186,8 +187,8 @@ class SchessTestCase(unittest.TestCase):
         fen = board.asFen()
         move = parseAN(board, "h8e8h")
         board.applyMove(move)
-        print("h8e8e")
-        print(board)
+        # print("h8e8e")
+        # print(board)
 
         self.assertEqual(
             placement(board.asFen()),
@@ -207,8 +208,8 @@ class SchessTestCase(unittest.TestCase):
         moves = set()
         for move in genAllMoves(board):
             moves.add(toAN(board, move))
-        print("--------")
-        print(board)
+        # print("--------")
+        # print(board)
 
         self.assertIn("h1e1h", moves)
         self.assertIn("h1e1e", moves)
@@ -224,8 +225,8 @@ class SchessTestCase(unittest.TestCase):
         fen = board.asFen()
         move = parseAN(board, "h1e1e")
         board.applyMove(move)
-        print("h1e1e")
-        print(board)
+        # print("h1e1e")
+        # print(board)
 
         self.assertEqual(
             placement(board.asFen()),
@@ -243,8 +244,8 @@ class SchessTestCase(unittest.TestCase):
         moves = set()
         for move in genAllMoves(board):
             moves.add(toAN(board, move))
-        print("--------")
-        print(board)
+        # print("--------")
+        # print(board)
 
         self.assertIn("f6d7", moves)
         self.assertNotIn("f6d7/H", moves)
@@ -262,9 +263,9 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         board.applyFen(SCHESSSTART)
 
-        print(board)
-        print(toString(board.virgin[0]))
-        print(toString(board.virgin[1]))
+        # print(board)
+        # print(toString(board.virgin[0]))
+        # print(toString(board.virgin[1]))
 
         self.assertEqual(board.virgin[0], brank8[1])
         self.assertEqual(board.virgin[1], brank8[0])
@@ -272,8 +273,8 @@ class SchessTestCase(unittest.TestCase):
         board = LBoard(SCHESS)
         FEN = "r1hqerk1/pp1nbppp/2pp1nb1/4p3/2PPP3/2N1B1PP/PP2NPB1/RH1QK2R/E w KQHEDA - 2 10"
         board.applyFen(FEN)
-        print("-----------")
-        print(board)
+        # print("-----------")
+        # print(board)
 
         move = parseSAN(board, "O-O")
         board.applyMove(move)

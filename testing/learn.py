@@ -39,7 +39,7 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
         dd = DiscovererDialog(discoverer)
 
         def on_all_engines_discovered(discoverer, event):
-            print("on_all_engines_discovered() OK")
+            # print("on_all_engines_discovered() OK")
             event.set()
 
         event = asyncio.Event()

@@ -282,7 +282,7 @@ class PlayGameTests(EmittingTestCase):
         await asyncio.sleep(0)
 
         self.assertEqual(self.gamemodel.ply, 3)
-        print(self.gamemodel.boards[-1])
+        # print(self.gamemodel.boards[-1])
 
 
 if __name__ == "__main__":

@@ -94,7 +94,7 @@ class BoardTestCase(unittest.TestCase):
 
         for cord0, cord1 in moves:
             board = board.move(Move(Cord(cord0), Cord(cord1), board))
-        board.printPieces()
+        # board.printPieces()
 
         # Not protected
         self.assertEqual(

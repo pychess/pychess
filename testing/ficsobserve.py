@@ -161,7 +161,7 @@ class ObserveGameTests(EmittingTestCase):
 
         await asyncio.wait_for(event.wait(), timeout=5)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        # print(self.games_persp.cur_gmwidg().gamemodel)
 
         lines = [
             "<12> -r------ --k----- ----p--- n-ppPb-p -----P-P -PP-K-P- PR------ ------R- B -1 0 0 0 0 11 463 schachbjm Maras 0 45 45 17 15 557871 274070 37 R/b2-g2 (0:10.025) Rg2 0 1 0",
@@ -177,7 +177,7 @@ class ObserveGameTests(EmittingTestCase):
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 74)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        # print(self.games_persp.cur_gmwidg().gamemodel)
 
     async def test2(self):
         """Test observing lecturebot"""
@@ -215,7 +215,7 @@ class ObserveGameTests(EmittingTestCase):
 
         await asyncio.wait_for(event.wait(), timeout=5)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        # print(self.games_persp.cur_gmwidg().gamemodel)
 
         lines = [
             "<12> rq--k-nr pp-b-pQp ---bp--- ---N---- -------- ---B---- PP---PP- R-B-R--K B -1 0 0 1 1 0 1 LectureBot LectureBot -2 0 0 32 33 0 0 15 Q/g4-g7 (0:00.000) Qxg7 0 0 0",
@@ -237,7 +237,7 @@ class ObserveGameTests(EmittingTestCase):
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 29)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        # print(self.games_persp.cur_gmwidg().gamemodel)
 
         lines = [
             "Game 1: LectureBot backs up 4 moves.",
@@ -256,7 +256,7 @@ class ObserveGameTests(EmittingTestCase):
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 25)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        # print(self.games_persp.cur_gmwidg().gamemodel)
 
         lines = [
             "<12> rq---knr pp-b-ppp ---bp--- ---N---- ------Q- ---B---- PP---PPP R-B-R-K- W -1 0 0 0 0 3 1 LectureBot LectureBot -2 0 0 33 34 0 0 14 K/e8-f8 (0:00.000) Kf8 0 0 0",
@@ -290,7 +290,7 @@ class ObserveGameTests(EmittingTestCase):
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 28)
 
-        print(self.games_persp.cur_gmwidg().gamemodel)
+        # print(self.games_persp.cur_gmwidg().gamemodel)
 
 
 if __name__ == "__main__":

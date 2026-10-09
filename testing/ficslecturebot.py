@@ -73,7 +73,7 @@ class ObserveGameTests(EmittingTestCase):
         await asyncio.wait_for(event.wait(), timeout=5)
 
         gamemodel = self.games_persp.cur_gmwidg().gamemodel
-        print(gamemodel)
+        # print(gamemodel)
 
         lines = [
             "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 1 Henley LectureBot -2 0 0 39 39 0 0 1 none (0:00.000) none 0 0 0",
@@ -90,7 +90,7 @@ class ObserveGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel)
+        # print(gamemodel)
 
         self.assertEqual(gamemodel.ply, 1)
 
@@ -111,7 +111,7 @@ class ObserveGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel)
+        # print(gamemodel)
 
         self.assertEqual(gamemodel.ply, 4)
 
@@ -149,7 +149,7 @@ class ObserveGameTests(EmittingTestCase):
 
         await asyncio.wait_for(event.wait(), timeout=5)
 
-        print(self.gamemodel)
+        # print(self.gamemodel)
 
         lines = [
             # bsetup
@@ -219,7 +219,7 @@ class ObserveGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(self.gamemodel.boards[-1])
+        # print(self.gamemodel.boards[-1])
 
         self.assertEqual(self.gamemodel.ply, 3)
 
@@ -282,7 +282,7 @@ class ObserveGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(self.gamemodel.boards[-1])
+        # print(self.gamemodel.boards[-1])
 
         self.assertEqual(self.gamemodel.ply, 1)
 

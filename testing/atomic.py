@@ -48,7 +48,7 @@ class AtomicTestCase(unittest.TestCase):
 
         board = AtomicBoard(setup=FEN1)
         board = board.move(parseSAN(board, "Nxa7"))
-        print(board)
+        # print(board)
         # Rook exploded, no O-O-O anymore!
         self.assertTrue(validate(board, parseSAN(board, "b6")))
         self.assertTrue(not validate(board, parseSAN(board, "a6")))
@@ -60,7 +60,7 @@ class AtomicTestCase(unittest.TestCase):
 
         board = AtomicBoard(setup=FEN1)
         board = board.move(parseSAN(board, "Nc7+"))
-        print(board)
+        # print(board)
         # King explosion takes precedence over mate!
         self.assertTrue(validate(board, parseSAN(board, "Qxd2")))
         self.assertTrue(validate(board, parseSAN(board, "Qxf2")))
@@ -72,7 +72,7 @@ class AtomicTestCase(unittest.TestCase):
 
         board = AtomicBoard(setup=FEN2)
         board = board.move(parseSAN(board, "Qxc2"))
-        print(board)
+        # print(board)
         self.assertEqual(getStatus(board), (BLACKWON, WON_KINGEXPLODE))
 
     def test_getstatus2(self):
@@ -82,21 +82,21 @@ class AtomicTestCase(unittest.TestCase):
         self.assertTrue(not validate(board, parseSAN(board, "Kxg7")))
         self.assertTrue(not validate(board, parseSAN(board, "Kg8")))
         self.assertTrue(not validate(board, parseSAN(board, "Kh7")))
-        print(board)
+        # print(board)
         self.assertEqual(getStatus(board), (DRAW, DRAW_STALEMATE))
 
     def test_getstatus3(self):
         """Testing possible to mate with the queen unaided in Atomic variant"""
 
         board = AtomicBoard(setup=FEN4)
-        print(board)
+        # print(board)
         self.assertEqual(getStatus(board), (WHITEWON, WON_MATE))
 
     def test_getstatus4(self):
         """Testing possible move into check when king touch saves the king"""
 
         board = AtomicBoard(setup=FEN5)
-        print(board)
+        # print(board)
         self.assertTrue(validate(board, parseSAN(board, "Kg5")))
 
     def test_apply_pop(self):
@@ -104,7 +104,7 @@ class AtomicTestCase(unittest.TestCase):
 
         board = LBoard(variant=ATOMICCHESS)
         board.applyFen(FEN1)
-        print(board)
+        # print(board)
         hist_exploding_around0 = [a[:] for a in board.hist_exploding_around]
         print_apply_pop = False
 

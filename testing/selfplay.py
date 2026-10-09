@@ -108,13 +108,14 @@ class CECPTests(unittest.IsolatedAsyncioTestCase):
                 for player in self.game.players:
                     player.setOptionInitialBoard(self.game)
 
-            print(variant.name)
+            # print(variant.name)
             self.game.start()
 
             await asyncio.wait_for(event.wait(), timeout=5)
 
             pgn = StringIO()
-            print(save(pgn, self.game))
+            # print(save(pgn, self.game))
+            save(pgn, self.game)
 
             self.assertIsNone(self.p0.invalid_move)
             self.assertIsNone(self.p1.invalid_move)

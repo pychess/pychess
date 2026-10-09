@@ -37,19 +37,19 @@ class LosersTestCase(unittest.TestCase):
         """Testing validate move in Losers variant"""
 
         board = LosersBoard(setup=FEN0)
-        print(board)
+        # print(board)
         self.assertTrue(validate(board, parseSAN(board, "Kxa7")))
         self.assertTrue(not validate(board, parseSAN(board, "Kb8")))
         self.assertTrue(not validate(board, parseSAN(board, "Kb7")))
 
         board = LosersBoard(setup=FEN1)
-        print(board)
+        # print(board)
         self.assertTrue(not validate(board, parseSAN(board, "Kxa7")))
         self.assertTrue(not validate(board, parseSAN(board, "Kb8")))
         self.assertTrue(validate(board, parseSAN(board, "Kb7")))
 
         board = LosersBoard(setup=FEN2)
-        print(board)
+        # print(board)
         self.assertTrue(not validate(board, parseSAN(board, "Kxb7")))
         self.assertTrue(not validate(board, parseSAN(board, "Kb8")))
         self.assertTrue(validate(board, parseSAN(board, "Rxb7")))

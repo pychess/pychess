@@ -76,7 +76,7 @@ class SittuyinTestCase(unittest.TestCase):
         """Testing validate move in Sittuyin variant"""
 
         board = SittuyinBoard(setup=FEN0)
-        print(board)
+        # print(board)
         self.assertTrue(validate(board, parseAN(board, "f4f3")))
         self.assertTrue(validate(board, parseAN(board, "b2b1")))
         self.assertTrue(validate(board, parseAN(board, "b2c1")))
@@ -89,7 +89,7 @@ class SittuyinTestCase(unittest.TestCase):
         self.assertFalse(validate(board, parseAN(board, "b2c1f")))
 
         board = SittuyinBoard(setup=FEN1)
-        print(board)
+        # print(board)
         # but (optional) promotion if we don't have Met (queen)
         self.assertFalse(validate(board, parseAN(board, "b2b2f")))
         self.assertFalse(validate(board, parseSAN(board, "b2=f")))
@@ -106,7 +106,7 @@ class SittuyinTestCase(unittest.TestCase):
         self.assertFalse(validate(board, parseAN(board, "b2c1f")))
 
         board = SittuyinBoard(setup=FEN2)
-        print(board)
+        # print(board)
         # simple pawn move can give check
         self.assertTrue(validate(board, parseAN(board, "d6d7")))
         # pawn can promote in place
@@ -116,7 +116,7 @@ class SittuyinTestCase(unittest.TestCase):
         self.assertFalse(validate(board, parseAN(board, "d6e7f")))
 
         board = SittuyinBoard(setup=FEN3)
-        print(board)
+        # print(board)
         self.assertTrue(validate(board, parseAN(board, "d6d7")))
         # last pawn being enywhere can promote
         self.assertTrue(validate(board, parseAN(board, "d6d6f")))
@@ -128,7 +128,7 @@ class SittuyinTestCase(unittest.TestCase):
 
         # https://www.facebook.com/Myanmar-Sittuyin-105323654491347/
         board = SittuyinBoard(setup=FEN5)
-        print(board)
+        # print(board)
         self.assertTrue(validate(board, parseAN(board, "b3b4")))
         self.assertTrue(validate(board, parseAN(board, "b3a4")))
 
@@ -142,12 +142,12 @@ class SittuyinTestCase(unittest.TestCase):
         """Testing Sittuyin promotion SAN parser"""
 
         board = SittuyinBoard(setup=FEN6)
-        print(board)
+        # print(board)
         self.assertNotEqual(parseAN(board, "d4c3f"), parseSAN(board, "c3=f"))
         self.assertEqual(parseAN(board, "b4c3f"), parseSAN(board, "c3=f"))
 
         board = SittuyinBoard(setup=FEN7)
-        print(board)
+        # print(board)
         self.assertNotEqual(parseAN(board, "f5e6f"), parseSAN(board, "e6=f"))
         self.assertEqual(parseAN(board, "d5e6f"), parseSAN(board, "e6=f"))
 
@@ -155,7 +155,7 @@ class SittuyinTestCase(unittest.TestCase):
         """Testing validate move in Sittuyin variant"""
 
         board = SittuyinBoard(setup=FEN4)
-        print(board)
+        # print(board)
 
         moves = set()
         for move in genCaptures(board.board):
@@ -165,7 +165,7 @@ class SittuyinTestCase(unittest.TestCase):
     def test_genCheckEvasions(self):
         """Testing validate move in Sittuyin variant"""
         board = SittuyinBoard(setup=FEN4)
-        print(board)
+        # print(board)
 
         moves = set()
         for move in genCheckEvasions(board.board):
@@ -175,7 +175,7 @@ class SittuyinTestCase(unittest.TestCase):
     def test_genAllMoves(self):
         """Testing validate move in Sittuyin variant"""
         board = SittuyinBoard(setup=FEN4)
-        print(board)
+        # print(board)
 
         moves = set()
         for move in genAllMoves(board.board):

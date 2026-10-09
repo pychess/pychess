@@ -34,7 +34,7 @@ class RacingKingsTestCase(unittest.TestCase):
 
         board = RacingKingsBoard(setup=FEN)
         board = board.move(parseSAN(board, "Kh8"))
-        print(board)
+        # print(board)
         # White king reached 8th row, but this is not a win
         # because black can reach 8th row also with hes next move
         self.assertEqual(getStatus(board), (RUNNING, UNKNOWN_REASON))
@@ -43,7 +43,7 @@ class RacingKingsTestCase(unittest.TestCase):
         self.assertTrue(not validate(board, parseSAN(board, "Kd8")))
 
         board = board.move(parseSAN(board, "Kb8"))
-        print(board)
+        # print(board)
         self.assertEqual(getStatus(board), (DRAW, DRAW_KINGSINEIGHTROW))
 
     def test_win_after_opponent_fails_to_draw_white(self):

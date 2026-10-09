@@ -174,7 +174,8 @@ class EmittingTestCase(unittest.IsolatedAsyncioTestCase):
             try:
                 await task
             except asyncio.CancelledError:
-                print("Task cancelled", task)
+                # print("Task cancelled", task)
+                pass
 
     async def runAndAssertEquals(self, signal, lines, expectedResults):
         self.args = None

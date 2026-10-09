@@ -46,21 +46,23 @@ class FRCFindMovesTestCase(unittest.TestCase):
             fen[2] = castl
             fen = " ".join(fen)
 
-            print(i + 1, "/", len(positions), "-", fen)
+            # print(i + 1, "/", len(positions), "-", fen)
             board.applyFen(fen)
 
             for depth, suposedMoveCount in enumerate(depths):
                 if depth + 1 > self.MAXDEPTH:
                     break
                 self.count = 0
-                print("searching depth %d for %d moves" % (depth + 1, suposedMoveCount))
+                # print("searching depth %d for %d moves" % (depth + 1, suposedMoveCount))
                 self.perft(board, depth + 1, [])
-                self.assertEqual(self.count, suposedMoveCount)
+                self.assertEqual(
+                    self.count, suposedMoveCount, f"{fen}, depth {depth + 1}"
+                )
 
     @unittest.skipIf(MSYS2, "Testing perft takes time. Leave it to travis.")
     def testMovegen1(self):
         """Testing FRC variant move generator with perftsuite.epd"""
-        print()
+        # print()
         self.MAXDEPTH = 3
         positions = []
         curdir = os.path.dirname(__file__)
@@ -74,7 +76,7 @@ class FRCFindMovesTestCase(unittest.TestCase):
     @unittest.skipIf(MSYS2, "Testing perft takes time. Leave it to travis.")
     def testMovegen2(self):
         """Testing FRC variant move generator with frc_perftsuite.epd"""
-        print()
+        # print()
         self.MAXDEPTH = 3
         positions = []
         curdir = os.path.dirname(__file__)

@@ -38,11 +38,11 @@ class PgnTestCase(unittest.TestCase):
         games, plys = pgnfile.get_records()
 
         for i, game in enumerate(games):
-            print(f"{i + 1}/{pgnfile.get_count()}")
+            # print(f"{i + 1}/{pgnfile.get_count()}")
             orig_moves_text = normalize(pgnfile.get_movetext(game))
 
             model = pgnfile.loadToModel(game)
-            print(model.tags["Site"])
+            # print(model.tags["Site"])
             new_moves = []
             walk(model.boards[0].board, new_moves, model)
             new_moves_text = normalize(" ".join(new_moves))
@@ -67,7 +67,9 @@ class PgnTestCase(unittest.TestCase):
                 ):
                     continue
 
-                self.assertEqual(orig, new)
+                self.assertEqual(
+                    orig, new, f"{name}: game {i + 1}, Site {model.tags['Site']}"
+                )
 
         pgnfile.close()
 

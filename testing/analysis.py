@@ -71,7 +71,7 @@ class CECPTests(EmittingTestCase):
     async def _testLine(
         self, engine, analyzer, board, analine, ply, moves, score, depth, nps
     ):
-        print("testline", ply, moves, score, depth, nps)
+        # print("testline", ply, moves, score, depth, nps)
         self.traceSignal(analyzer, "analyze")
         await engine.putline(analine)
         results = self.getSignalResults(analyzer)

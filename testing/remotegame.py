@@ -110,15 +110,15 @@ class RemoteGameTestCase(unittest.TestCase):
         # Check
         if cp is None or links is None or len(links) == 0:
             return
-        print("\n%s" % cp.get_description())
+        # print("\n%s" % cp.get_description())
         if cp.get_description() not in cplist:
-            print("- Skipping unlisted chess provider")
+            # print("- Skipping unlisted chess provider")
             return
         if not cp.is_enabled():
-            print("- Skipping disabled chess provider")
+            # print("- Skipping disabled chess provider")
             return
         if cp.is_async():
-            print("- Skipping asynchronous chess provider")
+            # print("- Skipping asynchronous chess provider")
             return
 
         # Pick one link only to not overload the remote server
@@ -126,8 +126,8 @@ class RemoteGameTestCase(unittest.TestCase):
 
         # Make unit tests reproducible
         url, expected = links[0]
-        print("- Target link: %s" % url)
-        print("- Expecting data: %s" % expected)
+        # print("- Target link: %s" % url)
+        # print("- Expecting data: %s" % expected)
 
         # Download link
         cp.reset()
@@ -142,9 +142,9 @@ class RemoteGameTestCase(unittest.TestCase):
 
         # Result
         ok = data is not None
-        print("- Fetched data: %s" % ok)
-        if ok:
-            print(data)
+        # print("- Fetched data: %s" % ok)
+        # if ok:
+        #     print(data)
         self.assertEqual(ok, expected, msg=f"{ok} != {expected} for URL {url!r}")
 
     def testLichess(self):

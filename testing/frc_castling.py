@@ -52,30 +52,30 @@ data = (
 class FRCCastlingTestCase(unittest.TestCase):
     def testFRCCastling(self):
         """Testing FRC castling movegen"""
-        print()
+        # print()
 
         for fen, castles in data:
-            print(fen)
+            # print(fen)
             board = LBoard(FISCHERRANDOMCHESS)
             board.applyFen(fen)
             # print board
             moves = [move for move in genCastles(board)]
-            self.assertEqual(len(moves), len(castles))
+            self.assertEqual(len(moves), len(castles), fen)
             for i, castle in enumerate(castles):
                 kfrom, kto, flag = castle
-                self.assertEqual(moves[i], newMove(kfrom, kto, flag))
+                self.assertEqual(moves[i], newMove(kfrom, kto, flag), fen)
 
     def testFRCCastlingUCI(self):
         """Testing UCI engine FRC castling move"""
-        print()
+        # print()
 
         fen = "rbq1krb1/pp1pp1pp/2p1n3/5p2/2PP1P1n/4B1N1/PP2P1PP/RBQNKR2 w FAfa - 2 6"
-        print(fen)
+        # print(fen)
         board = LBoard(FISCHERRANDOMCHESS)
         board.applyFen(fen)
         # print board
         moves = [move for move in genCastles(board)]
-        self.assertTrue(parseAN(board, "e1g1") in moves)
+        self.assertTrue(parseAN(board, "e1g1") in moves, fen)
 
 
 # (FEN, expected castling flags) for X-FEN file-letter rights parsed as SETUPCHESS.

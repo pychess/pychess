@@ -62,7 +62,7 @@ class PlacementTestCase(unittest.TestCase):
         """Testing validate move in Placement variant"""
 
         board = PlacementBoard(setup=FEN0)
-        print(board)
+        # print(board)
         # only drop moves to base line allowed
         self.assertTrue(validate(board, parseSAN(board, "K@a1")))
         self.assertTrue(validate(board, parseSAN(board, "K@b1")))
@@ -73,7 +73,7 @@ class PlacementTestCase(unittest.TestCase):
         self.assertTrue(not validate(board, parseSAN(board, "b4")))
 
         board = PlacementBoard(setup=FEN1)
-        print(board)
+        # print(board)
         # only drop moves to base line allowed
         self.assertTrue(validate(board, parseSAN(board, "K@a8")))
         self.assertTrue(validate(board, parseSAN(board, "K@b8")))
@@ -84,7 +84,7 @@ class PlacementTestCase(unittest.TestCase):
         self.assertTrue(not validate(board, parseSAN(board, "b5")))
 
         board = PlacementBoard(setup=FEN2)
-        print(board)
+        # print(board)
         # bishops have to be placed on opposite colored fields
         self.assertTrue(validate(board, parseSAN(board, "B@a1")))
         self.assertTrue(validate(board, parseSAN(board, "B@b1")))
@@ -96,7 +96,7 @@ class PlacementTestCase(unittest.TestCase):
         self.assertTrue(not validate(board, parseSAN(board, "N@b1")))
 
         board = PlacementBoard(setup=FEN3)
-        print(board)
+        # print(board)
         # bishops have to be placed on opposite colored fields
         self.assertTrue(validate(board, parseSAN(board, "B@b1")))
         self.assertTrue(validate(board, parseSAN(board, "N@c1")))

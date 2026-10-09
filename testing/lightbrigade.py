@@ -15,8 +15,8 @@ class SchessTestCase(unittest.TestCase):
         FEN = "k7/7P/8/8/8/8/8/7K w - - 0 1"
         board = LBoard(LIGHTBRIGADECHESS)
         board.applyFen(FEN)
-        print("--------")
-        print(board)
+        # print("--------")
+        # print(board)
 
         moves = set()
         for move in genAllMoves(board):
@@ -33,8 +33,8 @@ class SchessTestCase(unittest.TestCase):
         FEN = "k7/8/8/8/8/8/p7/7K b - - 0 1"
         board = LBoard(LIGHTBRIGADECHESS)
         board.applyFen(FEN)
-        print("--------")
-        print(board)
+        # print("--------")
+        # print(board)
 
         moves = set()
         for move in genAllMoves(board):

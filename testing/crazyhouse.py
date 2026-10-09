@@ -43,7 +43,7 @@ class CrazyhouseTestCase(unittest.TestCase):
         """Testing validate move in Crazyhouse variant"""
 
         board = CrazyhouseBoard(setup=FEN0)
-        print(board)
+        # print(board)
         # Drop can save mate
         self.assertTrue(validate(board, parseSAN(board, "R@b8")))
         self.assertTrue(validate(board, parseSAN(board, "Ka7")))
@@ -54,7 +54,7 @@ class CrazyhouseTestCase(unittest.TestCase):
     def test_check_evasions(self):
         """Testing check evasions in Crazyhouse variant"""
         board = CrazyhouseBoard(setup=FEN1)
-        print(board)
+        # print(board)
         # invalid drop
         self.assertTrue(validate(board, parseSAN(board, "Q@b1")))
         self.assertTrue(validate(board, parseSAN(board, "Q@c1")))

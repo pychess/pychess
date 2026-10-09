@@ -42,9 +42,9 @@ class BoardTestCase(unittest.TestCase):
         )
 
         for cord0, cord1 in moves:
-            print(cord0, cord1)
+            # print(cord0, cord1)
             board = board.move(Move(Cord(cord0), Cord(cord1), board))
-            board.printPieces()
+            # board.printPieces()
 
         self.assertIsNone(board[Cord(E8)])
         self.assertIsNone(board[Cord(H8)])

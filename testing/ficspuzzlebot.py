@@ -110,7 +110,7 @@ class ExamineGameTests(EmittingTestCase):
         game = self.connection.games.get(game)
         expectedResults = (game,)
         gamemodel = await self.runAndWaitForGameStarted(signal, lines, expectedResults)
-        print(gamemodel)
+        # print(gamemodel)
 
         p0, p1 = gamemodel.players
         assert isinstance(p0, ICPlayer)
@@ -153,7 +153,7 @@ class ExamineGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        # print(gamemodel.boards[-1])
 
         self.assertEqual(gamemodel.ply, 1)
 
@@ -187,7 +187,7 @@ class ExamineGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        # print(gamemodel.boards[-1])
 
         self.assertEqual(gamemodel.ply, 0)
 
@@ -210,7 +210,7 @@ class ExamineGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        # print(gamemodel.boards[-1])
 
         self.assertEqual(gamemodel.ply, 1)
 
@@ -240,7 +240,7 @@ class ExamineGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        # print(gamemodel.boards[-1])
 
         self.assertEqual(gamemodel.ply, 2)
 
@@ -270,7 +270,7 @@ class ExamineGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        # print(gamemodel.boards[-1])
 
         self.assertEqual(gamemodel.ply, 3)
 
@@ -306,7 +306,7 @@ class ExamineGameTests(EmittingTestCase):
         game = self.connection.games.get(game)
         expectedResults = (game,)
         gamemodel = await self.runAndWaitForGameStarted(signal, lines, expectedResults)
-        print(gamemodel)
+        # print(gamemodel)
 
         lines = [
             "Removing game 127 from observation list.",
@@ -344,7 +344,7 @@ class ExamineGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        # print(gamemodel.boards[-1])
 
         self.assertEqual(gamemodel.ply, 2)
 
@@ -374,7 +374,7 @@ class ExamineGameTests(EmittingTestCase):
         # let the game model process the moves
         await asyncio.sleep(0)
 
-        print(gamemodel.boards[-1])
+        # print(gamemodel.boards[-1])
 
         self.assertEqual(gamemodel.ply, 3)
 
@@ -406,7 +406,7 @@ class ExamineGameTests(EmittingTestCase):
 
         self.assertEqual(gamemodel.ply, 4)
 
-        print(gamemodel.boards[-1])
+        # print(gamemodel.boards[-1])
 
 
 if __name__ == "__main__":

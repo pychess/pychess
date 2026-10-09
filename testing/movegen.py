@@ -101,7 +101,7 @@ class FindMovesTestCase(unittest.TestCase):
 
     def movegen(self, positions, variant):
         for i, (fen, depths) in enumerate(positions):
-            print(i + 1, "/", len(positions), "-", fen)
+            # print(i + 1, "/", len(positions), "-", fen)
             board = LBoard(variant)
             board.applyFen(fen)
             hash = board.hash
@@ -110,15 +110,15 @@ class FindMovesTestCase(unittest.TestCase):
                 if depth > self.MAXDEPTH:
                     break
                 self.count = 0
-                print("searching depth %d for %d moves" % (depth, suposedMoveCount))
+                # print("searching depth %d for %d moves" % (depth, suposedMoveCount))
                 self.perft(board, depth, [])
-                self.assertEqual(board.hash, hash)
-                self.assertEqual(self.count, suposedMoveCount)
+                self.assertEqual(board.hash, hash, f"{fen}, depth {depth}")
+                self.assertEqual(self.count, suposedMoveCount, f"{fen}, depth {depth}")
 
     @unittest.skipIf(MSYS2, "Testing perft takes time. Leave it to travis.")
     def testMovegen1(self):
         """Testing NORMAL variant move generator with perftsuite.epd"""
-        print()
+        # print()
         # return
         self.MAXDEPTH = 3
         positions = []
@@ -135,11 +135,11 @@ class FindMovesTestCase(unittest.TestCase):
 
     def testMovegen2(self):
         """Testing NORMAL variant move generator with perftsuite2.epd"""
-        print()
-        print(
-            "The movegen test with perftsuite2.epd takes time! If you really want it to run"
-        )
-        print("put the 'return' line into comment and use pypy instead of python!")
+        # print()
+        # print(
+        #     "The movegen test with perftsuite2.epd takes time! If you really want it to run"
+        # )
+        # print("put the 'return' line into comment and use pypy instead of python!")
         return
         self.MAXDEPTH = 7
         positions = []
@@ -162,7 +162,7 @@ class FindMovesTestCase(unittest.TestCase):
                 [(1, 33), (2, 673), (3, 19354), (4, 374841), (5, 10241498)],
             )
         ]
-        print()
+        # print()
         # return
         self.MAXDEPTH = 3
         self.movegen(positions, SITTUYINCHESS)
@@ -183,7 +183,7 @@ class FindMovesTestCase(unittest.TestCase):
                 [(1, 23), (2, 527), (3, 12264)],
             ),
         ]
-        print()
+        # print()
         # return
         self.MAXDEPTH = 3
         self.movegen(positions, CAMBODIANCHESS)
@@ -196,7 +196,7 @@ class FindMovesTestCase(unittest.TestCase):
                 [(1, 26), (2, 665), (3, 17062), (4, 432413)],
             )
         ]
-        print()
+        # print()
         # return
         self.MAXDEPTH = 3
         self.movegen(positions, MAKRUKCHESS)
