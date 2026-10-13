@@ -68,7 +68,7 @@ PyChess is an open-source project, and contributions are welcome! Whether you wa
      ```
 
 2. **Set Up Your Development Environment**
-   - Ensure you have Python 3.10 or newer installed.
+   - Ensure you have Python 3.11 or newer installed.
    - Install the required system GTK/GObject packages for your platform. On Debian/Ubuntu, see `INSTALL` for the full package list; on macOS, see `INSTALL_MACOS` for the Homebrew packages.
    - Install Python dependencies with `uv`:
      ```bash
