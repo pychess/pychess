@@ -223,7 +223,7 @@ class CECPEngine(ProtocolEngine):
                         return_value = await asyncio.wait_for(
                             self.queue.get(), TIME_OUT_SECOND
                         )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 log.warning("Got timeout error", extra={"task": self.defname})
                 is_dead.add(True)
             except Exception:

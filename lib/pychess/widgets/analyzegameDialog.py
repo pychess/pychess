@@ -76,7 +76,7 @@ class AnalyzeGameDialog:
                 if HINT not in gamemodel.spectators:
                     try:
                         await asyncio.wait_for(gamemodel.start_analyzer(HINT), 5.0)
-                    except asyncio.TimeoutError:
+                    except TimeoutError:
                         log.error("Got timeout error while starting hint analyzer")
                         return
                     except Exception:
@@ -91,7 +91,7 @@ class AnalyzeGameDialog:
                     if SPY not in gamemodel.spectators:
                         try:
                             await asyncio.wait_for(gamemodel.start_analyzer(SPY), 5.0)
-                        except asyncio.TimeoutError:
+                        except TimeoutError:
                             log.error("Got timeout error while starting spy analyzer")
                             return
                         except Exception:

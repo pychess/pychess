@@ -576,7 +576,7 @@ class EngineDiscoverer(GObject.GObject):
             await subprocess.start()
         except OSError:
             raise PlayerIsDead
-        except asyncio.TimeoutError:
+        except TimeoutError:
             raise PlayerIsDead
         except GLib.GError:
             raise PlayerIsDead

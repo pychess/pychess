@@ -90,7 +90,7 @@ class SubProcess(GObject.GObject):
             self.read_stdout_task = asyncio.create_task(
                 self.read_stdout(self.proc.stdout)
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             log.warning("TimeoutError", extra={"task": self.defname})
             raise
         except GLib.GError:
@@ -196,7 +196,7 @@ class SubProcess(GObject.GObject):
     async def _wait_for_exit(self, timeout):
         try:
             await asyncio.wait_for(self.proc.wait(), timeout)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return False
         else:
             return True
@@ -215,7 +215,7 @@ class SubProcess(GObject.GObject):
                         asyncio.shield(self.write_task), self.QUIT_TIMEOUT
                     )
                 except (
-                    asyncio.TimeoutError,
+                    TimeoutError,
                     asyncio.CancelledError,
                     BrokenPipeError,
                     ConnectionResetError,
