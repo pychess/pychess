@@ -7,7 +7,7 @@ name = "pychess"
 dynamic = ["version"]
 description = "Chess client"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later" }
 authors = [
     { name = "Pychess team", email = "pychess-people@googlegroups.com" },
@@ -23,7 +23,6 @@ classifiers = [
     "Operating System :: POSIX",
     "Operating System :: MacOS :: MacOS X",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -63,7 +62,7 @@ include = ["pychess*"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py311"
 src = ["lib", "testing"]
 builtins = ["_", "ngettext", "reload"]
 extend-exclude = [
@@ -95,7 +94,7 @@ exclude = [
     "doc/createDoc",
     "lib/pychess.egg-info",
 ]
-pythonVersion = "3.10"
+pythonVersion = "3.11"
 pythonPlatform = "Linux"
 typeCheckingMode = "off"
 reportMissingImports = "none"
