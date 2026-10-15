@@ -1,6 +1,5 @@
 import asyncio
 import os
-import sys
 import unittest
 
 from pychess.Players.engineNest import discoverer
@@ -86,9 +85,6 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
         self.learn_persp.activate()
         self.assertEqual(len(self.learn_persp.store), 1)
 
-    @unittest.skipIf(
-        sys.version_info[:2] == (3, 11), "takes forever with Python 3.11.x"
-    )
     async def test1(self):
         """Start next endgame"""
         self.learn_persp.activate()
@@ -105,9 +101,6 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
         filename = LESSONS[0][0]
         start_lesson_from(filename)
 
-    @unittest.skipIf(
-        sys.version_info[:2] == (3, 11), "takes forever with Python 3.11.x"
-    )
     async def test4(self):
         """Start next puzzle"""
         filename = PUZZLES[0][0]
