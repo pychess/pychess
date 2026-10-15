@@ -58,7 +58,27 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
         except AttributeError:
             pass
 
+        # Stop live games and their engine subprocesses before cancelling tasks.
+        for gmwidg in list(self.games_persp.gamewidgets):
+            gmwidg.gamemodel.terminate()
+        self.games_persp.gamewidgets.clear()
         await cancel_all_tasks()
+
+    async def wait_for_game_start(self, start, *args):
+        """Wait for asynchronous engine initialization before test teardown."""
+        started = asyncio.Event()
+
+        def on_widget_created(games, gmwidg):
+            gmwidg.gamemodel.connect(
+                "game_started", lambda gamemodel: started.set()
+            )
+
+        handler = self.games_persp.connect("gmwidg_created", on_widget_created)
+        try:
+            start(*args)
+            await asyncio.wait_for(started.wait(), timeout=30)
+        finally:
+            self.games_persp.disconnect(handler)
 
     async def test0(self):
         """Init layout"""
@@ -69,7 +89,7 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
         """Start next endgame"""
         self.learn_persp.activate()
         pieces = ENDGAMES[0][0].lower()
-        start_endgame_from(pieces)
+        await self.wait_for_game_start(start_endgame_from, pieces)
 
     async def test2(self):
         """Start next lecture"""
@@ -84,7 +104,7 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
     async def test4(self):
         """Start next puzzle"""
         filename = PUZZLES[0][0]
-        start_puzzle_from(filename)
+        await self.wait_for_game_start(start_puzzle_from, filename)
 
 
 if __name__ == "__main__":
