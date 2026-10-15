@@ -69,9 +69,7 @@ class LearnTests(unittest.IsolatedAsyncioTestCase):
         started = asyncio.Event()
 
         def on_widget_created(games, gmwidg):
-            gmwidg.gamemodel.connect(
-                "game_started", lambda gamemodel: started.set()
-            )
+            gmwidg.gamemodel.connect("game_started", lambda gamemodel: started.set())
 
         handler = self.games_persp.connect("gmwidg_created", on_widget_created)
         try:
