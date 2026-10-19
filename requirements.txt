@@ -15,7 +15,7 @@ greenlet==3.5.6
 importlib_metadata==9.0.1
 iniconfig==2.3.1
 packaging==26.3
-pluggy==1.6.0
+pluggy==1.7.0
 ptyprocess==0.7.0
 Pygments==2.21.0
 tomli==2.5.0
