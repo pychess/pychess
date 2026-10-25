@@ -428,19 +428,6 @@ class InternetGameLichess(InternetGameInterface):
         # Nothing found
         return False
 
-    def query_api(self, path):
-        response = urlopen(
-            Request(
-                f"https://lichess.{self.url_tld}{path}",
-                headers={
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Accept": "application/vnd.lichess.v4+json",
-                },
-            )
-        )
-        bourne = self.read_data(response)
-        return self.json_loads(bourne)
-
     def download_game(self):
         # Check
         if None in [self.id, self.url_tld]:
@@ -448,64 +435,28 @@ class InternetGameLichess(InternetGameInterface):
 
         # Logic for the games
         if self.url_type == TYPE_GAME:
-            # Download the finished game
-            api = self.query_api("/import/master/%s/white" % self.id)
-            game = self.json_field(api, "game")
+            # Use the public API for both metadata and PGN. The web routes can
+            # require a browser challenge, and older single-game exports need auth.
+            request = Request(
+                f"https://lichess.{self.url_tld}/api/games/export/_ids"
+                "?pgnInJson=1&literate=1&clocks=1&evals=1&opening=1",
+                data=self.id.encode("utf-8"),
+                headers={
+                    "Content-Type": "text/plain",
+                    "Accept": "application/x-ndjson",
+                },
+            )
+            # A single requested ID produces at most one NDJSON record.
+            game = self.json_loads(self.read_data(urlopen(request)))
             if not isinstance(game, dict):
                 return None
-            if "winner" in game or game.get("status", {}).get("id", 0) >= 30:
-                # The single-game export requires authentication for older games.
-                # The public bulk API accepts a single ID as a plain-text body.
-                request = Request(
-                    f"https://lichess.{self.url_tld}/games/export/_ids"
-                    "?literate=1&clocks=1&evals=1&opening=1",
-                    data=self.id.encode("utf-8"),
-                    headers={
-                        "Content-Type": "text/plain",
-                        "Accept": "application/x-chess-pgn",
-                    },
-                )
-                return self.read_data(urlopen(request))
-            else:
-                if not self.allow_extra and game["rated"]:
-                    return None
-
-            # Rebuild the PGN file
-            game = {}
-            game["_url"] = "https://lichess.{}{}".format(
-                self.url_tld, self.json_field(api, "url/round")
-            )
-            game["Variant"] = self.json_field(api, "game/variant/name")
-            game["FEN"] = self.json_field(api, "game/initialFen")
-            game["SetUp"] = "1"
-            game["White"] = self.json_field(
-                api,
-                "player/name",
-                self.json_field(api, "player/user/username", "Anonymous"),
-            )
-            game["WhiteElo"] = self.json_field(api, "player/rating")
-            game["Black"] = self.json_field(
-                api,
-                "opponent/name",
-                self.json_field(api, "opponent/user/username", "Anonymous"),
-            )
-            game["BlackElo"] = self.json_field(api, "opponent/rating")
-            if self.json_field(api, "clock") != "":
-                game["TimeControl"] = "%d+%d" % (
-                    self.json_field(api, "clock/initial"),
-                    self.json_field(api, "clock/increment"),
-                )
-            else:
-                game["TimeControl"] = "%dd" % (
-                    self.json_field(api, "correspondence/increment") // 86400
-                )
-            game["Result"] = "*"
-            game["_moves"] = ""
-            moves = self.json_field(api, "steps")
-            for move in moves:
-                if move["ply"] > 0:
-                    game["_moves"] += " %s" % move["san"]
-            return self.rebuild_pgn(game)
+            if (
+                not self.allow_extra
+                and game.get("rated")
+                and game.get("status") in ("created", "started")
+            ):
+                return None
+            return game.get("pgn") or None
 
         # Logic for the studies
         elif self.url_type == TYPE_STUDY:
@@ -515,7 +466,6 @@ class InternetGameLichess(InternetGameInterface):
         # Logic for the puzzles
         elif self.url_type == TYPE_PUZZLE:
             # The API doesn't provide the history of the moves
-            # chessgame = self.query_api('/training/%s/load' % self.id)
 
             # Fetch the puzzle
             url = f"https://lichess.{self.url_tld}/training/{self.id}"
