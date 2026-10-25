@@ -1061,9 +1061,7 @@ class SetupPositionExtension(_GameInitializationMode):
 
     @classmethod
     def side_button_toggled(cls, button):
-        cls.side_image.set_from_pixbuf(
-            cls.black if button.get_active() else cls.white
-        )
+        cls.side_image.set_from_pixbuf(cls.black if button.get_active() else cls.white)
         cls.fen_changed()
 
     @classmethod
