@@ -4,6 +4,7 @@ from math import floor
 from gi.repository import Gtk
 from gi.repository import Pango
 from gi.repository import Gdk
+from gi.repository import GLib
 
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import (
@@ -206,9 +207,11 @@ class Sidepanel:
         self.choices_box.connect("realize", add_provider)
         __widget__.pack_start(self.choices_box, False, False, 0)
         self.choices_enabled = True
+        self._suppress_scroll = False
 
         sw = Gtk.ScrolledWindow()
         sw.add(self.textview)
+        self.sw = sw
         __widget__.pack_start(sw, True, True, 0)
 
         if self.gamemodel.practice_game or self.gamemodel.lesson_game:
@@ -990,7 +993,7 @@ class Sidepanel:
                     self.textbuffer.apply_tag_by_name("selected", start, end)
                 break
 
-        if start:
+        if start and not self._suppress_scroll:
             # self.textview.scroll_to_iter(start, within_margin=0.03)
             self.textview.scroll_to_iter(start, 0.01, True, 0.00, 0.00)
 
@@ -1278,6 +1281,15 @@ class Sidepanel:
         """
         This method execute the full refresh of the widget.
         """
+        # Preserve the visible scroll position so editing operations that
+        # rebuild the whole textbuffer (add/remove comment, reset
+        # evaluations, reload) don't snap the panel back to the top.
+        # See https://github.com/pychess/pychess/issues/906
+        vadj = self.sw.get_vadjustment()
+        saved_value = vadj.get_value()
+        saved_upper = vadj.get_upper()
+
+        self._suppress_scroll = True
         self.fetch_chess_conf()
         self.textbuffer.set_text("")
         self.nodelist = []
@@ -1288,6 +1300,25 @@ class Sidepanel:
 
         self.insert_nodes(self.gamemodel.boards[0].board, result=result)
         self.update_selected_node()
+
+        # Restore scroll once the freshly rebuilt content has been laid out.
+        GLib.idle_add(self._restore_scroll, saved_value, saved_upper)
+
+    def _restore_scroll(self, saved_value, saved_upper):
+        """Restore the vertical scroll position after a rebuild (issue #906).
+
+        Scheduled via GLib.idle_add from update() so the adjustment reflects
+        the new content. Keeps the user's view instead of jumping to top.
+        """
+        vadj = self.sw.get_vadjustment()
+        self._suppress_scroll = False
+        if saved_upper <= 0 or vadj.get_upper() <= 0:
+            return False
+        ratio = saved_value / saved_upper
+        target = ratio * vadj.get_upper()
+        target = min(target, max(0.0, vadj.get_upper() - vadj.get_page_size()))
+        vadj.set_value(max(0.0, target))
+        return False
 
     def on_choice_clicked(self, button, board):
         self.boardview.setShownBoard(board)
