@@ -1023,9 +1023,12 @@ class SetupPositionExtension(_GameInitializationMode):
 
         cls.castl = set()
 
-        cls.white = Gtk.Image.new_from_pixbuf(cls.white)
-        cls.black = Gtk.Image.new_from_pixbuf(cls.black)
-        cls.widgets["side_button"].set_image(cls.white)
+        # Use a single persistent image for the side-to-move toggle and only
+        # swap its pixbuf. Replacing the button's child image widget on every
+        # toggle (set_image) is a GTK3 quirk that leaves the button unredrawn
+        # until a resize - see https://github.com/pychess/pychess/issues/1911
+        cls.side_image = Gtk.Image.new_from_pixbuf(cls.white)
+        cls.widgets["side_button"].set_image(cls.side_image)
 
         cls.widgets["side_button"].connect("toggled", cls.side_button_toggled)
         cls.widgets["rotate_button"].connect(
@@ -1058,10 +1061,9 @@ class SetupPositionExtension(_GameInitializationMode):
 
     @classmethod
     def side_button_toggled(cls, button):
-        if button.get_active():
-            button.set_image(cls.black)
-        else:
-            button.set_image(cls.white)
+        cls.side_image.set_from_pixbuf(
+            cls.black if button.get_active() else cls.white
+        )
         cls.fen_changed()
 
     @classmethod
