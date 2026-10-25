@@ -433,6 +433,10 @@ class InternetGameLichess(InternetGameInterface):
             Request(
                 f"https://lichess.{self.url_tld}{path}",
                 headers={
+                    # Without an explicit User-Agent, urllib sends
+                    # "Python-urllib/x.y", which lichess.org now rejects with
+                    # HTTP 403 before the request reaches the API.
+                    "User-Agent": self.userAgent,
                     "X-Requested-With": "XMLHttpRequest",
                     "Accept": "application/vnd.lichess.v4+json",
                 },
@@ -461,6 +465,7 @@ class InternetGameLichess(InternetGameInterface):
                     "?literate=1&clocks=1&evals=1&opening=1",
                     data=self.id.encode("utf-8"),
                     headers={
+                        "User-Agent": self.userAgent,
                         "Content-Type": "text/plain",
                         "Accept": "application/x-chess-pgn",
                     },
@@ -519,7 +524,7 @@ class InternetGameLichess(InternetGameInterface):
 
             # Fetch the puzzle
             url = f"https://lichess.{self.url_tld}/training/{self.id}"
-            page = self.download(url)
+            page = self.download(url, userAgent=True)
             if page is None:
                 return None
 
