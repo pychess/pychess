@@ -180,6 +180,14 @@ cp "$SCRIPT_DIR/PyChess.app/Contents/MacOS/PyChess" \
    "$APP_DIR/Contents/MacOS/PyChess"
 chmod +x "$APP_DIR/Contents/MacOS/PyChess"
 
+# App icon. Info.plist already declares CFBundleIconFile=PyChess, but the icon
+# was never shipped, so the built app fell back to the generic document icon in
+# Finder / Dock. Copy the bundled .icns next to the launcher.
+if [ -f "$SCRIPT_DIR/PyChess.app/Contents/Resources/PyChess.icns" ]; then
+    cp "$SCRIPT_DIR/PyChess.app/Contents/Resources/PyChess.icns" \
+       "$APP_DIR/Contents/Resources/PyChess.icns"
+fi
+
 step "Done"
 cat <<EOF
 
