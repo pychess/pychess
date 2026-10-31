@@ -30,7 +30,7 @@ class ListAndVarManager:
         self.connection.client.run_command("showlist")
 
         # Auto flag
-        conf.notify_add("autoCallFlag", self.autoFlagNotify)
+        self.autoFlagConId = conf.notify_add("autoCallFlag", self.autoFlagNotify)
 
     def onUpdateLists(self, matchlist):
         self.publicLists.clear()
@@ -83,9 +83,20 @@ class ListAndVarManager:
         )
         # print 'notify flag', conf.get('autoCallFlag')
 
+    def stop(self):
+        # Remove the autoCallFlag listener registered in __init__.
+        # FICSMainConnection.close() already calls this; without it the
+        # callback stays in conf's idkeyfuncs forever, so every FICS session
+        # leaks a ListAndVarManager (and its connection) and the stale
+        # callbacks fire on dead connections whenever autoCallFlag is changed.
+        try:
+            conf.notify_remove(self.autoFlagConId)
+        except KeyError:
+            pass
+
     def getList(self, list_name):
         if list_name in self.publicLists:
-            return self.publicLists(list_name)
+            return self.publicLists[list_name]
         elif list_name in self.personalLists:
             return self.personalLists[list_name]
         else:
