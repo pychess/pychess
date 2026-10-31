@@ -89,7 +89,7 @@ gstreamer
 gst-plugins-base
 
 -------------------------
-Dependencies for 64bit Python 3.8.x on Windows:
+Dependencies for 64bit Python on Windows:
 Go to https://msys2.github.io/ and download the x86_64 installer
 In C:\msys64\mingw64.exe terminal run:
 
@@ -105,7 +105,7 @@ python ./pychess
 
 To create .msi installer:
 pacman -S mingw-w64-x86_64-python-cx_Freeze
-# You may need this on licalized Windows unless cx_Freeze will fail
+# You may need this on localized Windows unless cx_Freeze will fail
 export LC_ALL=C
 python setup.py bdist_msi
 
