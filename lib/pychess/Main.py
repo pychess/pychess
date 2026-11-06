@@ -31,7 +31,7 @@ from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.widgets.RecentChooser import recent_menu, recent_manager
 from pychess.widgets.prompttext import getUserTextDialog
 from pychess.Players.engineNest import discoverer
-from pychess.Savers import chesspastebin
+from pychess.Savers import chesspastebin, pgn
 from pychess.Savers.pgn import PGNFile
 from pychess.Savers.remotegame import get_internet_game
 from pychess.System.protoopen import splitUri
@@ -630,7 +630,9 @@ class PyChess(Gtk.Application):
         gamewidget.getWidgets()["leave_fullscreen1"].hide()
 
         # Externals download dialog
-        if not conf.get("dont_show_externals_at_startup"):
+        if not conf.get("dont_show_externals_at_startup") and (
+            pgn.scoutfish_path is None or pgn.chess_db_path is None
+        ):
             externals_dialog = ExternalsDialog()
             externals_dialog.show()
 

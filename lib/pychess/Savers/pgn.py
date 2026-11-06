@@ -448,12 +448,18 @@ else:
         cpuinfo["bitness"], MODERN, cpuinfo["binext"]
     )
 scoutfish_path = shutil.which(scoutfish, mode=os.X_OK, path=altpath)
+if scoutfish_path is None:
+    # scoutfish installed system-wide (e.g. by a distribution package)
+    scoutfish_path = shutil.which("scoutfish", mode=os.X_OK)
 
 if sys.platform == "win32":
     parser = "parser_x64.exe"
 else:
     parser = "parser_x{}{}{}".format(cpuinfo["bitness"], MODERN, cpuinfo["binext"])
 chess_db_path = shutil.which(parser, mode=os.X_OK, path=altpath)
+if chess_db_path is None:
+    # chess_db parser installed system-wide (e.g. by a distribution package)
+    chess_db_path = shutil.which("chess_db", mode=os.X_OK)
 
 
 class PGNFile(ChessFile):
