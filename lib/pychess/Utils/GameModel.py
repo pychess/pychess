@@ -1126,9 +1126,7 @@ class GameModel(GObject.GObject):
         # ICS servers do not send a final clock update on a time forfeit.
         if self.timed and reason in (WON_CALLFLAG, DRAW_CALLFLAG):
             if reason == WON_CALLFLAG:
-                self.timemodel.updatePlayer(
-                    WHITE if status == BLACKWON else BLACK, 0
-                )
+                self.timemodel.updatePlayer(WHITE if status == BLACKWON else BLACK, 0)
             else:
                 self.timemodel.updatePlayer(WHITE, 0)
                 self.timemodel.updatePlayer(BLACK, 0)
