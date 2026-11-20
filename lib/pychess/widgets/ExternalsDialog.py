@@ -40,29 +40,31 @@ class ExternalsDialog:
         )
         vbox.pack_start(label, True, True, 0)
 
-        box = Gtk.Box()
-        check_button = Gtk.CheckButton(_("database querying needs scoutfish"))
-        check_button.set_active(conf.get("download_scoutfish"))
-        check_button.connect(
-            "toggled", lambda w: conf.set("download_scoutfish", w.get_active())
-        )
-        box.add(check_button)
-        link = "https://github.com/pychess/scoutfish"
-        link_button = Gtk.LinkButton(link, link)
-        box.add(link_button)
-        vbox.pack_start(box, False, False, 0)
+        if pgn.scoutfish_path is None:
+            box = Gtk.Box()
+            check_button = Gtk.CheckButton(_("database querying needs scoutfish"))
+            check_button.set_active(conf.get("download_scoutfish"))
+            check_button.connect(
+                "toggled", lambda w: conf.set("download_scoutfish", w.get_active())
+            )
+            box.add(check_button)
+            link = "https://github.com/pychess/scoutfish"
+            link_button = Gtk.LinkButton(link, link)
+            box.add(link_button)
+            vbox.pack_start(box, False, False, 0)
 
-        box = Gtk.Box()
-        check_button = Gtk.CheckButton(_("database opening tree needs chess_db"))
-        check_button.set_active(conf.get("download_chess_db"))
-        check_button.connect(
-            "toggled", lambda w: conf.set("download_chess_db", w.get_active())
-        )
-        box.add(check_button)
-        link = "https://github.com/pychess/chess_db"
-        link_button = Gtk.LinkButton(link, link)
-        box.add(link_button)
-        vbox.pack_start(box, False, False, 0)
+        if pgn.chess_db_path is None:
+            box = Gtk.Box()
+            check_button = Gtk.CheckButton(_("database opening tree needs chess_db"))
+            check_button.set_active(conf.get("download_chess_db"))
+            check_button.connect(
+                "toggled", lambda w: conf.set("download_chess_db", w.get_active())
+            )
+            box.add(check_button)
+            link = "https://github.com/pychess/chess_db"
+            link_button = Gtk.LinkButton(link, link)
+            box.add(link_button)
+            vbox.pack_start(box, False, False, 0)
 
         check_button = Gtk.CheckButton(_("Don't show this dialog on startup."))
         check_button.set_active(conf.get("dont_show_externals_at_startup"))
