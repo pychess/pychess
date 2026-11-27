@@ -15,7 +15,7 @@ greenlet==3.5.6
 importlib_metadata==10.2.0
 iniconfig==2.3.1
 lazy-importer==0.1.0
-packaging==26.3
+packaging==26.4
 pluggy==1.7.0
 ptyprocess==0.7.0
 Pygments==2.21.0
